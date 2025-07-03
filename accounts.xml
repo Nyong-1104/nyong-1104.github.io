@@ -1,25 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <accounts>
-
-<!-- friend -->
-
     <account>
         <id>minyong</id>
         <password>1234</password>
     </account>
-
     <account>
         <id>tester1</id>
         <password>1234</password>
     </account>
-
     <account>
         <id>benow001</id>
         <password>0828</password>
     </account>
-
-
-
-
-
-
 </accounts>
