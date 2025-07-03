@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <accounts>
     <account>
+        <id>hunju</id>
+        <password>6400</password>
+    </account>
+    
+    <account>
         <id>minyong</id>
         <password>1234</password>
     </account>
