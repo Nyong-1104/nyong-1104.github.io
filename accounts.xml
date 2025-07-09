@@ -16,6 +16,11 @@
 
     
     <account>
+        <id>jason</id>
+        <password>4019</password>
+    </account>
+
+    <account>
         <id>minyong</id>
         <password>1234</password>
     </account>
