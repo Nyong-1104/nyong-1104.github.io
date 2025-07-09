@@ -34,5 +34,10 @@
         <id>hbooo_o</id>
         <password>5002</password>
     </account>
+
+    <account>
+        <id>leejh</id>
+        <password>3605</password>
+    </account>
     
 </accounts>
