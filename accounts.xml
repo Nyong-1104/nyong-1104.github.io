@@ -5,6 +5,18 @@
         <id>1</id>
         <password>1</password>
     </account>
+
+    
+    <account>
+        <id>benow</id>
+        <password>0828!</password>
+    </account>
+
+    
+    <account>
+        <id>wemarketing</id>
+        <password>0601@</password>
+    </account>
     
     <account>
         <id>hunju</id>
