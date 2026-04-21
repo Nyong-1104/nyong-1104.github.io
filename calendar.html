@@ -261,7 +261,7 @@
       if(d===now.getDate()&&month===now.getMonth()&&year===now.getFullYear())cls+=' today';
       const k=key(year,month,d);
       if(redMarks[k])cls+=' red-num';
-      el.className=cls; el.style.height=cellH+'px'; el.style.fontSize=fs+'px'; el.dataset.state=colorStates[k]||0;
+      el.className=cls; el.style.height=cellH+'px'; el.style.fontSize=fs+'px'; el.dataset.state=colorStates[k]||0; el.dataset.key=k;
       const ns=document.createElement('span'); ns.className='num'; ns.textContent=d; el.appendChild(ns);
       el.addEventListener('click',()=>{
         const n=(parseInt(el.dataset.state)+1)%3;
@@ -329,6 +329,32 @@
   document.addEventListener('mouseup',endDrag);
   document.addEventListener('touchend',endDrag);
   window.addEventListener('resize',()=>{clampCellW();syncWidget();syncCalGrid();});
+
+  // ── Keyboard shortcuts ───────────────────────────────────
+  let hoveredKey = null;
+
+  document.getElementById('cal-grid').addEventListener('mouseover',(e)=>{
+    const cell = e.target.closest('.day-cell:not(.empty)');
+    hoveredKey = cell ? cell.dataset.key : null;
+  });
+  document.getElementById('cal-grid').addEventListener('mouseleave',()=>{ hoveredKey = null; });
+
+  document.addEventListener('keydown',(e)=>{
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      month--; if(month<0){month=11;year--;} render();
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      month++; if(month>11){month=0;year++;} render();
+    } else if (e.key === ' ' && hoveredKey) {
+      e.preventDefault();
+      const n = (parseInt(colorStates[hoveredKey]||0)+1)%3;
+      colorStates[hoveredKey] = n;
+      const cell = document.querySelector(`.day-cell[data-key="${hoveredKey}"]`);
+      if (cell) cell.dataset.state = n;
+      save();
+    }
+  });
 </script>
 </body>
 </html>
