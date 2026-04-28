@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>허리 스트레칭 알림</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f7f7f5;
+      --surface: #ffffff;
+      --surface2: #f2f1ee;
+      --border: rgba(0,0,0,0.1);
+      --border-strong: rgba(0,0,0,0.18);
+      --text: #1a1a1a;
+      --text2: #666;
+      --text3: #999;
+      --accent: #7F77DD;
+      --accent-dark: #534AB7;
+      --accent-bg: #EEEDFE;
+      --accent-text: #3C3489;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #161616;
+        --surface: #1f1f1f;
+        --surface2: #2a2a2a;
+        --border: rgba(255,255,255,0.1);
+        --border-strong: rgba(255,255,255,0.18);
+        --text: #f0f0f0;
+        --text2: #aaa;
+        --text3: #666;
+        --accent-bg: #2a2760;
+        --accent-text: #b0aaff;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #4CAF50;
+      flex-shrink: 0;
+      animation: pulse 2s infinite;
+    }
+
+    .status-dot.paused { background: var(--text3); animation: none; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(76,175,80,0.4); }
+      50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(76,175,80,0); }
+    }
+
+    .header-text h1 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .header-text p {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 1px;
+    }
+
+    /* Notification banner */
+    .notif-bar {
+      background: var(--accent-bg);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--accent-text);
+      margin-bottom: 1rem;
+      display: none;
+      line-height: 1.5;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .notif-bar.show { display: flex; }
+
+    .notif-bar span { flex: 1; }
+
+    .notif-bar button {
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .notif-bar button:hover { background: var(--accent-dark); }
+
+    /* Preset buttons */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text3);
+      margin-bottom: 8px;
+    }
+
+    .preset-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      padding: 7px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .preset-btn:hover { background: var(--surface2); }
+
+    .preset-btn.active {
+      border: 2px solid var(--accent);
+      background: var(--accent-bg);
+      color: var(--accent-text);
+    }
+
+    /* Custom input row */
+    .custom-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      margin-bottom: 1.25rem;
+    }
+
+    .custom-label {
+      font-size: 12px;
+      color: var(--text3);
+      white-space: nowrap;
+    }
+
+    .time-inputs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .time-field {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .time-input {
+      width: 54px;
+      padding: 6px 8px;
+      border-radius: 7px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      font-family: inherit;
+      text-align: center;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .time-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(127,119,221,0.18);
+    }
+
+    .time-unit {
+      font-size: 12px;
+      color: var(--text3);
+    }
+
+    .time-sep {
+      font-size: 16px;
+      color: var(--border-strong);
+      font-weight: 300;
+    }
+
+    .apply-btn {
+      padding: 7px 16px;
+      border-radius: 7px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+
+    .apply-btn:hover { background: var(--accent-dark); }
+
+    .apply-btn:active { transform: scale(0.97); }
+
+    /* Timer card */
+    .timer-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .timer-ring {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+    }
+
+    .timer-ring svg { transform: rotate(-90deg); }
+
+    .timer-pct {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .timer-info { flex: 1; min-width: 0; }
+
+    .next-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text3);
+      margin-bottom: 3px;
+    }
+
+    .countdown {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+
+    .interval-badge {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 4px;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--text2);
+      transition: all 0.15s;
+    }
+
+    .btn:hover { background: var(--surface2); }
+    .btn:active { transform: scale(0.97); }
+
+    .btn.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn.primary:hover { background: var(--accent-dark); }
+
+    /* Stretch card */
+    .stretch-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      display: none;
+      animation: slideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .stretch-card.visible { display: block; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stretch-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .stretch-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .stretch-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .stretch-dur {
+      font-size: 12px;
+      color: var(--text3);
+      white-space: nowrap;
+    }
+
+    .shuffle-btn {
+      background: none;
+      border: 1px solid var(--border-strong);
+      font-size: 12px;
+      color: var(--text3);
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .shuffle-btn:hover { background: var(--surface2); color: var(--text); }
+
+    .divider { height: 1px; background: var(--border); margin: 0 0 12px; }
+
+    .illustration {
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 12px;
+      text-align: center;
+      min-height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .illustration svg { max-width: 240px; height: 130px; }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.45;
+    }
+
+    .step-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .stretch-btns { display: flex; gap: 8px; }
+
+    /* History */
+    .history-section {
+      margin-top: 1.25rem;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 13px;
+    }
+
+    .history-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .history-name { flex: 1; color: var(--text2); }
+
+    .history-time { font-size: 11px; color: var(--text3); }
+
+    .empty-history {
+      font-size: 13px;
+      color: var(--text3);
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="status-dot" id="dot"></div>
+    <div class="header-text">
+      <h1>허리 스트레칭 알림</h1>
+      <p id="statusTxt">실행 중</p>
+    </div>
+  </div>
+
+  <div class="notif-bar" id="notifBar">
+    <span>브라우저 알림을 허용하면 탭이 백그라운드에 있어도 크롬 알림이 옵니다.</span>
+    <button onclick="reqNotif()">알림 허용</button>
+  </div>
+
+  <div class="section-label">빠른 설정</div>
+  <div class="preset-row">
+    <button class="preset-btn active" data-m="20" data-s="0" onclick="applyPreset(this)">20분</button>
+    <button class="preset-btn" data-m="30" data-s="0" onclick="applyPreset(this)">30분</button>
+    <button class="preset-btn" data-m="60" data-s="0" onclick="applyPreset(this)">1시간</button>
+    <button class="preset-btn" id="customTag" style="display:none">설정값</button>
+  </div>
+
+  <div class="custom-row">
+    <span class="custom-label">직접 설정</span>
+    <div class="time-inputs">
+      <div class="time-field">
+        <input class="time-input" type="number" id="inMin" min="0" max="99" value="20">
+        <span class="time-unit">분</span>
+      </div>
+      <span class="time-sep">:</span>
+      <div class="time-field">
+        <input class="time-input" type="number" id="inSec" min="0" max="59" value="0">
+        <span class="time-unit">초</span>
+      </div>
+    </div>
+    <button class="apply-btn" onclick="applyCustom()">적용</button>
+  </div>
+
+  <div class="timer-card">
+    <div class="timer-ring">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle cx="36" cy="36" r="30" fill="none" stroke="var(--border)" stroke-width="5"/>
+        <circle id="ring" cx="36" cy="36" r="30" fill="none" stroke="#7F77DD" stroke-width="5"
+          stroke-dasharray="188.5" stroke-dashoffset="0" stroke-linecap="round"/>
+      </svg>
+      <div class="timer-pct" id="pct">100%</div>
+    </div>
+    <div class="timer-info">
+      <div class="next-label">다음 스트레칭까지</div>
+      <div class="countdown" id="countdown">20:00</div>
+      <div class="interval-badge" id="intBadge">20분 간격</div>
+      <div class="action-row">
+        <button class="btn primary" onclick="showNow()">지금 보기</button>
+        <button class="btn" id="pauseBtn" onclick="togglePause()">일시정지</button>
+        <button class="btn" onclick="resetTimer()">초기화</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stretch-card" id="sc">
+    <div class="stretch-top">
+      <div class="stretch-dot" id="sdot"></div>
+      <div class="stretch-name" id="sname"></div>
+      <div class="stretch-dur" id="sdur"></div>
+      <button class="shuffle-btn" onclick="nextS()">↺ 다른 동작</button>
+    </div>
+    <div class="divider"></div>
+    <div class="illustration" id="sillust"></div>
+    <div class="steps" id="ssteps"></div>
+    <div class="stretch-btns">
+      <button class="btn primary" onclick="doneS()" style="flex:1;padding:9px">✓ 완료!</button>
+      <button class="btn" onclick="closeS()" style="padding:9px 18px">닫기</button>
+    </div>
+  </div>
+
+  <div class="history-section">
+    <div class="section-label" style="margin-top:1.25rem">오늘 완료한 스트레칭</div>
+    <div class="history-list" id="historyList">
+      <div class="empty-history">아직 완료한 스트레칭이 없어요</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const stretches = [
+  {
+    name: "고양이-소 자세", dur: "30초", color: "#7F77DD",
+    steps: ["네 발로 엎드려 무릎과 손을 바닥에 짚습니다", "숨을 들이쉬며 등을 아래로 내리고 고개를 위로 듭니다", "숨을 내쉬며 등을 둥글게 올리고 고개를 내립니다", "5~10회 천천히 반복합니다"],
+    svg: `<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="106" width="200" height="6" rx="3" fill="#DDD8FF"/><ellipse cx="110" cy="77" rx="55" ry="22" fill="#AFA9EC" transform="rotate(-5 110 77)"/><circle cx="162" cy="61" r="18" fill="#AFA9EC"/><polygon points="153,52 158,40 165,52" fill="#8B7FE0"/><polygon points="163,52 168,40 175,52" fill="#8B7FE0"/><ellipse cx="156" cy="62" rx="2.5" ry="3" fill="#fff"/><ellipse cx="168" cy="62" rx="2.5" ry="3" fill="#fff"/><circle cx="156" cy="63" r="1.5" fill="#3A2D8A"/><circle cx="168" cy="63" r="1.5" fill="#3A2D8A"/><path d="M60,77 Q38,57 44,41" stroke="#AFA9EC" stroke-width="7" fill="none" stroke-linecap="round"/><rect x="142" y="91" width="11" height="22" rx="5.5" fill="#8B7FE0"/><rect x="158" y="93" width="11" height="20" rx="5.5" fill="#8B7FE0"/><rect x="62" y="89" width="11" height="22" rx="5.5" fill="#8B7FE0"/><rect x="78" y="91" width="11" height="22" rx="5.5" fill="#8B7FE0"/><path d="M78,67 Q110,49 142,67" stroke="#7F77DD" stroke-width="2" stroke-dasharray="5,3" fill="none"/></svg>`
+  },
+  {
+    name: "척추 비틀기", dur: "각 방향 20초", color: "#E85555",
+    steps: ["등을 꼿꼿이 세우고 의자에 앉습니다", "오른손으로 왼쪽 무릎을 잡고 왼팔을 뒤로 뻗습니다", "고개도 함께 돌려 20초 유지합니다", "반대 방향도 반복합니다"],
+    svg: `<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><rect x="75" y="82" width="70" height="10" rx="3" fill="#FFBABA"/><rect x="83" y="92" width="8" height="24" rx="4" fill="#FFBABA"/><rect x="129" y="92" width="8" height="24" rx="4" fill="#FFBABA"/><rect x="77" y="50" width="8" height="34" rx="4" fill="#FFBABA"/><rect x="77" y="48" width="66" height="8" rx="3" fill="#FF9A9A"/><ellipse cx="110" cy="68" rx="24" ry="22" fill="#FF6B6B"/><circle cx="124" cy="42" r="17" fill="#FF6B6B"/><ellipse cx="124" cy="32" rx="12" ry="9" fill="#E85555"/><ellipse cx="118" cy="43" rx="2.5" ry="3" fill="#fff"/><ellipse cx="130" cy="43" rx="2.5" ry="3" fill="#fff"/><circle cx="118" cy="44" r="1.5" fill="#8B2020"/><circle cx="130" cy="44" r="1.5" fill="#8B2020"/><path d="M88,65 Q72,62 64,70" stroke="#E85555" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M134,63 Q158,52 165,44" stroke="#E85555" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M112,33 Q128,18 140,30" stroke="#FF6B6B" stroke-width="2" fill="none" stroke-dasharray="4,3" marker-end="url(#a1)"/><defs><marker id="a1" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0L10,5L0,10Z" fill="#FF6B6B"/></marker></defs></svg>`
+  },
+  {
+    name: "어깨 스트레칭", dur: "각 방향 15초", color: "#1D9E75",
+    steps: ["바로 서거나 의자에 앉습니다", "오른팔을 왼쪽으로 가슴 앞에서 뻗습니다", "왼팔로 오른팔을 감싸 몸 쪽으로 당깁니다", "15초 유지 후 반대쪽도 반복합니다"],
+    svg: `<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><rect x="95" y="98" width="13" height="20" rx="6.5" fill="#0F6E56"/><rect x="112" y="98" width="13" height="20" rx="6.5" fill="#0F6E56"/><ellipse cx="110" cy="76" rx="24" ry="24" fill="#1D9E75"/><circle cx="110" cy="46" r="20" fill="#1D9E75"/><ellipse cx="110" cy="34" rx="14" ry="11" fill="#0F6E56"/><ellipse cx="103" cy="47" rx="3" ry="3.5" fill="#fff"/><ellipse cx="117" cy="47" rx="3" ry="3.5" fill="#fff"/><circle cx="103" cy="48" r="2" fill="#063D2E"/><circle cx="117" cy="48" r="2" fill="#063D2E"/><path d="M103,57 Q110,62 117,57" stroke="#063D2E" stroke-width="1.5" fill="none"/><path d="M86,68 L58,74" stroke="#0F6E56" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M134,68 Q124,68 115,74" stroke="#0F6E56" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M60,62 L48,72" stroke="#1D9E75" stroke-width="2" stroke-dasharray="4,3" fill="none" marker-end="url(#a2)"/><defs><marker id="a2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0L10,5L0,10Z" fill="#1D9E75"/></marker></defs></svg>`
+  },
+  {
+    name: "목 스트레칭", dur: "각 방향 10초", color: "#D85A30",
+    steps: ["어깨 힘을 빼고 편안히 앉습니다", "머리를 오른쪽으로 기울여 귀가 어깨 쪽으로 향하게 합니다", "10초 유지 후 왼쪽도 반복합니다", "앞으로 고개를 숙여 목 뒤도 10초 늘려줍니다"],
+    svg: `<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><ellipse cx="110" cy="106" rx="45" ry="14" fill="#FF8C5A"/><rect x="68" y="92" width="84" height="16" rx="8" fill="#FF8C5A"/><rect x="100" y="76" width="20" height="20" rx="8" fill="#FF8C5A"/><g transform="rotate(16 110 86)"><circle cx="116" cy="60" r="22" fill="#FFA07A"/><ellipse cx="116" cy="46" rx="16" ry="12" fill="#FF8C5A"/><ellipse cx="108" cy="62" rx="3.2" ry="3.8" fill="#fff"/><ellipse cx="124" cy="62" rx="3.2" ry="3.8" fill="#fff"/><circle cx="108" cy="63" r="2" fill="#7A2E10"/><circle cx="124" cy="63" r="2" fill="#7A2E10"/><path d="M110,72 Q116,77 122,72" stroke="#7A2E10" stroke-width="1.5" fill="none"/></g><path d="M158,56 Q168,46 158,36" stroke="#FFA07A" stroke-width="2.5" stroke-dasharray="5,3" fill="none" marker-end="url(#a3)"/><path d="M72,56 Q62,46 72,36" stroke="#FFA07A" stroke-width="2.5" stroke-dasharray="5,3" fill="none" marker-end="url(#a3)"/><defs><marker id="a3" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0L10,5L0,10Z" fill="#FFA07A"/></marker></defs></svg>`
+  },
+  {
+    name: "앉아서 전굴", dur: "30초", color: "#534AB7",
+    steps: ["의자 끝에 앉아 발을 바닥에 평평하게 놓습니다", "천천히 상체를 앞으로 숙입니다", "손이 발목이나 바닥에 닿으면 30초 유지합니다", "천천히 상체를 올립니다"],
+    svg: `<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><rect x="65" y="78" width="78" height="10" rx="3" fill="#C5BFFF"/><rect x="73" y="88" width="10" height="26" rx="5" fill="#C5BFFF"/><rect x="123" y="88" width="10" height="26" rx="5" fill="#C5BFFF"/><rect x="67" y="46" width="10" height="34" rx="5" fill="#C5BFFF"/><rect x="78" y="88" width="16" height="32" rx="8" fill="#7F77DD"/><rect x="120" y="88" width="16" height="32" rx="8" fill="#7F77DD"/><ellipse cx="86" cy="122" rx="12" ry="5" fill="#534AB7"/><ellipse cx="128" cy="122" rx="12" ry="5" fill="#534AB7"/><path d="M78,78 Q74,65 82,54 Q95,42 112,40" stroke="#7F77DD" stroke-width="22" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="118" cy="36" r="18" fill="#7F77DD"/><ellipse cx="126" cy="26" rx="11" ry="8" fill="#534AB7"/><path d="M78,64 Q60,75 55,96" stroke="#534AB7" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M50,96 L47,108" stroke="#7F77DD" stroke-width="2" stroke-dasharray="4,3" fill="none" marker-end="url(#a4)"/><defs><marker id="a4" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0L10,5L0,10Z" fill="#7F77DD"/></marker></defs></svg>`
+  },
+  {
+    name: "옆구리 스트레칭", dur: "각 방향 20초", color: "#27AE60",
+    steps: ["바로 서서 발을 어깨 너비로 벌립니다", "한 팔을 귀 옆으로 들어 반대 방향으로 기울입니다", "옆구리가 늘어나는 느낌으로 20초 유지합니다", "반대쪽도 동일하게 반복합니다"],
+    svg: `<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><rect x="168" y="10" width="14" height="108" rx="4" fill="#C8F0D8"/><rect x="10" y="112" width="178" height="6" rx="3" fill="#C8F0D8"/><rect x="94" y="96" width="15" height="22" rx="7.5" fill="#1E8449"/><rect x="114" y="96" width="15" height="22" rx="7.5" fill="#1E8449"/><ellipse cx="107" cy="74" rx="22" ry="28" fill="#27AE60" transform="rotate(6 107 74)"/><circle cx="104" cy="42" r="19" fill="#27AE60"/><ellipse cx="104" cy="29" rx="13" ry="10" fill="#1E8449"/><ellipse cx="97" cy="43" rx="3" ry="3.5" fill="#fff"/><ellipse cx="111" cy="43" rx="3" ry="3.5" fill="#fff"/><circle cx="97" cy="44" r="2" fill="#0A4D21"/><circle cx="111" cy="44" r="2" fill="#0A4D21"/><path d="M97,53 Q104,58 111,53" stroke="#0A4D21" stroke-width="1.5" fill="none"/><path d="M128,62 L167,50" stroke="#1E8449" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M83,60 Q66,40 74,18" stroke="#1E8449" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M76,72 Q60,52 68,20" stroke="#27AE60" stroke-width="2" stroke-dasharray="5,3" fill="none" marker-end="url(#a5)"/><defs><marker id="a5" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0L10,5L0,10Z" fill="#27AE60"/></marker></defs></svg>`
+  }
+]
+
+let totalSec = 20 * 60
+let remainSec = 20 * 60
+let paused = false
+let ticker = null
+let sidx = 0
+let history = []
+
+function fmtSec(s) {
+  if (s >= 60) {
+    const m = Math.floor(s / 60), sc = s % 60
+    return sc > 0 ? `${m}분 ${sc}초` : `${m}분`
+  }
+  return `${s}초`
+}
+
+function fmtCountdown(s) {
+  const m = Math.floor(s / 60), sc = s % 60
+  return `${m}:${sc.toString().padStart(2, '0')}`
+}
+
+function fmtTime(date) {
+  return date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0')
+}
+
+function updateRing() {
+  const pct = remainSec / totalSec
+  const circ = 188.5
+  document.getElementById('ring').style.strokeDashoffset = circ * (1 - pct)
+  document.getElementById('pct').textContent = Math.round(pct * 100) + '%'
+  document.getElementById('countdown').textContent = fmtCountdown(remainSec)
+}
+
+function applyTime(m, s) {
+  const tot = m * 60 + s
+  if (tot < 5) { alert('5초 이상으로 설정해주세요'); return false }
+  totalSec = tot
+  remainSec = tot
+  document.getElementById('intBadge').textContent = fmtSec(tot) + ' 간격'
+  updateRing()
+  return true
+}
+
+function applyPreset(el) {
+  const m = parseInt(el.dataset.m), s = parseInt(el.dataset.s)
+  if (!applyTime(m, s)) return
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'))
+  el.classList.add('active')
+  document.getElementById('customTag').style.display = 'none'
+  document.getElementById('inMin').value = m
+  document.getElementById('inSec').value = s
+}
+
+function applyCustom() {
+  const m = parseInt(document.getElementById('inMin').value) || 0
+  const s = parseInt(document.getElementById('inSec').value) || 0
+  if (!applyTime(m, s)) return
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'))
+  let matched = false
+  document.querySelectorAll('.preset-btn[data-m]').forEach(b => {
+    if (parseInt(b.dataset.m) === m && parseInt(b.dataset.s) === s) {
+      b.classList.add('active')
+      matched = true
+    }
+  })
+  if (!matched) {
+    const ct = document.getElementById('customTag')
+    ct.style.display = ''
+    ct.textContent = fmtSec(m * 60 + s)
+    ct.classList.add('active')
+  }
+}
+
+function tick() {
+  if (paused) return
+  remainSec--
+  if (remainSec <= 0) {
+    remainSec = totalSec
+    triggerStretch()
+  }
+  updateRing()
+}
+
+function triggerStretch() {
+  sidx = Math.floor(Math.random() * stretches.length)
+  renderStretch()
+  document.getElementById('sc').classList.add('visible')
+
+  if (Notification.permission === 'granted') {
+    const s = stretches[sidx]
+    new Notification('🧘 허리 스트레칭 시간!', {
+      body: `${s.name} — ${s.dur}`,
+      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y="52" font-size="52">🧘</text></svg>'
+    })
+  }
+}
+
+function renderStretch() {
+  const s = stretches[sidx]
+  document.getElementById('sdot').style.background = s.color
+  document.getElementById('sname').textContent = s.name
+  document.getElementById('sdur').textContent = s.dur
+  const il = document.getElementById('sillust')
+  il.innerHTML = s.svg
+  il.style.background = s.color + '18'
+  document.getElementById('ssteps').innerHTML = s.steps.map((t, i) =>
+    `<div class="step"><div class="step-num" style="background:${s.color}">${i + 1}</div><span>${t}</span></div>`
+  ).join('')
+}
+
+function showNow() {
+  sidx = Math.floor(Math.random() * stretches.length)
+  renderStretch()
+  document.getElementById('sc').classList.add('visible')
+  document.getElementById('sc').scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+}
+
+function nextS() {
+  sidx = (sidx + 1) % stretches.length
+  renderStretch()
+}
+
+function doneS() {
+  const s = stretches[sidx]
+  history.unshift({ name: s.name, color: s.color, time: fmtTime(new Date()) })
+  renderHistory()
+  document.getElementById('sc').classList.remove('visible')
+}
+
+function closeS() {
+  document.getElementById('sc').classList.remove('visible')
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList')
+  if (history.length === 0) {
+    list.innerHTML = '<div class="empty-history">아직 완료한 스트레칭이 없어요</div>'
+    return
+  }
+  list.innerHTML = history.slice(0, 5).map(h =>
+    `<div class="history-item">
+      <div class="history-dot" style="background:${h.color}"></div>
+      <span class="history-name">${h.name}</span>
+      <span class="history-time">${h.time}</span>
+    </div>`
+  ).join('')
+}
+
+function togglePause() {
+  paused = !paused
+  document.getElementById('pauseBtn').textContent = paused ? '재개' : '일시정지'
+  document.getElementById('dot').className = 'status-dot' + (paused ? ' paused' : '')
+  document.getElementById('statusTxt').textContent = paused ? '일시정지됨' : '실행 중'
+}
+
+function resetTimer() {
+  remainSec = totalSec
+  updateRing()
+}
+
+function reqNotif() {
+  Notification.requestPermission().then(p => {
+    if (p === 'granted') document.getElementById('notifBar').classList.remove('show')
+  })
+}
+
+document.getElementById('inSec').addEventListener('input', function () {
+  if (parseInt(this.value) > 59) this.value = 59
+  if (parseInt(this.value) < 0) this.value = 0
+})
+document.getElementById('inMin').addEventListener('input', function () {
+  if (parseInt(this.value) < 0) this.value = 0
+})
+document.getElementById('inMin').addEventListener('keydown', e => { if (e.key === 'Enter') applyCustom() })
+document.getElementById('inSec').addEventListener('keydown', e => { if (e.key === 'Enter') applyCustom() })
+
+if (Notification.permission === 'default') {
+  document.getElementById('notifBar').classList.add('show')
+}
+
+ticker = setInterval(tick, 1000)
+updateRing()
+</script>
+</body>
+</html>
