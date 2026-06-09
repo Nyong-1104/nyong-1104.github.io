@@ -349,7 +349,11 @@
       back.addEventListener('mouseleave', () => { if (flipped) clearHolo(); });
 
       back.addEventListener('click', e => {
-        if (e.target.tagName === 'A' || e.target.closest('a')) return;
+        const link = e.target.closest('.back-link');
+        if (link) {
+          window.location.href = link.getAttribute('href');
+          return;
+        }
         flipped = false;
         clearHolo();
         wrap.classList.remove('flipped', 'expanded');
