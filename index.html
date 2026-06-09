@@ -17,7 +17,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
+      padding: 2rem 1rem;
       font-family: 'Inter', sans-serif;
     }
 
@@ -35,12 +35,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 24px;
+      gap: 20px;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 640px;
     }
 
     .card-wrap {
-      width: 200px;
-      height: 300px;
+      width: min(200px, 42vw);
+      height: min(300px, 63vw);
       perspective: 1000px;
       cursor: pointer;
       flex-shrink: 0;
@@ -49,9 +52,17 @@
     }
 
     .card-wrap.expanded {
-      width: 280px;
-      height: 400px;
+      width: min(280px, 80vw);
+      height: min(400px, 115vw);
       z-index: 10;
+    }
+
+    @media (max-width: 480px) {
+      .stage { gap: 14px; }
+      .card-wrap.expanded {
+        width: min(300px, 85vw);
+        height: min(420px, 120vw);
+      }
     }
 
     .card-inner {
@@ -83,7 +94,7 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 24px;
+      padding: clamp(14px, 5%, 24px);
     }
 
     .card-back {
@@ -93,149 +104,136 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 26px 24px;
+      padding: clamp(16px, 5%, 26px) clamp(14px, 5%, 24px);
+      gap: 8px;
     }
 
     .shine-idle {
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      mix-blend-mode: screen;
-      opacity: 0.12;
+      position: absolute; inset: 0; border-radius: inherit;
+      pointer-events: none; mix-blend-mode: screen; opacity: 0.12;
       background: conic-gradient(from 120deg,#ff006640,#ff980040,#ffff0040,#00ff8840,#00bfff40,#8a2be240,#ff006640);
       filter: blur(3px);
     }
-
     .shine-hover {
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      mix-blend-mode: screen;
-      opacity: 0;
-      background: conic-gradient(from 0deg,#ff006680,#ff980080,#ffff0080,#00ff8880,#00bfff80,#8a2be280,#ff006680);
-      filter: blur(2px);
-      transition: opacity 0.2s;
+      position: absolute; inset: 0; border-radius: inherit;
+      pointer-events: none; mix-blend-mode: screen; opacity: 0;
+      filter: blur(2px); transition: opacity 0.2s;
     }
-
     .glare {
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      opacity: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.35) 0%, transparent 65%);
-      transition: opacity 0.2s;
+      position: absolute; inset: 0; border-radius: inherit;
+      pointer-events: none; opacity: 0; transition: opacity 0.2s;
     }
 
     .card-sub {
-      position: relative;
-      z-index: 2;
+      position: relative; z-index: 2;
       font-family: 'Inter', sans-serif;
-      font-size: 0.68rem;
-      font-weight: 500;
-      color: #555;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
+      font-size: clamp(0.55rem, 1.8vw, 0.68rem);
+      font-weight: 500; color: #555;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 5px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     .card-label {
-      position: relative;
-      z-index: 2;
+      position: relative; z-index: 2;
       font-family: 'Syne', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: -0.02em;
-      line-height: 1.15;
+      font-size: clamp(0.9rem, 4vw, 1.25rem);
+      font-weight: 800; color: #fff;
+      letter-spacing: -0.02em; line-height: 1.15;
+      word-break: keep-all; overflow-wrap: break-word;
     }
 
     .back-shine-idle {
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      mix-blend-mode: screen;
-      opacity: 0.07;
+      position: absolute; inset: 0; border-radius: inherit;
+      pointer-events: none; mix-blend-mode: screen; opacity: 0.07;
       background: conic-gradient(from 60deg,#ffffff30,#cccccc20,#aaaaaa30,#888888,#ffffff30);
       filter: blur(4px);
     }
-
     .back-shine-hover {
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      mix-blend-mode: screen;
-      opacity: 0;
-      background: conic-gradient(from 0deg,#ffffff55,#dddddd30,#bbbbbb55,#999999,#ffffff55);
-      filter: blur(2px);
-      transition: opacity 0.2s;
+      position: absolute; inset: 0; border-radius: inherit;
+      pointer-events: none; mix-blend-mode: screen; opacity: 0;
+      filter: blur(2px); transition: opacity 0.2s;
     }
-
     .back-glare {
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      opacity: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.18) 0%, transparent 65%);
-      transition: opacity 0.2s;
+      position: absolute; inset: 0; border-radius: inherit;
+      pointer-events: none; opacity: 0; transition: opacity 0.2s;
     }
 
     .back-tag {
-      position: relative;
-      z-index: 2;
+      position: relative; z-index: 2;
       font-family: 'Inter', sans-serif;
-      font-size: 0.68rem;
-      font-weight: 500;
-      color: #444;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-size: clamp(0.55rem, 1.8vw, 0.68rem);
+      font-weight: 500; color: #444;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     .back-title {
-      position: relative;
-      z-index: 2;
+      position: relative; z-index: 2;
       font-family: 'Syne', sans-serif;
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: #ddd;
-      letter-spacing: -0.02em;
-      line-height: 1.15;
+      font-size: clamp(0.95rem, 4vw, 1.35rem);
+      font-weight: 800; color: #ddd;
+      letter-spacing: -0.02em; line-height: 1.15;
+      word-break: keep-all; overflow-wrap: break-word;
     }
 
     .back-desc {
-      position: relative;
-      z-index: 2;
-      font-size: 0.85rem;
-      color: #777;
-      line-height: 1.75;
+      position: relative; z-index: 2;
+      font-size: clamp(0.72rem, 2.2vw, 0.85rem);
+      color: #777; line-height: 1.7;
       flex: 1;
-      display: flex;
-      align-items: center;
-      padding: 14px 0;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      word-break: keep-all;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
     }
 
     .back-link {
-      position: relative;
-      z-index: 2;
-      display: inline-block;
+      position: relative; z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-family: 'Syne', sans-serif;
-      font-size: 0.8rem;
+      font-size: clamp(0.72rem, 2vw, 0.82rem);
       font-weight: 700;
-      color: #ccc;
       text-decoration: none;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
-      padding: 10px 18px;
-      transition: background 0.15s;
+      background: linear-gradient(
+        105deg,
+        #666 30%,
+        #fff 48%,
+        #fff 52%,
+        #666 70%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 2.8s linear infinite;
+      border: none;
+      padding: 0;
+      transition: gap 0.2s;
+      cursor: pointer;
     }
 
-    .back-link:hover { background: rgba(255,255,255,0.12); }
+    .back-link:hover {
+      gap: 10px;
+    }
+
+    .back-link .arrow {
+      display: inline-block;
+      transition: transform 0.2s;
+      font-style: normal;
+    }
+
+    .back-link:hover .arrow {
+      transform: translateX(3px);
+    }
   </style>
 </head>
 <body>
@@ -243,7 +241,6 @@
   <div class="site-label">nyong.app</div>
 
   <div class="stage">
-
     <div class="card-wrap" id="card1">
       <div class="card-inner">
         <div class="card-front" id="front1">
@@ -260,7 +257,7 @@
           <div class="back-tag">Stretching</div>
           <div class="back-title">Heoli<br>Stretching</div>
           <div class="back-desc">설정한 간격마다 알림이 오고, 그때그때 맞는 허리·목·어깨 스트레칭 동작을 안내해줘요.</div>
-          <a class="back-link" href="/heoli-stretching.html">열기 →</a>
+          <a class="back-link" href="/heoli-stretching.html">Open <span class="arrow">→</span></a>
         </div>
       </div>
     </div>
@@ -281,14 +278,15 @@
           <div class="back-tag">Calendar</div>
           <div class="back-title">Calendar</div>
           <div class="back-desc">날짜를 클릭해 가능·불가능을 표시하고, 셀 크기와 간격을 자유롭게 조절할 수 있는 달력이에요.</div>
-          <a class="back-link" href="/calendar.html">열기 →</a>
+          <a class="back-link" href="/calendar.html">Open <span class="arrow">→</span></a>
         </div>
       </div>
     </div>
-
   </div>
 
   <script>
+    const allCards = [];
+
     function initCard(wrapId, frontId, shId, glId, backId, bshId, bglId) {
       const wrap  = document.getElementById(wrapId);
       const front = document.getElementById(frontId);
@@ -301,29 +299,36 @@
 
       function clearHolo() {
         wrap.style.transform = '';
-        sh.style.opacity  = '0';
-        gl.style.opacity  = '0';
-        bsh.style.opacity = '0';
-        bgl.style.opacity = '0';
+        sh.style.opacity = '0'; gl.style.opacity = '0';
+        bsh.style.opacity = '0'; bgl.style.opacity = '0';
       }
+
+      function reset() {
+        if (!flipped) return;
+        flipped = false;
+        clearHolo();
+        wrap.classList.remove('flipped', 'expanded');
+      }
+
+      allCards.push({ reset });
 
       front.addEventListener('mousemove', e => {
         if (flipped) return;
         const r = front.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width;
         const y = (e.clientY - r.top)  / r.height;
-        wrap.style.transform = `perspective(1000px) rotateX(${(y - 0.5) * 18}deg) rotateY(${(x - 0.5) * -18}deg) scale(1.02)`;
-        const angle = (Math.atan2(y - 0.5, x - 0.5) * 180 / Math.PI + 360) % 360;
+        wrap.style.transform = `perspective(1000px) rotateX(${(y-0.5)*18}deg) rotateY(${(x-0.5)*-18}deg) scale(1.02)`;
+        const angle = (Math.atan2(y-0.5, x-0.5) * 180 / Math.PI + 360) % 360;
         sh.style.background = `conic-gradient(from ${angle}deg,#ff006680,#ff980080,#ffff0080,#00ff8880,#00bfff80,#8a2be280,#ff006680)`;
         sh.style.opacity = '0.65';
         gl.style.background = `radial-gradient(circle at ${x*100}% ${y*100}%,rgba(255,255,255,0.4) 0%,transparent 60%)`;
         gl.style.opacity = '1';
       });
-
       front.addEventListener('mouseleave', () => { if (!flipped) clearHolo(); });
 
       front.addEventListener('click', () => {
         if (flipped) return;
+        allCards.forEach(c => c.reset());
         flipped = true;
         clearHolo();
         wrap.classList.add('flipped', 'expanded');
@@ -334,18 +339,17 @@
         const r = back.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width;
         const y = (e.clientY - r.top)  / r.height;
-        wrap.style.transform = `perspective(1000px) rotateX(${(y - 0.5) * -18}deg) rotateY(${(x - 0.5) * 18}deg) scale(1.02)`;
-        const angle = (Math.atan2(y - 0.5, x - 0.5) * 180 / Math.PI + 360) % 360;
+        wrap.style.transform = `perspective(1000px) rotateX(${(y-0.5)*-18}deg) rotateY(${(x-0.5)*18}deg) scale(1.02)`;
+        const angle = (Math.atan2(y-0.5, x-0.5) * 180 / Math.PI + 360) % 360;
         bsh.style.background = `conic-gradient(from ${angle}deg,#ffffff55,#cccccc30,#aaaaaa55,#888888,#ffffff55)`;
         bsh.style.opacity = '0.45';
         bgl.style.background = `radial-gradient(circle at ${x*100}% ${y*100}%,rgba(255,255,255,0.18) 0%,transparent 60%)`;
         bgl.style.opacity = '1';
       });
-
       back.addEventListener('mouseleave', () => { if (flipped) clearHolo(); });
 
       back.addEventListener('click', e => {
-        if (e.target.tagName === 'A') return;
+        if (e.target.tagName === 'A' || e.target.closest('a')) return;
         flipped = false;
         clearHolo();
         wrap.classList.remove('flipped', 'expanded');
