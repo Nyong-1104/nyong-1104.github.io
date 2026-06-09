@@ -126,7 +126,6 @@
 
     .card-sub {
       position: relative; z-index: 2;
-      font-family: 'Inter', sans-serif;
       font-size: clamp(0.55rem, 1.8vw, 0.68rem);
       font-weight: 500; color: #555;
       letter-spacing: 0.08em; text-transform: uppercase;
@@ -161,7 +160,6 @@
 
     .back-tag {
       position: relative; z-index: 2;
-      font-family: 'Inter', sans-serif;
       font-size: clamp(0.55rem, 1.8vw, 0.68rem);
       font-weight: 500; color: #444;
       letter-spacing: 0.08em; text-transform: uppercase;
@@ -194,8 +192,9 @@
       100% { background-position: 200% center; }
     }
 
-    .back-link {
-      position: relative; z-index: 2;
+    .open-btn {
+      position: relative;
+      z-index: 100;
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -203,37 +202,24 @@
       font-size: clamp(0.72rem, 2vw, 0.82rem);
       font-weight: 700;
       text-decoration: none;
-      background: linear-gradient(
-        105deg,
-        #666 30%,
-        #fff 48%,
-        #fff 52%,
-        #666 70%
-      );
+      background: linear-gradient(105deg, #666 30%, #fff 48%, #fff 52%, #666 70%);
       background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: shimmer 2.8s linear infinite;
-      border: none;
-      padding: 0;
-      transition: gap 0.2s;
+      padding: 4px 0;
       cursor: pointer;
+      pointer-events: all;
     }
 
-    .back-link:hover {
-      gap: 10px;
-    }
-
-    .back-link .arrow {
+    .open-btn .arrow {
       display: inline-block;
       transition: transform 0.2s;
-      font-style: normal;
     }
 
-    .back-link:hover .arrow {
-      transform: translateX(3px);
-    }
+    .open-btn:hover { gap: 10px; }
+    .open-btn:hover .arrow { transform: translateX(3px); }
   </style>
 </head>
 <body>
@@ -257,7 +243,7 @@
           <div class="back-tag">Stretching</div>
           <div class="back-title">Heoli<br>Stretching</div>
           <div class="back-desc">설정한 간격마다 알림이 오고, 그때그때 맞는 허리·목·어깨 스트레칭 동작을 안내해줘요.</div>
-          <a class="back-link" href="/heoli-stretching.html">Open <span class="arrow">→</span></a>
+          <span class="open-btn" onclick="event.stopPropagation(); window.location.href='/heoli-stretching.html'">Open <span class="arrow">→</span></span>
         </div>
       </div>
     </div>
@@ -278,7 +264,7 @@
           <div class="back-tag">Calendar</div>
           <div class="back-title">Calendar</div>
           <div class="back-desc">날짜를 클릭해 가능·불가능을 표시하고, 셀 크기와 간격을 자유롭게 조절할 수 있는 달력이에요.</div>
-          <a class="back-link" href="/calendar.html">Open <span class="arrow">→</span></a>
+          <span class="open-btn" onclick="event.stopPropagation(); window.location.href='/calendar.html'">Open <span class="arrow">→</span></span>
         </div>
       </div>
     </div>
@@ -348,14 +334,8 @@
       });
       back.addEventListener('mouseleave', () => { if (flipped) clearHolo(); });
 
-      back.querySelectorAll('.back-link').forEach(link => {
-        link.addEventListener('click', e => {
-          e.stopPropagation();
-          window.location.href = link.getAttribute('href');
-        });
-      });
-
-      back.addEventListener('click', e => {
+      back.addEventListener('click', () => {
+        if (!flipped) return;
         flipped = false;
         clearHolo();
         wrap.classList.remove('flipped', 'expanded');
