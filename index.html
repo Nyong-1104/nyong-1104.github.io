@@ -4,106 +4,357 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>nyong.app</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       background: #0a0a0a;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem;
+      font-family: 'Inter', sans-serif;
     }
-    .wrap {
+
+    .site-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #333;
+      margin-bottom: 32px;
+    }
+
+    .stage {
       display: flex;
-      flex-direction: column;
-      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
     }
-    .holo-btn {
-      position: relative;
-      width: 280px;
-      padding: 1.2rem 1.8rem;
-      border-radius: 16px;
-      border: none;
+
+    .card-wrap {
+      width: 200px;
+      height: 300px;
+      perspective: 1000px;
       cursor: pointer;
-      text-decoration: none;
-      display: block;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      color: #fff;
-      background: #1a1a1a;
-      overflow: hidden;
+      flex-shrink: 0;
+      transition: width 0.55s cubic-bezier(0.23,1,0.32,1),
+                  height 0.55s cubic-bezier(0.23,1,0.32,1);
+    }
+
+    .card-wrap.expanded {
+      width: 280px;
+      height: 400px;
+      z-index: 10;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
       transform-style: preserve-3d;
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+      transition: transform 0.75s cubic-bezier(0.23,1,0.32,1);
       will-change: transform;
     }
-    .holo-btn .shine {
+
+    .card-wrap.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      overflow: hidden;
+    }
+
+    .card-front {
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 24px;
+    }
+
+    .card-back {
+      background: #0f0f0f;
+      border: 1px solid #2a2a2a;
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 26px 24px;
+    }
+
+    .shine-idle {
       position: absolute;
       inset: 0;
       border-radius: inherit;
-      opacity: 0;
-      transition: opacity 0.15s;
       pointer-events: none;
       mix-blend-mode: screen;
-      background: conic-gradient(from 0deg, #ff006680, #ff980080, #ffff0080, #00ff8880, #00bfff80, #8a2be280, #ff006680);
-      filter: blur(2px);
+      opacity: 0.12;
+      background: conic-gradient(from 120deg,#ff006640,#ff980040,#ffff0040,#00ff8840,#00bfff40,#8a2be240,#ff006640);
+      filter: blur(3px);
     }
-    .holo-btn .glare {
+
+    .shine-hover {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0;
+      background: conic-gradient(from 0deg,#ff006680,#ff980080,#ffff0080,#00ff8880,#00bfff80,#8a2be280,#ff006680);
+      filter: blur(2px);
+      transition: opacity 0.2s;
+    }
+
+    .glare {
       position: absolute;
       inset: 0;
       border-radius: inherit;
       pointer-events: none;
       opacity: 0;
       background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.35) 0%, transparent 65%);
-      transition: opacity 0.15s;
+      transition: opacity 0.2s;
     }
-    .holo-btn .label {
+
+    .card-sub {
       position: relative;
       z-index: 2;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: #555;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
     }
+
+    .card-label {
+      position: relative;
+      z-index: 2;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .back-shine-idle {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0.07;
+      background: conic-gradient(from 60deg,#ffffff30,#cccccc20,#aaaaaa30,#888888,#ffffff30);
+      filter: blur(4px);
+    }
+
+    .back-shine-hover {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0;
+      background: conic-gradient(from 0deg,#ffffff55,#dddddd30,#bbbbbb55,#999999,#ffffff55);
+      filter: blur(2px);
+      transition: opacity 0.2s;
+    }
+
+    .back-glare {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.18) 0%, transparent 65%);
+      transition: opacity 0.2s;
+    }
+
+    .back-tag {
+      position: relative;
+      z-index: 2;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: #444;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .back-title {
+      position: relative;
+      z-index: 2;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #ddd;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .back-desc {
+      position: relative;
+      z-index: 2;
+      font-size: 0.85rem;
+      color: #777;
+      line-height: 1.75;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 14px 0;
+    }
+
+    .back-link {
+      position: relative;
+      z-index: 2;
+      display: inline-block;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #ccc;
+      text-decoration: none;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 10px 18px;
+      transition: background 0.15s;
+    }
+
+    .back-link:hover { background: rgba(255,255,255,0.12); }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <a class="holo-btn" href="/heoli-stretching.html">
-      <div class="shine"></div>
-      <div class="glare"></div>
-      <span class="label">헤올리 스트레칭</span>
-    </a>
-    <a class="holo-btn" href="/calendar.html">
-      <div class="shine"></div>
-      <div class="glare"></div>
-      <span class="label">캘린더</span>
-    </a>
+
+  <div class="site-label">nyong.app</div>
+
+  <div class="stage">
+
+    <div class="card-wrap" id="card1">
+      <div class="card-inner">
+        <div class="card-front" id="front1">
+          <div class="shine-idle"></div>
+          <div class="shine-hover" id="sh1"></div>
+          <div class="glare" id="gl1"></div>
+          <div class="card-sub">Stretching</div>
+          <div class="card-label">Heoli<br>Stretching</div>
+        </div>
+        <div class="card-back" id="back1">
+          <div class="back-shine-idle"></div>
+          <div class="back-shine-hover" id="bsh1"></div>
+          <div class="back-glare" id="bgl1"></div>
+          <div class="back-tag">Stretching</div>
+          <div class="back-title">Heoli<br>Stretching</div>
+          <div class="back-desc">설정한 간격마다 알림이 오고, 그때그때 맞는 허리·목·어깨 스트레칭 동작을 안내해줘요.</div>
+          <a class="back-link" href="/heoli-stretching.html">열기 →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-wrap" id="card2">
+      <div class="card-inner">
+        <div class="card-front" id="front2">
+          <div class="shine-idle"></div>
+          <div class="shine-hover" id="sh2"></div>
+          <div class="glare" id="gl2"></div>
+          <div class="card-sub">Calendar</div>
+          <div class="card-label">Calendar</div>
+        </div>
+        <div class="card-back" id="back2">
+          <div class="back-shine-idle"></div>
+          <div class="back-shine-hover" id="bsh2"></div>
+          <div class="back-glare" id="bgl2"></div>
+          <div class="back-tag">Calendar</div>
+          <div class="back-title">Calendar</div>
+          <div class="back-desc">날짜를 클릭해 가능·불가능을 표시하고, 셀 크기와 간격을 자유롭게 조절할 수 있는 달력이에요.</div>
+          <a class="back-link" href="/calendar.html">열기 →</a>
+        </div>
+      </div>
+    </div>
+
   </div>
+
   <script>
-    function initHolo(btn) {
-      const shine = btn.querySelector('.shine');
-      const glare = btn.querySelector('.glare');
-      btn.addEventListener('mousemove', e => {
-        const r = btn.getBoundingClientRect();
+    function initCard(wrapId, frontId, shId, glId, backId, bshId, bglId) {
+      const wrap  = document.getElementById(wrapId);
+      const front = document.getElementById(frontId);
+      const sh    = document.getElementById(shId);
+      const gl    = document.getElementById(glId);
+      const back  = document.getElementById(backId);
+      const bsh   = document.getElementById(bshId);
+      const bgl   = document.getElementById(bglId);
+      let flipped = false;
+
+      function clearHolo() {
+        wrap.style.transform = '';
+        sh.style.opacity  = '0';
+        gl.style.opacity  = '0';
+        bsh.style.opacity = '0';
+        bgl.style.opacity = '0';
+      }
+
+      front.addEventListener('mousemove', e => {
+        if (flipped) return;
+        const r = front.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width;
-        const y = (e.clientY - r.top) / r.height;
-        const rx = (y - 0.5) * 22;
-        const ry = (x - 0.5) * -22;
-        btn.style.transform = `perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.03)`;
-        btn.style.boxShadow = `0 20px 50px rgba(0,0,0,0.7), 0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12)`;
+        const y = (e.clientY - r.top)  / r.height;
+        wrap.style.transform = `perspective(1000px) rotateX(${(y - 0.5) * 18}deg) rotateY(${(x - 0.5) * -18}deg) scale(1.02)`;
         const angle = (Math.atan2(y - 0.5, x - 0.5) * 180 / Math.PI + 360) % 360;
-        shine.style.background = `conic-gradient(from ${angle}deg, #ff006680, #ff980080, #ffff0080, #00ff8880, #00bfff80, #8a2be280, #ff006680)`;
-        shine.style.opacity = '0.6';
-        glare.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(255,255,255,0.4) 0%, transparent 60%)`;
-        glare.style.opacity = '1';
+        sh.style.background = `conic-gradient(from ${angle}deg,#ff006680,#ff980080,#ffff0080,#00ff8880,#00bfff80,#8a2be280,#ff006680)`;
+        sh.style.opacity = '0.65';
+        gl.style.background = `radial-gradient(circle at ${x*100}% ${y*100}%,rgba(255,255,255,0.4) 0%,transparent 60%)`;
+        gl.style.opacity = '1';
       });
-      btn.addEventListener('mouseleave', () => {
-        btn.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) scale(1)';
-        btn.style.boxShadow = '0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)';
-        shine.style.opacity = '0';
-        glare.style.opacity = '0';
+
+      front.addEventListener('mouseleave', () => { if (!flipped) clearHolo(); });
+
+      front.addEventListener('click', () => {
+        if (flipped) return;
+        flipped = true;
+        clearHolo();
+        wrap.classList.add('flipped', 'expanded');
+      });
+
+      back.addEventListener('mousemove', e => {
+        if (!flipped) return;
+        const r = back.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width;
+        const y = (e.clientY - r.top)  / r.height;
+        wrap.style.transform = `perspective(1000px) rotateX(${(y - 0.5) * -18}deg) rotateY(${(x - 0.5) * 18}deg) scale(1.02)`;
+        const angle = (Math.atan2(y - 0.5, x - 0.5) * 180 / Math.PI + 360) % 360;
+        bsh.style.background = `conic-gradient(from ${angle}deg,#ffffff55,#cccccc30,#aaaaaa55,#888888,#ffffff55)`;
+        bsh.style.opacity = '0.45';
+        bgl.style.background = `radial-gradient(circle at ${x*100}% ${y*100}%,rgba(255,255,255,0.18) 0%,transparent 60%)`;
+        bgl.style.opacity = '1';
+      });
+
+      back.addEventListener('mouseleave', () => { if (flipped) clearHolo(); });
+
+      back.addEventListener('click', e => {
+        if (e.target.tagName === 'A') return;
+        flipped = false;
+        clearHolo();
+        wrap.classList.remove('flipped', 'expanded');
       });
     }
-    document.querySelectorAll('.holo-btn').forEach(initHolo);
+
+    initCard('card1','front1','sh1','gl1','back1','bsh1','bgl1');
+    initCard('card2','front2','sh2','gl2','back2','bsh2','bgl2');
   </script>
+
 </body>
 </html>
