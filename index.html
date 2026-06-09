@@ -348,12 +348,14 @@
       });
       back.addEventListener('mouseleave', () => { if (flipped) clearHolo(); });
 
-      back.addEventListener('click', e => {
-        const link = e.target.closest('.back-link');
-        if (link) {
+      back.querySelectorAll('.back-link').forEach(link => {
+        link.addEventListener('click', e => {
+          e.stopPropagation();
           window.location.href = link.getAttribute('href');
-          return;
-        }
+        });
+      });
+
+      back.addEventListener('click', e => {
         flipped = false;
         clearHolo();
         wrap.classList.remove('flipped', 'expanded');
