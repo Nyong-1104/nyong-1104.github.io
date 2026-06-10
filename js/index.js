@@ -183,41 +183,38 @@ function initCardDrag() {
 
   window.addEventListener('resize', () => layoutAll(null, false));
 
+  const DRAG_THRESHOLD = 8;
+
   drags.forEach((dragEl, cardIdx) => {
     const wrap = dragEl.querySelector('.card-wrap');
     const card = () => allCards.find(c => c.wrap === wrap);
     let drag = null;
 
-    dragEl.addEventListener('pointerdown', e => {
-      if (e.target.closest('.open-btn')) return;
+    function beginDrag(e) {
       const rect = dragEl.getBoundingClientRect();
       const stageRect = stage.getBoundingClientRect();
-      drag = {
-        id: e.pointerId,
-        cardIdx,
-        startX: e.clientX,
-        startY: e.clientY,
-        offsetX: e.clientX - rect.left,
-        offsetY: e.clientY - rect.top,
-        hoverSlot: order.indexOf(cardIdx),
-        moved: false
-      };
+      drag.active = true;
+      drag.offsetX = e.clientX - rect.left;
+      drag.offsetY = e.clientY - rect.top;
       dragEl.setPointerCapture(e.pointerId);
       dragEl.classList.add('is-dragging');
       dragEl.style.transition = 'none';
       dragEl.style.left = `${rect.left - stageRect.left}px`;
       dragEl.style.top = `${rect.top - stageRect.top}px`;
       card()?.clearTilt();
-    });
+    }
 
-    dragEl.addEventListener('pointermove', e => {
+    function onPointerMove(e) {
       if (!drag || drag.id !== e.pointerId) return;
-      const dx = e.clientX - drag.startX;
-      const dy = e.clientY - drag.startY;
-      if (!drag.moved && Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+
+      if (!drag.active) {
+        const dx = e.clientX - drag.startX;
+        const dy = e.clientY - drag.startY;
+        if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return;
+        beginDrag(e);
+      }
 
       drag.moved = true;
-      card()?.clearTilt();
       followPointer(dragEl, e.clientX, e.clientY, drag);
 
       const hoverSlot = hoverSlotFromX(e.clientX);
@@ -225,22 +222,43 @@ function initCardDrag() {
         drag.hoverSlot = hoverSlot;
         shiftOthersAside(drag.cardIdx, hoverSlot);
       }
-    });
+    }
 
     function endDrag(e) {
       if (!drag || drag.id !== e.pointerId) return;
-      if (drag.moved) {
-        shiftOthersAside(drag.cardIdx, hoverSlotFromX(e.clientX));
-        saveOrder(order);
-        suppressFlipUntil = Date.now() + 320;
+
+      document.removeEventListener('pointermove', onPointerMove);
+      document.removeEventListener('pointerup', endDrag);
+      document.removeEventListener('pointercancel', endDrag);
+
+      if (drag.active) {
+        if (drag.moved) {
+          shiftOthersAside(drag.cardIdx, hoverSlotFromX(e.clientX));
+          saveOrder(order);
+          suppressFlipUntil = Date.now() + 280;
+        }
+        dragEl.classList.remove('is-dragging');
+        snapDraggedToSlot(dragEl, drag.cardIdx);
       }
-      dragEl.classList.remove('is-dragging');
-      snapDraggedToSlot(dragEl, drag.cardIdx);
+
       drag = null;
     }
 
-    dragEl.addEventListener('pointerup', endDrag);
-    dragEl.addEventListener('pointercancel', endDrag);
+    dragEl.addEventListener('pointerdown', e => {
+      if (e.target.closest('.open-btn')) return;
+      drag = {
+        id: e.pointerId,
+        cardIdx,
+        startX: e.clientX,
+        startY: e.clientY,
+        hoverSlot: order.indexOf(cardIdx),
+        active: false,
+        moved: false
+      };
+      document.addEventListener('pointermove', onPointerMove);
+      document.addEventListener('pointerup', endDrag);
+      document.addEventListener('pointercancel', endDrag);
+    });
   });
 }
 
