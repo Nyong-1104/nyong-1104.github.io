@@ -243,7 +243,7 @@
           <div class="back-tag">Stretching</div>
           <div class="back-title">Heoli<br>Stretching</div>
           <div class="back-desc">설정한 간격마다 알림이 오고, 그때그때 맞는 허리·목·어깨 스트레칭 동작을 안내해줘요.</div>
-          <span class="open-btn" onclick="event.stopPropagation(); window.location.href='/heoli-stretching.html'">Open <span class="arrow">→</span></span>
+          <span class="open-btn" data-href="/heoli-stretching.html">Open <span class="arrow">→</span></span>
         </div>
       </div>
     </div>
@@ -264,7 +264,7 @@
           <div class="back-tag">Calendar</div>
           <div class="back-title">Calendar</div>
           <div class="back-desc">날짜를 클릭해 가능·불가능을 표시하고, 셀 크기와 간격을 자유롭게 조절할 수 있는 달력이에요.</div>
-          <span class="open-btn" onclick="event.stopPropagation(); window.location.href='/calendar.html'">Open <span class="arrow">→</span></span>
+          <span class="open-btn" data-href="/calendar.html">Open <span class="arrow">→</span></span>
         </div>
       </div>
     </div>
@@ -334,8 +334,13 @@
       });
       back.addEventListener('mouseleave', () => { if (flipped) clearHolo(); });
 
-      back.addEventListener('click', () => {
+      back.addEventListener('click', e => {
         if (!flipped) return;
+        if (e.target.closest('.open-btn')) {
+          const btn = e.target.closest('.open-btn');
+          window.location.href = btn.dataset.href;
+          return;
+        }
         flipped = false;
         clearHolo();
         wrap.classList.remove('flipped', 'expanded');
