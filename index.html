@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>nyong.app</title>
+  <title>nyong.app11</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
@@ -43,6 +43,7 @@
     }
 
     .card-wrap {
+      position: relative;
       width: min(200px, 42vw);
       height: min(300px, 63vw);
       perspective: 1000px;
@@ -110,42 +111,61 @@
     .back-tag { position:relative;z-index:2;font-size:clamp(0.55rem,1.8vw,0.68rem);font-weight:500;color:#444;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
     .back-title { position:relative;z-index:2;font-family:'Syne',sans-serif;font-size:clamp(0.95rem,4vw,1.35rem);font-weight:800;color:#ddd;letter-spacing:-0.02em;line-height:1.15;word-break:keep-all; }
     .back-desc { position:relative;z-index:2;font-size:clamp(0.72rem,2.2vw,0.85rem);color:#777;line-height:1.7;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;word-break:keep-all; }
+    .back-footer { position:relative;z-index:2;min-height:28px; }
 
     @keyframes shimmer {
       0%   { background-position: -200% center; }
       100% { background-position:  200% center; }
     }
 
+    /* 3D flip 밖에 배치 — 클릭/터치 영역 정상화 */
     .open-btn {
-      position: relative;
-      z-index: 10;
+      position: absolute;
+      bottom: clamp(16px, 5%, 26px);
+      left: clamp(14px, 5%, 24px);
+      z-index: 30;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       font-family: 'Syne', sans-serif;
       font-size: clamp(0.72rem, 2vw, 0.82rem);
       font-weight: 700;
+      color: #ccc;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      text-decoration: none;
+      padding: 8px 4px;
+      min-height: 36px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.25s ease 0.5s, visibility 0.25s ease 0.5s, gap 0.2s;
+    }
+    .open-btn .label {
       background: linear-gradient(105deg, #666 30%, #fff 48%, #fff 52%, #666 70%);
       background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: shimmer 2.8s linear infinite;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-      text-decoration: none;
-      padding: 4px 0;
-      min-height: 28px;
+      pointer-events: none;
+    }
+    .card-wrap.flipped .open-btn {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
     }
     .open-btn:hover { gap: 10px; }
-    .open-btn:active { opacity: 0.75; }
-    .open-btn .arrow { display:inline-block; transition:transform 0.2s; -webkit-text-fill-color: inherit; }
+    .open-btn:active { opacity: 0.7; }
+    .open-btn .arrow { display:inline-block; transition:transform 0.2s; pointer-events:none; }
     .open-btn:hover .arrow { transform: translateX(3px); }
 
     .soon-badge {
-      position: relative;
-      z-index: 10;
+      position: absolute;
+      bottom: clamp(16px, 5%, 26px);
+      left: clamp(14px, 5%, 24px);
+      z-index: 30;
       display: inline-flex;
       align-items: center;
       font-family: 'Syne', sans-serif;
@@ -156,8 +176,16 @@
       text-transform: uppercase;
       user-select: none;
       -webkit-user-select: none;
-      padding: 4px 0;
-      min-height: 28px;
+      padding: 8px 4px;
+      min-height: 36px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.25s ease 0.5s, visibility 0.25s ease 0.5s;
+    }
+    .card-wrap.flipped .soon-badge {
+      opacity: 1;
+      visibility: visible;
     }
   </style>
 </head>
@@ -182,9 +210,10 @@
           <div class="back-tag">Stretching</div>
           <div class="back-title">Heoli<br>Stretching</div>
           <div class="back-desc">설정한 간격마다 알림이 오고, 그때그때 맞는 허리·목·어깨 스트레칭 동작을 안내해줘요.</div>
-          <a class="open-btn" id="open1" href="/heoli-stretching.html">Open <span class="arrow">→</span></a>
+          <div class="back-footer"></div>
         </div>
       </div>
+      <a class="open-btn" id="open1" href="heoli-stretching.html"><span class="label">Open</span> <span class="arrow">→</span></a>
     </div>
 
     <div class="card-wrap" id="card2">
@@ -203,9 +232,10 @@
           <div class="back-tag">Calendar</div>
           <div class="back-title">Calendar</div>
           <div class="back-desc">날짜를 클릭해 가능·불가능을 표시하고, 셀 크기와 간격을 자유롭게 조절할 수 있는 달력이에요.</div>
-          <a class="open-btn" id="open2" href="/calendar.html">Open <span class="arrow">→</span></a>
+          <div class="back-footer"></div>
         </div>
       </div>
+      <a class="open-btn" id="open2" href="calendar.html"><span class="label">Open</span> <span class="arrow">→</span></a>
     </div>
 
     <div class="card-wrap soon" id="card3">
@@ -224,14 +254,19 @@
           <div class="back-tag">New App</div>
           <div class="back-title">Coming<br>Soon</div>
           <div class="back-desc">새로운 앱을 준비 중이에요. 곧 nyong.app에서 만나보실 수 있어요.</div>
-          <div class="soon-badge">Coming Soon</div>
+          <div class="back-footer"></div>
         </div>
       </div>
+      <div class="soon-badge">Coming Soon</div>
     </div>
   </div>
 
   <script>
     const allCards = [];
+
+    function resetAllCards() {
+      allCards.forEach(c => c.reset());
+    }
 
     function applyHolo(wrap, sh, gl, el, clientX, clientY, invert) {
       const r = el.getBoundingClientRect();
@@ -280,8 +315,11 @@
       allCards.push({ reset });
 
       if (openBtn) {
-        ['click', 'pointerup'].forEach(evt => {
-          openBtn.addEventListener(evt, e => e.stopPropagation());
+        openBtn.addEventListener('click', e => {
+          e.stopPropagation();
+        });
+        openBtn.addEventListener('pointerdown', e => {
+          e.stopPropagation();
         });
       }
 
@@ -308,17 +346,18 @@
       bindHolo(front, sh, gl, false, () => !flipped);
       bindHolo(back, bsh, bgl, true, () => flipped);
 
-      front.addEventListener('click', () => {
+      front.addEventListener('click', e => {
+        e.stopPropagation();
         if (flipped) return;
-        allCards.forEach(c => c.reset());
+        resetAllCards();
         flipped = true;
         clearHolo();
         wrap.classList.add('flipped', 'expanded');
       });
 
       back.addEventListener('click', e => {
+        e.stopPropagation();
         if (!flipped) return;
-        if (e.target.closest('a.open-btn, .soon-badge')) return;
         flipped = false;
         clearHolo();
         wrap.classList.remove('flipped', 'expanded');
@@ -328,6 +367,11 @@
     initCard('card1','front1','sh1','gl1','back1','bsh1','bgl1','open1');
     initCard('card2','front2','sh2','gl2','back2','bsh2','bgl2','open2');
     initCard('card3','front3','sh3','gl3','back3','bsh3','bgl3', null);
+
+    document.body.addEventListener('click', e => {
+      if (e.target.closest('.card-wrap')) return;
+      resetAllCards();
+    });
   </script>
 
 </body>
