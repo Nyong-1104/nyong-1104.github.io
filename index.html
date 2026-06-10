@@ -3,376 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>nyong.app11</title>
+  <title>nyong.app</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: #0a0a0a;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1rem;
-      font-family: 'Inter', sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .site-label {
-      font-family: 'Syne', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: #333;
-      margin-bottom: 32px;
-    }
-
-    .stage {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      width: 100%;
-      max-width: 720px;
-    }
-
-    .card-wrap {
-      position: relative;
-      width: min(200px, 42vw);
-      height: min(300px, 63vw);
-      perspective: 1000px;
-      flex-shrink: 0;
-      transition: width 0.55s cubic-bezier(0.23,1,0.32,1),
-                  height 0.55s cubic-bezier(0.23,1,0.32,1);
-    }
-    .card-wrap.expanded {
-      width: min(280px, 80vw);
-      height: min(400px, 115vw);
-      z-index: 10;
-    }
-    @media (max-width: 480px) {
-      .stage { gap: 14px; }
-      .card-wrap.expanded { width: min(300px, 85vw); height: min(420px, 120vw); }
-    }
-
-    .card-inner {
-      width: 100%; height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.75s cubic-bezier(0.23,1,0.32,1);
-    }
-    .card-wrap.flipped .card-inner { transform: rotateY(180deg); }
-
-    .card-front, .card-back {
-      position: absolute; inset: 0;
-      border-radius: 20px;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      overflow: hidden;
-      touch-action: manipulation;
-    }
-
-    .card-front {
-      background: #141414;
-      border: 1px solid #2a2a2a;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: clamp(14px,5%,24px);
-      cursor: pointer;
-    }
-    .card-back {
-      background: #0f0f0f;
-      border: 1px solid #2a2a2a;
-      transform: rotateY(180deg);
-      display: flex; flex-direction: column; justify-content: space-between;
-      padding: clamp(16px,5%,26px) clamp(14px,5%,24px);
-      gap: 8px;
-      cursor: pointer;
-    }
-
-    .card-wrap.soon .card-front { border-color: #222; }
-    .card-wrap.soon .card-label { color: #888; }
-
-    .shine-idle { position:absolute;inset:0;border-radius:inherit;pointer-events:none;mix-blend-mode:screen;opacity:0.12;background:conic-gradient(from 120deg,#ff006640,#ff980040,#ffff0040,#00ff8840,#00bfff40,#8a2be240,#ff006640);filter:blur(3px); }
-    .shine-hover { position:absolute;inset:0;border-radius:inherit;pointer-events:none;mix-blend-mode:screen;opacity:0;filter:blur(2px);transition:opacity 0.2s; }
-    .glare { position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity 0.2s; }
-    .back-shine-idle { position:absolute;inset:0;border-radius:inherit;pointer-events:none;mix-blend-mode:screen;opacity:0.07;background:conic-gradient(from 60deg,#ffffff30,#cccccc20,#aaaaaa30,#888888,#ffffff30);filter:blur(4px); }
-    .back-shine-hover { position:absolute;inset:0;border-radius:inherit;pointer-events:none;mix-blend-mode:screen;opacity:0;filter:blur(2px);transition:opacity 0.2s; }
-    .back-glare { position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity 0.2s; }
-
-    .card-sub { position:relative;z-index:2;font-size:clamp(0.55rem,1.8vw,0.68rem);font-weight:500;color:#555;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-    .card-label { position:relative;z-index:2;font-family:'Syne',sans-serif;font-size:clamp(0.9rem,4vw,1.25rem);font-weight:800;color:#fff;letter-spacing:-0.02em;line-height:1.15;word-break:keep-all; }
-    .back-tag { position:relative;z-index:2;font-size:clamp(0.55rem,1.8vw,0.68rem);font-weight:500;color:#444;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-    .back-title { position:relative;z-index:2;font-family:'Syne',sans-serif;font-size:clamp(0.95rem,4vw,1.35rem);font-weight:800;color:#ddd;letter-spacing:-0.02em;line-height:1.15;word-break:keep-all; }
-    .back-desc { position:relative;z-index:2;font-size:clamp(0.72rem,2.2vw,0.85rem);color:#777;line-height:1.7;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;word-break:keep-all; }
-    .back-footer { position:relative;z-index:2;min-height:28px; }
-
-    @keyframes shimmer {
-      0%   { background-position: -200% center; }
-      100% { background-position:  200% center; }
-    }
-
-    /* 3D flip 밖에 배치 — 클릭/터치 영역 정상화 */
-    .open-btn {
-      position: absolute;
-      bottom: clamp(16px, 5%, 26px);
-      left: clamp(14px, 5%, 24px);
-      z-index: 30;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(0.72rem, 2vw, 0.82rem);
-      font-weight: 700;
-      color: #ccc;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-      text-decoration: none;
-      padding: 8px 4px;
-      min-height: 36px;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity 0.25s ease 0.5s, visibility 0.25s ease 0.5s, gap 0.2s;
-    }
-    .open-btn .label {
-      background: linear-gradient(105deg, #666 30%, #fff 48%, #fff 52%, #666 70%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: shimmer 2.8s linear infinite;
-      pointer-events: none;
-    }
-    .card-wrap.flipped .open-btn {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-    }
-    .open-btn:hover { gap: 10px; }
-    .open-btn:active { opacity: 0.7; }
-    .open-btn .arrow { display:inline-block; transition:transform 0.2s; pointer-events:none; }
-    .open-btn:hover .arrow { transform: translateX(3px); }
-
-    .soon-badge {
-      position: absolute;
-      bottom: clamp(16px, 5%, 26px);
-      left: clamp(14px, 5%, 24px);
-      z-index: 30;
-      display: inline-flex;
-      align-items: center;
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(0.72rem, 2vw, 0.82rem);
-      font-weight: 700;
-      color: #444;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      user-select: none;
-      -webkit-user-select: none;
-      padding: 8px 4px;
-      min-height: 36px;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity 0.25s ease 0.5s, visibility 0.25s ease 0.5s;
-    }
-    .card-wrap.flipped .soon-badge {
-      opacity: 1;
-      visibility: visible;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Inter:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
 
-  <div class="site-label">nyong.app</div>
+  <header class="hero">
+    <h1 class="site-title">NYONG.APP</h1>
+    <div class="hero-line" aria-hidden="true"></div>
+    <p class="site-tagline">It's fun trying</p>
+  </header>
 
-  <div class="stage">
-    <div class="card-wrap" id="card1">
+  <div class="stage" id="stage">
+    <div class="card-drag" data-card="card1">
+    <div class="card-wrap card--green" id="card1">
       <div class="card-inner" id="inner1">
-        <div class="card-front" id="front1">
-          <div class="shine-idle"></div>
-          <div class="shine-hover" id="sh1"></div>
-          <div class="glare" id="gl1"></div>
-          <div class="card-sub">Stretching</div>
-          <div class="card-label">Heoli<br>Stretching</div>
+        <div class="card-front card-front--poster card-front--stretch" id="front1">
+          <div class="app-poster">
+            <div class="poster-tilt-wrap">
+              <svg class="poster-geo" viewBox="0 0 140 120" aria-hidden="true">
+                <rect x="8" y="16" width="22" height="56" fill="#000" transform="rotate(-11 19 44)"/>
+                <rect x="96" y="6" width="26" height="26" fill="#000" transform="rotate(13 109 19)"/>
+                <rect x="58" y="68" width="62" height="14" fill="#000" transform="rotate(-4 89 75)"/>
+                <rect x="22" y="86" width="16" height="16" fill="#000"/>
+              </svg>
+              <div class="poster-tilt-box poster-tilt-box--stretch">
+                <p class="poster-tilt-text">RIP..<br>MY BACK</p>
+              </div>
+            </div>
+            <svg class="poster-logo" viewBox="-18 -4 360 62" aria-label="Stretching" overflow="visible">
+              <text class="poster-logo-shadow" x="11" y="44" font-family="'Bebas Neue', sans-serif" font-size="46" fill="#000" stroke="#000" stroke-width="9" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill">STRETCHING</text>
+              <text class="poster-logo-main" x="2" y="41" font-family="'Bebas Neue', sans-serif" font-size="46" fill="#fff" stroke="#000" stroke-width="9" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill">STRETCHING</text>
+            </svg>
+          </div>
         </div>
         <div class="card-back" id="back1">
-          <div class="back-shine-idle"></div>
-          <div class="back-shine-hover" id="bsh1"></div>
-          <div class="back-glare" id="bgl1"></div>
-          <div class="back-tag">Stretching</div>
-          <div class="back-title">Heoli<br>Stretching</div>
+          <div class="back-tag">STRETCHING</div>
+          <div class="back-title">HEOLI<br>STRETCHING</div>
           <div class="back-desc">설정한 간격마다 알림이 오고, 그때그때 맞는 허리·목·어깨 스트레칭 동작을 안내해줘요.</div>
-          <div class="back-footer"></div>
         </div>
       </div>
-      <a class="open-btn" id="open1" href="heoli-stretching.html"><span class="label">Open</span> <span class="arrow">→</span></a>
+      <a class="open-btn" id="open1" href="heoli-stretching.html">OPEN →</a>
+    </div>
     </div>
 
-    <div class="card-wrap" id="card2">
+    <div class="card-drag" data-card="card2">
+    <div class="card-wrap card--purple" id="card2">
       <div class="card-inner" id="inner2">
-        <div class="card-front" id="front2">
-          <div class="shine-idle"></div>
-          <div class="shine-hover" id="sh2"></div>
-          <div class="glare" id="gl2"></div>
-          <div class="card-sub">Calendar</div>
-          <div class="card-label">Calendar</div>
+        <div class="card-front card-front--poster card-front--cal" id="front2">
+          <div class="app-poster">
+            <div class="poster-tilt-wrap">
+              <div class="poster-tilt-box poster-tilt-box--cal">
+                <p class="poster-tilt-text">SO,<br>WHAT'S THE DATE?</p>
+              </div>
+            </div>
+            <svg class="poster-logo" viewBox="-18 -4 330 62" aria-label="CALENDAR" overflow="visible">
+              <text class="poster-logo-shadow" x="11" y="44" font-family="'Bebas Neue', sans-serif" font-size="46" fill="#000" stroke="#000" stroke-width="9" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill">CALENDAR</text>
+              <text class="poster-logo-main" x="2" y="41" font-family="'Bebas Neue', sans-serif" font-size="46" fill="#fff" stroke="#000" stroke-width="9" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill">CALENDAR</text>
+            </svg>
+          </div>
         </div>
         <div class="card-back" id="back2">
-          <div class="back-shine-idle"></div>
-          <div class="back-shine-hover" id="bsh2"></div>
-          <div class="back-glare" id="bgl2"></div>
-          <div class="back-tag">Calendar</div>
-          <div class="back-title">Calendar</div>
+          <div class="back-tag">CALENDAR</div>
+          <div class="back-title">CALENDAR</div>
           <div class="back-desc">날짜를 클릭해 가능·불가능을 표시하고, 셀 크기와 간격을 자유롭게 조절할 수 있는 달력이에요.</div>
-          <div class="back-footer"></div>
         </div>
       </div>
-      <a class="open-btn" id="open2" href="calendar.html"><span class="label">Open</span> <span class="arrow">→</span></a>
+      <a class="open-btn" id="open2" href="calendar.html">OPEN →</a>
+    </div>
     </div>
 
-    <div class="card-wrap soon" id="card3">
+    <div class="card-drag" data-card="card3">
+    <div class="card-wrap card--yellow soon" id="card3">
       <div class="card-inner" id="inner3">
         <div class="card-front" id="front3">
-          <div class="shine-idle"></div>
-          <div class="shine-hover" id="sh3"></div>
-          <div class="glare" id="gl3"></div>
-          <div class="card-sub">New App</div>
-          <div class="card-label">Coming<br>Soon</div>
+          <div class="card-heading">NEW APP</div>
+          <div class="card-graphic" aria-hidden="true">
+            <svg class="shape shape-soon" viewBox="0 0 160 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="26" y="24" width="108" height="88" fill="#000" transform="rotate(8 80 68)"/>
+              <text x="80" y="62" text-anchor="middle" fill="#f8be22" font-family="Bebas Neue, sans-serif" font-size="36" transform="rotate(8 80 68)">?</text>
+              <text x="80" y="88" text-anchor="middle" fill="#fff" font-family="Bebas Neue, sans-serif" font-size="14" letter-spacing="2" transform="rotate(8 80 68)">SOON</text>
+              <rect x="118" y="10" width="22" height="22" fill="#f54025" stroke="#000" stroke-width="3"/>
+            </svg>
+          </div>
         </div>
         <div class="card-back" id="back3">
-          <div class="back-shine-idle"></div>
-          <div class="back-shine-hover" id="bsh3"></div>
-          <div class="back-glare" id="bgl3"></div>
-          <div class="back-tag">New App</div>
-          <div class="back-title">Coming<br>Soon</div>
+          <div class="back-tag">NEW APP</div>
+          <div class="back-title">COMING<br>SOON</div>
           <div class="back-desc">새로운 앱을 준비 중이에요. 곧 nyong.app에서 만나보실 수 있어요.</div>
-          <div class="back-footer"></div>
         </div>
       </div>
-      <div class="soon-badge">Coming Soon</div>
+      <div class="soon-badge">COMING SOON</div>
+    </div>
     </div>
   </div>
 
-  <script>
-    const allCards = [];
-
-    function resetAllCards() {
-      allCards.forEach(c => c.reset());
-    }
-
-    function applyHolo(wrap, sh, gl, el, clientX, clientY, invert) {
-      const r = el.getBoundingClientRect();
-      const x = (clientX - r.left) / r.width;
-      const y = (clientY - r.top) / r.height;
-      const tiltX = invert ? (y - 0.5) * -18 : (y - 0.5) * 18;
-      const tiltY = invert ? (x - 0.5) * 18 : (x - 0.5) * -18;
-      wrap.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
-      const angle = (Math.atan2(y - 0.5, x - 0.5) * 180 / Math.PI + 360) % 360;
-      if (invert) {
-        sh.style.background = `conic-gradient(from ${angle}deg,#ffffff55,#cccccc30,#aaaaaa55,#888888,#ffffff55)`;
-        sh.style.opacity = '0.45';
-        gl.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%,rgba(255,255,255,0.18) 0%,transparent 60%)`;
-      } else {
-        sh.style.background = `conic-gradient(from ${angle}deg,#ff006680,#ff980080,#ffff0080,#00ff8880,#00bfff80,#8a2be280,#ff006680)`;
-        sh.style.opacity = '0.65';
-        gl.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%,rgba(255,255,255,0.4) 0%,transparent 60%)`;
-      }
-      gl.style.opacity = '1';
-    }
-
-    function initCard(wrapId, frontId, shId, glId, backId, bshId, bglId, openId) {
-      const wrap  = document.getElementById(wrapId);
-      const front = document.getElementById(frontId);
-      const sh    = document.getElementById(shId);
-      const gl    = document.getElementById(glId);
-      const back  = document.getElementById(backId);
-      const bsh   = document.getElementById(bshId);
-      const bgl   = document.getElementById(bglId);
-      const openBtn = openId ? document.getElementById(openId) : null;
-      let flipped = false;
-
-      function clearHolo() {
-        wrap.style.transform = '';
-        sh.style.opacity = '0'; gl.style.opacity = '0';
-        bsh.style.opacity = '0'; bgl.style.opacity = '0';
-      }
-
-      function reset() {
-        if (!flipped) return;
-        flipped = false;
-        clearHolo();
-        wrap.classList.remove('flipped', 'expanded');
-      }
-
-      allCards.push({ reset });
-
-      if (openBtn) {
-        openBtn.addEventListener('click', e => {
-          e.stopPropagation();
-        });
-        openBtn.addEventListener('pointerdown', e => {
-          e.stopPropagation();
-        });
-      }
-
-      function bindHolo(el, shEl, glEl, invert, activeWhen) {
-        el.addEventListener('pointermove', e => {
-          if (!activeWhen()) return;
-          applyHolo(wrap, shEl, glEl, el, e.clientX, e.clientY, invert);
-        });
-        el.addEventListener('pointerdown', e => {
-          if (!activeWhen()) return;
-          applyHolo(wrap, shEl, glEl, el, e.clientX, e.clientY, invert);
-        });
-        el.addEventListener('pointerleave', () => {
-          if (activeWhen()) clearHolo();
-        });
-        el.addEventListener('pointerup', () => {
-          if (activeWhen()) clearHolo();
-        });
-        el.addEventListener('pointercancel', () => {
-          if (activeWhen()) clearHolo();
-        });
-      }
-
-      bindHolo(front, sh, gl, false, () => !flipped);
-      bindHolo(back, bsh, bgl, true, () => flipped);
-
-      front.addEventListener('click', e => {
-        e.stopPropagation();
-        if (flipped) return;
-        resetAllCards();
-        flipped = true;
-        clearHolo();
-        wrap.classList.add('flipped', 'expanded');
-      });
-
-      back.addEventListener('click', e => {
-        e.stopPropagation();
-        if (!flipped) return;
-        flipped = false;
-        clearHolo();
-        wrap.classList.remove('flipped', 'expanded');
-      });
-    }
-
-    initCard('card1','front1','sh1','gl1','back1','bsh1','bgl1','open1');
-    initCard('card2','front2','sh2','gl2','back2','bsh2','bgl2','open2');
-    initCard('card3','front3','sh3','gl3','back3','bsh3','bgl3', null);
-
-    document.body.addEventListener('click', e => {
-      if (e.target.closest('.card-wrap')) return;
-      resetAllCards();
-    });
-  </script>
+  <script src="js/index.js" defer></script>
 
 </body>
 </html>

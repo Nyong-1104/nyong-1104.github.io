@@ -3,91 +3,20 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>클릭 달력</title>
+  <title>Calendar · nyong.app</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #fff; display: flex; justify-content: center; padding: 24px 16px; min-height: 100vh; transition: background 0.25s; }
-    .cal-outer { width: 100%; max-width: 700px; }
-    :root {
-      --bg: #f9f9f9; --bg-border: #e0e0e0;
-      --bg-weekend: #e8e8e8; --bg-weekend-border: #d0d0d0;
-      --bg-possible: #c8e6c9; --bg-possible-border: #a5d6a7;
-      --bg-impossible: #ffcdd2; --bg-impossible-border: #ef9a9a;
-      --num-default: #555; --num-possible: #2e7d32; --num-impossible: #c62828;
-      --num-sun: #c0392b; --num-sat: #2471a3; --num-red: #c0392b;
-      --today-border: #888; --label-color: #777; --title-color: #222;
-      --nav-border: #ddd; --nav-color: #333; --nav-hover-bg: #efefef;
-      --footer-color: #888; --rw-border: #ddd; --rw-bg: #f0f0f0; --rw-cell-border: #bbb;
-      --gap-handle-bg: rgba(120,120,120,0.25); --gap-handle-border: rgba(120,120,120,0.4);
-      --gap-handle-color: #999; --corner-stroke: #bbb; --legend-reddot: #c0392b;
-    }
-    .dark {
-      --bg: #2a2a2a; --bg-border: #3a3a3a;
-      --bg-weekend: #1e1e1e; --bg-weekend-border: #141414;
-      --bg-possible: #1b4a1e; --bg-possible-border: #2e7d32;
-      --bg-impossible: #4a1a1a; --bg-impossible-border: #c62828;
-      --num-default: #ccc; --num-possible: #81c784; --num-impossible: #e57373;
-      --num-sun: #e57373; --num-sat: #64b5f6; --num-red: #e57373;
-      --today-border: #aaa; --label-color: #999; --title-color: #eee;
-      --nav-border: #444; --nav-color: #ccc; --nav-hover-bg: #333;
-      --footer-color: #666; --rw-border: #444; --rw-bg: #222; --rw-cell-border: #555;
-      --gap-handle-bg: rgba(180,180,180,0.18); --gap-handle-border: rgba(180,180,180,0.3);
-      --gap-handle-color: #666; --corner-stroke: #555; --legend-reddot: #e57373;
-    }
-    .cal-outer { padding: 1rem 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-    .cal-title { font-size: 18px; font-weight: 500; color: var(--title-color); transition: color 0.25s; }
-    .cal-nav button { background: none; border: 0.5px solid var(--nav-border); border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 14px; color: var(--nav-color); transition: background 0.2s, border-color 0.25s, color 0.25s; }
-    .cal-nav button:hover { background: var(--nav-hover-bg); }
-    #cal-grid-wrap { display: flex; justify-content: center; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
-    .day-label { text-align: center; font-weight: 500; color: var(--label-color); transition: color 0.25s; }
-    .day-label.sun { color: var(--num-sun); } .day-label.sat { color: var(--num-sat); }
-    .day-cell { display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; user-select: none; border: 0.5px solid transparent; position: relative; transition: background 0.2s, border-color 0.2s; }
-    .day-cell:hover { opacity: 0.8; } .day-cell:active { transform: scale(0.95); }
-    .day-cell.empty { cursor: default; pointer-events: none; }
-    .day-cell[data-state="0"] { background: var(--bg); border-color: var(--bg-border); }
-    .day-cell.sun[data-state="0"], .day-cell.sat[data-state="0"] { background: var(--bg-weekend); border-color: var(--bg-weekend-border); }
-    .day-cell[data-state="1"] { background: var(--bg-possible); border-color: var(--bg-possible-border); }
-    .day-cell[data-state="2"] { background: var(--bg-impossible); border-color: var(--bg-impossible-border); }
-    .day-cell .num { pointer-events: none; font-size: inherit; color: var(--num-default); transition: color 0.25s; }
-    .day-cell[data-state="1"] .num { color: var(--num-possible); }
-    .day-cell[data-state="2"] .num { color: var(--num-impossible); }
-    .day-cell.sun .num { color: var(--num-sun); } .day-cell.sat .num { color: var(--num-sat); }
-    .day-cell.red-num .num { color: var(--num-red) !important; font-weight: 500; }
-    .day-cell.today[data-state="0"] { border: 1.5px solid var(--today-border); }
-    .footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; gap: 8px; }
-    .footer-left { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
-    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--footer-color); transition: color 0.25s; }
-    .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
-    .legend-reddot { width: 7px; height: 7px; border-radius: 50%; background: var(--legend-reddot); flex-shrink: 0; transition: background 0.25s; }
-    #custom-toggle { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--footer-color); cursor: pointer; background: none; border: none; padding: 0; transition: color 0.2s; line-height: 1.2; }
-    #custom-toggle:hover { color: var(--title-color); }
-    #custom-toggle .toggle-icon-wrap rect { transition: fill 0.2s; }
-    #custom-toggle.open .toggle-icon-wrap rect:nth-child(1) { fill: var(--bg-possible); }
-    #custom-toggle.open .toggle-icon-wrap rect:nth-child(4) { fill: var(--bg-impossible); }
-    #theme-btn { display: inline-flex; align-items: center; justify-content: center; cursor: pointer; background: none; border: none; padding: 0; line-height: 1.2; font-size: 12px; color: var(--footer-color); transition: color 0.2s; }
-    #theme-btn:hover { color: var(--title-color); }
-    #reset-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--footer-color); cursor: pointer; background: none; border: none; padding: 0; white-space: nowrap; transition: color 0.2s; line-height: 1.2; }
-    #reset-btn:hover { color: var(--title-color); }
-    #rw-panel { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.3s ease, opacity 0.25s ease, margin-top 0.25s ease; margin-top: 0; }
-    #rw-panel.open { max-height: 300px; opacity: 1; margin-top: 8px; }
-    #rw-outer { position: relative; flex-shrink: 0; border: 0.5px solid var(--rw-border); border-radius: 6px; background: var(--rw-bg); box-sizing: border-box; user-select: none; display: inline-block; transition: background 0.25s, border-color 0.25s; }
-    #rw-inner { position: absolute; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; box-sizing: border-box; }
-    .sc { border-radius: 2px; border: 0.5px solid var(--rw-cell-border); box-sizing: border-box; transition: background 0.25s, border-color 0.25s; }
-    .dh { position: absolute; background: transparent; z-index: 10; }
-    #dh-outer { bottom: 0; right: 0; width: 14px; height: 14px; cursor: nwse-resize; }
-    #dh-outer-w { top: 0; right: 0; width: 8px; cursor: ew-resize; }
-    #dh-outer-h { bottom: 0; left: 0; height: 8px; cursor: ns-resize; }
-    #dh-gap { cursor: move; border-radius: 50%; background: var(--gap-handle-bg); border: 0.5px solid var(--gap-handle-border); display: flex; align-items: center; justify-content: center; font-size: 8px; color: var(--gap-handle-color); }
-    .corner-arrow { position: absolute; bottom: 3px; right: 3px; pointer-events: none; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/calendar.css">
 </head>
 <body>
-<div class="cal-outer" id="cal-outer">
+
+<header class="page-top">
+  <a class="back-btn" href="index.html"><span class="arrow">←</span> <span class="label">Back</span></a>
+  <div class="site-label">nyong.app</div>
+</header>
+
+<div class="cal-outer dark" id="cal-outer">
   <div class="cal-header">
     <div class="cal-nav"><button id="prev">&#8592;</button></div>
     <div class="cal-title" id="cal-title"></div>
@@ -153,7 +82,7 @@
   // ── State — load persisted values ───────────────────────
   const colorStates = LS.get('cal_colors', {});
   const redMarks    = LS.get('cal_reds',   {});
-  let isDark = LS.get('cal_dark',  false);
+  let isDark = LS.get('cal_dark',  true);
   let cellW  = LS.get('cal_cellW', null);   // null = 첫 실행 → 컨테이너 꽉 채움
   let cellH  = LS.get('cal_cellH', 40);
   let gap    = LS.get('cal_gap',   4);
@@ -163,8 +92,8 @@
   const PAD=6, CELL_H_MIN=18, CELL_H_MAX=90, GAP_MIN=1, GAP_MAX=14;
 
   const themes = {
-    light:{bg:'#f9f9f9',bgB:'#e0e0e0',bgWe:'#e8e8e8',bgWeB:'#d0d0d0',bgPos:'#c8e6c9',bgPosB:'#a5d6a7',bgImp:'#ffcdd2',bgImpB:'#ef9a9a'},
-    dark: {bg:'#2a2a2a',bgB:'#3a3a3a',bgWe:'#1e1e1e',bgWeB:'#141414',bgPos:'#1b4a1e',bgPosB:'#2e7d32',bgImp:'#4a1a1a',bgImpB:'#c62828'}
+    light:{bg:'#f0f0f0',bgB:'#ddd',bgWe:'#e4e4e4',bgWeB:'#ccc',bgPos:'#c8e6c9',bgPosB:'#a5d6a7',bgImp:'#ffcdd2',bgImpB:'#ef9a9a'},
+    dark: {bg:'#1a1a1a',bgB:'#2a2a2a',bgWe:'#111111',bgWeB:'#1e1e1e',bgPos:'#1b3d1f',bgPosB:'#2e6b34',bgImp:'#3d1b1b',bgImpB:'#8b3030'}
   };
 
   function save() {
@@ -192,7 +121,7 @@
 
   function applyTheme() {
     document.getElementById('cal-outer').classList.toggle('dark', isDark);
-    document.body.style.background = isDark ? '#111' : '#fff';
+    document.body.style.background = '#0a0a0a';
     const t = isDark ? themes.dark : themes.light;
     document.getElementById('ld-basic').style.cssText      = `background:${t.bg};border:0.5px solid ${t.bgB};width:12px;height:12px;border-radius:3px;flex-shrink:0;`;
     document.getElementById('ld-possible').style.cssText   = `background:${t.bgPos};border:0.5px solid ${t.bgPosB};width:12px;height:12px;border-radius:3px;flex-shrink:0;`;
