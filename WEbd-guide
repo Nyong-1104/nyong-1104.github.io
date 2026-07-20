@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEbd · Live Design Preview — 코드 없이, 실제 페이지 위에서 디자인 미리보기</title>
+<meta name="description" content="WEbd는 어떤 웹페이지 위에서도 이미지 교체, 텍스트 수정, 요소 이동, CSS 조정을 코드 없이 실시간으로 미리보는 크롬 확장프로그램입니다.">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --bg:#0B0D11; --bg2:#101217; --panel:#14161C; --panel2:#191C23; --panel3:#1F232C;
+  --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+  --txt:#EAECF3; --muted:#B9BDC9; --dim:#8E93A3;
+  --pri:#8B7CFF; --pri2:#5A48E8; --acc:#9F45E4;
+  --good:#6BDC97; --warn:#FFB16A; --danger:#FF7A7A;
+  --amber:#FFB16A; --green:#6BDC97;
+  --grad:linear-gradient(135deg,#8B7CFF,#5A48E8);
+  --grad2:linear-gradient(135deg,#A78BFF,#9F45E4);
+  --radius:18px;
+  --shadow:0 18px 50px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg); color:var(--txt); line-height:1.6;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(60vw 40vw at 78% -6%, rgba(139,124,255,.18), transparent 60%),
+    radial-gradient(50vw 40vw at 8% 8%, rgba(159,69,228,.14), transparent 60%),
+    radial-gradient(60vw 50vw at 50% 108%, rgba(90,72,232,.12), transparent 60%);
+}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+  letter-spacing:.02em;color:var(--pri);background:rgba(139,124,255,.12);
+  border:1px solid rgba(139,124,255,.25);padding:6px 14px;border-radius:999px;
+}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  font-weight:700;font-size:15px;padding:13px 22px;border-radius:12px;
+  border:1px solid transparent;cursor:pointer;transition:.18s;white-space:nowrap;
+}
+.btn-pri{background:var(--grad);color:#fff;box-shadow:0 10px 26px rgba(90,72,232,.4)}
+.btn-pri:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(90,72,232,.55)}
+.btn-ghost{background:var(--panel2);color:var(--txt);border-color:var(--line2)}
+.btn-ghost:hover{border-color:var(--pri);color:#fff}
+
+/* ===== NAV ===== */
+nav{
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(16px);background:rgba(11,13,17,.72);
+  border-bottom:1px solid var(--line);
+}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:17px}
+.brand img{width:30px;height:30px;border-radius:8px;box-shadow:0 4px 14px rgba(90,72,232,.5)}
+.brand .sep{color:var(--dim);font-weight:400;margin:0 2px}
+.brand .sub{color:var(--muted);font-weight:600;font-size:14px}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a{font-size:14px;color:var(--muted);font-weight:600;transition:.15s}
+.nav-links a:hover{color:#fff}
+.nav-cta{padding:9px 16px;font-size:14px}
+@media(max-width:820px){.nav-links a:not(.nav-cta){display:none}}
+
+/* ===== HERO ===== */
+.hero{padding:76px 0 40px}
+.hero-grid{display:grid;grid-template-columns:1fr 1.12fr;gap:48px;align-items:center}
+.hero h1{font-size:52px;line-height:1.12;font-weight:800;letter-spacing:-.02em;margin:22px 0 20px}
+.hero h1 .hl{background:var(--grad2);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p.lead{font-size:18px;color:var(--muted);max-width:520px}
+.hero-cta{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+.hero-meta{display:flex;gap:22px;margin-top:26px;flex-wrap:wrap}
+.hero-meta div{font-size:13px;color:var(--dim)}
+.hero-meta b{display:block;font-size:22px;color:var(--txt);font-weight:800}
+@media(max-width:940px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .hero h1{font-size:38px}
+}
+
+/* ===== MOCK BROWSER ===== */
+.browser{
+  border-radius:16px;overflow:hidden;background:#0f1116;
+  border:1px solid var(--line2);box-shadow:var(--shadow);
+}
+.browser-bar{
+  display:flex;align-items:center;gap:8px;padding:11px 14px;
+  background:#171a21;border-bottom:1px solid var(--line);
+}
+.dot{width:11px;height:11px;border-radius:50%}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.url{
+  flex:1;margin-left:10px;font-size:12px;color:var(--dim);background:#0e1015;
+  border:1px solid var(--line);border-radius:7px;padding:5px 12px;
+  display:flex;align-items:center;gap:7px;
+}
+.url::before{content:"🔒";font-size:10px;opacity:.6}
+.browser-body{position:relative;display:grid;grid-template-columns:1fr 288px;min-height:436px}
+
+/* fake webpage */
+.page{padding:24px 22px;background:#fbfbfd;color:#1a1c22;overflow:hidden;position:relative}
+.page .kicker{font-size:11px;font-weight:800;letter-spacing:.14em;color:#8B7CFF;text-transform:uppercase}
+.page h2{font-size:24px;font-weight:800;margin:8px 0 6px;line-height:1.15;color:#15171d}
+.page .price{font-size:18px;font-weight:800;color:#15171d}
+.page .desc{font-size:12px;color:#5b6070;margin:12px 0 16px;line-height:1.55}
+.hero-img{width:100%;height:132px;border-radius:14px;margin:8px 0 14px;background:linear-gradient(135deg,#d9d4ff,#b9aeff 55%,#8B7CFF);position:relative;overflow:hidden}
+.hero-img::after{content:"";position:absolute;inset:0;opacity:0;background:linear-gradient(135deg,#ffd8a8,#ff8fb1 55%,#c084fc);animation:imgSwap 15s infinite}
+.page .cta-btn{display:inline-block;font-size:13px;font-weight:700;color:#fff;background:#2a2d36;padding:10px 20px;border-radius:10px;animation:btnColor 15s infinite}
+.sel-ring{position:absolute;border:2px solid #8B7CFF;border-radius:12px;box-shadow:0 0 0 4px rgba(139,124,255,.18);opacity:0;pointer-events:none}
+.sel-label{position:absolute;top:-22px;left:-2px;font-size:10px;font-weight:700;color:#fff;background:#8B7CFF;padding:2px 8px;border-radius:6px;white-space:nowrap}
+#ring1{animation:ring1 15s infinite}
+#ring2{animation:ring2 15s infinite}
+#ring3{animation:ring3 15s infinite}
+.ftoolbar{position:absolute;display:flex;gap:2px;background:#14161C;border:1px solid var(--line2);border-radius:10px;padding:4px;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;animation:ftbar 15s infinite;z-index:6}
+.ftoolbar span{font-size:12px;color:#cfd2db;padding:4px 7px;border-radius:6px}
+.ftoolbar span.hot{background:rgba(139,124,255,.25);color:#fff}
+.toast{position:absolute;left:44%;bottom:14px;transform:translateX(-50%) translateY(14px);background:#14161C;border:1px solid var(--line2);color:#EAECF3;font-size:11px;font-weight:600;padding:8px 14px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;animation:toast 15s infinite;z-index:7;white-space:nowrap}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;animation:flash 15s infinite;z-index:5}
+
+/* ===== ACCURATE WEbd PANEL (reproduction) ===== */
+.wp{background:#0d0f14;border-left:1px solid var(--line);display:flex;flex-direction:column;font-size:11px;color:var(--txt);overflow:hidden}
+.wp-head{display:flex;align-items:center;gap:8px;padding:9px 10px;border-bottom:1px solid var(--line)}
+.wp-logo{width:26px;height:26px;border-radius:7px;flex:none;box-shadow:0 3px 10px rgba(90,72,232,.5)}
+.wp-logo img{width:100%;height:100%;border-radius:7px;display:block}
+.wp-name{display:flex;flex-direction:column;line-height:1.15;margin-right:auto}
+.wp-name b{font-size:12.5px;font-weight:800}
+.wp-name small{font-size:9.5px;color:var(--dim)}
+.wp-tools{display:flex;align-items:center;gap:3px}
+.wp-t{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:11px;color:#c4c8d2;background:transparent}
+.wp-t.sel{background:rgba(139,124,255,.22);color:#CFC9FF}
+.wp-t.blue{background:#2f6bff;color:#fff}
+.wp-toggle{width:32px;height:18px;border-radius:20px;background:var(--pri);position:relative;margin:0 1px}
+.wp-toggle::after{content:"";position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:50%;background:#fff}
+.wp-tabs{display:flex;gap:2px;padding:8px 8px 0;border-bottom:1px solid var(--line)}
+.wp-tabs b{font-size:11px;font-weight:600;color:var(--dim);padding:7px 7px;border-radius:6px 6px 0 0;cursor:default;white-space:nowrap}
+.wp-tabs b.on{color:#fff;box-shadow:inset 0 -2px 0 var(--pri)}
+.wp-body{padding:11px 11px 14px;display:flex;flex-direction:column;gap:9px;overflow:hidden}
+.wp-sel{display:flex;align-items:center;gap:6px}
+.wp-chip{background:rgba(139,124,255,.14);color:#CFC9FF;border:1px solid rgba(139,124,255,.3);border-radius:7px;padding:5px 9px;font-size:10.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wp-mini{flex:none;background:var(--panel2);border:1px solid var(--line);color:#c4c8d2;border-radius:7px;padding:5px 8px;font-size:10px}
+.wp-sect{font-size:9px;font-weight:800;letter-spacing:.14em;color:var(--dim);margin-top:2px}
+.wp-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wp-row>label{color:var(--muted);font-size:11px}
+.wp-val{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:11px;color:#D8DAE2;text-align:right;min-width:96px}
+.wp-val.sm{min-width:66px}
+.wp-sw{width:44px;height:24px;border-radius:7px;background:#3a3f4b;border:1px solid var(--line2)}
+.wp-seg{display:flex;gap:4px}
+.wp-seg i{font-style:normal;background:var(--panel2);border:1px solid var(--line);color:#B9BDC9;border-radius:7px;padding:5px 10px;font-size:10.5px}
+.wp-seg i.on{background:rgba(139,124,255,.22);color:#fff;border-color:var(--pri)}
+.wp-warn{background:rgba(255,177,106,.10);border:1px solid rgba(255,177,106,.28);color:#FFD3A6;border-radius:9px;padding:8px 10px;font-size:10px;line-height:1.45;display:flex;flex-direction:column;gap:7px}
+.wp-warn b{background:rgba(255,177,106,.22);color:#FFE1C4;border-radius:7px;padding:6px 8px;text-align:center;font-weight:700;font-size:10px;align-self:flex-start}
+/* margin/padding visualizer */
+.wp-mp{border:1.5px dashed rgba(255,177,106,.55);border-radius:10px;padding:20px 30px;position:relative;margin-top:2px}
+.wp-mp .mp-lab{position:absolute;font-size:8.5px;font-weight:800;letter-spacing:.06em}
+.wp-mp .mp-m{top:3px;left:8px;color:var(--amber)}
+.wp-mp .mp-n{position:absolute;font-size:9.5px;color:#c4c8d2;font-weight:700}
+.mp-mt{top:4px;left:50%;transform:translateX(-50%)}
+.mp-mb{bottom:4px;left:50%;transform:translateX(-50%)}
+.mp-ml{top:50%;left:8px;transform:translateY(-50%)}
+.mp-mr{top:50%;right:8px;transform:translateY(-50%)}
+.wp-pad{border:1.5px dashed rgba(107,220,151,.55);border-radius:8px;padding:20px 26px;position:relative}
+.mp-p{top:2px;left:6px;color:var(--green)}
+.mp-pt{top:2px;left:50%;transform:translateX(-50%)}
+.mp-pb{bottom:2px;left:50%;transform:translateX(-50%)}
+.mp-pl{top:50%;left:6px;transform:translateY(-50%)}
+.mp-pr{top:50%;right:6px;transform:translateY(-50%)}
+.wp-core{background:rgba(139,124,255,.12);border:1px solid rgba(139,124,255,.3);border-radius:6px;padding:9px;text-align:center;font-size:10px;font-weight:700;color:#CFC9FF}
+.wp-corner{display:flex;align-items:center;gap:5px}
+.wp-corner .lk{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:rgba(139,124,255,.22);color:#CFC9FF;border:1px solid var(--pri);font-size:11px}
+.wp-corner .cin{width:34px;text-align:center;background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:5px 0;font-size:10.5px;color:#D8DAE2}
+.wp-slider{flex:1;max-width:120px;height:6px;border-radius:4px;background:var(--panel3);position:relative}
+.wp-slider::before{content:"";position:absolute;left:0;top:0;bottom:0;width:78%;border-radius:4px;background:var(--pri)}
+.wp-slider::after{content:"";position:absolute;top:-4px;left:78%;width:14px;height:14px;border-radius:50%;background:#fff;transform:translateX(-50%)}
+.wp-reset{background:var(--panel2);border:1px solid var(--line2);color:#D8DAE2;border-radius:9px;padding:9px;text-align:center;font-size:10.5px;font-weight:700;margin-top:3px}
+.wp-fade{position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(transparent,#0d0f14);pointer-events:none}
+
+@keyframes ring1{0%,6%{opacity:0}9%,22%{opacity:1}26%,100%{opacity:0}}
+@keyframes ftbar{0%,9%{opacity:0;transform:translateY(6px)}12%,22%{opacity:1;transform:translateY(0)}26%,100%{opacity:0}}
+@keyframes imgSwap{0%,14%{opacity:0}18%,44%{opacity:1}48%,100%{opacity:0}}
+@keyframes ring2{0%,30%{opacity:0}33%,46%{opacity:1}50%,100%{opacity:0}}
+@keyframes btnColor{0%,52%{background:#2a2d36}58%,86%{background:linear-gradient(135deg,#8B7CFF,#5A48E8)}92%,100%{background:#2a2d36}}
+@keyframes ring3{0%,52%{opacity:0}55%,70%{opacity:1}74%,100%{opacity:0}}
+@keyframes toast{0%,17%{opacity:0;transform:translateX(-50%) translateY(14px)}20%,27%{opacity:1;transform:translateX(-50%) translateY(0)}30%,45%{opacity:0}47%,54%{opacity:1;transform:translateX(-50%) translateY(0)}58%,86%{opacity:0}88%,95%{opacity:1;transform:translateX(-50%) translateY(0)}99%,100%{opacity:0}}
+@keyframes flash{0%,88%{opacity:0}90%{opacity:.7}96%,100%{opacity:0}}
+
+/* ===== SECTION ===== */
+section{padding:70px 0;position:relative}
+.sec-head{text-align:center;max-width:680px;margin:0 auto 46px}
+.sec-head h2{font-size:34px;font-weight:800;letter-spacing:-.02em;margin:16px 0 12px}
+.sec-head p{color:var(--muted);font-size:16px}
+
+/* install */
+.install-wrap{max-width:640px;margin:0 auto}
+.icard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:34px 32px}
+.icard .storehead{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.icard .storehead img{width:52px;height:52px;border-radius:13px;box-shadow:0 6px 18px rgba(90,72,232,.45)}
+.icard .storehead h3{font-size:21px;font-weight:800}
+.icard .storehead small{color:var(--dim);font-size:13px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:14px;margin-bottom:26px}
+.steps li{display:flex;gap:12px;font-size:14.5px;color:var(--muted);line-height:1.5}
+.steps .n{flex:none;width:24px;height:24px;border-radius:8px;background:rgba(139,124,255,.16);color:var(--pri);font-weight:800;font-size:12px;display:grid;place-items:center;margin-top:1px}
+.steps b{color:var(--txt)}
+.store-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;font-size:16px;padding:15px}
+.store-note{text-align:center;font-size:12.5px;color:var(--dim);margin-top:14px}
+.store-note a{color:var(--pri);word-break:break-all}
+.kbd{display:inline-block;font-family:ui-monospace,monospace;font-size:12px;font-weight:700;background:var(--panel3);border:1px solid var(--line2);border-bottom-width:2px;border-radius:6px;padding:1px 7px;color:#dfe1ea}
+
+/* features */
+.feat{display:flex;flex-direction:column;gap:28px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:34px}
+.frow.rev .ftext{order:2}
+.ftext .eyebrow{margin-bottom:16px}
+.ftext h3{font-size:25px;font-weight:800;letter-spacing:-.01em;margin-bottom:12px}
+.ftext p{color:var(--muted);font-size:15px;margin-bottom:16px}
+.ftags{display:flex;flex-wrap:wrap;gap:8px}
+.ftags span{font-size:12.5px;font-weight:600;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:6px 13px}
+.fdemo{border-radius:16px;overflow:hidden;position:relative;box-shadow:var(--shadow);border:1px solid var(--line2)}
+.fdemo .wp{border-left:none}
+@media(max-width:860px){
+  .frow{grid-template-columns:1fr;gap:26px;padding:24px}
+  .frow.rev .ftext{order:0}
+}
+
+/* demo: element toolbar on-page */
+.d-canvas{background:#fbfbfd;padding:30px;min-height:300px;display:grid;place-items:center;position:relative}
+.d-card{background:#fff;border-radius:14px;box-shadow:0 8px 30px rgba(20,22,30,.12);padding:18px;width:210px;text-align:center;position:relative}
+.d-thumb{height:88px;border-radius:10px;background:linear-gradient(135deg,#c7bcff,#8B7CFF);margin-bottom:12px}
+.d-card h4{font-size:15px;color:#15171d;font-weight:800}
+.d-card small{font-size:12px;color:#7a7f8f}
+.d-ring{position:absolute;inset:-6px;border:2px solid #8B7CFF;border-radius:16px;box-shadow:0 0 0 4px rgba(139,124,255,.16);animation:pulse 3s infinite}
+.d-tb{position:absolute;top:-46px;left:50%;transform:translateX(-50%);display:flex;gap:2px;background:#14161C;border:1px solid var(--line2);border-radius:11px;padding:5px;box-shadow:0 10px 26px rgba(0,0,0,.4)}
+.d-tb b{font-size:14px;padding:5px 8px;border-radius:7px;cursor:default}
+.d-tb b:nth-child(1){animation:hot 12s infinite}
+.d-tb b:nth-child(3){animation:hot 12s infinite 3s}
+.d-tb b:nth-child(4){animation:hot 12s infinite 6s}
+.d-hint{position:absolute;top:14px;left:14px;font-size:11px;font-weight:700;color:#8B7CFF;background:rgba(139,124,255,.12);border:1px solid rgba(139,124,255,.28);padding:4px 10px;border-radius:999px}
+@keyframes hot{0%,4%{background:transparent}8%,16%{background:rgba(139,124,255,.3)}20%,100%{background:transparent}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(139,124,255,.16)}50%{box-shadow:0 0 0 7px rgba(139,124,255,.05)}}
+
+/* tab body variants (reuse wp) */
+.wp.mini .wp-body{gap:10px}
+.wp-hint{font-size:10.5px;color:var(--dim);line-height:1.5}
+/* images list */
+.im-card{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px}
+.im-thumb{width:44px;height:44px;border-radius:8px;flex:none;background:linear-gradient(135deg,#e8e4ff,#8B7CFF)}
+.im-thumb.b{background:linear-gradient(135deg,#ffd8a8,#ff8fb1)}
+.im-thumb.c{background:linear-gradient(135deg,#bfe8ff,#5A48E8)}
+.im-meta{flex:1;min-width:0}
+.im-meta b{font-size:10.5px;color:#e6e8ef;font-weight:700;display:block}
+.im-meta small{font-size:9px;color:var(--dim)}
+.im-btns{display:flex;flex-direction:column;gap:3px}
+.im-btns i{font-style:normal;font-size:9px;background:var(--panel3);border:1px solid var(--line);border-radius:5px;padding:3px 8px;text-align:center;color:#c4c8d2}
+.im-btns i.p{background:var(--pri);color:#fff;border-color:transparent}
+/* palette */
+.pal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.pal-cell{aspect-ratio:1;border-radius:9px;border:1px solid var(--line2);position:relative}
+.pal-cell .c{position:absolute;right:3px;bottom:3px;width:15px;height:15px;border-radius:50%;background:#14161C;color:#fff;font-size:8px;font-weight:800;display:grid;place-items:center;border:1px solid var(--line)}
+.pal-cell.pick{outline:2px solid #fff;outline-offset:2px;animation:pulse 3s infinite}
+.wp-btn-ghost{background:var(--panel2);border:1px solid var(--line2);color:#D8DAE2;border-radius:9px;padding:8px;text-align:center;font-size:10.5px;font-weight:700}
+/* fonts */
+.ft-card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px}
+.ft-top{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--dim);margin-bottom:6px}
+.ft-top b{color:#e6e8ef;font-size:11px}
+.ft-prev{font-size:17px;font-weight:800;color:#fff;margin-bottom:10px;animation:fontCycle 9s infinite}
+.ft-pick{display:flex;justify-content:space-between;gap:8px}
+.ft-pick .sel{flex:1;background:#101217;border:1px solid var(--line);border-radius:7px;padding:6px 9px;font-size:10px;color:var(--dim)}
+.ft-pick .sh{background:var(--panel3);border:1px solid var(--line2);border-radius:7px;padding:6px 12px;font-size:10px;color:#c4c8d2}
+.ft-load{background:var(--panel2);border:1px solid var(--line2);color:#D8DAE2;border-radius:9px;padding:9px;text-align:center;font-size:10.5px;font-weight:700}
+@keyframes fontCycle{0%,25%{font-family:Georgia,serif}33%,58%{font-family:"Pretendard",sans-serif}66%,92%{font-family:ui-monospace,"Courier New",monospace}100%{font-family:Georgia,serif}}
+/* code */
+.cd-chip{background:rgba(139,124,255,.14);color:#CFC9FF;border:1px solid rgba(139,124,255,.3);border-radius:7px;padding:5px 9px;font-size:10px;font-weight:600;align-self:flex-start}
+.cd-area{background:#0b0d11;border:1px solid var(--line);border-radius:9px;padding:11px;font-family:ui-monospace,monospace;font-size:11px;line-height:1.8;min-height:96px}
+.cd-area .sel{color:#8B7CFF}.cd-area .prop{color:#7fd1ff}.cd-area .val{color:#f7b86b}.cd-area .cmt{color:#5b6070}
+.cd-area .typing{border-right:2px solid #8B7CFF;animation:caret 1s steps(1) infinite,typing 6s steps(24) infinite;white-space:nowrap;overflow:hidden;display:inline-block;vertical-align:bottom}
+.wp-apply{background:var(--pri);color:#fff;border-radius:9px;padding:9px;text-align:center;font-size:10.5px;font-weight:700;animation:pressBtn 15s infinite}
+@keyframes caret{50%{border-color:transparent}}
+@keyframes typing{0%{max-width:0}45%,100%{max-width:170px}}
+@keyframes pressBtn{0%,55%{filter:none}58%{filter:brightness(1.25)}61%,100%{filter:none}}
+/* misc */
+.ms-stat{font-size:10px;color:var(--dim);line-height:1.5}
+.ms-row{display:flex;gap:7px}
+.ms-row .b{flex:1;background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:8px;text-align:center;font-size:10.5px;font-weight:700;color:#D8DAE2}
+.ms-lang{display:flex;gap:5px}
+.ms-lang i{font-style:normal;background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:5px 11px;font-size:10px;color:#B9BDC9}
+.ms-lang i.on{background:rgba(139,124,255,.22);border-color:var(--pri);color:#fff}
+.ms-cap{background:var(--panel2);border:1px solid var(--line2);border-radius:9px;padding:9px;text-align:center;font-size:10.5px;font-weight:700;color:#D8DAE2}
+.ms-motion{background:var(--panel2);border:1px solid var(--line2);border-radius:9px;padding:9px;text-align:center;font-size:10.5px;font-weight:700;color:#D8DAE2;animation:motionText 8s infinite}
+.ms-del{background:#2A1518;border:1px solid rgba(255,92,92,.3);color:#FF8A8A;border-radius:9px;padding:9px;text-align:center;font-size:10.5px;font-weight:700}
+@keyframes motionText{0%,45%{color:#D8DAE2}50%,92%{color:#8B7CFF}}
+
+/* how to use */
+.how{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.hcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:24px 22px;position:relative;overflow:hidden}
+.hcard .hn{font-size:44px;font-weight:800;line-height:1;background:var(--grad2);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;opacity:.9}
+.hcard h4{font-size:16px;font-weight:800;margin:12px 0 8px}
+.hcard p{font-size:13.5px;color:var(--muted);line-height:1.55}
+@media(max-width:860px){.how{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.how{grid-template-columns:1fr}}
+
+/* shortcuts */
+.short-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.short{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.short .keys{display:flex;gap:5px;flex:none}
+.short small{color:var(--muted);font-size:13.5px}
+@media(max-width:820px){.short-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.short-grid{grid-template-columns:1fr}}
+
+/* callout */
+.callout{background:linear-gradient(135deg,rgba(139,124,255,.12),rgba(159,69,228,.08));border:1px solid rgba(139,124,255,.28);border-radius:24px;padding:44px 40px;text-align:center}
+.callout h2{font-size:30px;font-weight:800;margin-bottom:12px}
+.callout p{color:var(--muted);font-size:16px;max-width:560px;margin:0 auto 26px}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:44px 0 40px;margin-top:40px}
+.foot-grid{display:flex;justify-content:space-between;align-items:flex-start;gap:30px;flex-wrap:wrap}
+.foot-brand{max-width:320px}
+.foot-brand p{color:var(--dim);font-size:13.5px;margin-top:12px;line-height:1.6}
+.foot-cols{display:flex;gap:56px;flex-wrap:wrap}
+.foot-col b{font-size:13px;color:var(--txt);display:block;margin-bottom:12px}
+.foot-col a{display:block;font-size:13.5px;color:var(--muted);margin-bottom:9px;transition:.15s}
+.foot-col a:hover{color:var(--pri)}
+.foot-bottom{margin-top:34px;padding-top:22px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+.reveal{opacity:0;transform:translateY(24px);transition:.7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">
+      <img src="data:image/png;base64,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" alt="WEbd">
+      <span>WEbd</span><span class="sep">·</span><span class="sub">Live Design Preview</span>
+    </a>
+    <div class="nav-links">
+      <a href="#install">설치</a>
+      <a href="#features">기능</a>
+      <a href="#how">사용법</a>
+      <a href="#shortcuts">단축키</a>
+      <a href="https://chromewebstore.google.com/detail/webd-live-design-preview/cggopapjcbddhjlfebaedbaepjhekajf?hl=ko" target="_blank" rel="noopener" class="btn btn-pri nav-cta">Chrome에 추가</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">🎨 크롬 확장프로그램 · 코드 불필요</span>
+      <h1>실제 페이지 위에서<br><span class="hl">디자인을 바로</span> 바꿔보세요</h1>
+      <p class="lead">WEbd는 어떤 웹사이트에서든 이미지 교체·텍스트 수정·요소 이동·색상과 폰트 변경을 <b>코드 한 줄 없이</b> 실시간으로 미리보게 해주는 라이브 디자인 프리뷰 도구입니다. 개발자에게 넘기기 전, 바뀐 화면을 눈으로 먼저 확인하세요.</p>
+      <div class="hero-cta">
+        <a href="https://chromewebstore.google.com/detail/webd-live-design-preview/cggopapjcbddhjlfebaedbaepjhekajf?hl=ko" target="_blank" rel="noopener" class="btn btn-pri">⬇ Chrome 웹 스토어에서 설치</a>
+        <a href="#features" class="btn btn-ghost">기능 살펴보기</a>
+      </div>
+      <div class="hero-meta">
+        <div><b>6</b>개 편집 탭</div>
+        <div><b>0</b>줄의 코드</div>
+        <div><b>모든</b> 웹사이트</div>
+      </div>
+    </div>
+
+    <!-- animated browser + accurate panel -->
+    <div class="browser reveal">
+      <div class="browser-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="url">numbuzin.com/product</span>
+      </div>
+      <div class="browser-body">
+        <div class="page">
+          <div class="flash"></div>
+          <div class="kicker">New Arrival</div>
+          <div style="position:relative;display:inline-block">
+            <h2>Aurora Bottle</h2>
+            <div class="sel-ring" id="ring2" style="inset:-6px -10px"><span class="sel-label">h2 · 텍스트 수정</span></div>
+            <div class="ftoolbar" style="top:-40px;left:0"><span>🖼</span><span class="hot">✏️</span><span>⧉</span><span>＋</span><span>🗑</span></div>
+          </div>
+          <div class="price">₩38,000</div>
+          <div style="position:relative;margin-top:12px">
+            <div class="hero-img"></div>
+            <div class="sel-ring" id="ring1" style="inset:8px -6px -6px -6px"><span class="sel-label">img · 이미지 교체</span></div>
+          </div>
+          <p class="desc">가볍고 튼튼한 데일리 텀블러. 12시간 보온·보냉을 유지합니다.</p>
+          <div style="position:relative;display:inline-block">
+            <span class="cta-btn">지금 구매하기</span>
+            <div class="sel-ring" id="ring3" style="inset:-6px -8px"><span class="sel-label">button · 배경색</span></div>
+          </div>
+          <div class="toast">✅ 변경 완료 — 새로고침해도 유지돼요</div>
+        </div>
+
+        <!-- ACCURATE WEbd PANEL -->
+        <div class="wp">
+          <div class="wp-head">
+            <div class="wp-logo"><img src="data:image/png;base64,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" alt=""></div>
+            <div class="wp-name"><b>WEbd</b><small>numbuzin.com</small></div>
+            <div class="wp-tools">
+              <span class="wp-t sel">▲</span>
+              <span class="wp-t blue">↕</span>
+              <span class="wp-t">↩︎</span>
+              <span class="wp-t">↪︎</span>
+              <span class="wp-toggle"></span>
+              <span class="wp-t">✕</span>
+            </div>
+          </div>
+          <div class="wp-tabs">
+            <b class="on">Style</b><b>Images</b><b>Palette</b><b>Fonts</b><b>Code</b><b>Misc</b>
+          </div>
+          <div class="wp-body">
+            <div class="wp-sel"><span class="wp-chip">h2.product-title</span><span class="wp-mini">↑ Parent</span><span class="wp-mini">↓ Child</span></div>
+            <div class="wp-sect">TEXT</div>
+            <div class="wp-row"><label>Font</label><span class="wp-val">(Current) system-</span></div>
+            <div class="wp-row"><label>Font size</label><span class="wp-val sm">24</span></div>
+            <div class="wp-row"><label>Weight</label><span class="wp-val sm">800</span></div>
+            <div class="wp-row"><label>Text color</label><span class="wp-sw"></span></div>
+            <div class="wp-row"><label>Align</label><span class="wp-seg"><i>Left</i><i class="on">Center</i><i>Right</i></span></div>
+            <div class="wp-row"><label>Line height(%)</label><span class="wp-val sm">120</span></div>
+            <div class="wp-sect">BOX</div>
+            <div class="wp-row"><label>Background</label><span class="wp-sw"></span></div>
+            <div class="wp-row"><label>Opacity</label><span class="wp-slider"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- INSTALL -->
+<section id="install">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">설치</span>
+      <h2>Chrome 웹 스토어에서 설치</h2>
+      <p>파일을 직접 불러올 필요 없어요. 웹 스토어에서 <b>Chrome에 추가</b> 한 번이면 끝입니다.</p>
+    </div>
+    <div class="install-wrap">
+      <div class="icard reveal">
+        <div class="storehead">
+          <img src="data:image/png;base64,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" alt="WEbd">
+          <div>
+            <h3>WEbd – Live Design Preview</h3>
+            <small>Chrome Web Store · 무료 · Manifest V3</small>
+          </div>
+        </div>
+        <ul class="steps">
+          <li><span class="n">1</span><span>아래 버튼으로 <b>Chrome 웹 스토어</b>의 WEbd 페이지를 엽니다.</span></li>
+          <li><span class="n">2</span><span><b>Chrome에 추가</b> → <b>확장 프로그램 추가</b>를 클릭합니다.</span></li>
+          <li><span class="n">3</span><span>툴바의 퍼즐 아이콘에서 <b>WEbd</b>를 <span class="kbd">📌</span> 로 고정하세요.</span></li>
+          <li><span class="n">4</span><span>아무 사이트에서 <b>WEbd 아이콘</b>을 클릭 = 편집 시작 / 종료.</span></li>
+        </ul>
+        <a href="https://chromewebstore.google.com/detail/webd-live-design-preview/cggopapjcbddhjlfebaedbaepjhekajf?hl=ko" target="_blank" rel="noopener" class="btn btn-pri store-btn">🛒 Chrome 웹 스토어에서 WEbd 설치하기</a>
+        <p class="store-note">직접 주소: <a href="https://chromewebstore.google.com/detail/webd-live-design-preview/cggopapjcbddhjlfebaedbaepjhekajf?hl=ko" target="_blank" rel="noopener">chromewebstore.google.com/detail/webd-live-design-preview</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">기능</span>
+      <h2>선택하고, 바꾸고, 바로 확인</h2>
+      <p>요소를 클릭하면 플로팅 툴바와 6개의 편집 탭이 나타납니다. 모든 변경은 이 사이트에만 저장되고, 새로고침해도 자동으로 다시 적용돼요.</p>
+    </div>
+
+    <div class="feat">
+
+      <!-- 1. Element toolbar -->
+      <div class="frow reveal">
+        <div class="ftext">
+          <span class="eyebrow">플로팅 툴바</span>
+          <h3>클릭 한 번으로 요소 편집</h3>
+          <p>페이지 위 요소에 마우스를 올리면 크기가 표시되고, 클릭하면 바로 위에 편집 툴바가 뜹니다. 이미지 교체부터 삭제까지 여기서 한 번에 처리하세요.</p>
+          <div class="ftags">
+            <span>🖼 이미지 교체</span><span>✏️ 텍스트 인라인 수정</span><span>⧉ 요소 복제</span>
+            <span>＋ 위/아래/안쪽 삽입</span><span>👁 숨김</span><span>🗑 삭제</span>
+          </div>
+        </div>
+        <div class="fdemo">
+          <div class="d-canvas">
+            <div class="d-hint">▲ 편집 모드</div>
+            <div class="d-card">
+              <div class="d-tb"><b>🖼</b><b>✏️</b><b>⧉</b><b>＋</b><b>👁</b><b>🗑</b></div>
+              <div class="d-thumb"></div>
+              <h4>Aurora Bottle</h4>
+              <small>₩38,000</small>
+              <div class="d-ring"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Style tab (accurate) -->
+      <div class="frow rev reveal">
+        <div class="ftext">
+          <span class="eyebrow">Style 탭</span>
+          <h3>코드 없이 비주얼로 조정</h3>
+          <p>선택한 요소가 상단에 표시되고, <b>↑Parent · ↓Child</b>로 이동할 수 있어요. 글자 크기·굵기·색·정렬·행간(TEXT), 배경·여백·모서리·테두리·그림자·투명도·크기(BOX)까지 슬라이더와 입력으로 즉석에서 다듬습니다.</p>
+          <div class="ftags">
+            <span>타이포그래피</span><span>마진 · 패딩 비주얼 편집</span><span>모서리 · 테두리</span><span>그림자 · 투명도</span><span>↑부모 ↓자식</span>
+          </div>
+        </div>
+        <div class="fdemo">
+          <div class="wp mini">
+            <div class="wp-head">
+              <div class="wp-logo"><img src="data:image/png;base64,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" alt=""></div>
+              <div class="wp-name"><b>WEbd</b><small>numbuzin.com</small></div>
+              <div class="wp-tools"><span class="wp-t sel">▲</span><span class="wp-t blue">↕</span><span class="wp-t">↩︎</span><span class="wp-t">↪︎</span><span class="wp-toggle"></span><span class="wp-t">✕</span></div>
+            </div>
+            <div class="wp-tabs"><b class="on">Style</b><b>Images</b><b>Palette</b><b>Fonts</b><b>Code</b><b>Misc</b></div>
+            <div class="wp-body">
+              <div class="wp-sel"><span class="wp-chip">p.price-section-desc</span><span class="wp-mini">↑ Parent</span><span class="wp-mini">↓ Child</span></div>
+              <div class="wp-sect">TEXT</div>
+              <div class="wp-row"><label>Font size</label><span class="wp-val sm">15</span></div>
+              <div class="wp-row"><label>Align</label><span class="wp-seg"><i>Left</i><i class="on">Center</i><i>Right</i></span></div>
+              <div class="wp-sect">BOX</div>
+              <div class="wp-warn">This element has no background color.<b>Select parent with background</b></div>
+              <div class="wp-mp">
+                <span class="mp-lab mp-m">Margin</span>
+                <span class="mp-n mp-mt">0</span><span class="mp-n mp-mb">22</span><span class="mp-n mp-ml">136</span><span class="mp-n mp-mr">136</span>
+                <div class="wp-pad">
+                  <span class="mp-lab mp-p">Padding</span>
+                  <span class="mp-n mp-pt">0</span><span class="mp-n mp-pb">0</span><span class="mp-n mp-pl">0</span><span class="mp-n mp-pr">0</span>
+                  <div class="wp-core">640 × 47</div>
+                </div>
+              </div>
+              <div class="wp-row"><label>Corners</label><span class="wp-corner"><span class="lk">🔗</span><span class="cin">0</span><span class="cin">0</span><span class="cin">0</span><span class="cin">0</span></span></div>
+              <div class="wp-row"><label>Opacity</label><span class="wp-slider"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Images tab -->
+      <div class="frow reveal">
+        <div class="ftext">
+          <span class="eyebrow">Images 탭</span>
+          <h3>페이지 속 이미지를 한눈에</h3>
+          <p>페이지에서 사용된 모든 이미지를 원본 크기와 함께 목록으로 보여줍니다. 마우스로 올리기 어려운 이미지도 여기서 <b>이동(Go)·열기(Open)·교체(Replace)</b>로 바로 다룰 수 있어요. 내 컴퓨터 파일로 교체하면 됩니다.</p>
+          <div class="ftags">
+            <span>사용 이미지 자동 수집</span><span>원본 해상도 표시</span><span>Go · Open · Replace</span><span>배경 이미지 포함</span>
+          </div>
+        </div>
+        <div class="fdemo">
+          <div class="wp mini">
+            <div class="wp-head">
+              <div class="wp-logo"><img src="data:image/png;base64,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" alt=""></div>
+              <div class="wp-name"><b>WEbd</b><small>numbuzin.com</small></div>
+              <div class="wp-tools"><span class="wp-t sel">▲</span><span class="wp-t blue">↕</span><span class="wp-t">↩︎</span><span class="wp-t">↪︎</span><span class="wp-toggle"></span><span class="wp-t">✕</span></div>
+            </div>
+            <div class="wp-tabs"><b>Style</b><b class="on">Images</b><b>Palette</b><b>Fonts</b><b>Code</b><b>Misc</b></div>
+            <div class="wp-body">
+              <div class="im-card"><div class="im-thumb"></div><div class="im-meta"><b>Original 1000 × 1300px</b><small>IMG</small></div><div class="im-btns"><i>Go</i><i>Open</i><i class="p">Replace</i></div></div>
+              <div class="im-card"><div class="im-thumb b"></div><div class="im-meta"><b>Original 1000 × 1300px</b><small>IMG</small></div><div class="im-btns"><i>Go</i><i>Open</i><i class="p">Replace</i></div></div>
+              <div class="im-card"><div class="im-thumb c"></div><div class="im-meta"><b>Original 1240 × 687px</b><small>IMG</small></div><div class="im-btns"><i>Go</i><i>Open</i><i class="p">Replace</i></div></div>
+              <div class="im-card"><div class="im-thumb"></div><div class="im-meta"><b>Original 1000 × 1300px</b><small>IMG</small></div><div class="im-btns"><i>Go</i><i>Open</i><i class="p">Replace</i></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Palette tab -->
+      <div class="frow rev reveal">
+        <div class="ftext">
+          <span class="eyebrow">Palette 탭</span>
+          <h3>색 하나로 페이지 전체 톤 바꾸기</h3>
+          <p>페이지에서 실제 쓰인 색을 <b>배경색·텍스트색</b>으로 나눠 사용 횟수와 함께 모아 보여줍니다. 색 하나를 골라 새 색으로 바꾸면 그 색을 쓰던 모든 요소가 한 번에 바뀌고, 자주 쓰는 색은 <b>My palette</b>에 자동 저장돼요.</p>
+          <div class="ftags">
+            <span>배경/텍스트 색 분리</span><span>사용 횟수 표시</span><span>전체 일괄 변경</span><span>Rescan</span><span>My palette 자동 저장</span>
+          </div>
+        </div>
+        <div class="fdemo">
+          <div class="wp mini">
+            <div class="wp-head">
+              <div class="wp-logo"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAQOElEQVR4nO1dW4wcVXr+/v9UV1VX9Rgb23Pr8QUkrAiDHeILBGMbQmAJ62iJwliAFJm3SCRaP/CAwkbqGS3ryNL6ASnkLdrlZZP1JMK7AhIJIZZIqzwsIdiEbDRZCYhmQCy72Hg809Nddc6fh6ru6RnPjLvn4qmqrk8qdffpOqdO1fnOfznnP6cIHUAqwiMYwejoqAGAD777+W0hmT0EehCgfWKwX7FV1iY0ELA0MwIiLeVIG+nxZ2v6kv8vPHep9Na8C6+/MH25vCsts4N7XSTdKLZY63BSgIti5JJAfmaEx0+ODXwMAJVKhYERjI6SQZugdk6qVCo8MjIiRCQA8P5Lk98C+JsCecRzenYbo6G1hjYhtDGd3XxOgI6uxWAQWVCkwKQwXZv6BERvCZk3hn9c/kmURWgEIzSK0RsS4YYEkPOi6CRpALh05tePa5gXADnS425RM/VrCIK6FgLBgIgIInGZOQHWhQAQiIl+CAGiyFauVcJ0/bIWQz8X5rNPnu99EwDOD4s6ORa13VJYlgAyLIrGSP9H5dNB2/NeMiKnbOXwbFiFMSYEwCTEHT2UhefkBFjdtYwYIRgWtgqqiFDXDECvVmszf/3MT3d9diMSLEoAgVD0J8l7ZyZOOMo559rFPVPVqwBgICCA5vf0nAA3LnM9CND8X0QEQgT2rE2oBtXxelh7/ukLQ69HyQBALTWIwAsTAGBsGEwguXjms+d82x9jxXumqlc1gUAgJqK2bIccNw8EIiJigDBTv6oV8x6v4I+df/Kz5wgk54cXb+vrEiuVd6yTY6TfPzP5bdt2Xwl03a0HNc1Eav1vI8eagEgFuqYDqbs2u6/86E8mv31yjHTl+DvWdae2/pCKMI2See9vJv7Ct72/rQc1MRAhEK9YhDW+5ypgXVXA4vUXAxBZ7FA1nPnLZ14bekUgTJhzE5sSQIZF0SiZ985OnHCV/bI2oZFG4+dIKYghIsaExmH75X94YuIEgcz5YWlKcwbiAYQ7Ib88++WgaznnlFIq1KFEOiVHqkHEgQmFSakCO+d+9NSXgx/dCamgwkCsAkSEiEgunZ38Yam4+dTX1SuawSr6Ly4oVwEpVAFzeY0xusferKaCK68+9Vr52cgzIGGpCBORfHDui8dYWaemZq9Ko/FzZAfMrKaDq6LIOvXPf/zFYwQSqQgzALz58rhDOviOYzkA0PY4co6UQWAK7CDg4DsvPzbuAADTKJmhsPRwwXIPzYazRmRxfzFHJsB1PWssdg+VndLDNEqGRYRg8ITv+I4RY5jamyDKkUIQSGCMW/AdAzwhIkQffn9ihwj/m6XsXYGuCwnxWhhsuRHYwTNYj2stlVfEKLZJm/qnRswx1ob3+k5pdxDWTe7zdwGIONR141ql3Yp5LyvCcSNGkIv+bgKJGIHBcQbRvtCEBMkJ0DUgkJaQRGgfA9hvzLIxAzkyCCMahrCfLbbKRuJwnhxdAQKREQOLrDIHOpAbZ8mRRYQSSB7c0cUg5LN9XY+cAF2OnABdjpwAXY6cAF2OnABdjpwAXY6cAF2O7iYAoc310dnFdStFugFEgNGAhAIRgBSBeX7ARregKwmgQ8ByCfatCiJA/ZpBWBV04+K37iIARb2+p1zAHX+6CVvusAEAl8frGB+7iqnJAKS6Syd0lw1gALYJe/9sM7bcYUMMIAbYssfG3mc3g21qCazrDnQNAYgAXRf03+vBL1uR7ufoEAFKZQuD93kIa4Jumh/tDgJQ1NMLJcbQMW/xXi7AjuMe7BJDDLrGO+gKAhAD4ayg/1ARXq+CAPN6OcWS3+tXGLyviKAqXRMfnf3bJMDUAfdWhYH7iiBeQs8LQEQY/P0iilsVTB1dIQUyTwACIFqw7S4HPTsKTd1/3XkcqYmenQVsv9uB6O4Ik848AcQAlsfY+bAPAMsaeA1i7HrUh+XHtkDGkWkCNCz/voNFeH3tD3n4/RYGDhWh69n3CLJLAAKMAAWfUT4W9f52hnob5+x4yEehxJkfHs4mASgS53pG0H+4CK8vGvJtpzcTRSTw+2KPYCbbQ8TZJADmLP/+e4tRw3fSk2NDcfD+2CMIkFmPIJMEIIos/613x5a/WdzyXzJ/7BFs2lnA9n0OTJhdjyCTBBANWD5j50Ox5b+Cu2zk2f2ID9tnSEaXT2aOAESADgR9B9yOLP+l4A9Y6D/kZtYjyBYBGpa/xygfjXr/amb3Gh7AzodbPIKMkSBTBGha/vd68HqtVTfYnEdgYfB+L/IIMvXEskQAAkwAuFsV+g8XoztbCx8+9gjKGZ0jyAwBCFG0z9a9DkpDVseW/5LlNjyCXRZ698ceQU6A5EFMZPkPPbhyy38pNBp896N+FC+QIY8gGwQgwNQFvfcU4fevQ5hjTAB/wMLA4WzNEWSCAI3eXz7mxQnrcI14/8Fdf+BFM4UZmSNIPQFIAXpW0He4iOIaWP5LXieOI/H7LQwdyc4cQboJQIAJBO4WRv8hb/3FsgBgoHy/h+JWhgkk9R5BqglABJgQ2LrXnbP817FB5nsELkyQ+vZPNwFER/P962H5L4V5HkEPI+1bLKaXALH4335PZ9E+a3FdACgNxh5BkG6PIL0EEECt0Zh/x5eOr7XrYR+2l26PIJUEIAWEM1Gcf7FX3fQGIMRzBP0KQw8UEUyn1yNIHwFi0e/cyug7VJwTvzdTDMcRRsRA+UgR3rbII0ijKkgdAeZb/oV1t/yXrEfTIyig957II0gjUkcA0fEav+OlKGEj7yAm3m2PllLrEaSLAA3Lf78Lr081kjauOrEq8AcVBg67qVQD6SKAAFaRMXi01PydCAiw+w9LKKTQI0gNAYgjy7/3UBHe9ptv+S8HAeAPpNMjSAcBGDChRHH+h4pztU6CuG14BAQMPVCEt02lShWkggCEKNxr614XfnnjLP+l0OoR9DU8ggTVbzmkggCiAbvEGDwaz/cnsdbNOQIPziaGCZEKEiTxUc5HbPlv3e/C67cicbua8uQGx0qrGauCUjlaR2CCdKwmSj4Bmpa/v+oY/+beP8scole5YaQAtz3qo5CSqKFEE6Ax5t972IO3PZ7xW2G3onjFsAkF4axA1+Yf4axEvVat3r7w+y0MHfVSETWU3I0iG2P+WxR6D7hR71yJ+I9DxL76ZQ0T784guGZgjDSt99b36oIJBZ+x4yEP2+50mnk7qXMjHH3HAy4+//cqatMarCix0iCxBKB4ocetBx2Uyp2v8AXQbMDfflTDh39/GeGMARFBaO7/hS+yFi346n9q2P/nW7Dtrs5JMG+O4PccfPr2DNjrsN43EYlVASYECj2x7gdWJPobbft/b11DOCuwSwyrSLDcJY4iwe5hhLOCj//l2rwyOkJjjuAbPuxbYo8goUgmAQgwWrD17niFb5u7e8xDnCecFQQzBsyAibeGvdHBDNRn4g2kO91cAnMeQU/ZwkDsESTVJUgmAQSwXMbgsdVZ/sDclvArqYMJV3tx4PbHfBQ8Ts68xQIkjgDEQFgV9B4swt22Ost/Q/PGKPVbGDqW3DmCZBEg3s7d2azQd6DYXJ6dSjTqTsCOo0UUEzpHkCgCRLt7ALfe5cyN+Seqhp2h4RHcsquA/gMOdAKXlifq8ZoQsHsYA0dWbvknDi3rCJwEegSJIoCEgq13FVdu+ScQDY9g05CFwcPFxHkEiSKAKhIGji6xn3/aIcDtf+Sh4CXrrSSJIEBzzP+AtzaWf9LQWE3Ub2HHcS9RHsHGE4AACQTOFkbvQS/dlv8yaHgEO495iVpHsOEEaFr+e134A2u3t0/S0LqyuO+AmxiPYMMftQkB+xbGwP3+3Lx8VhHf2+3f8OFu4UQsJtlYAhAgRmC5jGKGLP+l0JwjGLKigBGz8R7BhksAANFUrFl73b8Wb/xY67eGNCackuIJbDgBSBHqUxpf/6rW1JM3jNtr42i8G+jK/9ZR+0qDC+11NRGAC4TqbzUuj9eb7xVckzqZyOP58r9qmL2iwdbGi7uNDQiJG8kEgk/fmIre4vk7zpoUTQT85sMafvXaFHQoHUXlNDacHh+bAjGh93fXrk5f/GcN//2PUzB1AVu04e8log+//7kA10fGNNBWevy5aHo7ZRIgIUCFKCBjqTKXvOZi3wWoXdXQNQEXWh70UvVamB7vPagcgt2j5kLIlrhXLFYmrr9W7YqJ3k5qzdVz2efX7nNdmN5mmckICROALEBCQfU34eoIIHPfSVEk+leibwVQBYKEwMyXYXuN1fi+TDpZBFWIglOSgGQQAIieFKHZYGtBgNbvK6pSa50Wu+4KCLBQQmw0kkOABlobrd3PhWlr/YA7rceN0hOEDfcCcmwscgJ0OXICdDlyAnQ5cgJ0OXICdDlyAnQ5cgJ0OVgkSeNSOW4mBCJcUG3Ok+bIHCwqEIcmnGRi5JKgeyAQYWKEEk4ygIvMCYlRznHTwKTAgosMkUsWWwJK4lRFjnWBQBRZQiSXWAveZWKC5AToIggRExjvsmLz0XTt2icFy2bZ8AClHOsOEWMpm2fDa59oYz7iu54vTwB4y3d8ApATIOsgGNfyiQRvPXWhPMFEJGBcmK5N15iYTa4KsguBEJhng+kaAxeISFgqwhPWtbeDcPYXruUyUS4FMgxjK5dDM/uLydq1t6UizADw+Ok9NVGF79XCGpAPD2cXBA5MDQVT+N7pf91Ti5IAiAgRkVw6O/nDUnHzqa+rVzQjGhy4KWHhbZbZcVBoJ/VaYVh1R2Wu5PmtUf2NMbrH3qymgiuvPvVa+VmBEIGEAWBkZISkIlyA/eJMMDPuWq4SkRS+AinHYjAi2rFcVQ1nxo1jv1ipCI9ghICWpYkyLIrGSL93duKES/YFECjUIZqLtXMJkE4JIGKYLACQuq4/8fSFodfPD4s6OUYaaNH3NEZaKsIHXxh6fVbXTyu2mECUjw2kGWJARMwW10z99NMXhl4XCDcaH1hg8NEomUrlHevgXw29Uq1VT9uWQ4oU5+oghRDRRIoLyqFqWD39zGtDr1SOv2MRaF6HXnQquCEiLp757DnbLp4zMG6tXtPUsrNNrgISrAKMaEs5ioRna1J9/uQ/Df5dq9hvxaIEkHhDdQLJe2cmTjjKOefaxT1T1asAYCCg5lYOOQESQQAREYlMe/asTagG1fF6WHs+FvtxY1FLDSIs6vMTSAgkMizq4ItDr9dnZh6arVd/oNgyxYLPxEwSbcOc2wcbDREjkJDB5Fo+K1imFlZ/UKvPPNQw+AgkizU+0MYGJXJeFJ2MRMelM79+XMO8AMiRHneLmqlfQxDUtRAIBkREkMa7knIJsF4SQEz0QwgQRbZyrRKm65e1GPq5MJ998nzvm8CcKscyaCscrFKp8MjIiBBFLHr/pclvAfxNgTziOT27jdHQWkObELqx7jknwLoQgMEgsqBIgUlhujb1CYjeEjJvDP+4/JMoi9AIRmgUozeU0B3FA0o0gIDR0ajgD777+W0hmT0EehCgfWKwX7FV1iY0EHBOgDUlgFFssdbhpAAXxcglgfzMCI+fHBv4GIg6KjCC0VFqWzX/P4ww+Gw2ogHaAAAAAElFTkSuQmCC" alt=""></div>
+              <div class="wp-name"><b>WEbd</b><small>numbuzin.com</small></div>
+              <div class="wp-tools"><span class="wp-t sel">▲</span><span class="wp-t blue">↕</span><span class="wp-t">↩︎</span><span class="wp-t">↪︎</span><span class="wp-toggle"></span><span class="wp-t">✕</span></div>
+            </div>
+            <div class="wp-tabs"><b>Style</b><b>Images</b><b class="on">Palette</b><b>Fonts</b><b>Code</b><b>Misc</b></div>
+            <div class="wp-body">
+              <div class="wp-hint">Colors used on this page. Click one to inspect and bulk-change it.</div>
+              <div class="wp-sect">BACKGROUND COLORS</div>
+              <div class="pal-grid">
+                <div class="pal-cell" style="background:#fff"><span class="c">8</span></div>
+                <div class="pal-cell" style="background:#f1f1f4"><span class="c">4</span></div>
+                <div class="pal-cell" style="background:#0b0b0d"><span class="c">3</span></div>
+                <div class="pal-cell pick" style="background:#ec3a5b"><span class="c">1</span></div>
+              </div>
+              <div class="wp-sect">TEXT COLORS</div>
+              <div class="pal-grid">
+                <div class="pal-cell" style="background:#15161b"><span class="c">22</span></div>
+                <div class="pal-cell" style="background:#2b2d34"><span class="c">21</span></div>
+                <div class="pal-cell" style="background:#ec3a5b"><span class="c">19</span></div>
+                <div class="pal-cell" style="background:#0b0b0d"><span class="c">15</span></div>
+              </div>
+              <div class="wp-btn-ghost">Rescan</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Fonts tab -->
+      <div class="frow reveal">
+        <div class="ftext">
+          <span class="eyebrow">Fonts 탭</span>
+          <h3>폰트 교체를 전 페이지에 한 번에</h3>
+          <p>페이지에서 쓰인 폰트를 <b>사용 위치 수</b>와 함께 모아, 하나를 골라 전체로 교체합니다. 한글 웹폰트는 자동으로 불러오고, <b>내 컴퓨터 폰트</b>(Chrome 103+)까지 목록에서 바로 선택. <b>Show</b>로 어디에 쓰였는지 화면에서 반짝여 확인하세요.</p>
+          <div class="ftags">
+            <span>사용 폰트 자동 수집</span><span>전체 교체</span><span>한글 웹폰트 자동 로드</span><span>💻 내 컴퓨터 폰트</span><span>Show 하이라이트</span>
+          </div>
+        </div>
+        <div class="fdemo">
+          <div class="wp mini">
+            <div class="wp-head">
+              <div class="wp-logo"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAQOElEQVR4nO1dW4wcVXr+/v9UV1VX9Rgb23Pr8QUkrAiDHeILBGMbQmAJ62iJwliAFJm3SCRaP/CAwkbqGS3ryNL6ASnkLdrlZZP1JMK7AhIJIZZIqzwsIdiEbDRZCYhmQCy72Hg809Nddc6fh6ru6RnPjLvn4qmqrk8qdffpOqdO1fnOfznnP6cIHUAqwiMYwejoqAGAD777+W0hmT0EehCgfWKwX7FV1iY0ELA0MwIiLeVIG+nxZ2v6kv8vPHep9Na8C6+/MH25vCsts4N7XSTdKLZY63BSgIti5JJAfmaEx0+ODXwMAJVKhYERjI6SQZugdk6qVCo8MjIiRCQA8P5Lk98C+JsCecRzenYbo6G1hjYhtDGd3XxOgI6uxWAQWVCkwKQwXZv6BERvCZk3hn9c/kmURWgEIzSK0RsS4YYEkPOi6CRpALh05tePa5gXADnS425RM/VrCIK6FgLBgIgIInGZOQHWhQAQiIl+CAGiyFauVcJ0/bIWQz8X5rNPnu99EwDOD4s6ORa13VJYlgAyLIrGSP9H5dNB2/NeMiKnbOXwbFiFMSYEwCTEHT2UhefkBFjdtYwYIRgWtgqqiFDXDECvVmszf/3MT3d9diMSLEoAgVD0J8l7ZyZOOMo559rFPVPVqwBgICCA5vf0nAA3LnM9CND8X0QEQgT2rE2oBtXxelh7/ukLQ69HyQBALTWIwAsTAGBsGEwguXjms+d82x9jxXumqlc1gUAgJqK2bIccNw8EIiJigDBTv6oV8x6v4I+df/Kz5wgk54cXb+vrEiuVd6yTY6TfPzP5bdt2Xwl03a0HNc1Eav1vI8eagEgFuqYDqbs2u6/86E8mv31yjHTl+DvWdae2/pCKMI2See9vJv7Ct72/rQc1MRAhEK9YhDW+5ypgXVXA4vUXAxBZ7FA1nPnLZ14bekUgTJhzE5sSQIZF0SiZ985OnHCV/bI2oZFG4+dIKYghIsaExmH75X94YuIEgcz5YWlKcwbiAYQ7Ib88++WgaznnlFIq1KFEOiVHqkHEgQmFSakCO+d+9NSXgx/dCamgwkCsAkSEiEgunZ38Yam4+dTX1SuawSr6Ly4oVwEpVAFzeY0xusferKaCK68+9Vr52cgzIGGpCBORfHDui8dYWaemZq9Ko/FzZAfMrKaDq6LIOvXPf/zFYwQSqQgzALz58rhDOviOYzkA0PY4co6UQWAK7CDg4DsvPzbuAADTKJmhsPRwwXIPzYazRmRxfzFHJsB1PWssdg+VndLDNEqGRYRg8ITv+I4RY5jamyDKkUIQSGCMW/AdAzwhIkQffn9ihwj/m6XsXYGuCwnxWhhsuRHYwTNYj2stlVfEKLZJm/qnRswx1ob3+k5pdxDWTe7zdwGIONR141ql3Yp5LyvCcSNGkIv+bgKJGIHBcQbRvtCEBMkJ0DUgkJaQRGgfA9hvzLIxAzkyCCMahrCfLbbKRuJwnhxdAQKREQOLrDIHOpAbZ8mRRYQSSB7c0cUg5LN9XY+cAF2OnABdjpwAXY6cAF2OnABdjpwAXY6cAF2O7iYAoc310dnFdStFugFEgNGAhAIRgBSBeX7ARregKwmgQ8ByCfatCiJA/ZpBWBV04+K37iIARb2+p1zAHX+6CVvusAEAl8frGB+7iqnJAKS6Syd0lw1gALYJe/9sM7bcYUMMIAbYssfG3mc3g21qCazrDnQNAYgAXRf03+vBL1uR7ufoEAFKZQuD93kIa4Jumh/tDgJQ1NMLJcbQMW/xXi7AjuMe7BJDDLrGO+gKAhAD4ayg/1ARXq+CAPN6OcWS3+tXGLyviKAqXRMfnf3bJMDUAfdWhYH7iiBeQs8LQEQY/P0iilsVTB1dIQUyTwACIFqw7S4HPTsKTd1/3XkcqYmenQVsv9uB6O4Ik848AcQAlsfY+bAPAMsaeA1i7HrUh+XHtkDGkWkCNCz/voNFeH3tD3n4/RYGDhWh69n3CLJLAAKMAAWfUT4W9f52hnob5+x4yEehxJkfHs4mASgS53pG0H+4CK8vGvJtpzcTRSTw+2KPYCbbQ8TZJADmLP/+e4tRw3fSk2NDcfD+2CMIkFmPIJMEIIos/613x5a/WdzyXzJ/7BFs2lnA9n0OTJhdjyCTBBANWD5j50Ox5b+Cu2zk2f2ID9tnSEaXT2aOAESADgR9B9yOLP+l4A9Y6D/kZtYjyBYBGpa/xygfjXr/amb3Gh7AzodbPIKMkSBTBGha/vd68HqtVTfYnEdgYfB+L/IIMvXEskQAAkwAuFsV+g8XoztbCx8+9gjKGZ0jyAwBCFG0z9a9DkpDVseW/5LlNjyCXRZ698ceQU6A5EFMZPkPPbhyy38pNBp896N+FC+QIY8gGwQgwNQFvfcU4fevQ5hjTAB/wMLA4WzNEWSCAI3eXz7mxQnrcI14/8Fdf+BFM4UZmSNIPQFIAXpW0He4iOIaWP5LXieOI/H7LQwdyc4cQboJQIAJBO4WRv8hb/3FsgBgoHy/h+JWhgkk9R5BqglABJgQ2LrXnbP817FB5nsELkyQ+vZPNwFER/P962H5L4V5HkEPI+1bLKaXALH4335PZ9E+a3FdACgNxh5BkG6PIL0EEECt0Zh/x5eOr7XrYR+2l26PIJUEIAWEM1Gcf7FX3fQGIMRzBP0KQw8UEUyn1yNIHwFi0e/cyug7VJwTvzdTDMcRRsRA+UgR3rbII0ijKkgdAeZb/oV1t/yXrEfTIyig957II0gjUkcA0fEav+OlKGEj7yAm3m2PllLrEaSLAA3Lf78Lr081kjauOrEq8AcVBg67qVQD6SKAAFaRMXi01PydCAiw+w9LKKTQI0gNAYgjy7/3UBHe9ptv+S8HAeAPpNMjSAcBGDChRHH+h4pztU6CuG14BAQMPVCEt02lShWkggCEKNxr614XfnnjLP+l0OoR9DU8ggTVbzmkggCiAbvEGDwaz/cnsdbNOQIPziaGCZEKEiTxUc5HbPlv3e/C67cicbua8uQGx0qrGauCUjlaR2CCdKwmSj4Bmpa/v+oY/+beP8scole5YaQAtz3qo5CSqKFEE6Ax5t972IO3PZ7xW2G3onjFsAkF4axA1+Yf4axEvVat3r7w+y0MHfVSETWU3I0iG2P+WxR6D7hR71yJ+I9DxL76ZQ0T784guGZgjDSt99b36oIJBZ+x4yEP2+50mnk7qXMjHH3HAy4+//cqatMarCix0iCxBKB4ocetBx2Uyp2v8AXQbMDfflTDh39/GeGMARFBaO7/hS+yFi346n9q2P/nW7Dtrs5JMG+O4PccfPr2DNjrsN43EYlVASYECj2x7gdWJPobbft/b11DOCuwSwyrSLDcJY4iwe5hhLOCj//l2rwyOkJjjuAbPuxbYo8goUgmAQgwWrD17niFb5u7e8xDnCecFQQzBsyAibeGvdHBDNRn4g2kO91cAnMeQU/ZwkDsESTVJUgmAQSwXMbgsdVZ/sDclvArqYMJV3tx4PbHfBQ8Ts68xQIkjgDEQFgV9B4swt22Ost/Q/PGKPVbGDqW3DmCZBEg3s7d2azQd6DYXJ6dSjTqTsCOo0UUEzpHkCgCRLt7ALfe5cyN+Seqhp2h4RHcsquA/gMOdAKXlifq8ZoQsHsYA0dWbvknDi3rCJwEegSJIoCEgq13FVdu+ScQDY9g05CFwcPFxHkEiSKAKhIGji6xn3/aIcDtf+Sh4CXrrSSJIEBzzP+AtzaWf9LQWE3Ub2HHcS9RHsHGE4AACQTOFkbvQS/dlv8yaHgEO495iVpHsOEEaFr+e134A2u3t0/S0LqyuO+AmxiPYMMftQkB+xbGwP3+3Lx8VhHf2+3f8OFu4UQsJtlYAhAgRmC5jGKGLP+l0JwjGLKigBGz8R7BhksAANFUrFl73b8Wb/xY67eGNCackuIJbDgBSBHqUxpf/6rW1JM3jNtr42i8G+jK/9ZR+0qDC+11NRGAC4TqbzUuj9eb7xVckzqZyOP58r9qmL2iwdbGi7uNDQiJG8kEgk/fmIre4vk7zpoUTQT85sMafvXaFHQoHUXlNDacHh+bAjGh93fXrk5f/GcN//2PUzB1AVu04e8log+//7kA10fGNNBWevy5aHo7ZRIgIUCFKCBjqTKXvOZi3wWoXdXQNQEXWh70UvVamB7vPagcgt2j5kLIlrhXLFYmrr9W7YqJ3k5qzdVz2efX7nNdmN5mmckICROALEBCQfU34eoIIHPfSVEk+leibwVQBYKEwMyXYXuN1fi+TDpZBFWIglOSgGQQAIieFKHZYGtBgNbvK6pSa50Wu+4KCLBQQmw0kkOABlobrd3PhWlr/YA7rceN0hOEDfcCcmwscgJ0OXICdDlyAnQ5cgJ0OXICdDlyAnQ5cgJ0OVgkSeNSOW4mBCJcUG3Ok+bIHCwqEIcmnGRi5JKgeyAQYWKEEk4ygIvMCYlRznHTwKTAgosMkUsWWwJK4lRFjnWBQBRZQiSXWAveZWKC5AToIggRExjvsmLz0XTt2icFy2bZ8AClHOsOEWMpm2fDa59oYz7iu54vTwB4y3d8ApATIOsgGNfyiQRvPXWhPMFEJGBcmK5N15iYTa4KsguBEJhng+kaAxeISFgqwhPWtbeDcPYXruUyUS4FMgxjK5dDM/uLydq1t6UizADw+Ok9NVGF79XCGpAPD2cXBA5MDQVT+N7pf91Ti5IAiAgRkVw6O/nDUnHzqa+rVzQjGhy4KWHhbZbZcVBoJ/VaYVh1R2Wu5PmtUf2NMbrH3qymgiuvPvVa+VmBEIGEAWBkZISkIlyA/eJMMDPuWq4SkRS+AinHYjAi2rFcVQ1nxo1jv1ipCI9ghICWpYkyLIrGSL93duKES/YFECjUIZqLtXMJkE4JIGKYLACQuq4/8fSFodfPD4s6OUYaaNH3NEZaKsIHXxh6fVbXTyu2mECUjw2kGWJARMwW10z99NMXhl4XCDcaH1hg8NEomUrlHevgXw29Uq1VT9uWQ4oU5+oghRDRRIoLyqFqWD39zGtDr1SOv2MRaF6HXnQquCEiLp757DnbLp4zMG6tXtPUsrNNrgISrAKMaEs5ioRna1J9/uQ/Df5dq9hvxaIEkHhDdQLJe2cmTjjKOefaxT1T1asAYCCg5lYOOQESQQAREYlMe/asTagG1fF6WHs+FvtxY1FLDSIs6vMTSAgkMizq4ItDr9dnZh6arVd/oNgyxYLPxEwSbcOc2wcbDREjkJDB5Fo+K1imFlZ/UKvPPNQw+AgkizU+0MYGJXJeFJ2MRMelM79+XMO8AMiRHneLmqlfQxDUtRAIBkREkMa7knIJsF4SQEz0QwgQRbZyrRKm65e1GPq5MJ998nzvm8CcKscyaCscrFKp8MjIiBBFLHr/pclvAfxNgTziOT27jdHQWkObELqx7jknwLoQgMEgsqBIgUlhujb1CYjeEjJvDP+4/JMoi9AIRmgUozeU0B3FA0o0gIDR0ajgD777+W0hmT0EehCgfWKwX7FV1iY0EHBOgDUlgFFssdbhpAAXxcglgfzMCI+fHBv4GIg6KjCC0VFqWzX/P4ww+Gw2ogHaAAAAAElFTkSuQmCC" alt=""></div>
+              <div class="wp-name"><b>WEbd</b><small>numbuzin.com</small></div>
+              <div class="wp-tools"><span class="wp-t sel">▲</span><span class="wp-t blue">↕</span><span class="wp-t">↩︎</span><span class="wp-t">↪︎</span><span class="wp-toggle"></span><span class="wp-t">✕</span></div>
+            </div>
+            <div class="wp-tabs"><b>Style</b><b>Images</b><b>Palette</b><b class="on">Fonts</b><b>Code</b><b>Misc</b></div>
+            <div class="wp-body">
+              <div class="wp-hint">Fonts used on this page. Pick one to replace it everywhere. Korean web fonts load automatically.</div>
+              <div class="ft-load">💻 Load my computer's fonts</div>
+              <div class="ft-card">
+                <div class="ft-top"><b>Pretendard Variable</b><span>130 places</span></div>
+                <div class="ft-prev">The quick brown fox 0123</div>
+                <div class="ft-pick"><span class="sel">Choose a replacement…</span><span class="sh">Show</span></div>
+              </div>
+              <div class="wp-btn-ghost">Rescan</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Code tab -->
+      <div class="frow rev reveal">
+        <div class="ftext">
+          <span class="eyebrow">Code 탭</span>
+          <h3>필요하면 CSS·HTML 직접 편집</h3>
+          <p>선택한 요소의 CSS 규칙만 골라 편집하고 <b>Apply</b>를 누르면 즉시 반영됩니다. 같은 탭에서 요소의 <b>HTML</b>도 그 자리에서 수정할 수 있어, 비주얼 편집과 코드 편집을 자유롭게 오갈 수 있어요.</p>
+          <div class="ftags">
+            <span>선택 요소 CSS 편집</span><span>HTML 인라인 편집</span><span>즉시 Apply</span><span>Reload</span>
+          </div>
+        </div>
+        <div class="fdemo">
+          <div class="wp mini">
+            <div class="wp-head">
+              <div class="wp-logo"><img src="data:image/png;base64,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" alt=""></div>
+              <div class="wp-name"><b>WEbd</b><small>numbuzin.com</small></div>
+              <div class="wp-tools"><span class="wp-t sel">▲</span><span class="wp-t blue">↕</span><span class="wp-t">↩︎</span><span class="wp-t">↪︎</span><span class="wp-toggle"></span><span class="wp-t">✕</span></div>
+            </div>
+            <div class="wp-tabs"><b>Style</b><b>Images</b><b>Palette</b><b>Fonts</b><b class="on">Code</b><b>Misc</b></div>
+            <div class="wp-body">
+              <div class="wp-sect">CSS</div>
+              <span class="cd-chip">img#eListPrdImage22_6.asyncImage</span>
+              <div class="wp-hint">CSS rules for the selected element only. Edit and press Apply.</div>
+              <div class="cd-area">
+<span class="sel">#eListPrdImage22_6</span> {<br>
+<span class="typing">&nbsp;&nbsp;<span class="prop">border-radius</span>: <span class="val">16px</span>;</span><br>
+}
+              </div>
+              <div class="wp-apply">Apply</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Misc tab -->
+      <div class="frow reveal">
+        <div class="ftext">
+          <span class="eyebrow">Misc 탭</span>
+          <h3>백업 · 언어 · 캡처 · 모션 정지</h3>
+          <p>변경 개수를 확인하고 전체를 <b>Export/Import</b>(JSON)로 백업하세요. 언어를 <b>English·한국어·中文</b>로 바꾸고, 전체 페이지를 <b>스크린샷</b>으로 저장하고, 애니메이션과 자동 슬라이더를 <b>일시정지</b>해 정적인 상태로 살펴볼 수 있어요.</p>
+          <div class="ftags">
+            <span>Export / Import (JSON)</span><span>🌐 EN · 한 · 中</span><span>📸 전체 페이지 캡처</span><span>⏸ 모션·스크립트 정지</span><span>사이트 초기화</span>
+          </div>
+        </div>
+        <div class="fdemo">
+          <div class="wp mini">
+            <div class="wp-head">
+              <div class="wp-logo"><img src="data:image/png;base64,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" alt=""></div>
+              <div class="wp-name"><b>WEbd</b><small>numbuzin.com</small></div>
+              <div class="wp-tools"><span class="wp-t sel">▲</span><span class="wp-t blue">↕</span><span class="wp-t">↩︎</span><span class="wp-t">↪︎</span><span class="wp-toggle"></span><span class="wp-t">✕</span></div>
+            </div>
+            <div class="wp-tabs"><b>Style</b><b>Images</b><b>Palette</b><b>Fonts</b><b>Code</b><b class="on">Misc</b></div>
+            <div class="wp-body">
+              <div class="ms-stat">0 style rules · 0 content changes<br>Changes only apply to this site (numbuzin.com).</div>
+              <div class="wp-sect">BACKUP</div>
+              <div class="ms-row"><span class="b">Export</span><span class="b">Import</span></div>
+              <div class="wp-sect">LANGUAGE</div>
+              <div class="ms-lang"><i>English</i><i class="on">한국어</i><i>中文</i></div>
+              <div class="wp-sect">CAPTURE</div>
+              <div class="ms-cap">📸 Capture full page</div>
+              <div class="wp-sect">MOTION / SCRIPTS</div>
+              <div class="ms-motion">⏸ Motion: RUNNING — click to pause</div>
+              <div class="ms-del">Delete all changes for this site</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO USE -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">사용법</span>
+      <h2>네 단계면 충분해요</h2>
+      <p>설치 후, 편집하고 싶은 아무 페이지에서 바로 시작하세요.</p>
+    </div>
+    <div class="how">
+      <div class="hcard reveal"><div class="hn">1</div><h4>아이콘 클릭</h4><p>툴바의 WEbd 아이콘을 눌러 편집 패널을 엽니다. 커서 버튼(▲) 또는 단축키 <span class="kbd">A</span>로 편집 모드를 켜세요.</p></div>
+      <div class="hcard reveal"><div class="hn">2</div><h4>요소 선택</h4><p>바꾸고 싶은 요소를 클릭하면 플로팅 툴바와 스타일 패널이 나타납니다. 더블클릭하면 텍스트를 바로 수정할 수 있어요.</p></div>
+      <div class="hcard reveal"><div class="hn">3</div><h4>바로 편집</h4><p>이미지 교체, 색·폰트 변경, 요소 이동(<span class="kbd">S</span>)까지 실시간으로. 잘못했다면 <span class="kbd">Ctrl</span>+<span class="kbd">Z</span>로 되돌리세요.</p></div>
+      <div class="hcard reveal"><div class="hn">4</div><h4>자동 저장</h4><p>변경은 이 사이트에만 저장되어 새로고침 후에도 유지됩니다. 캡처로 공유하거나 JSON으로 백업하세요.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SHORTCUTS -->
+<section id="shortcuts">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">단축키</span>
+      <h2>손이 빨라지는 키</h2>
+    </div>
+    <div class="short-grid">
+      <div class="short reveal"><span class="keys"><span class="kbd">A</span></span><small>편집 모드 켜기 / 끄기 (탐색 모드 전환)</small></div>
+      <div class="short reveal"><span class="keys"><span class="kbd">S</span></span><small>드래그 이동 모드 (Alt+드래그 = 자유 배치)</small></div>
+      <div class="short reveal"><span class="keys"><span class="kbd">1</span><span class="kbd">~</span><span class="kbd">6</span></span><small>탭 전환 (Style·Images·Palette·Fonts·Code·Misc)</small></div>
+      <div class="short reveal"><span class="keys"><span class="kbd">더블클릭</span></span><small>텍스트 바로 수정</small></div>
+      <div class="short reveal"><span class="keys"><span class="kbd">Ctrl</span><span class="kbd">Z</span></span><small>되돌리기 / <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">Z</span> 다시 실행</small></div>
+      <div class="short reveal"><span class="keys"><span class="kbd">ESC</span></span><small>선택 해제</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- CALLOUT -->
+<section>
+  <div class="wrap">
+    <div class="callout reveal">
+      <h2>디자인을 말로 설명하지 말고, 보여주세요</h2>
+      <p>기획·마케팅·디자인 리뷰가 훨씬 빨라집니다. WEbd로 실제 화면 위에서 바꾸고, 그대로 캡처해 공유하세요.</p>
+      <a href="https://chromewebstore.google.com/detail/webd-live-design-preview/cggopapjcbddhjlfebaedbaepjhekajf?hl=ko" target="_blank" rel="noopener" class="btn btn-pri">⬇ Chrome 웹 스토어에서 설치</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top"><img src="data:image/png;base64,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" alt="WEbd"><span>WEbd</span><span class="sep">·</span><span class="sub">Live Design Preview</span></a>
+        <p>어떤 웹페이지 위에서도 코드 없이 디자인을 미리보는 크롬 확장프로그램. 이미지·텍스트·색·폰트·레이아웃을 실시간으로 바꿔보세요.</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <b>제품</b>
+          <a href="#install">설치</a>
+          <a href="#features">기능</a>
+          <a href="#how">사용법</a>
+          <a href="#shortcuts">단축키</a>
+        </div>
+        <div class="foot-col">
+          <b>바로가기</b>
+          <a href="https://chromewebstore.google.com/detail/webd-live-design-preview/cggopapjcbddhjlfebaedbaepjhekajf?hl=ko" target="_blank" rel="noopener">Chrome 웹 스토어</a>
+          <a href="#features">편집 탭 6종</a>
+          <a href="#shortcuts">단축키</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 WEbd — Live Design Preview. Chrome Extension v2.0.4</span>
+      <span>Manifest V3 · 모든 변경은 사이트별 로컬에만 저장됩니다</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
