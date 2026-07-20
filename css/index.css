@@ -156,6 +156,7 @@ body {
 .card--green .card-front  { background: var(--green); }
 .card--purple .card-front { background: var(--purple); }
 .card--yellow .card-front { background: var(--yellow); }
+.card--red .card-front    { background: var(--red); }
 
 .card--green .card-heading  { color: var(--black); }
 .card--purple .card-heading { color: var(--white); }
@@ -255,6 +256,11 @@ body {
 .poster-tilt-box--stretch {
   clip-path: polygon(5% 4%, 97% 8%, 99% 91%, -6% 95%);
   transform: rotate(3deg);
+}
+
+.poster-tilt-box--webd {
+  clip-path: polygon(4% 7%, 98% 2%, 96% 93%, -5% 96%);
+  transform: rotate(-3deg);
 }
 
 .poster-tilt-text {
