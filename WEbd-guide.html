@@ -197,6 +197,61 @@ nav{
 .wp-reset{background:var(--panel2);border:1px solid var(--line2);color:#D8DAE2;border-radius:9px;padding:9px;text-align:center;font-size:10.5px;font-weight:700;margin-top:3px}
 .wp-fade{position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(transparent,#0d0f14);pointer-events:none}
 
+@media(max-width:900px){
+  .browser-body{
+    grid-template-columns:1fr;
+    min-height:auto;
+  }
+  .wp{
+    border-left:none;
+    border-top:1px solid var(--line);
+  }
+  .page{
+    padding:20px 16px 24px;
+    min-height:0;
+  }
+  .page h2{
+    font-size:clamp(17px,4.8vw,22px);
+    line-height:1.2;
+    word-break:keep-all;
+  }
+  .page .price{font-size:16px}
+  .page .desc{
+    font-size:11px;
+    line-height:1.55;
+    margin:10px 0 14px;
+  }
+  .hero-img{margin:8px 0 12px}
+  .page .cta-btn{font-size:12px;padding:9px 16px}
+  .toast{
+    left:50%;
+    bottom:12px;
+    max-width:calc(100% - 28px);
+    white-space:normal;
+    text-align:center;
+    font-size:10px;
+    line-height:1.4;
+    padding:7px 12px;
+  }
+  .sel-label{font-size:9px;padding:2px 6px}
+  .ftoolbar span{padding:3px 5px;font-size:11px}
+  .wp-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .wp-tabs::-webkit-scrollbar{display:none}
+}
+
+@media(max-width:520px){
+  .browser{border-radius:12px}
+  .browser-bar{padding:9px 10px}
+  .url{font-size:11px;padding:4px 10px;margin-left:6px}
+  .page{padding:16px 14px 20px}
+  .page .kicker{font-size:10px}
+  .page h2{font-size:16px}
+  .page .desc{font-size:10.5px}
+  .wp-head{padding:8px}
+  .wp-tabs b{font-size:10px;padding:6px 5px}
+  .wp-body{padding:9px}
+}
+
 @keyframes ring1{0%,6%{opacity:0}9%,22%{opacity:1}26%,100%{opacity:0}}
 @keyframes ftbar{0%,9%{opacity:0;transform:translateY(6px)}12%,22%{opacity:1;transform:translateY(0)}26%,100%{opacity:0}}
 @keyframes imgSwap{0%,14%{opacity:0}18%,44%{opacity:1}48%,100%{opacity:0}}
