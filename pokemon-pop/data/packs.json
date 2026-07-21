@@ -6,15 +6,24 @@
     "nameShort": "151",
     "code": "sv2a",
     "releaseYear": 2023,
-    "languages": ["kr", "jp"],
+    "languages": [
+      "kr",
+      "jp"
+    ],
     "blurb": "원조 151마리를 모은 강화 확장팩. 리자몽·뮤 SAR가 대표 카드입니다.",
     "packImage": "./assets/pack-151.png",
-    "coverCardId": "sv2a-charizard-sar-jp",
+    "coverCardId": "sv2a-charizard-sar",
     "cardIds": [
-      "sv2a-charizard-sar-jp",
-      "sv2a-charizard-sar-kr",
-      "sv2a-mew-sar-jp",
-      "sv2a-mew-sar-kr"
+      "sv2a-charizard-sar",
+      "sv2a-venusaur-sar",
+      "sv2a-blastoise-sar",
+      "sv2a-alakazam-sar",
+      "sv2a-zapdos-sar",
+      "sv2a-mew-sar",
+      "sv2a-erika-sar",
+      "sv2a-giovanni-sar",
+      "sv2a-charizard-sr",
+      "sv2a-bulbasaur-ar"
     ]
   },
   {
@@ -23,15 +32,50 @@
     "nameEn": "PokéKyun Collection",
     "code": "CP1",
     "releaseYear": 2016,
-    "languages": ["kr", "jp"],
+    "languages": [
+      "kr",
+      "jp"
+    ],
     "blurb": "2016년 발매된 귀여움 특화 세트. 피카츄·데덴네가 대표 카드입니다.",
     "packImage": "./assets/pack-pokekyun.png",
-    "coverCardId": "kyun-pikachu-jp",
+    "coverCardId": "kyun-pikachu",
     "cardIds": [
-      "kyun-pikachu-jp",
-      "kyun-pikachu-kr",
-      "kyun-dedenne-jp",
-      "kyun-dedenne-kr"
+      "kyun-pikachu",
+      "kyun-dedenne",
+      "kyun-jirachi",
+      "kyun-sylveon-ex",
+      "kyun-charizard",
+      "kyun-flareon-ex",
+      "kyun-gardevoir-ex",
+      "kyun-diancie",
+      "kyun-espurr",
+      "kyun-raichu"
+    ]
+  },
+  {
+    "id": "thunderclap-spark",
+    "nameKo": "플라즈마 스파크",
+    "nameEn": "Thunderclap Spark",
+    "code": "sm7a",
+    "releaseYear": 2018,
+    "languages": [
+      "kr",
+      "jp"
+    ],
+    "blurb": "썬&문 강화 확장팩. 제라오라 GX·게노세크트 GX가 대표 카드입니다.",
+    "packImage": "./assets/pack-ThunderclapSpark.png",
+    "coverCardId": "sm7a-zeraora-gx-sr",
+    "cardIds": [
+      "sm7a-zeraora-gx-sr",
+      "sm7a-zeraora-gx-hr",
+      "sm7a-virizion-gx-sr",
+      "sm7a-genesect-gx-sr",
+      "sm7a-magcargo-gx-sr",
+      "sm7a-kahili-sr",
+      "sm7a-judge-sr",
+      "sm7a-tapu-koko",
+      "sm7a-ditto-prism",
+      "sm7a-electropower-ur"
     ]
   }
 ]

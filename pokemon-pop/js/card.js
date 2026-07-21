@@ -8,6 +8,38 @@
     return `<td>${Number(v).toLocaleString("en-US")}</td>`;
   }
 
+  function renderPop(variant) {
+    const thead = document.querySelector("#pop-table thead tr");
+    thead.innerHTML =
+      `<th>그레이딩</th>` +
+      PT.GRADE_COLS.map((g) => `<th>${g === "total" ? "Total" : g}</th>`).join("");
+
+    const tbody = document.querySelector("#pop-table tbody");
+    tbody.innerHTML = PT.GRADERS.map((g) => {
+      const data = variant?.pop?.[g] ?? null;
+      return `<tr>
+        <td>${g}</td>
+        ${PT.GRADE_COLS.map((col) => popCell(data, col)).join("")}
+      </tr>`;
+    }).join("");
+  }
+
+  function renderVariant(card, lang) {
+    const variant = card.variants?.[lang];
+    if (!variant) return;
+
+    document.getElementById("price-value").textContent = PT.formatPrice(variant.price);
+    document.getElementById("price-meta").textContent =
+      `${variant.price?.source || "PSA"} ${variant.price?.grade || "10"} · ${lang === "kr" ? "한판" : "일판"} · 기준일 ${variant.price?.asOf || variant.updatedAt || "—"}`;
+    renderPop(variant);
+    document.getElementById("updated").textContent =
+      `POP/가격 스냅샷: ${variant.updatedAt || "—"} (${lang === "kr" ? "한판" : "일판"} · 수동 시드)`;
+
+    document.querySelectorAll(".lang-tab").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.dataset.lang === lang);
+    });
+  }
+
   const id = PT.qs("id");
   const packs = PT.getPacks();
   const cards = PT.getCards();
@@ -46,24 +78,18 @@
     ${pack ? `<a class="badge" href="./set.html?pack=${pack.id}">${pack.nameKo}</a>` : ""}
   `;
 
-  document.getElementById("price-value").textContent = PT.formatPrice(card.price);
-  document.getElementById("price-meta").textContent =
-    `${card.price?.source || "PSA"} ${card.price?.grade || "10"} · 기준일 ${card.price?.asOf || card.updatedAt || "—"}`;
+  const tabs = document.getElementById("lang-tabs");
+  if (tabs) {
+    tabs.innerHTML = `
+      <button type="button" class="lang-tab is-active" data-lang="jp">일본판</button>
+      <button type="button" class="lang-tab" data-lang="kr">한글판</button>
+    `;
+    tabs.addEventListener("click", (e) => {
+      const btn = e.target.closest(".lang-tab");
+      if (!btn) return;
+      renderVariant(card, btn.dataset.lang);
+    });
+  }
 
-  const thead = document.querySelector("#pop-table thead tr");
-  thead.innerHTML =
-    `<th>그레이딩</th>` +
-    PT.GRADE_COLS.map((g) => `<th>${g === "total" ? "Total" : g}</th>`).join("");
-
-  const tbody = document.querySelector("#pop-table tbody");
-  tbody.innerHTML = PT.GRADERS.map((g) => {
-    const data = card.pop?.[g] ?? null;
-    return `<tr>
-      <td>${g}</td>
-      ${PT.GRADE_COLS.map((col) => popCell(data, col)).join("")}
-    </tr>`;
-  }).join("");
-
-  document.getElementById("updated").textContent =
-    `POP/가격 스냅샷: ${card.updatedAt || "—"} (수동 시드 · 주기 갱신 예정)`;
+  renderVariant(card, "jp");
 })();

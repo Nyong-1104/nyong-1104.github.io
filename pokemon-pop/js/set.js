@@ -1,14 +1,20 @@
 (function () {
   const PT = window.PopTracker;
-  const RARITY_RANK = { SAR: 5, SIR: 5, RR: 4, SR: 4, R: 3, U: 2, C: 1 };
+  const RARITY_RANK = { SAR: 5, SIR: 5, HR: 5, UR: 4, SR: 4, RR: 4, PRISM: 3, R: 3, AR: 3, U: 2, C: 1 };
+
+  function listPrice(card) {
+    const jp = card.variants?.jp?.price?.amount || 0;
+    const kr = card.variants?.kr?.price?.amount || 0;
+    return Math.max(jp, kr);
+  }
 
   function sortCards(list, mode) {
     const arr = list.slice();
     switch (mode) {
       case "price-desc":
-        return arr.sort((a, b) => (b.price?.amount || 0) - (a.price?.amount || 0));
+        return arr.sort((a, b) => listPrice(b) - listPrice(a));
       case "price-asc":
-        return arr.sort((a, b) => (a.price?.amount || 0) - (b.price?.amount || 0));
+        return arr.sort((a, b) => listPrice(a) - listPrice(b));
       case "type":
         return arr.sort((a, b) => (a.typeKo || "").localeCompare(b.typeKo || "", "ko"));
       case "rarity":
@@ -22,9 +28,8 @@
     }
   }
 
-  function filterCards(list, lang, type) {
+  function filterCards(list, type) {
     return list.filter((c) => {
-      if (lang && lang !== "all" && c.language !== lang) return false;
       if (type && type !== "all" && c.type !== type) return false;
       return true;
     });
@@ -62,10 +67,9 @@
   });
 
   const sortSelect = document.getElementById("sort-by");
-  const langSelect = document.getElementById("filter-lang");
 
   function render() {
-    const filtered = filterCards(packCards, langSelect.value, typeSelect.value);
+    const filtered = filterCards(packCards, typeSelect.value);
     const sorted = sortCards(filtered, sortSelect.value);
     grid.innerHTML = "";
 
@@ -87,6 +91,7 @@
       });
       a.appendChild(holo);
 
+      const jpPrice = card.variants?.jp?.price;
       const meta = document.createElement("div");
       meta.className = "card-meta";
       meta.innerHTML = `
@@ -94,7 +99,8 @@
         <div class="card-meta__sub">
           <span class="${PT.typeBadgeClass(card.type)}">${card.typeKo}</span>
           <span>${card.rarity}</span>
-          <span>${PT.formatPrice(card.price)}</span>
+          <span>${card.number}</span>
+          <span>${PT.formatPrice(jpPrice)}</span>
         </div>
       `;
       a.appendChild(meta);
@@ -104,7 +110,6 @@
   }
 
   sortSelect.addEventListener("change", render);
-  langSelect.addEventListener("change", render);
   typeSelect.addEventListener("change", render);
   render();
 })();

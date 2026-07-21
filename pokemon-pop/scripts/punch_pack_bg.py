@@ -26,5 +26,5 @@ def punch_black(path: Path, threshold: int = 28) -> None:
     print(path.name, "->", im.size)
 
 
-for name in ("pack-151.png", "pack-pokekyun.png"):
+for name in ("pack-151.png", "pack-pokekyun.png", "pack-ThunderclapSpark.png"):
     punch_black(assets / name)
