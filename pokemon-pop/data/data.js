@@ -97,6 +97,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 850,
+      "basePop": 1240
     }
   },
   {
@@ -115,6 +119,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 220,
+      "basePop": 980
     }
   },
   {
@@ -133,6 +141,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 240,
+      "basePop": 910
     }
   },
   {
@@ -151,6 +163,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 160,
+      "basePop": 720
     }
   },
   {
@@ -169,6 +185,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 190,
+      "basePop": 800
     }
   },
   {
@@ -187,6 +207,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 280,
+      "basePop": 980
     }
   },
   {
@@ -205,6 +229,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 1100
     }
   },
   {
@@ -223,6 +251,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 110,
+      "basePop": 1050
     }
   },
   {
@@ -241,6 +273,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 2100
     }
   },
   {
@@ -259,6 +295,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 3200
     }
   },
   {
@@ -277,6 +317,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 190,
+      "basePop": 145
     }
   },
   {
@@ -295,6 +339,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 98
     }
   },
   {
@@ -313,6 +361,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 85,
+      "basePop": 160
     }
   },
   {
@@ -331,6 +383,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 140,
+      "basePop": 120
     }
   },
   {
@@ -349,6 +405,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 110,
+      "basePop": 200
     }
   },
   {
@@ -367,6 +427,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 130
     }
   },
   {
@@ -385,6 +449,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 100,
+      "basePop": 150
     }
   },
   {
@@ -403,6 +471,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 55,
+      "basePop": 180
     }
   },
   {
@@ -421,6 +493,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 40,
+      "basePop": 90
     }
   },
   {
@@ -439,6 +515,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 70,
+      "basePop": 110
     }
   },
   {
@@ -457,6 +537,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 180,
+      "basePop": 420
     }
   },
   {
@@ -475,6 +559,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 320,
+      "basePop": 180
     }
   },
   {
@@ -493,6 +581,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 350
     }
   },
   {
@@ -511,6 +603,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 110,
+      "basePop": 300
     }
   },
   {
@@ -529,6 +625,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 280
     }
   },
   {
@@ -547,6 +647,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 250,
+      "basePop": 95
     }
   },
   {
@@ -565,6 +669,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 210,
+      "basePop": 110
     }
   },
   {
@@ -583,6 +691,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 25,
+      "basePop": 600
     }
   },
   {
@@ -601,6 +713,10 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 45,
+      "basePop": 400
     }
   },
   {
@@ -619,11 +735,16 @@ window.POP_CATALOG = [
       "jp": null,
       "kr": null,
       "en": null
+    },
+    "seed": {
+      "basePrice": 90,
+      "basePop": 220
     }
   }
 ];
 window.POP_LIVE = {
   "generatedAt": "2026-07-21",
+  "source": "seed",
   "cards": {
     "sv2a-charizard-sar": {
       "jp": {

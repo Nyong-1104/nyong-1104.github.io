@@ -1,94 +1,21 @@
 # -*- coding: utf-8 -*-
 """Generate packs, catalog, live snapshot, and bundled data.js for PokePop."""
 import json
-import hashlib
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
-LIVE_DIR = DATA / "live"
+SCRIPTS = ROOT / "scripts"
 ASOF = "2026-07-21"
 
-TIER_A = {"SAR", "SIR", "HR", "UR", "SR"}
-TIER_B = {"AR", "RR", "PRISM", "R"}
-# U, C and anything else -> tier C
-
-
-def seed_int(key: str) -> int:
-    return int(hashlib.md5(key.encode()).hexdigest()[:8], 16)
-
-
-def tier_for_rarity(rarity: str) -> str:
-    if rarity in TIER_A:
-        return "A"
-    if rarity in TIER_B:
-        return "B"
-    return "C"
-
-
-def full_pop(key: str, base_pop10: int, lang: str) -> dict:
-    s = seed_int(f"{key}-{lang}")
-    mult = 0.42 if lang == "kr" else 1.0
-    p10 = max(3, int(base_pop10 * mult * (0.7 + (s % 40) / 100)))
-    p9 = int(p10 * (0.6 + (s % 20) / 100))
-    p8 = int(p10 * (0.15 + (s % 15) / 100))
-    total = p10 + p9 + p8 + (s % 40)
-    bgs10 = max(0, p10 // 18)
-    cgc10 = max(0, p10 // 12)
-    return {
-        "PSA": {"10": p10, "9": p9, "8": p8, "total": total},
-        "BGS": {
-            "10": bgs10,
-            "9.5": bgs10 * 3 + 2,
-            "9": bgs10 * 2,
-            "total": bgs10 * 6 + 8,
-        }
-        if bgs10 or lang == "jp"
-        else None,
-        "CGC": {
-            "10": cgc10,
-            "9.5": cgc10 + 4,
-            "9": max(1, cgc10 // 2),
-            "total": cgc10 * 3 + 10,
-        },
-        "BRG": None,
-        "TAG": {"10": max(0, p10 // 80), "9": max(0, p10 // 50), "total": max(0, p10 // 30)}
-        if lang == "jp"
-        else None,
-        "ACE": None,
-        "AGS": {"10": max(0, p10 // 120), "9": max(0, p10 // 80), "total": max(0, p10 // 50)}
-        if lang == "jp" and p10 > 100
-        else None,
-    }
-
-
-def price_snapshot(key: str, base_price: int, lang: str) -> dict:
-    s = seed_int(f"{key}-{lang}")
-    mult = 0.42 if lang == "kr" else 1.0 if lang == "jp" else 0.95
-    amount = max(8, int(base_price * mult * (0.85 + (s % 30) / 100)))
-    return {
-        "source": "PSA",
-        "grade": "10",
-        "amount": amount,
-        "currency": "USD",
-        "asOf": ASOF,
-    }
-
-
-def live_variant(card_id: str, tier: str, base_price: int, base_pop: int, lang: str):
-    if tier == "C":
-        return None
-    if tier == "B":
-        return {
-            "price": price_snapshot(card_id, base_price, lang),
-            "pop": None,
-            "updatedAt": ASOF,
-        }
-    return {
-        "price": price_snapshot(card_id, base_price, lang),
-        "pop": full_pop(card_id, base_pop, lang),
-        "updatedAt": ASOF,
-    }
+sys.path.insert(0, str(SCRIPTS))
+from pokepop_snapshot import (  # noqa: E402
+    build_live_snapshot,
+    finalize_catalog_card,
+    tier_for_rarity,
+    write_data_bundle,
+)
 
 
 def catalog_card(
@@ -121,11 +48,6 @@ def catalog_card(
         "catalogKeys": {"jp": None, "kr": None, "en": None},
         "_seed": {"basePrice": base_price, "basePop": base_pop},
     }
-
-
-def strip_seed(card: dict) -> dict:
-    out = {k: v for k, v in card.items() if k != "_seed"}
-    return out
 
 
 packs = [
@@ -169,7 +91,6 @@ packs = [
 ]
 
 raw_cards = [
-    # --- 151 (10) ---
     catalog_card(
         "sv2a-charizard-sar",
         "sv2a-151",
@@ -310,7 +231,6 @@ raw_cards = [
         35,
         3200,
     ),
-    # --- PokéKyun (10) ---
     catalog_card(
         "kyun-pikachu",
         "pokekyun",
@@ -451,7 +371,6 @@ raw_cards = [
         70,
         110,
     ),
-    # --- Thunderclap Spark (10) ---
     catalog_card(
         "sm7a-zeraora-gx-sr",
         "thunderclap-spark",
@@ -597,62 +516,13 @@ raw_cards = [
 for p in packs:
     p["cardIds"] = [c["id"] for c in raw_cards if c["packId"] == p["id"]]
 
-catalog = [strip_seed(c) for c in raw_cards]
-
-live_cards = {}
-for card in raw_cards:
-    pack = next(p for p in packs if p["id"] == card["packId"])
-    langs = pack["languages"]
-    seed = card["_seed"]
-    variants = {}
-    for lang in langs:
-        variant = live_variant(
-            card["id"],
-            card["tier"],
-            seed["basePrice"],
-            seed["basePop"],
-            lang,
-        )
-        if variant:
-            variants[lang] = variant
-    if variants:
-        live_cards[card["id"]] = variants
-
-live = {
-    "generatedAt": ASOF,
-    "cards": live_cards,
-}
-
-DATA.mkdir(parents=True, exist_ok=True)
-LIVE_DIR.mkdir(parents=True, exist_ok=True)
-
-(DATA / "packs.json").write_text(
-    json.dumps(packs, ensure_ascii=False, indent=2) + "\n",
-    encoding="utf-8",
-)
-(DATA / "catalog.json").write_text(
-    json.dumps(catalog, ensure_ascii=False, indent=2) + "\n",
-    encoding="utf-8",
-)
-(LIVE_DIR / "pop-price.json").write_text(
-    json.dumps(live, ensure_ascii=False, indent=2) + "\n",
-    encoding="utf-8",
-)
-
-data_js = (
-    "window.POP_PACKS = "
-    + json.dumps(packs, ensure_ascii=False, indent=2)
-    + ";\nwindow.POP_CATALOG = "
-    + json.dumps(catalog, ensure_ascii=False, indent=2)
-    + ";\nwindow.POP_LIVE = "
-    + json.dumps(live, ensure_ascii=False, indent=2)
-    + ";\n"
-)
-(DATA / "data.js").write_text(data_js, encoding="utf-8")
+catalog = [finalize_catalog_card(c) for c in raw_cards]
+live, stats = build_live_snapshot(catalog, packs, ASOF)
+write_data_bundle(DATA, packs, catalog, live)
 
 tiers = {"A": 0, "B": 0, "C": 0}
 for c in catalog:
     tiers[c["tier"]] += 1
 
-print(f"packs={len(packs)} catalog={len(catalog)} live_cards={len(live_cards)}")
+print(f"packs={len(packs)} catalog={len(catalog)} live_cards={stats['cardsLive']}")
 print(f"tiers: A={tiers['A']} B={tiers['B']} C={tiers['C']}")

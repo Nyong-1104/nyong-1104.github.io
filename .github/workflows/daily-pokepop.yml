@@ -1,0 +1,37 @@
+name: Daily PokePop update
+
+on:
+  schedule:
+    # 00:00 KST (Asia/Seoul) = 15:00 UTC
+    - cron: "0 15 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-live:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Refresh live snapshot
+        run: python pokemon-pop/scripts/fetch_live.py
+
+      - name: Commit and push if changed
+        run: |
+          git add pokemon-pop/data/live/pop-price.json pokemon-pop/data/live/last-run.json pokemon-pop/data/data.js
+          if git diff --staged --quiet; then
+            echo "No live data changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(pokepop): daily live snapshot $(date -u +%Y-%m-%d)"
+          git push
