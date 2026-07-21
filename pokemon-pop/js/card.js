@@ -15,8 +15,13 @@
       PT.GRADE_COLS.map((g) => `<th>${g === "total" ? "Total" : g}</th>`).join("");
 
     const tbody = document.querySelector("#pop-table tbody");
+    if (!variant?.pop) {
+      tbody.innerHTML = `<tr><td colspan="${PT.GRADE_COLS.length + 1}" class="pop-empty pop-empty--message">POP 데이터 없음 (Tier B는 가격만 수집)</td></tr>`;
+      return;
+    }
+
     tbody.innerHTML = PT.GRADERS.map((g) => {
-      const data = variant?.pop?.[g] ?? null;
+      const data = variant.pop[g] ?? null;
       return `<tr>
         <td>${g}</td>
         ${PT.GRADE_COLS.map((col) => popCell(data, col)).join("")}
@@ -24,20 +29,48 @@
     }).join("");
   }
 
+  function renderEmptyState(card, lang) {
+    document.getElementById("price-value").textContent = "—";
+    document.getElementById("price-meta").textContent = `${PT.langLabel(lang)} · 데이터 없음`;
+    const tbody = document.querySelector("#pop-table tbody");
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="${PT.GRADE_COLS.length + 1}" class="pop-empty pop-empty--message">아직 수집되지 않았습니다.</td></tr>`;
+    }
+    document.getElementById("updated").textContent = "";
+  }
+
+  function renderTierC(card) {
+    document.getElementById("price-value").textContent = "—";
+    document.getElementById("price-meta").textContent = PT.tierLabel(card.tier);
+    const tbody = document.querySelector("#pop-table tbody");
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="${PT.GRADE_COLS.length + 1}" class="pop-empty pop-empty--message">Tier C 카드는 POP/가격 수집 대상이 아닙니다.</td></tr>`;
+    }
+    document.getElementById("updated").textContent = "카탈로그 정보만 제공됩니다.";
+  }
+
   function renderVariant(card, lang) {
-    const variant = card.variants?.[lang];
-    if (!variant) return;
-
-    document.getElementById("price-value").textContent = PT.formatPrice(variant.price);
-    document.getElementById("price-meta").textContent =
-      `${variant.price?.source || "PSA"} ${variant.price?.grade || "10"} · ${lang === "kr" ? "한판" : "일판"} · 기준일 ${variant.price?.asOf || variant.updatedAt || "—"}`;
-    renderPop(variant);
-    document.getElementById("updated").textContent =
-      `POP/가격 스냅샷: ${variant.updatedAt || "—"} (${lang === "kr" ? "한판" : "일판"} · 수동 시드)`;
-
     document.querySelectorAll(".lang-tab").forEach((btn) => {
       btn.classList.toggle("is-active", btn.dataset.lang === lang);
     });
+
+    if (card.tier === "C") {
+      renderTierC(card);
+      return;
+    }
+
+    const variant = card.variants?.[lang];
+    if (!variant) {
+      renderEmptyState(card, lang);
+      return;
+    }
+
+    document.getElementById("price-value").textContent = PT.formatPrice(variant.price);
+    document.getElementById("price-meta").textContent =
+      `${variant.price?.source || "PSA"} ${variant.price?.grade || "10"} · ${PT.langLabel(lang)} · 기준일 ${variant.price?.asOf || variant.updatedAt || "—"}`;
+    renderPop(variant);
+    document.getElementById("updated").textContent =
+      `POP/가격 스냅샷: ${variant.updatedAt || "—"} (${PT.langLabel(lang)} · ${PT.tierLabel(card.tier)})`;
   }
 
   const id = PT.qs("id");
@@ -75,21 +108,28 @@
     <span>${card.number}</span>
     <span class="${PT.typeBadgeClass(card.type)}">${card.typeKo}</span>
     <span class="badge">${card.rarity}</span>
+    <span class="badge badge--tier badge--tier-${(card.tier || "c").toLowerCase()}">${PT.tierLabel(card.tier)}</span>
     ${pack ? `<a class="badge" href="./set.html?pack=${pack.id}">${pack.nameKo}</a>` : ""}
   `;
 
   const tabs = document.getElementById("lang-tabs");
+  const packLangs = pack?.languages?.length ? pack.languages : ["jp", "kr"];
+  let activeLang = packLangs[0];
+
   if (tabs) {
-    tabs.innerHTML = `
-      <button type="button" class="lang-tab is-active" data-lang="jp">일본판</button>
-      <button type="button" class="lang-tab" data-lang="kr">한글판</button>
-    `;
+    tabs.innerHTML = packLangs
+      .map(
+        (lang) =>
+          `<button type="button" class="lang-tab${lang === activeLang ? " is-active" : ""}" data-lang="${lang}" role="tab">${PT.langTabLabel(lang)}</button>`
+      )
+      .join("");
     tabs.addEventListener("click", (e) => {
       const btn = e.target.closest(".lang-tab");
       if (!btn) return;
-      renderVariant(card, btn.dataset.lang);
+      activeLang = btn.dataset.lang;
+      renderVariant(card, activeLang);
     });
   }
 
-  renderVariant(card, "jp");
+  renderVariant(card, activeLang);
 })();

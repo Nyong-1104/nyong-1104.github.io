@@ -1,0 +1,542 @@
+[
+  {
+    "id": "sv2a-charizard-sar",
+    "packId": "sv2a-151",
+    "nameKo": "리자몽 ex",
+    "nameEn": "Charizard ex",
+    "number": "201/165",
+    "rarity": "SAR",
+    "type": "fire",
+    "typeKo": "불",
+    "holoStyle": "sar",
+    "image": "https://images.pokemontcg.io/sv3pt5/199_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sv2a-venusaur-sar",
+    "packId": "sv2a-151",
+    "nameKo": "이상해꽃 ex",
+    "nameEn": "Venusaur ex",
+    "number": "200/165",
+    "rarity": "SAR",
+    "type": "grass",
+    "typeKo": "풀",
+    "holoStyle": "sar",
+    "image": "https://images.pokemontcg.io/sv3pt5/198_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sv2a-blastoise-sar",
+    "packId": "sv2a-151",
+    "nameKo": "거북왕 ex",
+    "nameEn": "Blastoise ex",
+    "number": "202/165",
+    "rarity": "SAR",
+    "type": "water",
+    "typeKo": "물",
+    "holoStyle": "sar",
+    "image": "https://images.pokemontcg.io/sv3pt5/200_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sv2a-alakazam-sar",
+    "packId": "sv2a-151",
+    "nameKo": "후딘 ex",
+    "nameEn": "Alakazam ex",
+    "number": "203/165",
+    "rarity": "SAR",
+    "type": "psychic",
+    "typeKo": "초",
+    "holoStyle": "sar",
+    "image": "https://images.pokemontcg.io/sv3pt5/201_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sv2a-zapdos-sar",
+    "packId": "sv2a-151",
+    "nameKo": "썬더 ex",
+    "nameEn": "Zapdos ex",
+    "number": "204/165",
+    "rarity": "SAR",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "sar",
+    "image": "https://images.pokemontcg.io/sv3pt5/202_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sv2a-mew-sar",
+    "packId": "sv2a-151",
+    "nameKo": "뮤 ex",
+    "nameEn": "Mew ex",
+    "number": "205/165",
+    "rarity": "SAR",
+    "type": "psychic",
+    "typeKo": "초",
+    "holoStyle": "sar",
+    "image": "https://images.pokemontcg.io/sv3pt5/151_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sv2a-erika-sar",
+    "packId": "sv2a-151",
+    "nameKo": "이상해씨의 초대",
+    "nameEn": "Erika's Invitation",
+    "number": "206/165",
+    "rarity": "SAR",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "sar",
+    "image": "https://images.pokemontcg.io/sv3pt5/203_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sv2a-giovanni-sar",
+    "packId": "sv2a-151",
+    "nameKo": "비주의 카리스마",
+    "nameEn": "Giovanni's Charisma",
+    "number": "207/165",
+    "rarity": "SAR",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "sar",
+    "image": "https://images.pokemontcg.io/sv3pt5/204_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sv2a-charizard-sr",
+    "packId": "sv2a-151",
+    "nameKo": "리자몽 ex",
+    "nameEn": "Charizard ex",
+    "number": "185/165",
+    "rarity": "SR",
+    "type": "fire",
+    "typeKo": "불",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/sv3pt5/183_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sv2a-bulbasaur-ar",
+    "packId": "sv2a-151",
+    "nameKo": "이상해씨",
+    "nameEn": "Bulbasaur",
+    "number": "166/165",
+    "rarity": "AR",
+    "type": "grass",
+    "typeKo": "풀",
+    "holoStyle": "reverse",
+    "image": "https://images.pokemontcg.io/sv3pt5/166_hires.png",
+    "tier": "B",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "kyun-pikachu",
+    "packId": "pokekyun",
+    "nameKo": "피카츄",
+    "nameEn": "Pikachu",
+    "number": "010/032",
+    "rarity": "RR",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/g1/RC29_hires.png",
+    "tier": "B",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "kyun-dedenne",
+    "packId": "pokekyun",
+    "nameKo": "데덴네",
+    "nameEn": "Dedenne",
+    "number": "012/032",
+    "rarity": "U",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "reverse",
+    "image": "https://images.pokemontcg.io/g1/RC10_hires.png",
+    "tier": "C",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "kyun-jirachi",
+    "packId": "pokekyun",
+    "nameKo": "지라치",
+    "nameEn": "Jirachi",
+    "number": "015/032",
+    "rarity": "R",
+    "type": "psychic",
+    "typeKo": "초",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/xy10/42_hires.png",
+    "tier": "B",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "kyun-sylveon-ex",
+    "packId": "pokekyun",
+    "nameKo": "님피아 EX",
+    "nameEn": "Sylveon EX",
+    "number": "025/032",
+    "rarity": "RR",
+    "type": "fairy",
+    "typeKo": "페어리",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/xy7/92_hires.png",
+    "tier": "B",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "kyun-charizard",
+    "packId": "pokekyun",
+    "nameKo": "리자몽",
+    "nameEn": "Charizard",
+    "number": "005/032",
+    "rarity": "R",
+    "type": "fire",
+    "typeKo": "불",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/xy12/11_hires.png",
+    "tier": "B",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "kyun-flareon-ex",
+    "packId": "pokekyun",
+    "nameKo": "부스터 EX",
+    "nameEn": "Flareon EX",
+    "number": "006/032",
+    "rarity": "RR",
+    "type": "fire",
+    "typeKo": "불",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/xy8/20_hires.png",
+    "tier": "B",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "kyun-gardevoir-ex",
+    "packId": "pokekyun",
+    "nameKo": "가디안 EX",
+    "nameEn": "Gardevoir EX",
+    "number": "019/032",
+    "rarity": "RR",
+    "type": "fairy",
+    "typeKo": "페어리",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/xy7/78_hires.png",
+    "tier": "B",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "kyun-diancie",
+    "packId": "pokekyun",
+    "nameKo": "디안시",
+    "nameEn": "Diancie",
+    "number": "027/032",
+    "rarity": "R",
+    "type": "fairy",
+    "typeKo": "페어리",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/xy6/71_hires.png",
+    "tier": "B",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "kyun-espurr",
+    "packId": "pokekyun",
+    "nameKo": "냐스퍼",
+    "nameEn": "Espurr",
+    "number": "016/032",
+    "rarity": "C",
+    "type": "psychic",
+    "typeKo": "초",
+    "holoStyle": "reverse",
+    "image": "https://images.pokemontcg.io/xy4/42_hires.png",
+    "tier": "C",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "kyun-raichu",
+    "packId": "pokekyun",
+    "nameKo": "라이츄",
+    "nameEn": "Raichu",
+    "number": "011/032",
+    "rarity": "R",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/g1/RC9_hires.png",
+    "tier": "B",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sm7a-zeraora-gx-sr",
+    "packId": "thunderclap-spark",
+    "nameKo": "제라오라 GX",
+    "nameEn": "Zeraora-GX",
+    "number": "063/060",
+    "rarity": "SR",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/sm8/201_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sm7a-zeraora-gx-hr",
+    "packId": "thunderclap-spark",
+    "nameKo": "제라오라 GX",
+    "nameEn": "Zeraora-GX",
+    "number": "069/060",
+    "rarity": "HR",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "sar",
+    "image": "https://images.pokemontcg.io/sm8/201_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sm7a-virizion-gx-sr",
+    "packId": "thunderclap-spark",
+    "nameKo": "비리디온 GX",
+    "nameEn": "Virizion-GX",
+    "number": "061/060",
+    "rarity": "SR",
+    "type": "grass",
+    "typeKo": "풀",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/sm8/196_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sm7a-genesect-gx-sr",
+    "packId": "thunderclap-spark",
+    "nameKo": "게노세크트 GX",
+    "nameEn": "Genesect-GX",
+    "number": "064/060",
+    "rarity": "SR",
+    "type": "metal",
+    "typeKo": "강철",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/sm8/60_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sm7a-magcargo-gx-sr",
+    "packId": "thunderclap-spark",
+    "nameKo": "마그카르고 GX",
+    "nameEn": "Magcargo-GX",
+    "number": "062/060",
+    "rarity": "SR",
+    "type": "fire",
+    "typeKo": "불",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/sm8/202_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sm7a-kahili-sr",
+    "packId": "thunderclap-spark",
+    "nameKo": "카힐리",
+    "nameEn": "Kahili",
+    "number": "065/060",
+    "rarity": "SR",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/sm8/190_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sm7a-judge-sr",
+    "packId": "thunderclap-spark",
+    "nameKo": "저지맨",
+    "nameEn": "Judge",
+    "number": "066/060",
+    "rarity": "SR",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/sm8/191_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sm7a-tapu-koko",
+    "packId": "thunderclap-spark",
+    "nameKo": "카푸코코",
+    "nameEn": "Tapu Koko",
+    "number": "032/060",
+    "rarity": "R",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/sm2/47_hires.png",
+    "tier": "B",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sm7a-ditto-prism",
+    "packId": "thunderclap-spark",
+    "nameKo": "메타몽◇",
+    "nameEn": "Ditto ◇",
+    "number": "043/060",
+    "rarity": "PRISM",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/sm8/154_hires.png",
+    "tier": "B",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  },
+  {
+    "id": "sm7a-electropower-ur",
+    "packId": "thunderclap-spark",
+    "nameKo": "일렉파워",
+    "nameEn": "Electropower",
+    "number": "071/060",
+    "rarity": "UR",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://images.pokemontcg.io/sm8/172_hires.png",
+    "tier": "A",
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    }
+  }
+]

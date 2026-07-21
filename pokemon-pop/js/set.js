@@ -2,19 +2,13 @@
   const PT = window.PopTracker;
   const RARITY_RANK = { SAR: 5, SIR: 5, HR: 5, UR: 4, SR: 4, RR: 4, PRISM: 3, R: 3, AR: 3, U: 2, C: 1 };
 
-  function listPrice(card) {
-    const jp = card.variants?.jp?.price?.amount || 0;
-    const kr = card.variants?.kr?.price?.amount || 0;
-    return Math.max(jp, kr);
-  }
-
   function sortCards(list, mode) {
     const arr = list.slice();
     switch (mode) {
       case "price-desc":
-        return arr.sort((a, b) => listPrice(b) - listPrice(a));
+        return arr.sort((a, b) => PT.bestPriceAmount(b) - PT.bestPriceAmount(a));
       case "price-asc":
-        return arr.sort((a, b) => listPrice(a) - listPrice(b));
+        return arr.sort((a, b) => PT.bestPriceAmount(a) - PT.bestPriceAmount(b));
       case "type":
         return arr.sort((a, b) => (a.typeKo || "").localeCompare(b.typeKo || "", "ko"));
       case "rarity":
@@ -33,6 +27,13 @@
       if (type && type !== "all" && c.type !== type) return false;
       return true;
     });
+  }
+
+  function listPriceLabel(card) {
+    const best = PT.bestPriceAmount(card);
+    if (best > 0) return PT.formatPrice({ amount: best, currency: "USD" });
+    if (card.tier === "C") return "수집 안 함";
+    return "—";
   }
 
   const packId = PT.qs("pack");
@@ -91,7 +92,6 @@
       });
       a.appendChild(holo);
 
-      const jpPrice = card.variants?.jp?.price;
       const meta = document.createElement("div");
       meta.className = "card-meta";
       meta.innerHTML = `
@@ -99,8 +99,9 @@
         <div class="card-meta__sub">
           <span class="${PT.typeBadgeClass(card.type)}">${card.typeKo}</span>
           <span>${card.rarity}</span>
+          <span class="badge badge--tier badge--tier-${(card.tier || "c").toLowerCase()}">${card.tier || "—"}</span>
           <span>${card.number}</span>
-          <span>${PT.formatPrice(jpPrice)}</span>
+          <span>${listPriceLabel(card)}</span>
         </div>
       `;
       a.appendChild(meta);
