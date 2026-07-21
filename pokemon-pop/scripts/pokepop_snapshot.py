@@ -4,8 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 
-TIER_A = {"SAR", "SIR", "HR", "UR", "SR"}
-TIER_B = {"AR", "RR", "PRISM", "R"}
+TIER_A = {"SAR", "SIR", "HR", "UR", "SR", "AR"}
+TIER_B = {"RR", "PRISM", "R"}
 
 
 def seed_int(key: str) -> int:

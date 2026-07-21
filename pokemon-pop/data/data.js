@@ -290,7 +290,7 @@ window.POP_CATALOG = [
     "typeKo": "풀",
     "holoStyle": "reverse",
     "image": "https://images.pokemontcg.io/sv3pt5/166_hires.png",
-    "tier": "B",
+    "tier": "A",
     "catalogKeys": {
       "jp": null,
       "kr": null,
@@ -743,7 +743,7 @@ window.POP_CATALOG = [
   }
 ];
 window.POP_LIVE = {
-  "generatedAt": "2026-07-21T16:35:40+09:00",
+  "generatedAt": "2026-07-21T16:39:29+09:00",
   "source": "seed",
   "cards": {
     "sv2a-charizard-sar": {
@@ -787,7 +787,7 @@ window.POP_LIVE = {
             "total": 19
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -821,7 +821,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "en": {
         "price": {
@@ -855,7 +855,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sv2a-venusaur-sar": {
@@ -899,7 +899,7 @@ window.POP_LIVE = {
             "total": 20
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -933,7 +933,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "en": {
         "price": {
@@ -967,7 +967,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sv2a-blastoise-sar": {
@@ -1011,7 +1011,7 @@ window.POP_LIVE = {
             "total": 15
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1045,7 +1045,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "en": {
         "price": {
@@ -1079,7 +1079,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sv2a-alakazam-sar": {
@@ -1123,7 +1123,7 @@ window.POP_LIVE = {
             "total": 15
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1157,7 +1157,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "en": {
         "price": {
@@ -1191,7 +1191,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sv2a-zapdos-sar": {
@@ -1235,7 +1235,7 @@ window.POP_LIVE = {
             "total": 15
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1269,7 +1269,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "en": {
         "price": {
@@ -1303,7 +1303,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sv2a-mew-sar": {
@@ -1347,7 +1347,7 @@ window.POP_LIVE = {
             "total": 19
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1381,7 +1381,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "en": {
         "price": {
@@ -1415,7 +1415,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sv2a-erika-sar": {
@@ -1459,7 +1459,7 @@ window.POP_LIVE = {
             "total": 21
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1493,7 +1493,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "en": {
         "price": {
@@ -1527,7 +1527,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sv2a-giovanni-sar": {
@@ -1571,7 +1571,7 @@ window.POP_LIVE = {
             "total": 15
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1605,7 +1605,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "en": {
         "price": {
@@ -1639,7 +1639,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sv2a-charizard-sr": {
@@ -1683,7 +1683,7 @@ window.POP_LIVE = {
             "total": 39
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1717,7 +1717,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "en": {
         "price": {
@@ -1751,7 +1751,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sv2a-bulbasaur-ar": {
@@ -1763,8 +1763,39 @@ window.POP_LIVE = {
           "currency": "USD",
           "asOf": "2026-07-21"
         },
-        "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "pop": {
+          "PSA": {
+            "10": 3072,
+            "9": 2027,
+            "8": 491,
+            "total": 5616
+          },
+          "BGS": {
+            "10": 170,
+            "9.5": 512,
+            "9": 340,
+            "total": 1028
+          },
+          "CGC": {
+            "10": 256,
+            "9.5": 260,
+            "9": 128,
+            "total": 778
+          },
+          "BRG": null,
+          "TAG": {
+            "10": 38,
+            "9": 61,
+            "total": 102
+          },
+          "ACE": null,
+          "AGS": {
+            "10": 25,
+            "9": 38,
+            "total": 61
+          }
+        },
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1774,8 +1805,31 @@ window.POP_LIVE = {
           "currency": "USD",
           "asOf": "2026-07-21"
         },
-        "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "pop": {
+          "PSA": {
+            "10": 1008,
+            "9": 655,
+            "8": 201,
+            "total": 1869
+          },
+          "BGS": {
+            "10": 56,
+            "9.5": 170,
+            "9": 112,
+            "total": 344
+          },
+          "CGC": {
+            "10": 84,
+            "9.5": 88,
+            "9": 42,
+            "total": 262
+          },
+          "BRG": null,
+          "TAG": null,
+          "ACE": null,
+          "AGS": null
+        },
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "en": {
         "price": {
@@ -1785,8 +1839,31 @@ window.POP_LIVE = {
           "currency": "USD",
           "asOf": "2026-07-21"
         },
-        "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "pop": {
+          "PSA": {
+            "10": 2527,
+            "9": 1743,
+            "8": 606,
+            "total": 4885
+          },
+          "BGS": {
+            "10": 140,
+            "9.5": 422,
+            "9": 280,
+            "total": 848
+          },
+          "CGC": {
+            "10": 210,
+            "9.5": 214,
+            "9": 105,
+            "total": 640
+          },
+          "BRG": null,
+          "TAG": null,
+          "ACE": null,
+          "AGS": null
+        },
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "kyun-pikachu": {
@@ -1799,7 +1876,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1810,7 +1887,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "kyun-jirachi": {
@@ -1823,7 +1900,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1834,7 +1911,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "kyun-sylveon-ex": {
@@ -1847,7 +1924,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1858,7 +1935,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "kyun-charizard": {
@@ -1871,7 +1948,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1882,7 +1959,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "kyun-flareon-ex": {
@@ -1895,7 +1972,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1906,7 +1983,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "kyun-gardevoir-ex": {
@@ -1919,7 +1996,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1930,7 +2007,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "kyun-diancie": {
@@ -1943,7 +2020,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1954,7 +2031,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "kyun-raichu": {
@@ -1967,7 +2044,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -1978,7 +2055,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sm7a-zeraora-gx-sr": {
@@ -2022,7 +2099,7 @@ window.POP_LIVE = {
             "total": 8
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -2056,7 +2133,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sm7a-zeraora-gx-hr": {
@@ -2100,7 +2177,7 @@ window.POP_LIVE = {
             "total": 3
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -2134,7 +2211,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sm7a-virizion-gx-sr": {
@@ -2178,7 +2255,7 @@ window.POP_LIVE = {
             "total": 7
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -2212,7 +2289,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sm7a-genesect-gx-sr": {
@@ -2256,7 +2333,7 @@ window.POP_LIVE = {
             "total": 5
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -2290,7 +2367,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sm7a-magcargo-gx-sr": {
@@ -2334,7 +2411,7 @@ window.POP_LIVE = {
             "total": 5
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -2368,7 +2445,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sm7a-kahili-sr": {
@@ -2408,7 +2485,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -2442,7 +2519,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sm7a-judge-sr": {
@@ -2482,7 +2559,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -2516,7 +2593,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sm7a-tapu-koko": {
@@ -2529,7 +2606,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -2540,7 +2617,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sm7a-ditto-prism": {
@@ -2553,7 +2630,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -2564,7 +2641,7 @@ window.POP_LIVE = {
           "asOf": "2026-07-21"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     },
     "sm7a-electropower-ur": {
@@ -2608,7 +2685,7 @@ window.POP_LIVE = {
             "total": 3
           }
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       },
       "kr": {
         "price": {
@@ -2642,16 +2719,16 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:35:40+09:00"
+        "updatedAt": "2026-07-21T16:39:29+09:00"
       }
     }
   }
 };
 window.POP_LAST_RUN = {
-  "ranAt": "2026-07-21T16:35:40+09:00",
+  "ranAt": "2026-07-21T16:39:29+09:00",
   "stats": {
     "asOf": "2026-07-21",
-    "asOfIso": "2026-07-21T16:35:40+09:00",
+    "asOfIso": "2026-07-21T16:39:29+09:00",
     "cardsTotal": 30,
     "cardsLive": 28,
     "skippedTierC": 2,
