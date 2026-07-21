@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>카드 · PokePop</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="./css/pop.css">
+  <link rel="stylesheet" href="./css/holo.css">
+</head>
+<body>
+  <nav class="site-nav">
+    <a class="nav-brand" href="./index.html">
+      <img class="nav-brand__logo" src="./assets/pokepop-logo.png" alt="PokePop">
+      <span class="nav-brand__text">PokePop</span>
+    </a>
+    <a class="nav-back" id="nav-back" href="./index.html">← 팩 목록</a>
+  </nav>
+
+  <main class="page">
+    <div class="detail" id="detail">
+      <div class="detail__visual" id="detail-visual"></div>
+      <div class="detail__info">
+        <h1 id="card-name">—</h1>
+        <div class="detail__sub" id="card-sub"></div>
+
+        <div class="price-panel">
+          <div class="price-panel__label">Current price</div>
+          <div class="price-panel__value" id="price-value">—</div>
+          <div class="price-panel__meta" id="price-meta"></div>
+        </div>
+
+        <h2 class="section-title">POP REPORT</h2>
+        <div class="pop-table-wrap">
+          <table class="pop-table" id="pop-table">
+            <thead><tr></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="footnote" id="updated"></p>
+        <p class="footnote">
+          PSA · BGS · CGC · BRG · TAG · ACE · AGS. 값이 비어 있으면 아직 스냅샷에 없는 업체입니다.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <script src="./data/data.js"></script>
+  <script src="./js/shared.js"></script>
+  <script src="./js/holo.js"></script>
+  <script src="./js/card.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "sv2a-151",
+    "nameKo": "Pokémon TCG: Scarlet & Violet—151",
+    "nameEn": "Pokémon TCG: Scarlet & Violet—151",
+    "nameShort": "151",
+    "code": "sv2a",
+    "releaseYear": 2023,
+    "languages": ["kr", "jp"],
+    "blurb": "원조 151마리를 모은 강화 확장팩. 리자몽·뮤 SAR가 대표 카드입니다.",
+    "packImage": "./assets/pack-151.png",
+    "coverCardId": "sv2a-charizard-sar-jp",
+    "cardIds": [
+      "sv2a-charizard-sar-jp",
+      "sv2a-charizard-sar-kr",
+      "sv2a-mew-sar-jp",
+      "sv2a-mew-sar-kr"
+    ]
+  },
+  {
+    "id": "pokekyun",
+    "nameKo": "PokéKyun Collection",
+    "nameEn": "PokéKyun Collection",
+    "code": "CP1",
+    "releaseYear": 2016,
+    "languages": ["kr", "jp"],
+    "blurb": "2016년 발매된 귀여움 특화 세트. 피카츄·데덴네가 대표 카드입니다.",
+    "packImage": "./assets/pack-pokekyun.png",
+    "coverCardId": "kyun-pikachu-jp",
+    "cardIds": [
+      "kyun-pikachu-jp",
+      "kyun-pikachu-kr",
+      "kyun-dedenne-jp",
+      "kyun-dedenne-kr"
+    ]
+  }
+]

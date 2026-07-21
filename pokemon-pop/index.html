@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PokePop · nyong.app</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="./css/pop.css">
+  <link rel="stylesheet" href="./css/holo.css">
+</head>
+<body>
+  <nav class="site-nav">
+    <a class="nav-brand" href="./index.html">
+      <img class="nav-brand__logo" src="./assets/pokepop-logo.png" alt="PokePop">
+      <span class="nav-brand__text">PokePop</span>
+    </a>
+    <a class="nav-back" href="../index.html">← nyong.app</a>
+  </nav>
+
+  <main class="page">
+    <header class="hero-block">
+      <img class="hero-logo" src="./assets/pokepop-logo.png" alt="PokePop">
+      <h1>PokePop</h1>
+      <p>포켓몬카드팩을 골라 그레이딩 POP과 가격을 한번에 확인 할 수 있어요.</p>
+    </header>
+    <div class="pack-grid" id="pack-grid"></div>
+
+    <p class="credit">
+      Holo effect adapted from
+      <a href="https://github.com/simeydotme/pokemon-cards-css" target="_blank" rel="noopener">simeydotme/pokemon-cards-css</a>
+      (GPL-3.0). Card images via Pokémon TCG API. POP/가격은 실시간이 아닌 테스트를 위한 MVP 스냅샷이에요.
+    </p>
+  </main>
+
+  <script src="./data/data.js"></script>
+  <script src="./js/shared.js"></script>
+  <script src="./js/holo.js"></script>
+  <script src="./js/packs.js"></script>
+</body>
+</html>

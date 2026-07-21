@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>세트 · PokePop</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="./css/pop.css">
+  <link rel="stylesheet" href="./css/holo.css">
+</head>
+<body>
+  <nav class="site-nav">
+    <a class="nav-brand" href="./index.html">
+      <img class="nav-brand__logo" src="./assets/pokepop-logo.png" alt="PokePop">
+      <span class="nav-brand__text">PokePop</span>
+    </a>
+    <a class="nav-back" href="./index.html">← 팩 목록</a>
+  </nav>
+
+  <main class="page">
+    <header class="set-head">
+      <h1 id="set-title">세트</h1>
+      <p id="set-blurb"></p>
+    </header>
+
+    <div class="toolbar">
+      <div class="field">
+        <label for="sort-by">정렬</label>
+        <select id="sort-by">
+          <option value="price-desc">가격 높은순</option>
+          <option value="price-asc">가격 낮은순</option>
+          <option value="type">속성순</option>
+          <option value="rarity">등급(희귀도)순</option>
+          <option value="name">이름순</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="filter-lang">언어</label>
+        <select id="filter-lang">
+          <option value="all">전체</option>
+          <option value="kr">한판</option>
+          <option value="jp">일판</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="filter-type">속성</label>
+        <select id="filter-type">
+          <option value="all">전체</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card-grid" id="card-grid"></div>
+  </main>
+
+  <script src="./data/data.js"></script>
+  <script src="./js/shared.js"></script>
+  <script src="./js/holo.js"></script>
+  <script src="./js/set.js"></script>
+</body>
+</html>

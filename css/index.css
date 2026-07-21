@@ -263,6 +263,11 @@ body {
   transform: rotate(-3deg);
 }
 
+.poster-tilt-box--pop {
+  clip-path: polygon(3% 5%, 99% 3%, 95% 94%, -4% 92%);
+  transform: rotate(4deg);
+}
+
 .poster-tilt-text {
   font-family: 'Archivo Black', sans-serif;
   font-size: clamp(1.55rem, 7vw, 2.05rem);
