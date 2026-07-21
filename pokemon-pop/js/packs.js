@@ -42,4 +42,6 @@
     grid.appendChild(a);
     PT.mountHoloCard(holo);
   });
+
+  PT.mountSiteUpdated(document.getElementById("site-updated"));
 })();

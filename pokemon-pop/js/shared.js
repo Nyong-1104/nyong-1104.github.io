@@ -18,6 +18,78 @@ window.PopTracker = window.PopTracker || {};
     return window.POP_LIVE || { generatedAt: null, cards: {} };
   };
 
+  PT.getSiteUpdatedAt = function () {
+    const live = PT.getLive();
+    const lastRun = window.POP_LAST_RUN || {};
+    return live.generatedAt || lastRun.ranAt || null;
+  };
+
+  PT.parseSnapshotTime = function (value) {
+    if (!value) return null;
+    const str = String(value);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      return new Date(str + "T00:00:00+09:00");
+    }
+    const d = new Date(str);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  PT.formatTimeAgo = function (value) {
+    const then = PT.parseSnapshotTime(value);
+    if (!then) return "—";
+    const sec = Math.round((then.getTime() - Date.now()) / 1000);
+    const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
+    const abs = Math.abs(sec);
+    if (abs < 45) return rtf.format(sec, "second");
+    const min = Math.round(sec / 60);
+    if (Math.abs(min) < 60) return rtf.format(min, "minute");
+    const hr = Math.round(sec / 3600);
+    if (Math.abs(hr) < 24) return rtf.format(hr, "hour");
+    const day = Math.round(sec / 86400);
+    if (Math.abs(day) < 30) return rtf.format(day, "day");
+    const month = Math.round(sec / (86400 * 30));
+    if (Math.abs(month) < 12) return rtf.format(month, "month");
+    return rtf.format(Math.round(sec / (86400 * 365)), "year");
+  };
+
+  PT.formatLocalDateTime = function (value) {
+    const d = PT.parseSnapshotTime(value);
+    if (!d) return "";
+    return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  };
+
+  /** Relative + viewer-local absolute time, e.g. "3 hours ago · Jul 21, 2026, 4:25 PM" */
+  PT.formatUpdatedDisplay = function (value) {
+    const ago = PT.formatTimeAgo(value);
+    const local = PT.formatLocalDateTime(value);
+    if (!local || ago === "—") return ago;
+    return `${ago} · ${local}`;
+  };
+
+  PT.bindRelativeTime = function (el, getText) {
+    if (!el) return function () {};
+    function paint() {
+      el.textContent = typeof getText === "function" ? getText() : getText;
+    }
+    paint();
+    window.setInterval(paint, 60000);
+    return paint;
+  };
+
+  PT.mountSiteUpdated = function (el) {
+    if (!el) return;
+    const ts = PT.getSiteUpdatedAt();
+    if (!ts) {
+      el.textContent = "";
+      el.hidden = true;
+      return;
+    }
+    el.hidden = false;
+    PT.bindRelativeTime(el, function () {
+      return `데이터 갱신: ${PT.formatUpdatedDisplay(ts)}`;
+    });
+  };
+
   PT.mergeCard = function (catalogCard) {
     const liveEntry = PT.getLive().cards?.[catalogCard.id] || {};
     const variants = {};

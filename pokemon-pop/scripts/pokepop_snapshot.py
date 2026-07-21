@@ -56,7 +56,7 @@ def full_pop(key: str, base_pop10: int, lang: str) -> dict:
     }
 
 
-def price_snapshot(key: str, base_price: int, lang: str, asof: str) -> dict:
+def price_snapshot(key: str, base_price: int, lang: str, asof_iso: str) -> dict:
     s = seed_int(f"{key}-{lang}")
     mult = 0.42 if lang == "kr" else 1.0 if lang == "jp" else 0.95
     amount = max(8, int(base_price * mult * (0.85 + (s % 30) / 100)))
@@ -65,23 +65,23 @@ def price_snapshot(key: str, base_price: int, lang: str, asof: str) -> dict:
         "grade": "10",
         "amount": amount,
         "currency": "USD",
-        "asOf": asof,
+        "asOf": asof_iso[:10],
     }
 
 
-def live_variant(card_id: str, tier: str, base_price: int, base_pop: int, lang: str, asof: str):
+def live_variant(card_id: str, tier: str, base_price: int, base_pop: int, lang: str, asof_iso: str):
     if tier == "C":
         return None
     if tier == "B":
         return {
-            "price": price_snapshot(card_id, base_price, lang, asof),
+            "price": price_snapshot(card_id, base_price, lang, asof_iso),
             "pop": None,
-            "updatedAt": asof,
+            "updatedAt": asof_iso,
         }
     return {
-        "price": price_snapshot(card_id, base_price, lang, asof),
+        "price": price_snapshot(card_id, base_price, lang, asof_iso),
         "pop": full_pop(card_id, base_pop, lang),
-        "updatedAt": asof,
+        "updatedAt": asof_iso,
     }
 
 
@@ -92,7 +92,7 @@ def finalize_catalog_card(card: dict) -> dict:
     return out
 
 
-def build_live_snapshot(catalog, packs, asof: str, previous=None):
+def build_live_snapshot(catalog, packs, asof_iso: str, previous=None):
     """Build live POP/price data. Tier C cards are omitted."""
     previous = previous or {}
     prev_cards = previous.get("cards") or {}
@@ -100,7 +100,8 @@ def build_live_snapshot(catalog, packs, asof: str, previous=None):
 
     live_cards = {}
     stats = {
-        "asOf": asof,
+        "asOf": asof_iso[:10],
+        "asOfIso": asof_iso,
         "cardsTotal": len(catalog),
         "cardsLive": 0,
         "skippedTierC": 0,
@@ -133,7 +134,7 @@ def build_live_snapshot(catalog, packs, asof: str, previous=None):
                     base_price,
                     base_pop,
                     lang,
-                    asof,
+                    asof_iso,
                 )
                 if variant:
                     variants[lang] = variant
@@ -150,14 +151,14 @@ def build_live_snapshot(catalog, packs, asof: str, previous=None):
             stats["cardsLive"] += 1
 
     live = {
-        "generatedAt": asof,
+        "generatedAt": asof_iso,
         "source": "seed",
         "cards": live_cards,
     }
     return live, stats
 
 
-def write_data_bundle(data_dir: Path, packs, catalog, live) -> None:
+def write_data_bundle(data_dir: Path, packs, catalog, live, last_run=None) -> None:
     data_dir.mkdir(parents=True, exist_ok=True)
     live_dir = data_dir / "live"
     live_dir.mkdir(parents=True, exist_ok=True)
@@ -175,6 +176,10 @@ def write_data_bundle(data_dir: Path, packs, catalog, live) -> None:
         encoding="utf-8",
     )
 
+    last_run_path = live_dir / "last-run.json"
+    if last_run is None and last_run_path.exists():
+        last_run = json.loads(last_run_path.read_text(encoding="utf-8"))
+
     data_js = (
         "window.POP_PACKS = "
         + json.dumps(packs, ensure_ascii=False, indent=2)
@@ -182,6 +187,8 @@ def write_data_bundle(data_dir: Path, packs, catalog, live) -> None:
         + json.dumps(catalog, ensure_ascii=False, indent=2)
         + ";\nwindow.POP_LIVE = "
         + json.dumps(live, ensure_ascii=False, indent=2)
+        + ";\nwindow.POP_LAST_RUN = "
+        + json.dumps(last_run or {}, ensure_ascii=False, indent=2)
         + ";\n"
     )
     (data_dir / "data.js").write_text(data_js, encoding="utf-8")

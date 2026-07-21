@@ -36,41 +36,15 @@
     if (tbody) {
       tbody.innerHTML = `<tr><td colspan="${PT.GRADE_COLS.length + 1}" class="pop-empty pop-empty--message">아직 수집되지 않았습니다.</td></tr>`;
     }
-    document.getElementById("updated").textContent = "";
   }
 
-  function renderTierC(card) {
+  function renderTierC() {
     document.getElementById("price-value").textContent = "—";
     document.getElementById("price-meta").textContent = PT.tierLabel(card.tier);
     const tbody = document.querySelector("#pop-table tbody");
     if (tbody) {
       tbody.innerHTML = `<tr><td colspan="${PT.GRADE_COLS.length + 1}" class="pop-empty pop-empty--message">Tier C 카드는 POP/가격 수집 대상이 아닙니다.</td></tr>`;
     }
-    document.getElementById("updated").textContent = "카탈로그 정보만 제공됩니다.";
-  }
-
-  function renderVariant(card, lang) {
-    document.querySelectorAll(".lang-tab").forEach((btn) => {
-      btn.classList.toggle("is-active", btn.dataset.lang === lang);
-    });
-
-    if (card.tier === "C") {
-      renderTierC(card);
-      return;
-    }
-
-    const variant = card.variants?.[lang];
-    if (!variant) {
-      renderEmptyState(card, lang);
-      return;
-    }
-
-    document.getElementById("price-value").textContent = PT.formatPrice(variant.price);
-    document.getElementById("price-meta").textContent =
-      `${variant.price?.source || "PSA"} ${variant.price?.grade || "10"} · ${PT.langLabel(lang)} · 기준일 ${variant.price?.asOf || variant.updatedAt || "—"}`;
-    renderPop(variant);
-    document.getElementById("updated").textContent =
-      `POP/가격 스냅샷: ${variant.updatedAt || "—"} (${PT.langLabel(lang)} · ${PT.tierLabel(card.tier)})`;
   }
 
   const id = PT.qs("id");
@@ -116,6 +90,43 @@
   const packLangs = pack?.languages?.length ? pack.languages : ["jp", "kr"];
   let activeLang = packLangs[0];
 
+  function getUpdatedText() {
+    if (card.tier === "C") return "카탈로그 정보만 제공됩니다.";
+    const variant = card.variants?.[activeLang];
+    if (!variant) return `${PT.langLabel(activeLang)} · 아직 수집되지 않았습니다.`;
+    const ts = variant.updatedAt || PT.getSiteUpdatedAt();
+    return `POP/가격 스냅샷: ${PT.formatUpdatedDisplay(ts)} (${PT.langLabel(activeLang)} · ${PT.tierLabel(card.tier)})`;
+  }
+
+  const repaintUpdated = PT.bindRelativeTime(document.getElementById("updated"), getUpdatedText);
+
+  function renderVariant(lang) {
+    activeLang = lang;
+    document.querySelectorAll(".lang-tab").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.dataset.lang === lang);
+    });
+
+    if (card.tier === "C") {
+      renderTierC();
+      repaintUpdated();
+      return;
+    }
+
+    const variant = card.variants?.[lang];
+    if (!variant) {
+      renderEmptyState(card, lang);
+      repaintUpdated();
+      return;
+    }
+
+    const priceWhen = variant.price?.asOf || variant.updatedAt;
+    document.getElementById("price-value").textContent = PT.formatPrice(variant.price);
+    document.getElementById("price-meta").textContent =
+      `${variant.price?.source || "PSA"} ${variant.price?.grade || "10"} · ${PT.langLabel(lang)} · ${PT.formatUpdatedDisplay(priceWhen)}`;
+    renderPop(variant);
+    repaintUpdated();
+  }
+
   if (tabs) {
     tabs.innerHTML = packLangs
       .map(
@@ -126,10 +137,9 @@
     tabs.addEventListener("click", (e) => {
       const btn = e.target.closest(".lang-tab");
       if (!btn) return;
-      activeLang = btn.dataset.lang;
-      renderVariant(card, activeLang);
+      renderVariant(btn.dataset.lang);
     });
   }
 
-  renderVariant(card, activeLang);
+  renderVariant(activeLang);
 })();

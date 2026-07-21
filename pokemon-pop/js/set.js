@@ -110,6 +110,8 @@
     });
   }
 
+  PT.mountSiteUpdated(document.getElementById("site-updated"));
+
   sortSelect.addEventListener("change", render);
   typeSelect.addEventListener("change", render);
   render();
