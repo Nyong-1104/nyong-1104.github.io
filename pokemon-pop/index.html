@@ -28,6 +28,20 @@
       <img class="nav-brand__logo" src="./assets/pokepop-logo.png" alt="PokePop">
       <span class="nav-brand__text">PokePop</span>
     </a>
+    <div class="nav-search" id="nav-search">
+      <label class="nav-search__label" for="pokemon-search">
+        <span class="nav-brand__text">Search</span>
+      </label>
+      <input
+        id="pokemon-search"
+        class="nav-search__input"
+        type="search"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="포켓몬 이름 검색"
+      >
+    </div>
+    <div class="nav-actions"></div>
   </nav>
 
   <main class="page">
@@ -36,7 +50,21 @@
       <h1>PokePop</h1>
       <p>포켓몬카드팩을 골라 그레이딩 POP과 가격을 한번에 확인 할 수 있어요.</p>
     </header>
-    <div class="pack-grid" id="pack-grid"></div>
+
+    <section class="search-panel" id="search-panel" hidden>
+      <header class="search-panel__head">
+        <h2 class="search-panel__title" id="search-panel-title"></h2>
+        <button type="button" class="search-panel__clear" id="search-clear"></button>
+      </header>
+      <div class="card-grid" id="search-grid"></div>
+    </section>
+
+    <section class="packs-section" id="packs-section">
+      <header class="packs-section__head" id="packs-section-head" hidden>
+        <h2 class="packs-section__title" id="packs-section-title"></h2>
+      </header>
+      <div class="pack-grid" id="pack-grid"></div>
+    </section>
 
     <p class="site-updated" id="site-updated" hidden></p>
 
@@ -49,6 +77,7 @@
 
   <script src="./data/data.js"></script>
   <script src="./js/shared.js"></script>
+  <script src="./js/i18n.js"></script>
   <script src="./js/holo.js"></script>
   <script src="./js/packs.js"></script>
 </body>

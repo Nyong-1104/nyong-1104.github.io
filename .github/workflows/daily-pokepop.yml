@@ -1,9 +1,9 @@
-name: Daily PokePop update
+name: Hourly PokePop update
 
 on:
   schedule:
-    # 00:00 KST (Asia/Seoul) = 15:00 UTC
-    - cron: "0 15 * * *"
+    # Every hour (GitHub may delay a few minutes)
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -21,7 +21,11 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Refresh live snapshot
+      - name: Refresh live snapshot (BRG + optional eBay)
+        env:
+          EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
+          EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
+          EBAY_FETCH_LIMIT: "50"
         run: python pokemon-pop/scripts/fetch_live.py
 
       - name: Commit and push if changed
@@ -33,5 +37,5 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore(pokepop): daily live snapshot $(date -u +%Y-%m-%d)"
+          git commit -m "chore(pokepop): hourly live snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
           git push

@@ -1,13 +1,40 @@
 {
-  "ranAt": "2026-07-22T01:16:44+09:00",
+  "ranAt": "2026-07-22T01:34:55+09:00",
   "stats": {
     "asOf": "2026-07-22",
-    "asOfIso": "2026-07-22T01:16:44+09:00",
-    "cardsTotal": 30,
-    "cardsLive": 28,
-    "skippedTierC": 2,
-    "variantsWritten": 66,
+    "asOfIso": "2026-07-22T01:34:55+09:00",
+    "cardsTotal": 3887,
+    "cardsLive": 3887,
+    "variantsWritten": 8521,
     "variantsKept": 0,
-    "variantsFailed": 0
+    "variantsFailed": 0,
+    "brg": {
+      "brgEnabled": true,
+      "setsResolved": 1,
+      "setsMissing": 0,
+      "cardsMatched": 1,
+      "cardsUnmatched": 0,
+      "dryRun": false,
+      "setMap": [
+        {
+          "packId": "mg-festa-seoul-stamp",
+          "lang": "kr",
+          "setName": "POKEMON MG KOREAN PROMO",
+          "year": 2026
+        }
+      ],
+      "errors": []
+    },
+    "removed": [
+      "mg-festa-050",
+      "mg-festa-025",
+      "mg-festa-034",
+      "mg-festa-033",
+      "mg-festa-030",
+      "mg-festa-026",
+      "mg-festa-028",
+      "mg-festa-029",
+      "mg-festa-031"
+    ]
   }
 }

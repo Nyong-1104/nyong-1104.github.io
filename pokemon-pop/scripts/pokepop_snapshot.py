@@ -4,80 +4,41 @@ import hashlib
 import json
 from pathlib import Path
 
-TIER_A = {"SAR", "SIR", "HR", "UR", "SR", "AR"}
-TIER_B = {"RR", "PRISM", "R"}
-
 
 def seed_int(key: str) -> int:
     return int(hashlib.md5(key.encode()).hexdigest()[:8], 16)
 
 
-def tier_for_rarity(rarity: str) -> str:
-    if rarity in TIER_A:
-        return "A"
-    if rarity in TIER_B:
-        return "B"
-    return "C"
-
-
 def full_pop(key: str, base_pop10: int, lang: str) -> dict:
-    s = seed_int(f"{key}-{lang}")
-    mult = 0.42 if lang == "kr" else 1.0
-    p10 = max(3, int(base_pop10 * mult * (0.7 + (s % 40) / 100)))
-    p9 = int(p10 * (0.6 + (s % 20) / 100))
-    p8 = int(p10 * (0.15 + (s % 15) / 100))
-    total = p10 + p9 + p8 + (s % 40)
-    bgs10 = max(0, p10 // 18)
-    cgc10 = max(0, p10 // 12)
+    """POP shell. BRG is filled later from break.co.kr; other graders stay empty until wired."""
+    _ = (key, base_pop10, lang)  # reserved for future seed/live sources
     return {
-        "PSA": {"10": p10, "9": p9, "8": p8, "total": total},
-        "BGS": {
-            "10": bgs10,
-            "9.5": bgs10 * 3 + 2,
-            "9": bgs10 * 2,
-            "total": bgs10 * 6 + 8,
-        }
-        if bgs10 or lang == "jp"
-        else None,
-        "CGC": {
-            "10": cgc10,
-            "9.5": cgc10 + 4,
-            "9": max(1, cgc10 // 2),
-            "total": cgc10 * 3 + 10,
-        },
+        "PSA": None,
+        "BGS": None,
+        "CGC": None,
         "BRG": None,
-        "TAG": {"10": max(0, p10 // 80), "9": max(0, p10 // 50), "total": max(0, p10 // 30)}
-        if lang == "jp"
-        else None,
+        "TAG": None,
         "ACE": None,
-        "AGS": {"10": max(0, p10 // 120), "9": max(0, p10 // 80), "total": max(0, p10 // 50)}
-        if lang == "jp" and p10 > 100
-        else None,
+        "AGS": None,
     }
 
 
 def price_snapshot(key: str, base_price: int, lang: str, asof_iso: str) -> dict:
+    """Placeholder PSA-grade prices (seed). Overridden by eBay when credentials are set."""
     s = seed_int(f"{key}-{lang}")
     mult = 0.42 if lang == "kr" else 1.0 if lang == "jp" else 0.95
-    amount = max(8, int(base_price * mult * (0.85 + (s % 30) / 100)))
+    p10 = max(8, int(base_price * mult * (0.85 + (s % 30) / 100)))
+    p9 = max(5, int(p10 * (0.42 + (s % 18) / 100)))
+    p8 = max(3, int(p10 * (0.18 + (s % 12) / 100)))
     return {
-        "source": "PSA",
-        "grade": "10",
-        "amount": amount,
+        "source": "seed",
         "currency": "USD",
         "asOf": asof_iso[:10],
+        "grades": {"10": p10, "9": p9, "8": p8},
     }
 
 
-def live_variant(card_id: str, tier: str, base_price: int, base_pop: int, lang: str, asof_iso: str):
-    if tier == "C":
-        return None
-    if tier == "B":
-        return {
-            "price": price_snapshot(card_id, base_price, lang, asof_iso),
-            "pop": None,
-            "updatedAt": asof_iso,
-        }
+def live_variant(card_id: str, base_price: int, base_pop: int, lang: str, asof_iso: str):
     return {
         "price": price_snapshot(card_id, base_price, lang, asof_iso),
         "pop": full_pop(card_id, base_pop, lang),
@@ -93,7 +54,7 @@ def finalize_catalog_card(card: dict) -> dict:
 
 
 def build_live_snapshot(catalog, packs, asof_iso: str, previous=None):
-    """Build live POP/price data. Tier C cards are omitted."""
+    """Build live POP/price data for every catalog card."""
     previous = previous or {}
     prev_cards = previous.get("cards") or {}
     packs_by_id = {p["id"]: p for p in packs}
@@ -104,18 +65,12 @@ def build_live_snapshot(catalog, packs, asof_iso: str, previous=None):
         "asOfIso": asof_iso,
         "cardsTotal": len(catalog),
         "cardsLive": 0,
-        "skippedTierC": 0,
         "variantsWritten": 0,
         "variantsKept": 0,
         "variantsFailed": 0,
     }
 
     for card in catalog:
-        tier = card.get("tier", "C")
-        if tier == "C":
-            stats["skippedTierC"] += 1
-            continue
-
         pack = packs_by_id.get(card["packId"])
         if not pack:
             continue
@@ -128,17 +83,14 @@ def build_live_snapshot(catalog, packs, asof_iso: str, previous=None):
         variants = {}
         for lang in pack.get("languages", []):
             try:
-                variant = live_variant(
+                variants[lang] = live_variant(
                     card["id"],
-                    tier,
                     base_price,
                     base_pop,
                     lang,
                     asof_iso,
                 )
-                if variant:
-                    variants[lang] = variant
-                    stats["variantsWritten"] += 1
+                stats["variantsWritten"] += 1
             except Exception:
                 if lang in prev_card:
                     variants[lang] = prev_card[lang]
@@ -180,6 +132,11 @@ def write_data_bundle(data_dir: Path, packs, catalog, live, last_run=None) -> No
     if last_run is None and last_run_path.exists():
         last_run = json.loads(last_run_path.read_text(encoding="utf-8"))
 
+    psa_sets_path = data_dir / "psa-sets.json"
+    psa_sets = {}
+    if psa_sets_path.exists():
+        psa_sets = json.loads(psa_sets_path.read_text(encoding="utf-8"))
+
     data_js = (
         "window.POP_PACKS = "
         + json.dumps(packs, ensure_ascii=False, indent=2)
@@ -189,6 +146,8 @@ def write_data_bundle(data_dir: Path, packs, catalog, live, last_run=None) -> No
         + json.dumps(live, ensure_ascii=False, indent=2)
         + ";\nwindow.POP_LAST_RUN = "
         + json.dumps(last_run or {}, ensure_ascii=False, indent=2)
+        + ";\nwindow.POP_PSA_SETS = "
+        + json.dumps(psa_sets, ensure_ascii=False, indent=2)
         + ";\n"
     )
     (data_dir / "data.js").write_text(data_js, encoding="utf-8")

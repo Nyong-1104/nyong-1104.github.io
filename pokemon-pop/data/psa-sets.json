@@ -1,0 +1,339 @@
+{
+  "sv2a-151": {
+    "jp": null,
+    "kr": null,
+    "en": null,
+    "_meta": {
+      "code": "sv2a",
+      "year": 2023,
+      "nameEn": "Pokémon Card 151"
+    }
+  },
+  "pokekyun": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "CP3",
+      "year": 2016,
+      "nameEn": "PokéKyun Collection"
+    }
+  },
+  "thunderclap-spark": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "sm7a",
+      "year": 2018,
+      "nameEn": "Plasma Spark"
+    }
+  },
+  "s8a-25th": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "S8a",
+      "year": 2021,
+      "nameEn": "25th Anniversary Collection"
+    }
+  },
+  "sv4k-ancient-roar": {
+    "jp": null,
+    "kr": null,
+    "en": null,
+    "_meta": {
+      "code": "SV4K",
+      "year": 2023,
+      "nameEn": "Ancient Roar"
+    }
+  },
+  "sv6a-night-wanderer": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV6a",
+      "year": 2024,
+      "nameEn": "Night Wanderer"
+    }
+  },
+  "sv7a-paradise-dragona": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV7a",
+      "year": 2024,
+      "nameEn": "Paradise Dragona"
+    }
+  },
+  "m3-nihil-zero": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "M3",
+      "year": 2025,
+      "nameEn": "Nihil Zero"
+    }
+  },
+  "m4-ninja-spinner": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "M4",
+      "year": 2025,
+      "nameEn": "Ninja Spinner"
+    }
+  },
+  "sv3a-raging-surf": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV3a",
+      "year": 2023,
+      "nameEn": "Raging Surf"
+    }
+  },
+  "sv10-rocket-glory": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV10",
+      "year": 2025,
+      "nameEn": "Glory of Team Rocket"
+    }
+  },
+  "m1l-mega-brave": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "M1L",
+      "year": 2025,
+      "nameEn": "Mega Brave"
+    }
+  },
+  "m1s-mega-symphonia": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "M1S",
+      "year": 2025,
+      "nameEn": "Mega Symphonia"
+    }
+  },
+  "sv4m-future-flash": {
+    "jp": null,
+    "kr": null,
+    "en": null,
+    "_meta": {
+      "code": "SV4M",
+      "year": 2023,
+      "nameEn": "Future Flash"
+    }
+  },
+  "sv9-battle-partners": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV9",
+      "year": 2025,
+      "nameEn": "Battle Partners"
+    }
+  },
+  "sv6-mask-of-change": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV6",
+      "year": 2024,
+      "nameEn": "Mask of Change"
+    }
+  },
+  "sv5m-cyber-judge": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV5M",
+      "year": 2024,
+      "nameEn": "Cyber Judge"
+    }
+  },
+  "s4a-shiny-star-v": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "S4a",
+      "year": 2020,
+      "nameEn": "Shiny Star V"
+    }
+  },
+  "sv4a-shiny-treasure": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV4a",
+      "year": 2023,
+      "nameEn": "Shiny Treasure ex"
+    }
+  },
+  "sv2p-snow-hazard": {
+    "jp": "https://www.psacard.com/pop/tcg-cards/2023/pokemon-japanese-sv2p-snow-hazard/236821",
+    "kr": null,
+    "_meta": {
+      "code": "SV2P",
+      "year": 2023,
+      "nameEn": "Snow Hazard"
+    }
+  },
+  "sv11b-black-bolt": {
+    "jp": null,
+    "kr": null,
+    "en": null,
+    "_meta": {
+      "code": "SV11B",
+      "year": 2025,
+      "nameEn": "Black Bolt"
+    }
+  },
+  "sv11w-white-flare": {
+    "jp": null,
+    "kr": null,
+    "en": null,
+    "_meta": {
+      "code": "SV11W",
+      "year": 2025,
+      "nameEn": "White Flare"
+    }
+  },
+  "sv7-stellar-miracle": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV7",
+      "year": 2024,
+      "nameEn": "Stellar Miracle"
+    }
+  },
+  "s4-amazing-volt-tackle": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "S4",
+      "year": 2020,
+      "nameEn": "Amazing Volt Tackle"
+    }
+  },
+  "m5-abyss-eye": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "M5",
+      "year": 2025,
+      "nameEn": "Abyss Eye"
+    }
+  },
+  "sv9a-heat-wave-arena": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV9a",
+      "year": 2025,
+      "nameEn": "Heat Wave Arena"
+    }
+  },
+  "sv5k-wild-force": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV5K",
+      "year": 2024,
+      "nameEn": "Wild Force"
+    }
+  },
+  "s6a-eevee-heroes": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "S6a",
+      "year": 2021,
+      "nameEn": "Eevee Heroes"
+    }
+  },
+  "m2-inferno-x": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "M2",
+      "year": 2025,
+      "nameEn": "Inferno X"
+    }
+  },
+  "s7r-blue-sky-stream": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "S7R",
+      "year": 2021,
+      "nameEn": "Blue Sky Stream"
+    }
+  },
+  "sv8-super-electric-breaker": {
+    "jp": "https://www.psacard.com/pop/tcg-cards/2024/pokemon-japanese-sv8-super-electric-breaker/284389",
+    "kr": null,
+    "_meta": {
+      "code": "SV8",
+      "year": 2024,
+      "nameEn": "Super Electric Breaker"
+    }
+  },
+  "sv5a-crimson-haze": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV5a",
+      "year": 2024,
+      "nameEn": "Crimson Haze"
+    }
+  },
+  "sv2d-clay-burst": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV2D",
+      "year": 2023,
+      "nameEn": "Clay Burst"
+    }
+  },
+  "sv8a-terastal-festa": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV8a",
+      "year": 2024,
+      "nameEn": "Terastal Fest ex"
+    }
+  },
+  "m2a-mega-dream-ex": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "M2a",
+      "year": 2025,
+      "nameEn": "MEGA Dream ex"
+    }
+  },
+  "sv3-ruler-of-black-flame": {
+    "jp": null,
+    "kr": null,
+    "_meta": {
+      "code": "SV3",
+      "year": 2023,
+      "nameEn": "Ruler of the Black Flame"
+    }
+  },
+  "mg-festa-seoul-stamp": {
+    "kr": null,
+    "_meta": {
+      "code": "MG-PROMO",
+      "year": 2026,
+      "nameEn": "MG Festa Pokémon GO Seoul Stamp Rally"
+    }
+  }
+}

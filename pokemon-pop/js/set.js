@@ -1,22 +1,36 @@
 (function () {
   const PT = window.PopTracker;
-  const RARITY_RANK = { SAR: 5, SIR: 5, HR: 5, UR: 4, SR: 4, RR: 4, PRISM: 3, R: 3, AR: 3, U: 2, C: 1 };
+  const RARITY_RANK = { SAR: 5, SIR: 5, HR: 5, UR: 4, SR: 4, RRR: 4, RR: 4, PRISM: 3, R: 3, AR: 3, U: 2, C: 1 };
 
-  function sortCards(list, mode) {
+  function sortCards(list, mode, editionLang) {
     const arr = list.slice();
     switch (mode) {
       case "price-desc":
-        return arr.sort((a, b) => PT.bestPriceAmount(b) - PT.bestPriceAmount(a));
+        return arr.sort(
+          (a, b) => PT.bestPriceAmount(b, editionLang) - PT.bestPriceAmount(a, editionLang)
+        );
       case "price-asc":
-        return arr.sort((a, b) => PT.bestPriceAmount(a) - PT.bestPriceAmount(b));
+        return arr.sort(
+          (a, b) => PT.bestPriceAmount(a, editionLang) - PT.bestPriceAmount(b, editionLang)
+        );
       case "type":
-        return arr.sort((a, b) => (a.typeKo || "").localeCompare(b.typeKo || "", "ko"));
+        return arr.sort((a, b) =>
+          PT.typeLabel(a.type).localeCompare(PT.typeLabel(b.type), PT.getUiLang())
+        );
       case "rarity":
         return arr.sort(
           (a, b) => (RARITY_RANK[b.rarity] || 0) - (RARITY_RANK[a.rarity] || 0)
         );
       case "name":
-        return arr.sort((a, b) => a.nameKo.localeCompare(b.nameKo, "ko"));
+        return arr.sort((a, b) =>
+          PT.cardName(a).localeCompare(PT.cardName(b), PT.getUiLang())
+        );
+      case "number":
+        return arr.sort((a, b) => {
+          const na = parseInt(String(a.number || "").split("/")[0], 10) || 0;
+          const nb = parseInt(String(b.number || "").split("/")[0], 10) || 0;
+          return na - nb;
+        });
       default:
         return arr;
     }
@@ -29,12 +43,13 @@
     });
   }
 
-  function listPriceLabel(card) {
-    const best = PT.bestPriceAmount(card);
-    if (best > 0) return PT.formatPrice({ amount: best, currency: "USD" });
-    if (card.tier === "C") return "수집 안 함";
+  function listPriceLabel(card, editionLang) {
+    const amount = PT.bestPriceAmount(card, editionLang);
+    if (amount > 0) return PT.formatMoney(amount, "USD");
     return "—";
   }
+
+  PT.mountLangSwitcher(document.querySelector(".site-nav"));
 
   const packId = PT.qs("pack");
   const packs = PT.getPacks();
@@ -45,37 +60,81 @@
 
   const pack = packs.find((p) => p.id === packId) || packs[0];
   if (!pack) {
-    grid.innerHTML = `<p class="empty-state">팩을 찾을 수 없습니다.</p>`;
+    grid.innerHTML = `<p class="empty-state">${PT.t("emptyPack")}</p>`;
     return;
   }
 
-  document.title = `${pack.nameKo || pack.nameEn} · PokePop`;
-  document.getElementById("set-title").textContent = pack.nameKo || pack.nameEn;
-  document.getElementById("set-blurb").textContent = pack.blurb;
+  document.title = `${PT.packName(pack)} · PokePop`;
+  document.getElementById("set-title").textContent = PT.packName(pack);
+  document.getElementById("set-blurb").textContent = PT.packBlurb(pack);
+
+  const psaEl = document.getElementById("set-psa-link");
+  if (psaEl) {
+    const preferred =
+      (pack.languages || []).indexOf("jp") !== -1
+        ? "jp"
+        : (pack.languages || [])[0] || "jp";
+    const link = PT.psaSetPopLink(pack, preferred);
+    if (link) {
+      const label = link.exact ? PT.t("psaSetPopLink") : PT.t("psaSetPopSearch");
+      psaEl.innerHTML = `<a href="${link.href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+    }
+  }
+
+  const back = document.querySelector(".nav-back");
+  if (back) back.textContent = PT.t("backPacks");
 
   const packCards = cards.filter((c) => c.packId === pack.id);
+  if (!packCards.length) {
+    grid.innerHTML = `<p class="empty-state">${PT.t("emptyPackCards")}</p>`;
+    document.getElementById("set-blurb").textContent =
+      PT.packBlurb(pack) || PT.t("emptyPackCards");
+    PT.mountSiteUpdated(document.getElementById("site-updated"));
+    return;
+  }
+
   const typeSelect = document.getElementById("filter-type");
+  const langSelect = document.getElementById("filter-lang");
+  const sortSelect = document.getElementById("sort-by");
+
+  document.querySelector('label[for="sort-by"]').textContent = PT.t("sort");
+  document.querySelector('label[for="filter-type"]').textContent = PT.t("type");
+  document.querySelector('label[for="filter-lang"]').textContent = PT.t("language");
+
+  sortSelect.options[0].textContent = PT.t("sortNumber");
+  sortSelect.options[1].textContent = PT.t("sortPriceDesc");
+  sortSelect.options[2].textContent = PT.t("sortPriceAsc");
+  sortSelect.options[3].textContent = PT.t("sortType");
+  sortSelect.options[4].textContent = PT.t("sortRarity");
+  sortSelect.options[5].textContent = PT.t("sortName");
+
+  typeSelect.innerHTML = `<option value="all">${PT.t("all")}</option>`;
   const types = [];
   packCards.forEach((c) => {
     if (types.indexOf(c.type) === -1) types.push(c.type);
   });
   types.forEach((t) => {
-    const card = packCards.find((c) => c.type === t);
     const opt = document.createElement("option");
     opt.value = t;
-    opt.textContent = card?.typeKo || t;
+    opt.textContent = PT.typeLabel(t);
     typeSelect.appendChild(opt);
   });
 
-  const sortSelect = document.getElementById("sort-by");
+  const packLangs = pack.languages?.length ? pack.languages : ["jp"];
+  langSelect.innerHTML = packLangs
+    .map((lang) => `<option value="${lang}">${PT.langLabel(lang)}</option>`)
+    .join("");
 
+  // Card list defaults to Japanese edition (UI language stays separate)
+  langSelect.value = packLangs.indexOf("jp") !== -1 ? "jp" : packLangs[0];
   function render() {
+    const editionLang = langSelect.value || packLangs[0];
     const filtered = filterCards(packCards, typeSelect.value);
-    const sorted = sortCards(filtered, sortSelect.value);
+    const sorted = sortCards(filtered, sortSelect.value, editionLang);
     grid.innerHTML = "";
 
     if (!sorted.length) {
-      grid.innerHTML = `<p class="empty-state">조건에 맞는 카드가 없습니다.</p>`;
+      grid.innerHTML = `<p class="empty-state">${PT.t("emptyCards")}</p>`;
       return;
     }
 
@@ -85,8 +144,8 @@
       a.href = `./card.html?id=${encodeURIComponent(card.id)}`;
 
       const holo = PT.createHoloCardEl({
-        image: card.image,
-        name: card.nameKo,
+        image: PT.cardImageForEdition(card, editionLang),
+        name: PT.cardName(card),
         holoStyle: card.holoStyle,
         compact: true,
       });
@@ -95,13 +154,12 @@
       const meta = document.createElement("div");
       meta.className = "card-meta";
       meta.innerHTML = `
-        <div class="card-meta__name">${card.nameKo}</div>
+        <div class="card-meta__name">${PT.cardName(card)}</div>
         <div class="card-meta__sub">
-          <span class="${PT.typeBadgeClass(card.type)}">${card.typeKo}</span>
+          <span class="${PT.typeBadgeClass(card.type)}">${PT.typeLabel(card.type)}</span>
           <span>${card.rarity}</span>
-          <span class="badge badge--tier badge--tier-${(card.tier || "c").toLowerCase()}">${card.tier || "—"}</span>
           <span>${card.number}</span>
-          <span>${listPriceLabel(card)}</span>
+          <span>${listPriceLabel(card, editionLang)}</span>
         </div>
       `;
       a.appendChild(meta);
@@ -114,5 +172,6 @@
 
   sortSelect.addEventListener("change", render);
   typeSelect.addEventListener("change", render);
+  langSelect.addEventListener("change", render);
   render();
 })();

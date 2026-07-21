@@ -28,7 +28,9 @@
       <img class="nav-brand__logo" src="./assets/pokepop-logo.png" alt="PokePop">
       <span class="nav-brand__text">PokePop</span>
     </a>
-    <a class="nav-back" id="nav-back" href="./index.html">← 팩 목록</a>
+    <div class="nav-actions">
+      <a class="nav-back" id="nav-back" href="./index.html">← 팩 목록</a>
+    </div>
   </nav>
 
   <main class="page">
@@ -39,11 +41,14 @@
         <div class="detail__sub" id="card-sub"></div>
 
         <div class="lang-tabs" id="lang-tabs" role="tablist" aria-label="언어 선택"></div>
+        <p class="image-lang-note" id="image-lang-note" hidden></p>
 
         <div class="price-panel">
-          <div class="price-panel__label">Current price</div>
-          <div class="price-panel__value" id="price-value">—</div>
+          <div class="price-panel__label">eBay Price (PSA)</div>
+          <div class="price-grades" id="price-grades"></div>
           <div class="price-panel__meta" id="price-meta"></div>
+          <p class="price-panel__seed" id="price-ebay-link"></p>
+        <p class="price-panel__seed" id="psa-set-pop-link"></p>
         </div>
 
         <h2 class="section-title">POP REPORT</h2>
@@ -63,6 +68,7 @@
 
   <script src="./data/data.js"></script>
   <script src="./js/shared.js"></script>
+  <script src="./js/i18n.js"></script>
   <script src="./js/holo.js"></script>
   <script src="./js/card.js"></script>
 </body>

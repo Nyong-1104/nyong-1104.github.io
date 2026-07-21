@@ -28,13 +28,16 @@
       <img class="nav-brand__logo" src="./assets/pokepop-logo.png" alt="PokePop">
       <span class="nav-brand__text">PokePop</span>
     </a>
-    <a class="nav-back" href="./index.html">← 팩 목록</a>
+    <div class="nav-actions">
+      <a class="nav-back" href="./index.html">← 팩 목록</a>
+    </div>
   </nav>
 
   <main class="page">
     <header class="set-head">
       <h1 id="set-title">세트</h1>
       <p id="set-blurb"></p>
+      <p class="set-ext-links" id="set-psa-link"></p>
       <p class="site-updated" id="site-updated" hidden></p>
     </header>
 
@@ -42,6 +45,7 @@
       <div class="field">
         <label for="sort-by">정렬</label>
         <select id="sort-by">
+          <option value="number" selected>번호순</option>
           <option value="price-desc">가격 높은순</option>
           <option value="price-asc">가격 낮은순</option>
           <option value="type">속성순</option>
@@ -55,6 +59,10 @@
           <option value="all">전체</option>
         </select>
       </div>
+      <div class="field">
+        <label for="filter-lang">언어</label>
+        <select id="filter-lang"></select>
+      </div>
     </div>
 
     <div class="card-grid" id="card-grid"></div>
@@ -62,6 +70,7 @@
 
   <script src="./data/data.js"></script>
   <script src="./js/shared.js"></script>
+  <script src="./js/i18n.js"></script>
   <script src="./js/holo.js"></script>
   <script src="./js/set.js"></script>
 </body>

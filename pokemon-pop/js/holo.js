@@ -90,15 +90,35 @@ window.PopTracker = window.PopTracker || {};
     const style = opts.holoStyle || "sar";
     const wrap = document.createElement("div");
     wrap.className = `holo-card holo-card--${style}${opts.compact ? " holo-card--compact" : ""}`;
-    wrap.innerHTML = `
-      <div class="holo-card__rotator">
-        <div class="holo-card__front">
-          <img class="holo-card__img" src="${opts.image}" alt="${opts.name}" loading="lazy" />
-          <div class="holo-card__shine" aria-hidden="true"></div>
-          <div class="holo-card__glare" aria-hidden="true"></div>
-        </div>
-      </div>
-    `;
+    const img = document.createElement("img");
+    img.className = "holo-card__img";
+    img.loading = "lazy";
+    if (opts.image) img.src = opts.image;
+    img.alt = opts.name || "";
+
+    const rotator = document.createElement("div");
+    rotator.className = "holo-card__rotator";
+    const front = document.createElement("div");
+    front.className = "holo-card__front";
+    const shine = document.createElement("div");
+    shine.className = "holo-card__shine";
+    shine.setAttribute("aria-hidden", "true");
+    const glare = document.createElement("div");
+    glare.className = "holo-card__glare";
+    glare.setAttribute("aria-hidden", "true");
+    front.appendChild(img);
+    front.appendChild(shine);
+    front.appendChild(glare);
+    rotator.appendChild(front);
+    wrap.appendChild(rotator);
     return wrap;
+  };
+
+  PT.setHoloCardImage = function (root, image, name) {
+    if (!root) return;
+    const img = root.querySelector(".holo-card__img");
+    if (!img) return;
+    if (image) img.src = image;
+    if (name != null) img.alt = name;
   };
 })(window.PopTracker);

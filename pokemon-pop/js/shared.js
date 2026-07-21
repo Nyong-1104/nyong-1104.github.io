@@ -4,6 +4,7 @@ window.PopTracker = window.PopTracker || {};
 (function (PT) {
   PT.GRADERS = ["PSA", "BGS", "CGC", "BRG", "TAG", "ACE", "AGS"];
   PT.GRADE_COLS = ["10", "9.5", "9", "8", "total"];
+  PT.PRICE_GRADES = ["10", "9", "8"];
   PT.LANG_ORDER = ["jp", "kr", "en"];
 
   PT.getPacks = function () {
@@ -58,7 +59,6 @@ window.PopTracker = window.PopTracker || {};
     return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
   };
 
-  /** Relative + viewer-local absolute time, e.g. "3 hours ago · Jul 21, 2026, 4:25 PM" */
   PT.formatUpdatedDisplay = function (value) {
     const ago = PT.formatTimeAgo(value);
     const local = PT.formatLocalDateTime(value);
@@ -86,7 +86,7 @@ window.PopTracker = window.PopTracker || {};
     }
     el.hidden = false;
     PT.bindRelativeTime(el, function () {
-      return `데이터 갱신: ${PT.formatUpdatedDisplay(ts)}`;
+      return `${PT.t("updatedPrefix")} ${PT.formatUpdatedDisplay(ts)}`;
     });
   };
 
@@ -104,37 +104,46 @@ window.PopTracker = window.PopTracker || {};
   };
 
   PT.langLabel = function (lang) {
-    if (lang === "kr") return "한글판";
-    if (lang === "jp") return "일본판";
-    if (lang === "en") return "영문판";
-    return String(lang || "").toUpperCase();
+    return PT.editionLabel ? PT.editionLabel(lang) : String(lang || "").toUpperCase();
   };
 
   PT.langTabLabel = function (lang) {
-    return PT.langLabel(lang).replace("판", "");
+    return PT.langLabel(lang);
   };
 
-  PT.tierLabel = function (tier) {
-    if (tier === "A") return "Tier A · POP+가격";
-    if (tier === "B") return "Tier B · 가격";
-    if (tier === "C") return "Tier C · 카탈로그만";
-    return tier || "";
+  PT.priceAmountForGrade = function (price, grade) {
+    if (!price) return null;
+    if (price.grades && price.grades[grade] != null) return Number(price.grades[grade]);
+    if (grade === "10" && price.amount != null) return Number(price.amount);
+    return null;
   };
 
-  PT.bestPriceAmount = function (card) {
-    const amounts = PT.LANG_ORDER.map((lang) => card.variants?.[lang]?.price?.amount).filter(
+  PT.priceAmountForLang = function (card, lang) {
+    return PT.priceAmountForGrade(card.variants?.[lang]?.price, "10");
+  };
+
+  PT.bestPriceAmount = function (card, preferredLang) {
+    if (preferredLang) {
+      const n = PT.priceAmountForLang(card, preferredLang);
+      if (n != null) return n;
+    }
+    const amounts = PT.LANG_ORDER.map((lang) => PT.priceAmountForLang(card, lang)).filter(
       (n) => n != null
     );
     if (!amounts.length) return 0;
     return Math.max.apply(null, amounts);
   };
 
+  PT.formatMoney = function (amount, currency) {
+    if (amount == null) return "—";
+    const n = Number(amount);
+    if (currency === "USD" || !currency) return `$${n.toLocaleString("en-US")}`;
+    if (currency === "KRW") return `₩${n.toLocaleString("ko-KR")}`;
+    return `${n.toLocaleString()} ${currency}`;
+  };
+
   PT.formatPrice = function (price) {
-    if (!price || price.amount == null) return "—";
-    const n = Number(price.amount);
-    if (price.currency === "USD") return `$${n.toLocaleString("en-US")}`;
-    if (price.currency === "KRW") return `₩${n.toLocaleString("ko-KR")}`;
-    return `${n.toLocaleString()} ${price.currency}`;
+    return PT.formatMoney(PT.priceAmountForGrade(price, "10"), price?.currency);
   };
 
   PT.typeBadgeClass = function (type) {
