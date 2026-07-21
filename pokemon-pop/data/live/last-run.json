@@ -1,15 +1,15 @@
 {
-  "ranAt": "2026-07-22T04:12:48+09:00",
+  "ranAt": "2026-07-22T06:02:05+09:00",
   "stats": {
     "asOf": "2026-07-22",
-    "asOfIso": "2026-07-22T04:12:48+09:00",
+    "asOfIso": "2026-07-22T06:02:05+09:00",
     "cardsTotal": 3887,
     "cardsLive": 3887,
     "variantsWritten": 8521,
     "variantsKept": 0,
     "variantsFailed": 0,
     "ebayPricesRestored": 0,
-    "brgPopsRestored": 1794,
+    "brgPopsRestored": 1812,
     "brg": {
       "brgEnabled": true,
       "setsResolved": 73,
