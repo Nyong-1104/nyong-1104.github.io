@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-21T16:49:17+09:00",
+  "generatedAt": "2026-07-22T01:16:44+09:00",
   "source": "seed",
   "cards": {
     "sv2a-charizard-sar": {
@@ -9,7 +9,7 @@
           "grade": "10",
           "amount": 884,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -43,7 +43,7 @@
             "total": 19
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -51,7 +51,7 @@
           "grade": "10",
           "amount": 385,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -77,7 +77,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "en": {
         "price": {
@@ -85,7 +85,7 @@
           "grade": "10",
           "amount": 912,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -111,7 +111,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sv2a-venusaur-sar": {
@@ -121,7 +121,7 @@
           "grade": "10",
           "amount": 198,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -155,7 +155,7 @@
             "total": 20
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -163,7 +163,7 @@
           "grade": "10",
           "amount": 92,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -189,7 +189,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "en": {
         "price": {
@@ -197,7 +197,7 @@
           "grade": "10",
           "amount": 181,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -223,7 +223,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sv2a-blastoise-sar": {
@@ -233,7 +233,7 @@
           "grade": "10",
           "amount": 266,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -267,7 +267,7 @@
             "total": 15
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -275,7 +275,7 @@
           "grade": "10",
           "amount": 99,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -301,7 +301,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "en": {
         "price": {
@@ -309,7 +309,7 @@
           "grade": "10",
           "amount": 246,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -335,7 +335,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sv2a-alakazam-sar": {
@@ -345,7 +345,7 @@
           "grade": "10",
           "amount": 144,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -379,7 +379,7 @@
             "total": 15
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -387,7 +387,7 @@
           "grade": "10",
           "amount": 72,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -413,7 +413,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "en": {
         "price": {
@@ -421,7 +421,7 @@
           "grade": "10",
           "amount": 164,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -447,7 +447,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sv2a-zapdos-sar": {
@@ -457,7 +457,7 @@
           "grade": "10",
           "amount": 209,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -491,7 +491,7 @@
             "total": 15
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -499,7 +499,7 @@
           "grade": "10",
           "amount": 67,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -525,7 +525,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "en": {
         "price": {
@@ -533,7 +533,7 @@
           "grade": "10",
           "amount": 193,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -559,7 +559,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sv2a-mew-sar": {
@@ -569,7 +569,7 @@
           "grade": "10",
           "amount": 285,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -603,7 +603,7 @@
             "total": 19
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -611,7 +611,7 @@
           "grade": "10",
           "amount": 107,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -637,7 +637,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "en": {
         "price": {
@@ -645,7 +645,7 @@
           "grade": "10",
           "amount": 231,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -671,7 +671,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sv2a-erika-sar": {
@@ -681,7 +681,7 @@
           "grade": "10",
           "amount": 89,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -715,7 +715,7 @@
             "total": 21
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -723,7 +723,7 @@
           "grade": "10",
           "amount": 39,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -749,7 +749,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "en": {
         "price": {
@@ -757,7 +757,7 @@
           "grade": "10",
           "amount": 96,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -783,7 +783,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sv2a-giovanni-sar": {
@@ -793,7 +793,7 @@
           "grade": "10",
           "amount": 107,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -827,7 +827,7 @@
             "total": 15
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -835,7 +835,7 @@
           "grade": "10",
           "amount": 50,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -861,7 +861,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "en": {
         "price": {
@@ -869,7 +869,7 @@
           "grade": "10",
           "amount": 107,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -895,7 +895,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sv2a-charizard-sr": {
@@ -905,7 +905,7 @@
           "grade": "10",
           "amount": 93,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -939,7 +939,7 @@
             "total": 39
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -947,7 +947,7 @@
           "grade": "10",
           "amount": 33,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -973,7 +973,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "en": {
         "price": {
@@ -981,7 +981,7 @@
           "grade": "10",
           "amount": 92,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1007,7 +1007,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sv2a-bulbasaur-ar": {
@@ -1017,7 +1017,7 @@
           "grade": "10",
           "amount": 35,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1051,7 +1051,7 @@
             "total": 61
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1059,7 +1059,7 @@
           "grade": "10",
           "amount": 13,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1085,7 +1085,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "en": {
         "price": {
@@ -1093,7 +1093,7 @@
           "grade": "10",
           "amount": 31,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1119,7 +1119,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "kyun-pikachu": {
@@ -1129,10 +1129,10 @@
           "grade": "10",
           "amount": 209,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1140,10 +1140,10 @@
           "grade": "10",
           "amount": 84,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "kyun-jirachi": {
@@ -1153,10 +1153,10 @@
           "grade": "10",
           "amount": 75,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1164,10 +1164,10 @@
           "grade": "10",
           "amount": 36,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "kyun-sylveon-ex": {
@@ -1177,10 +1177,10 @@
           "grade": "10",
           "amount": 127,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1188,10 +1188,10 @@
           "grade": "10",
           "amount": 59,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "kyun-charizard": {
@@ -1201,10 +1201,10 @@
           "grade": "10",
           "amount": 108,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1212,10 +1212,10 @@
           "grade": "10",
           "amount": 52,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "kyun-flareon-ex": {
@@ -1225,10 +1225,10 @@
           "grade": "10",
           "amount": 80,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1236,10 +1236,10 @@
           "grade": "10",
           "amount": 38,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "kyun-gardevoir-ex": {
@@ -1249,10 +1249,10 @@
           "grade": "10",
           "amount": 102,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1260,10 +1260,10 @@
           "grade": "10",
           "amount": 39,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "kyun-diancie": {
@@ -1273,10 +1273,10 @@
           "grade": "10",
           "amount": 54,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1284,10 +1284,10 @@
           "grade": "10",
           "amount": 19,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "kyun-raichu": {
@@ -1297,10 +1297,10 @@
           "grade": "10",
           "amount": 74,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1308,10 +1308,10 @@
           "grade": "10",
           "amount": 26,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sm7a-zeraora-gx-sr": {
@@ -1321,7 +1321,7 @@
           "grade": "10",
           "amount": 158,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1355,7 +1355,7 @@
             "total": 8
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1363,7 +1363,7 @@
           "grade": "10",
           "amount": 69,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1389,7 +1389,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sm7a-zeraora-gx-hr": {
@@ -1399,7 +1399,7 @@
           "grade": "10",
           "amount": 320,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1433,7 +1433,7 @@
             "total": 3
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1441,7 +1441,7 @@
           "grade": "10",
           "amount": 124,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1467,7 +1467,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sm7a-virizion-gx-sr": {
@@ -1477,7 +1477,7 @@
           "grade": "10",
           "amount": 87,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1511,7 +1511,7 @@
             "total": 7
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1519,7 +1519,7 @@
           "grade": "10",
           "amount": 37,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1545,7 +1545,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sm7a-genesect-gx-sr": {
@@ -1555,7 +1555,7 @@
           "grade": "10",
           "amount": 103,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1589,7 +1589,7 @@
             "total": 5
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1597,7 +1597,7 @@
           "grade": "10",
           "amount": 52,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1623,7 +1623,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sm7a-magcargo-gx-sr": {
@@ -1633,7 +1633,7 @@
           "grade": "10",
           "amount": 83,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1667,7 +1667,7 @@
             "total": 5
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1675,7 +1675,7 @@
           "grade": "10",
           "amount": 31,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1701,7 +1701,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sm7a-kahili-sr": {
@@ -1711,7 +1711,7 @@
           "grade": "10",
           "amount": 237,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1741,7 +1741,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1749,7 +1749,7 @@
           "grade": "10",
           "amount": 106,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1775,7 +1775,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sm7a-judge-sr": {
@@ -1785,7 +1785,7 @@
           "grade": "10",
           "amount": 205,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1815,7 +1815,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1823,7 +1823,7 @@
           "grade": "10",
           "amount": 91,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1849,7 +1849,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sm7a-tapu-koko": {
@@ -1859,10 +1859,10 @@
           "grade": "10",
           "amount": 27,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1870,10 +1870,10 @@
           "grade": "10",
           "amount": 8,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sm7a-ditto-prism": {
@@ -1883,10 +1883,10 @@
           "grade": "10",
           "amount": 51,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1894,10 +1894,10 @@
           "grade": "10",
           "amount": 17,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": null,
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     },
     "sm7a-electropower-ur": {
@@ -1907,7 +1907,7 @@
           "grade": "10",
           "amount": 84,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1941,7 +1941,7 @@
             "total": 3
           }
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       },
       "kr": {
         "price": {
@@ -1949,7 +1949,7 @@
           "grade": "10",
           "amount": 32,
           "currency": "USD",
-          "asOf": "2026-07-21"
+          "asOf": "2026-07-22"
         },
         "pop": {
           "PSA": {
@@ -1975,7 +1975,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-21T16:49:17+09:00"
+        "updatedAt": "2026-07-22T01:16:44+09:00"
       }
     }
   }
