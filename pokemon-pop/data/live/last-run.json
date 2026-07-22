@@ -1,30 +1,30 @@
 {
-  "ranAt": "2026-07-22T17:19:05+09:00",
+  "ranAt": "2026-07-22T20:04:07+09:00",
   "stats": {
     "asOf": "2026-07-22",
-    "asOfIso": "2026-07-22T17:19:05+09:00",
-    "cardsTotal": 3888,
-    "cardsLive": 1631,
+    "asOfIso": "2026-07-22T20:04:07+09:00",
+    "cardsTotal": 3951,
+    "cardsLive": 1694,
     "skippedTierC": 2257,
-    "variantsWritten": 3637,
+    "variantsWritten": 3803,
     "variantsKept": 0,
     "variantsFailed": 0,
     "tiers": {
-      "A": 1137,
+      "A": 1200,
       "B": 494,
       "C": 2257
     },
     "ebayPricesRestored": 0,
-    "brgPopsRestored": 1453,
+    "brgPopsRestored": 1454,
     "psaPopsRestored": 246,
     "brg": {
       "brgEnabled": true,
       "setsResolved": 77,
       "setsMissing": 0,
-      "setsUnavailable": 3,
-      "cardsMatched": 1436,
-      "cardsNoBrgEntry": 2033,
-      "cardsAttempted": 3469,
+      "setsUnavailable": 4,
+      "cardsMatched": 1492,
+      "cardsNoBrgEntry": 2103,
+      "cardsAttempted": 3595,
       "brgEntriesFetched": 2393,
       "dryRun": false,
       "setMap": [
@@ -181,6 +181,11 @@
           "lang": "kr",
           "setName": "POKEMON MG KOREAN M1L",
           "year": 2025
+        },
+        {
+          "packId": "m1l-mega-brave",
+          "lang": "en",
+          "setName": null
         },
         {
           "packId": "m1s-mega-symphonia",
@@ -507,8 +512,8 @@
         }
       ],
       "errors": [],
-      "matchRate": 0.414,
-      "cardsUnmatched": 2033
+      "matchRate": 0.415,
+      "cardsUnmatched": 2103
     },
     "ebay": {
       "ebayEnabled": false,
