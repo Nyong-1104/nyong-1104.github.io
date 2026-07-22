@@ -107,6 +107,7 @@
     if (searchGrid) searchGrid.innerHTML = "";
     if (hero) hero.hidden = false;
     if (grid) grid.hidden = false;
+    if (tabRoot) tabRoot.hidden = false;
     if (packsSection) packsSection.hidden = false;
     setPacksSectionMode(false);
   }
@@ -122,8 +123,9 @@
       return;
     }
 
-    if (hero) hero.hidden = false;
-    if (grid) grid.hidden = false;
+    if (hero) hero.hidden = true;
+    if (grid) grid.hidden = true;
+    if (tabRoot) tabRoot.hidden = true;
     setPacksSectionMode(true);
 
     const hits = searchCards(q);
@@ -148,17 +150,20 @@
         a.className = "card-link";
         a.href = `./card.html?id=${encodeURIComponent(card.id)}`;
         const holo = PT.createHoloCardEl({
-          image: PT.cardImage(card, "jp") || card.image,
+          image: PT.cardImageForEdition(card, "jp") || card.image || "",
           name: PT.cardName(card),
           holoStyle: card.holoStyle || "holo",
           compact: true,
         });
         const meta = document.createElement("div");
-        meta.className = "card-link__meta";
+        meta.className = "card-meta";
         meta.innerHTML = `
-          <div class="card-link__name">${escapeHtml(PT.cardName(card))}</div>
-          <div class="card-link__sub">${escapeHtml(card.number || "")} · ${escapeHtml(card.rarity || "")}</div>
-          <div class="card-link__pack">${escapeHtml(PT.t("searchPack"))}: ${escapeHtml(
+          <div class="card-meta__name">${escapeHtml(PT.cardName(card))}</div>
+          <div class="card-meta__sub">
+            <span>${escapeHtml(card.number || "")}</span>
+            <span>${escapeHtml(card.rarity || "")}</span>
+          </div>
+          <div class="card-meta__sub">${escapeHtml(PT.t("searchPack"))}: ${escapeHtml(
           pack ? PT.packName(pack) : card.packId || ""
         )}</div>
         `;
@@ -235,7 +240,15 @@
 
   function syncTabUi() {
     if (!tabRoot) return;
+    let pill = tabRoot.querySelector(".pack-tabs__pill");
+    if (!pill) {
+      pill = document.createElement("span");
+      pill.className = "pack-tabs__pill";
+      pill.setAttribute("aria-hidden", "true");
+      tabRoot.insertBefore(pill, tabRoot.firstChild);
+    }
     const buttons = tabRoot.querySelectorAll(".pack-tabs__btn");
+    let activeBtn = null;
     buttons.forEach(function (btn) {
       const group = btn.getAttribute("data-pack-group");
       const on = group === activeGroup;
@@ -243,7 +256,38 @@
       btn.setAttribute("aria-selected", on ? "true" : "false");
       if (group === "booster") btn.textContent = PT.t("tabBoosters");
       if (group === "promo") btn.textContent = PT.t("tabPromos");
+      if (on) activeBtn = btn;
     });
+    if (activeBtn) {
+      const rootBox = tabRoot.getBoundingClientRect();
+      const btnBox = activeBtn.getBoundingClientRect();
+      const left = btnBox.left - rootBox.left;
+      pill.style.width = `${btnBox.width}px`;
+      pill.style.transform = `translateX(${left}px)`;
+    }
+  }
+
+  function animateTabPill(fromBtn, toBtn) {
+    if (!tabRoot || !toBtn) {
+      syncTabUi();
+      return;
+    }
+    let pill = tabRoot.querySelector(".pack-tabs__pill");
+    if (!pill) {
+      syncTabUi();
+      return;
+    }
+    const rootBox = tabRoot.getBoundingClientRect();
+    const toBox = toBtn.getBoundingClientRect();
+    const left = toBox.left - rootBox.left;
+    pill.classList.add("is-moving");
+    pill.style.width = `${toBox.width}px`;
+    pill.style.transform = `translateX(${left}px)`;
+    const done = function () {
+      pill.classList.remove("is-moving");
+      pill.removeEventListener("transitionend", done);
+    };
+    pill.addEventListener("transitionend", done);
   }
 
   function renderPackGrid() {
@@ -293,24 +337,41 @@
     });
   }
 
-  function setActiveGroup(group) {
-    activeGroup = group === "promo" ? "promo" : "booster";
+  function setActiveGroup(group, opts) {
+    const next = group === "promo" ? "promo" : "booster";
+    const prev = activeGroup;
+    activeGroup = next;
     try {
       localStorage.setItem(TAB_STORAGE_KEY, activeGroup);
     } catch (e) {
       /* ignore */
     }
-    syncTabUi();
+    const buttons = tabRoot ? tabRoot.querySelectorAll(".pack-tabs__btn") : [];
+    let fromBtn = null;
+    let toBtn = null;
+    buttons.forEach(function (btn) {
+      const g = btn.getAttribute("data-pack-group");
+      if (g === prev) fromBtn = btn;
+      if (g === next) toBtn = btn;
+      btn.classList.toggle("is-active", g === next);
+      btn.setAttribute("aria-selected", g === next ? "true" : "false");
+    });
+    if (opts && opts.animate) animateTabPill(fromBtn, toBtn);
+    else syncTabUi();
     renderPackGrid();
   }
 
   function mountTabs() {
     if (!tabRoot) return;
     syncTabUi();
+    requestAnimationFrame(syncTabUi);
+    window.addEventListener("resize", syncTabUi);
     tabRoot.addEventListener("click", function (ev) {
       const btn = ev.target.closest(".pack-tabs__btn");
       if (!btn) return;
-      setActiveGroup(btn.getAttribute("data-pack-group"));
+      const group = btn.getAttribute("data-pack-group");
+      if (group === activeGroup) return;
+      setActiveGroup(group, { animate: true });
     });
   }
 

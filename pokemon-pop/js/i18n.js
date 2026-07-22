@@ -62,6 +62,12 @@ window.PopTracker = window.PopTracker || {};
       tabBoosters: "확장팩",
       tabPromos: "프로모",
       emptyPackGroup: "이 분류에 표시할 팩이 없습니다.",
+      menuOpen: "메뉴 열기",
+      menuClose: "메뉴 닫기",
+      menuTitle: "메뉴",
+      menuLang: "언어",
+      menuBoosters: "확장팩",
+      menuPromos: "프로모",
     },
     en: {
       siteTagline: "Browse packs and check grading POP counts with eBay PSA asking prices.",
@@ -118,6 +124,12 @@ window.PopTracker = window.PopTracker || {};
       tabBoosters: "Booster Sets",
       tabPromos: "Promos",
       emptyPackGroup: "No packs in this category yet.",
+      menuOpen: "Open menu",
+      menuClose: "Close menu",
+      menuTitle: "Menu",
+      menuLang: "Language",
+      menuBoosters: "Booster sets",
+      menuPromos: "Promos",
     },
     ja: {
       siteTagline: "パックを選んでグレーディングPOPとeBay相場をまとめて確認できます。",
@@ -174,6 +186,12 @@ window.PopTracker = window.PopTracker || {};
       tabBoosters: "拡張パック",
       tabPromos: "プロモ",
       emptyPackGroup: "この分類のパックはまだありません。",
+      menuOpen: "メニューを開く",
+      menuClose: "メニューを閉じる",
+      menuTitle: "メニュー",
+      menuLang: "言語",
+      menuBoosters: "拡張パック",
+      menuPromos: "プロモ",
     },
   };
 
@@ -301,60 +319,143 @@ window.PopTracker = window.PopTracker || {};
   PT.mountLangSwitcher = function (nav) {
     if (!nav) return;
     const hostParent = nav.querySelector(".nav-actions") || nav;
-    let host = nav.querySelector(".nav-lang");
-    if (!host) {
-      host = document.createElement("div");
-      host.className = "nav-lang";
-      host.setAttribute("role", "group");
-      host.setAttribute("aria-label", "Language");
-      hostParent.appendChild(host);
+
+    let btn = nav.querySelector(".nav-menu-btn");
+    if (!btn) {
+      btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "nav-menu-btn";
+      btn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("aria-controls", "nav-drawer");
+      hostParent.appendChild(btn);
     }
+    btn.setAttribute("aria-label", PT.t("menuOpen"));
+    btn.innerHTML =
+      '<span class="nav-menu-btn__bars" aria-hidden="true"><span></span><span></span><span></span></span>';
+
+    let backdrop = document.getElementById("nav-drawer-backdrop");
+    if (!backdrop) {
+      backdrop = document.createElement("div");
+      backdrop.id = "nav-drawer-backdrop";
+      backdrop.className = "nav-drawer-backdrop";
+      document.body.appendChild(backdrop);
+    }
+
+    let drawer = document.getElementById("nav-drawer");
+    if (!drawer) {
+      drawer = document.createElement("aside");
+      drawer.id = "nav-drawer";
+      drawer.className = "nav-drawer";
+      drawer.setAttribute("role", "dialog");
+      drawer.setAttribute("aria-modal", "true");
+      document.body.appendChild(drawer);
+    }
+    drawer.setAttribute("aria-label", PT.t("menuTitle"));
+
+    function packGroup(pack) {
+      const g = String((pack && pack.listGroup) || "booster").toLowerCase();
+      return g === "promo" ? "promo" : "booster";
+    }
+
+    function visiblePacks(group) {
+      const packs = (PT.getPacks && PT.getPacks()) || [];
+      return packs
+        .filter(function (p) {
+          return p && !p.listHidden && packGroup(p) === group;
+        })
+        .slice()
+        .sort(function (a, b) {
+          const ya = Number(a.releaseYear) || 0;
+          const yb = Number(b.releaseYear) || 0;
+          if (yb !== ya) return yb - ya;
+          return String(a.id || "").localeCompare(String(b.id || ""));
+        });
+    }
+
+    function packLinks(group) {
+      return visiblePacks(group)
+        .map(function (pack) {
+          const name = PT.packName ? PT.packName(pack) : pack.nameKo || pack.id;
+          return `<a class="nav-drawer__link" href="./set.html?pack=${encodeURIComponent(
+            pack.id
+          )}">${name}</a>`;
+        })
+        .join("");
+    }
+
     const active = PT.getUiLang();
-    host.innerHTML = [
+    const langBtns = [
       { id: "ko", label: PT.t("uiKo") },
       { id: "en", label: PT.t("uiEn") },
       { id: "ja", label: PT.t("uiJa") },
     ]
-      .map(
-        (item) =>
-          `<button type="button" class="nav-lang__btn${item.id === active ? " is-active" : ""}" data-ui-lang="${item.id}" aria-pressed="${item.id === active ? "true" : "false"}">${item.label}</button>`
-      )
+      .map(function (item) {
+        return `<button type="button" class="nav-drawer__lang-btn${
+          item.id === active ? " is-active" : ""
+        }" data-ui-lang="${item.id}" aria-pressed="${
+          item.id === active ? "true" : "false"
+        }">${item.label}</button>`;
+      })
       .join("");
 
-    function closeLang() {
-      host.classList.remove("is-open");
+    drawer.innerHTML = `
+      <div class="nav-drawer__head">
+        <h2 class="nav-drawer__title">${PT.t("menuTitle")}</h2>
+        <button type="button" class="nav-drawer__close" aria-label="${PT.t(
+          "menuClose"
+        )}">×</button>
+      </div>
+      <div class="nav-drawer__body">
+        <section class="nav-drawer__section">
+          <h3 class="nav-drawer__section-title">${PT.t("menuLang")}</h3>
+          <div class="nav-drawer__langs">${langBtns}</div>
+        </section>
+        <section class="nav-drawer__section">
+          <h3 class="nav-drawer__section-title">${PT.t("menuBoosters")}</h3>
+          <div class="nav-drawer__links">${packLinks("booster") || `<p class="nav-drawer__empty">${PT.t(
+            "emptyPackGroup"
+          )}</p>`}</div>
+        </section>
+        <section class="nav-drawer__section">
+          <h3 class="nav-drawer__section-title">${PT.t("menuPromos")}</h3>
+          <div class="nav-drawer__links">${packLinks("promo") || `<p class="nav-drawer__empty">${PT.t(
+            "emptyPackGroup"
+          )}</p>`}</div>
+        </section>
+      </div>
+    `;
+
+    function setOpen(open) {
+      document.body.classList.toggle("nav-drawer-open", open);
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      btn.setAttribute("aria-label", open ? PT.t("menuClose") : PT.t("menuOpen"));
+      drawer.classList.toggle("is-open", open);
+      backdrop.classList.toggle("is-open", open);
     }
 
-    host.onclick = function (e) {
-      const btn = e.target.closest("[data-ui-lang]");
-      if (!btn) return;
-
-      const isActive = btn.classList.contains("is-active");
-      const expanded = host.classList.contains("is-open");
-
-      // First tap on active (collapsed): expand options on touch devices
-      if (isActive && !expanded) {
-        e.preventDefault();
-        host.classList.add("is-open");
+    btn.onclick = function () {
+      setOpen(!drawer.classList.contains("is-open"));
+    };
+    backdrop.onclick = function () {
+      setOpen(false);
+    };
+    drawer.querySelector(".nav-drawer__close").onclick = function () {
+      setOpen(false);
+    };
+    drawer.onclick = function (e) {
+      const langBtn = e.target.closest("[data-ui-lang]");
+      if (!langBtn) return;
+      if (langBtn.dataset.uiLang === active) {
+        setOpen(false);
         return;
       }
-
-      if (btn.dataset.uiLang === active) {
-        closeLang();
-        return;
-      }
-
-      PT.setUiLang(btn.dataset.uiLang);
+      PT.setUiLang(langBtn.dataset.uiLang);
       window.location.reload();
     };
 
-    document.addEventListener(
-      "pointerdown",
-      function (e) {
-        if (!host.contains(e.target)) closeLang();
-      },
-      true
-    );
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setOpen(false);
+    });
   };
 
   // Apply saved lang on load
