@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-07-22T23:39:37+09:00",
+  "ranAt": "2026-07-23T00:28:52+09:00",
   "stats": {
-    "asOf": "2026-07-22",
-    "asOfIso": "2026-07-22T23:39:37+09:00",
+    "asOf": "2026-07-23",
+    "asOfIso": "2026-07-23T00:28:52+09:00",
     "cardsTotal": 3953,
     "cardsLive": 1696,
     "skippedTierC": 2257,
@@ -14,8 +14,511 @@
       "B": 494,
       "C": 2257
     },
-    "brgPopsRestored": 1510,
     "ebayPricesRestored": 0,
-    "gemratePsaRestored": 0
+    "brgPopsRestored": 1510,
+    "psaPopsRestored": 358,
+    "brg": {
+      "brgEnabled": true,
+      "setsResolved": 77,
+      "setsMissing": 0,
+      "setsUnavailable": 4,
+      "cardsMatched": 1494,
+      "cardsNoBrgEntry": 2107,
+      "cardsAttempted": 3601,
+      "brgEntriesFetched": 2393,
+      "dryRun": false,
+      "setMap": [
+        {
+          "packId": "sv2a-151",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV2A",
+          "year": 2023
+        },
+        {
+          "packId": "sv2a-151",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV2A",
+          "year": 2023
+        },
+        {
+          "packId": "sv2a-151",
+          "lang": "en",
+          "setName": null
+        },
+        {
+          "packId": "pokekyun",
+          "lang": "jp",
+          "setName": "POKEMON XY JAPANESE CP3",
+          "year": 2016
+        },
+        {
+          "packId": "pokekyun",
+          "lang": "kr",
+          "setName": "POKEMON XY KOREAN CP3",
+          "year": 2016
+        },
+        {
+          "packId": "thunderclap-spark",
+          "lang": "jp",
+          "setName": "POKEMON S&M JAPANESE SM7A",
+          "year": 2018
+        },
+        {
+          "packId": "thunderclap-spark",
+          "lang": "kr",
+          "setName": "POKEMON S&M KOREAN SM7A",
+          "year": 2018
+        },
+        {
+          "packId": "s8a-25th",
+          "lang": "jp",
+          "setName": "POKEMON SWSH JAPANESE S8AP",
+          "year": 2021
+        },
+        {
+          "packId": "s8a-25th",
+          "lang": "kr",
+          "setName": "POKEMON SWSH KOREAN S8A",
+          "year": 2021
+        },
+        {
+          "packId": "sv4k-ancient-roar",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV4K",
+          "year": 2023
+        },
+        {
+          "packId": "sv4k-ancient-roar",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV4K",
+          "year": 2023
+        },
+        {
+          "packId": "sv4k-ancient-roar",
+          "lang": "en",
+          "setName": null
+        },
+        {
+          "packId": "sv6a-night-wanderer",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV6A",
+          "year": 2024
+        },
+        {
+          "packId": "sv6a-night-wanderer",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV6A",
+          "year": 2024
+        },
+        {
+          "packId": "sv7a-paradise-dragona",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV7A",
+          "year": 2024
+        },
+        {
+          "packId": "sv7a-paradise-dragona",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV7A",
+          "year": 2024
+        },
+        {
+          "packId": "m3-nihil-zero",
+          "lang": "jp",
+          "setName": "POKEMON S&M JAPANESE SM3+",
+          "year": 2017
+        },
+        {
+          "packId": "m3-nihil-zero",
+          "lang": "kr",
+          "setName": "POKEMON S&M KOREAN SM3+",
+          "year": 2017
+        },
+        {
+          "packId": "m4-ninja-spinner",
+          "lang": "jp",
+          "setName": "POKEMON S&M JAPANESE SM4+",
+          "year": 2017
+        },
+        {
+          "packId": "m4-ninja-spinner",
+          "lang": "kr",
+          "setName": "POKEMON S&M KOREAN SM4+",
+          "year": 2017
+        },
+        {
+          "packId": "sv3a-raging-surf",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV3A",
+          "year": 2023
+        },
+        {
+          "packId": "sv3a-raging-surf",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV3A",
+          "year": 2023
+        },
+        {
+          "packId": "sv10-rocket-glory",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV10",
+          "year": 2025
+        },
+        {
+          "packId": "sv10-rocket-glory",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV10",
+          "year": 2025
+        },
+        {
+          "packId": "m1l-mega-brave",
+          "lang": "jp",
+          "setName": "POKEMON MG JAPANESE M1L",
+          "year": 2025
+        },
+        {
+          "packId": "m1l-mega-brave",
+          "lang": "kr",
+          "setName": "POKEMON MG KOREAN M1L",
+          "year": 2025
+        },
+        {
+          "packId": "m1l-mega-brave",
+          "lang": "en",
+          "setName": null
+        },
+        {
+          "packId": "m1s-mega-symphonia",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE M1S",
+          "year": 2025
+        },
+        {
+          "packId": "m1s-mega-symphonia",
+          "lang": "kr",
+          "setName": "POKEMON MG KOREAN M1S",
+          "year": 2025
+        },
+        {
+          "packId": "sv4m-future-flash",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV4M",
+          "year": 2023
+        },
+        {
+          "packId": "sv4m-future-flash",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV4M",
+          "year": 2023
+        },
+        {
+          "packId": "sv4m-future-flash",
+          "lang": "en",
+          "setName": null
+        },
+        {
+          "packId": "sv9-battle-partners",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV9",
+          "year": 2025
+        },
+        {
+          "packId": "sv9-battle-partners",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV9",
+          "year": 2025
+        },
+        {
+          "packId": "sv6-mask-of-change",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV6",
+          "year": 2024
+        },
+        {
+          "packId": "sv6-mask-of-change",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV6",
+          "year": 2024
+        },
+        {
+          "packId": "sv5m-cyber-judge",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV5M",
+          "year": 2024
+        },
+        {
+          "packId": "sv5m-cyber-judge",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV5M",
+          "year": 2024
+        },
+        {
+          "packId": "s4a-shiny-star-v",
+          "lang": "jp",
+          "setName": "POKEMON SWSH JAPANESE S4A",
+          "year": 2020
+        },
+        {
+          "packId": "s4a-shiny-star-v",
+          "lang": "kr",
+          "setName": "POKEMON SWSH KOREAN S4A",
+          "year": 2020
+        },
+        {
+          "packId": "sv4a-shiny-treasure",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV4A",
+          "year": 2023
+        },
+        {
+          "packId": "sv4a-shiny-treasure",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV4A",
+          "year": 2023
+        },
+        {
+          "packId": "sv2p-snow-hazard",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV2P",
+          "year": 2023
+        },
+        {
+          "packId": "sv2p-snow-hazard",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV2P",
+          "year": 2023
+        },
+        {
+          "packId": "sv11b-black-bolt",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV11B",
+          "year": 2025
+        },
+        {
+          "packId": "sv11b-black-bolt",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV11B",
+          "year": 2025
+        },
+        {
+          "packId": "sv11b-black-bolt",
+          "lang": "en",
+          "setName": "POKEMON S&V BLKEN",
+          "year": 2025
+        },
+        {
+          "packId": "sv11w-white-flare",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV11W",
+          "year": 2025
+        },
+        {
+          "packId": "sv11w-white-flare",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV11W",
+          "year": 2025
+        },
+        {
+          "packId": "sv11w-white-flare",
+          "lang": "en",
+          "setName": "POKEMON S&V WHTEN",
+          "year": 2025
+        },
+        {
+          "packId": "sv7-stellar-miracle",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV7",
+          "year": 2024
+        },
+        {
+          "packId": "sv7-stellar-miracle",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV7",
+          "year": 2024
+        },
+        {
+          "packId": "s4-amazing-volt-tackle",
+          "lang": "jp",
+          "setName": "POKEMON SWSH JAPANESE S4A",
+          "year": 2020
+        },
+        {
+          "packId": "s4-amazing-volt-tackle",
+          "lang": "kr",
+          "setName": "POKEMON SWSH KOREAN S4A",
+          "year": 2020
+        },
+        {
+          "packId": "m5-abyss-eye",
+          "lang": "jp",
+          "setName": "POKEMON S&M JAPANESE SM5M",
+          "year": 2017
+        },
+        {
+          "packId": "m5-abyss-eye",
+          "lang": "kr",
+          "setName": "POKEMON S&M KOREAN SM5+",
+          "year": 2018
+        },
+        {
+          "packId": "sv9a-heat-wave-arena",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV9A",
+          "year": 2025
+        },
+        {
+          "packId": "sv9a-heat-wave-arena",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV9A",
+          "year": 2025
+        },
+        {
+          "packId": "sv5k-wild-force",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV5K",
+          "year": 2024
+        },
+        {
+          "packId": "sv5k-wild-force",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV5K",
+          "year": 2024
+        },
+        {
+          "packId": "s6a-eevee-heroes",
+          "lang": "jp",
+          "setName": "POKEMON SWSH JAPANESE S6A",
+          "year": 2021
+        },
+        {
+          "packId": "s6a-eevee-heroes",
+          "lang": "kr",
+          "setName": "POKEMON SWSH KOREAN S6A",
+          "year": 2021
+        },
+        {
+          "packId": "m2-inferno-x",
+          "lang": "jp",
+          "setName": "POKEMON MG JAPANESE M2",
+          "year": 2025
+        },
+        {
+          "packId": "m2-inferno-x",
+          "lang": "kr",
+          "setName": "POKEMON MG KOREAN M2",
+          "year": 2025
+        },
+        {
+          "packId": "s7r-blue-sky-stream",
+          "lang": "jp",
+          "setName": "POKEMON SWSH JAPANESE S7R",
+          "year": 2021
+        },
+        {
+          "packId": "s7r-blue-sky-stream",
+          "lang": "kr",
+          "setName": "POKEMON SWSH KOREAN S7R",
+          "year": 2021
+        },
+        {
+          "packId": "sv8-super-electric-breaker",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV8",
+          "year": 2024
+        },
+        {
+          "packId": "sv8-super-electric-breaker",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV8",
+          "year": 2024
+        },
+        {
+          "packId": "sv5a-crimson-haze",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV5A",
+          "year": 2024
+        },
+        {
+          "packId": "sv5a-crimson-haze",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV5A",
+          "year": 2024
+        },
+        {
+          "packId": "sv2d-clay-burst",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV2D",
+          "year": 2023
+        },
+        {
+          "packId": "sv2d-clay-burst",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV2D",
+          "year": 2023
+        },
+        {
+          "packId": "sv8a-terastal-festa",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV8A",
+          "year": 2024
+        },
+        {
+          "packId": "sv8a-terastal-festa",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV8A",
+          "year": 2024
+        },
+        {
+          "packId": "m2a-mega-dream-ex",
+          "lang": "jp",
+          "setName": "POKEMON MG JAPANESE M2A",
+          "year": 2025
+        },
+        {
+          "packId": "m2a-mega-dream-ex",
+          "lang": "kr",
+          "setName": "POKEMON MG KOREAN M2A",
+          "year": 2026
+        },
+        {
+          "packId": "sv3-ruler-of-black-flame",
+          "lang": "jp",
+          "setName": "POKEMON S&V JAPANESE SV3",
+          "year": 2023
+        },
+        {
+          "packId": "sv3-ruler-of-black-flame",
+          "lang": "kr",
+          "setName": "POKEMON S&V KOREAN SV3",
+          "year": 2023
+        },
+        {
+          "packId": "mg-festa-seoul-stamp",
+          "lang": "kr",
+          "setName": "POKEMON MG KOREAN PROMO",
+          "year": 2026
+        },
+        {
+          "packId": "bw2-red-collection",
+          "lang": "jp",
+          "setName": "POKEMON B&W JAPANESE BW2",
+          "year": 2011
+        },
+        {
+          "packId": "bw2-red-collection",
+          "lang": "kr",
+          "setName": "POKEMON B&W KOREAN BW2",
+          "year": 2011
+        }
+      ],
+      "errors": [],
+      "matchRate": 0.4149,
+      "cardsUnmatched": 2107
+    },
+    "ebay": {
+      "ebayEnabled": false,
+      "note": "Set EBAY_CLIENT_ID and EBAY_CLIENT_SECRET to enable eBay prices"
+    },
+    "liveSource": "seed+BRG"
   }
 }
