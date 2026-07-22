@@ -110665,5 +110665,36 @@
     "editions": [
       "en"
     ]
+  },
+  {
+    "id": "sv11w-victini-bwr",
+    "packId": "sv11w-white-flare",
+    "nameKo": "비크티니",
+    "nameEn": "Victini",
+    "nameJa": "ビクティニ",
+    "number": "171/086",
+    "rarity": "BWR",
+    "type": "fire",
+    "typeKo": "불",
+    "holoStyle": "sar",
+    "image": "./assets/sv11b-victini-bwr-en.png",
+    "images": {
+      "jp": null,
+      "kr": null,
+      "en": "./assets/sv11b-victini-bwr-en.png"
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "tier": "A",
+    "seed": {
+      "basePrice": 280,
+      "basePop": 120
+    },
+    "editions": [
+      "en"
+    ]
   }
 ]

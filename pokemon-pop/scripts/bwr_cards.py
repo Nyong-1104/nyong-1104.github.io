@@ -5,7 +5,7 @@ There is no general rarity rule — only these cards:
   - Black: Zekrom ex (Black Bolt 174/086) — JP/KR/EN
   - White: Reshiram ex (White Flare 174/086) — JP/KR/EN
   - Red: Victini SR (Red Collection 070/066) — legacy
-  - EN-only: Victini BWR (Black Bolt EN 171/086) — not in JP/KR Black Bolt
+  - EN-only: Victini BWR (Black Bolt / White Flare EN 171/086) — not in JP/KR
 """
 
 # cardId → optional field overrides applied on top of catalog rows
@@ -39,13 +39,29 @@ BWR_CARDS = {
             "en": "https://images.pokemontcg.io/bw2/70_hires.png",
         },
     },
-    # EN Black Bolt only (JP/KR #171 is a different SAR). Shown when edition=en.
+    # EN Black Bolt / White Flare only (JP/KR #171 is a different SAR).
     "sv11b-victini-bwr": {
         "nameKo": "비크티니",
         "nameEn": "Victini",
         "nameJa": "ビクティニ",
         "number": "171/086",
         "packId": "sv11b-black-bolt",
+        "type": "fire",
+        "typeKo": "불",
+        "editions": ["en"],
+        "image": "./assets/sv11b-victini-bwr-en.png",
+        "images": {
+            "jp": None,
+            "kr": None,
+            "en": "./assets/sv11b-victini-bwr-en.png",
+        },
+    },
+    "sv11w-victini-bwr": {
+        "nameKo": "비크티니",
+        "nameEn": "Victini",
+        "nameJa": "ビクティニ",
+        "number": "171/086",
+        "packId": "sv11w-white-flare",
         "type": "fire",
         "typeKo": "불",
         "editions": ["en"],
