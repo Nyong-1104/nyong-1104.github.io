@@ -108842,5 +108842,33 @@
       "basePop": 19
     },
     "tier": "B"
+  },
+  {
+    "id": "bw2-070",
+    "packId": "bw2-red-collection",
+    "nameKo": "비크티니",
+    "nameEn": "Victini",
+    "nameJa": "ビクティニ",
+    "number": "070/066",
+    "rarity": "BWR",
+    "type": "fire",
+    "typeKo": "불",
+    "holoStyle": "sar",
+    "image": "https://images.pokemontcg.io/bw2/70_hires.png",
+    "images": {
+      "jp": "https://images.pokemontcg.io/bw2/70_hires.png",
+      "kr": null,
+      "en": "https://images.pokemontcg.io/bw2/70_hires.png"
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "tier": "A",
+    "seed": {
+      "basePrice": 280,
+      "basePop": 120
+    }
   }
 ]

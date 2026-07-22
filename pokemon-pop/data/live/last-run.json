@@ -1,58 +1,20 @@
 {
-  "ranAt": "2026-07-22T09:59:20+09:00",
+  "ranAt": "2026-07-22T10:05:01+09:00",
   "stats": {
     "asOf": "2026-07-22",
-    "asOfIso": "2026-07-22T09:59:20+09:00",
-    "cardsTotal": 3887,
-    "cardsLive": 1630,
+    "asOfIso": "2026-07-22T10:05:01+09:00",
+    "cardsTotal": 3888,
+    "cardsLive": 1631,
     "skippedTierC": 2257,
-    "variantsWritten": 3635,
+    "variantsWritten": 3637,
     "variantsKept": 0,
     "variantsFailed": 0,
     "tiers": {
-      "A": 1136,
+      "A": 1137,
       "B": 494,
       "C": 2257
     },
-    "ebayPricesRestored": 0,
-    "brgPopsRestored": 1449,
-    "brg": {
-      "brgEnabled": true,
-      "setsResolved": 3,
-      "setsMissing": 0,
-      "setsUnavailable": 0,
-      "cardsMatched": 87,
-      "cardsNoBrgEntry": 225,
-      "cardsAttempted": 312,
-      "brgEntriesFetched": 98,
-      "dryRun": false,
-      "setMap": [
-        {
-          "packId": "sv11w-white-flare",
-          "lang": "jp",
-          "setName": "POKEMON S&V JAPANESE SV11W",
-          "year": 2025
-        },
-        {
-          "packId": "sv11w-white-flare",
-          "lang": "kr",
-          "setName": "POKEMON S&V KOREAN SV11W",
-          "year": 2025
-        },
-        {
-          "packId": "sv11w-white-flare",
-          "lang": "en",
-          "setName": "POKEMON S&V WHTEN",
-          "year": 2025
-        }
-      ],
-      "errors": [],
-      "matchRate": 0.2788,
-      "cardsUnmatched": 225
-    },
-    "ebay": {
-      "ebayEnabled": false
-    },
-    "liveSource": "seed+BRG"
+    "brgPopsRestored": 1451,
+    "ebayPricesRestored": 0
   }
 }

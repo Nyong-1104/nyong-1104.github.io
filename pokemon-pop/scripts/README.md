@@ -24,9 +24,12 @@ GitHub Actions runs **hourly** (`.github/workflows/daily-pokepop.yml`).
 
 | Tier | Rarity | Live snapshot |
 |------|--------|---------------|
-| A | SAR, SIR, HR, UR, SR, AR, SSR, S_2, RRR | POP + price shell |
+| A | SAR, SIR, HR, UR, SR, AR, SSR, S_2, RRR, **BWR** | POP + price shell |
 | B | RR, PRISM, R, PROMO | POP + price shell |
 | C | U, C, other | Catalog only (skipped in live) |
+
+**BWR** (Black / White / Red special finish) is **not** a general rule — only three cards, listed in `scripts/bwr_cards.py`:
+제크로무 ex (Black Bolt), 레시라무 ex (White Flare), 비크티니 (Red Collection).
 
 BRG column map: **10←100 · 9.5←90 · 9←85 · 8←80**.
 

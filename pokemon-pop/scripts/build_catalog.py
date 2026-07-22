@@ -23,6 +23,7 @@ KST = timezone(timedelta(hours=9))
 
 sys.path.insert(0, str(SCRIPTS))
 from pokepop_snapshot import build_live_snapshot, write_data_bundle  # noqa: E402
+from bwr_cards import ensure_bwr_cards  # noqa: E402
 
 GITHUB_RAW = "https://raw.githubusercontent.com/type-null/PTCG-database/main/data_jp"
 GITHUB_API = "https://api.github.com/repos/type-null/PTCG-database/contents/data_jp"
@@ -239,26 +240,34 @@ TRAINER_KO = {
 
 
 def map_rarity(raw: str | None, card: dict | None = None) -> str:
-    """Map PTCG-database rarity codes. Missing rarity on secret #s → BWR (Black/White Rare)."""
-    if raw:
-        mapped = RARITY_MAP.get(raw)
-        if mapped:
-            return mapped
-        cleaned = raw.upper().replace("RARE_", "").replace("_C", "")
-        if cleaned in {"BWR", "SAR", "SIR", "SSR", "S_2", "HR", "UR", "SR", "AR", "RR", "RRR", "PRISM", "R", "U", "C", "PROMO"}:
-            return cleaned
-        return cleaned[:6] or "C"
-
-    # Black Bolt / White Flare BWR arts ship with rarity=null in PTCG-database
-    if card:
-        try:
-            num = int(str(card.get("number") or "0").split("/")[0])
-            total = int(str(card.get("set_total") or "0").split("/")[0])
-        except ValueError:
-            num, total = 0, 0
-        if total and num > total:
-            return "BWR"
-    return "C"
+    """Map PTCG-database rarity codes. BWR is never inferred — only whitelist overrides."""
+    _ = card
+    if not raw:
+        return "C"
+    mapped = RARITY_MAP.get(raw)
+    if mapped:
+        return mapped
+    cleaned = raw.upper().replace("RARE_", "").replace("_C", "")
+    if cleaned in {
+        "BWR",
+        "SAR",
+        "SIR",
+        "SSR",
+        "S_2",
+        "HR",
+        "UR",
+        "SR",
+        "AR",
+        "RR",
+        "RRR",
+        "PRISM",
+        "R",
+        "U",
+        "C",
+        "PROMO",
+    }:
+        return cleaned
+    return cleaned[:6] or "C"
 
 
 def map_type(card: dict) -> tuple[str, str]:
@@ -637,6 +646,9 @@ def main() -> int:
 
     print("Attaching multilingual images…")
     attach_multilang_images(catalog)
+
+    print("Applying BWR whitelist…")
+    catalog = ensure_bwr_cards(catalog, packs_out)
 
     asof = datetime.now(KST).isoformat(timespec="seconds")
     live, stats = build_live_snapshot(catalog, packs_out, asof)

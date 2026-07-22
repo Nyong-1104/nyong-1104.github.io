@@ -22,6 +22,7 @@ KST = timezone(timedelta(hours=9))
 
 sys.path.insert(0, str(SCRIPTS))
 from brg_pop import fetch_brg_for_packs, restore_brg_pops  # noqa: E402
+from bwr_cards import ensure_bwr_cards  # noqa: E402
 from ebay_prices import (  # noqa: E402
     fetch_ebay_batch,
     has_credentials,
@@ -117,6 +118,7 @@ def main(argv: list[str] | None = None) -> int:
     asof_iso = now.isoformat(timespec="seconds")
     packs = load_json(DATA / "packs.json")
     catalog = load_json(DATA / "catalog.json")
+    catalog = ensure_bwr_cards(catalog, packs)
     tier_counts = assign_tiers_to_catalog(catalog)
 
     live_path = DATA / "live" / "pop-price.json"
