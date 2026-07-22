@@ -117,6 +117,35 @@ GEMRATE_SETS: dict[str, dict[str, dict[str, Any]]] = {
             "reuseFrom": {"packId": "m1l-mega-brave", "lang": "en"},
         },
     },
+    "sv10-rocket-glory": {
+        "jp": {
+            "year": 2025,
+            "set_name": "Pokemon Japanese SV10-Glory of Team Rocket",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Japanese+SV10-Glory+of+Team+Rocket"
+            ),
+        },
+        "kr": {
+            "year": 2025,
+            "set_name": "Pokemon Korean SV10-Glory of Team Rocket",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Korean+SV10-Glory+of+Team+Rocket"
+            ),
+        },
+        "en": {
+            "year": 2025,
+            "set_name": "Pokemon Dri EN-Destined Rivals",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Dri+EN-Destined+Rivals"
+            ),
+        },
+    },
 }
 
 # Preferred GemRate parallel names for each catalog rarity (order = preference).
