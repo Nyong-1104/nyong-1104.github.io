@@ -1,6 +1,28 @@
 (function () {
   const PT = window.PopTracker;
-  const RARITY_RANK = { SAR: 5, SIR: 5, HR: 5, UR: 4, SR: 4, RRR: 4, RR: 4, PRISM: 3, R: 3, AR: 3, U: 2, C: 1 };
+  const RARITY_RANK = {
+    BWR: 100,
+    SAR: 90,
+    SIR: 90,
+    SSR: 85,
+    S_2: 80,
+    HR: 75,
+    UR: 70,
+    SR: 65,
+    RRR: 60,
+    RR: 50,
+    PRISM: 45,
+    AR: 40,
+    R: 30,
+    PROMO: 25,
+    U: 20,
+    C: 10,
+  };
+
+  function rarityRank(card) {
+    const key = String(card?.rarity || "").toUpperCase();
+    return RARITY_RANK[key] || 0;
+  }
 
   function sortCards(list, mode, editionLang) {
     const arr = list.slice();
@@ -18,9 +40,13 @@
           PT.typeLabel(a.type).localeCompare(PT.typeLabel(b.type), PT.getUiLang())
         );
       case "rarity":
-        return arr.sort(
-          (a, b) => (RARITY_RANK[b.rarity] || 0) - (RARITY_RANK[a.rarity] || 0)
-        );
+        return arr.sort((a, b) => {
+          const diff = rarityRank(b) - rarityRank(a);
+          if (diff) return diff;
+          const na = parseInt(String(a.number || "").split("/")[0], 10) || 0;
+          const nb = parseInt(String(b.number || "").split("/")[0], 10) || 0;
+          return na - nb;
+        });
       case "name":
         return arr.sort((a, b) =>
           PT.cardName(a).localeCompare(PT.cardName(b), PT.getUiLang())
@@ -101,12 +127,13 @@
   document.querySelector('label[for="filter-type"]').textContent = PT.t("type");
   document.querySelector('label[for="filter-lang"]').textContent = PT.t("language");
 
-  sortSelect.options[0].textContent = PT.t("sortNumber");
-  sortSelect.options[1].textContent = PT.t("sortPriceDesc");
-  sortSelect.options[2].textContent = PT.t("sortPriceAsc");
-  sortSelect.options[3].textContent = PT.t("sortType");
-  sortSelect.options[4].textContent = PT.t("sortRarity");
+  sortSelect.options[0].textContent = PT.t("sortRarity");
+  sortSelect.options[1].textContent = PT.t("sortNumber");
+  sortSelect.options[2].textContent = PT.t("sortPriceDesc");
+  sortSelect.options[3].textContent = PT.t("sortPriceAsc");
+  sortSelect.options[4].textContent = PT.t("sortType");
   sortSelect.options[5].textContent = PT.t("sortName");
+  sortSelect.value = "rarity";
 
   typeSelect.innerHTML = `<option value="all">${PT.t("all")}</option>`;
   const types = [];

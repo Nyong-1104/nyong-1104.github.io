@@ -4,7 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 
-TIER_A = {"SAR", "SIR", "HR", "UR", "SR", "AR", "SSR", "S_2", "RRR"}
+TIER_A = {"SAR", "SIR", "HR", "UR", "SR", "AR", "SSR", "S_2", "RRR", "BWR"}
 TIER_B = {"RR", "PRISM", "R", "PROMO"}
 # U, C, and anything else → Tier C (catalog only)
 

@@ -2,7 +2,7 @@
 window.PopTracker = window.PopTracker || {};
 
 (function (PT) {
-  PT.GRADERS = ["PSA", "BGS", "CGC", "BRG", "TAG", "ACE", "AGS"];
+  PT.GRADERS = ["BRG", "PSA", "BGS", "CGC", "TAG", "ACE", "AGS"];
   PT.GRADE_COLS = ["10", "9.5", "9", "8", "total"];
   PT.PRICE_GRADES = ["10", "9", "8"];
   PT.LANG_ORDER = ["jp", "kr", "en"];

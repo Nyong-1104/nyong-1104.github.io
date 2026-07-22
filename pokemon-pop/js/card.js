@@ -26,6 +26,11 @@
     return brg ? `${col}<span class="pop-brg-hint">/${brg}</span>` : col;
   }
 
+  function graderHasData(graderData) {
+    if (!graderData || typeof graderData !== "object") return false;
+    return PT.GRADE_COLS.some((col) => graderData[col] != null);
+  }
+
   function renderPop(variant) {
     const thead = document.querySelector("#pop-table thead tr");
     thead.innerHTML =
@@ -33,13 +38,20 @@
       PT.GRADE_COLS.map((g) => `<th>${gradeHeader(g)}</th>`).join("");
 
     const tbody = document.querySelector("#pop-table tbody");
-    if (!variant?.pop) {
+    const pop = variant?.pop;
+    if (!pop) {
       tbody.innerHTML = `<tr><td colspan="${PT.GRADE_COLS.length + 1}" class="pop-empty pop-empty--message">${PT.t("popEmpty")}</td></tr>`;
       return;
     }
 
-    const rows = PT.GRADERS.map((g) => {
-      const data = variant.pop[g] ?? null;
+    const activeGraders = PT.GRADERS.filter((g) => graderHasData(pop[g]));
+    if (!activeGraders.length) {
+      tbody.innerHTML = `<tr><td colspan="${PT.GRADE_COLS.length + 1}" class="pop-empty pop-empty--message">${PT.t("popEmptyBrg")}</td></tr>`;
+      return;
+    }
+
+    const rows = activeGraders.map((g) => {
+      const data = pop[g] ?? null;
       const live = data && data.source === "break";
       return `<tr${live ? ' class="pop-live-row"' : ""}>
         <td>${g}${live ? ' <span class="pop-live-tag">live</span>' : ""}</td>
@@ -47,14 +59,16 @@
       </tr>`;
     });
 
-    const totals = PT.GRADE_COLS.map((col) => {
-      const v = sumPopColumn(variant.pop, col);
-      if (v == null) return `<td class="pop-empty">—</td>`;
-      return `<td>${v.toLocaleString("en-US")}</td>`;
-    });
-    rows.push(
-      `<tr class="pop-total-row"><td>${PT.t("popTotalRow")}</td>${totals.join("")}</tr>`
-    );
+    if (activeGraders.length > 1) {
+      const totals = PT.GRADE_COLS.map((col) => {
+        const v = sumPopColumn(pop, col);
+        if (v == null) return `<td class="pop-empty">—</td>`;
+        return `<td>${v.toLocaleString("en-US")}</td>`;
+      });
+      rows.push(
+        `<tr class="pop-total-row"><td>${PT.t("popTotalRow")}</td>${totals.join("")}</tr>`
+      );
+    }
 
     tbody.innerHTML = rows.join("");
   }
