@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """Explicit BWR (Black / White / Red special-finish) whitelist.
 
-There is no general rarity rule — only these three cards exist:
-  - Black: Zekrom ex (Black Bolt 174/086)
-  - White: Reshiram ex (White Flare 174/086)
-  - Red: Victini SR (Red Collection 070/066)
+There is no general rarity rule — only these cards:
+  - Black: Zekrom ex (Black Bolt 174/086) — JP/KR/EN
+  - White: Reshiram ex (White Flare 174/086) — JP/KR/EN
+  - Red: Victini SR (Red Collection 070/066) — legacy
+  - EN-only: Victini BWR (Black Bolt EN 171/086) — not in JP/KR Black Bolt
 """
 
 # cardId → optional field overrides applied on top of catalog rows
@@ -38,6 +39,23 @@ BWR_CARDS = {
             "en": "https://images.pokemontcg.io/bw2/70_hires.png",
         },
     },
+    # EN Black Bolt only (JP/KR #171 is a different SAR). Shown when edition=en.
+    "sv11b-victini-bwr": {
+        "nameKo": "비크티니",
+        "nameEn": "Victini",
+        "nameJa": "ビクティニ",
+        "number": "171/086",
+        "packId": "sv11b-black-bolt",
+        "type": "fire",
+        "typeKo": "불",
+        "editions": ["en"],
+        "image": "./assets/sv11b-victini-bwr-en.png",
+        "images": {
+            "jp": None,
+            "kr": None,
+            "en": "./assets/sv11b-victini-bwr-en.png",
+        },
+    },
 }
 
 BWR_SEED = {"basePrice": 280, "basePop": 120}
@@ -56,6 +74,8 @@ def apply_bwr(card: dict) -> dict:
     card["tier"] = "A"
     card["holoStyle"] = "sar"
     card["seed"] = dict(BWR_SEED)
+    if overrides and overrides.get("editions"):
+        card["editions"] = list(overrides["editions"])
     return card
 
 
@@ -114,6 +134,8 @@ def ensure_bwr_cards(catalog: list[dict], packs: list[dict]) -> list[dict]:
             "tier": "A",
             "seed": dict(BWR_SEED),
         }
+        if meta.get("editions"):
+            card["editions"] = list(meta["editions"])
         catalog.append(card)
         by_id[card_id] = card
         pack = packs_by_id.get(pack_id)

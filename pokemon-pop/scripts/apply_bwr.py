@@ -16,6 +16,7 @@ sys.path.insert(0, str(SCRIPTS))
 from brg_pop import restore_brg_pops  # noqa: E402
 from bwr_cards import ensure_bwr_cards  # noqa: E402
 from ebay_prices import live_source_label, restore_ebay_prices  # noqa: E402
+from gemrate_pop import restore_psa_pops  # noqa: E402
 from pokepop_snapshot import (  # noqa: E402
     assign_tiers_to_catalog,
     build_live_snapshot,
@@ -39,9 +40,12 @@ def main() -> int:
     stats["tiers"] = tiers
     stats["brgPopsRestored"] = restore_brg_pops(live, previous)
     stats["ebayPricesRestored"] = restore_ebay_prices(live, previous)
+    stats["gemratePsaRestored"] = restore_psa_pops(live, previous)
     live["source"] = live_source_label(live)
     if stats["brgPopsRestored"] and "BRG" not in str(live.get("source")):
         live["source"] = "seed+BRG" if live["source"] == "seed" else f"{live['source']}+BRG"
+    if stats["gemratePsaRestored"] and "gemrate" not in str(live.get("source")).lower():
+        live["source"] = f"{live['source']}+gemrate"
     live["generatedAt"] = asof
     last_run = {"ranAt": asof, "stats": stats}
     (DATA / "live" / "last-run.json").write_text(

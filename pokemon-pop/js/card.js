@@ -209,8 +209,14 @@
 
   const visual = document.getElementById("detail-visual");
   const packLangs = pack?.languages?.length ? pack.languages : ["jp", "kr"];
-  // Card detail defaults to Japanese edition
-  let activeLang = packLangs.indexOf("jp") !== -1 ? "jp" : packLangs[0];
+  const cardEditions = Array.isArray(card.editions) && card.editions.length
+    ? card.editions
+    : packLangs;
+  const tabLangs = packLangs.filter((lang) => cardEditions.indexOf(lang) !== -1);
+  const editionLangs = tabLangs.length ? tabLangs : cardEditions;
+  // Card detail defaults to Japanese when available for this card
+  let activeLang =
+    editionLangs.indexOf("jp") !== -1 ? "jp" : editionLangs[0] || packLangs[0];
   paintEbayLink(activeLang);
 
   const holo = PT.createHoloCardEl({
@@ -287,7 +293,7 @@
   }
 
   if (tabs) {
-    tabs.innerHTML = packLangs
+    tabs.innerHTML = editionLangs
       .map(
         (lang) =>
           `<button type="button" class="lang-tab${lang === activeLang ? " is-active" : ""}" data-lang="${lang}" role="tab">${PT.langTabLabel(lang)}</button>`

@@ -146,6 +146,64 @@ GEMRATE_SETS: dict[str, dict[str, dict[str, Any]]] = {
             ),
         },
     },
+    "sv11b-black-bolt": {
+        "jp": {
+            "year": 2025,
+            "set_name": "Pokemon Japanese Sv11b-Black Bolt",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Japanese+Sv11b-Black+Bolt"
+            ),
+        },
+        "kr": {
+            "year": 2025,
+            "set_name": "Pokemon Korean Sv11b-Black Bolt",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Korean+Sv11b-Black+Bolt"
+            ),
+        },
+        "en": {
+            "year": 2025,
+            "set_name": "Pokemon Blk EN-Black Bolt",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Blk+EN-Black+Bolt"
+            ),
+        },
+    },
+    "sv11w-white-flare": {
+        "jp": {
+            "year": 2025,
+            "set_name": "Pokemon Japanese Sv11w-White Flare",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Japanese+Sv11w-White+Flare"
+            ),
+        },
+        "kr": {
+            "year": 2025,
+            "set_name": "Pokemon Korean Sv11w-White Flare",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Korean+Sv11w-White+Flare"
+            ),
+        },
+        "en": {
+            "year": 2025,
+            "set_name": "Pokemon Wht EN-White Flare",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Wht+EN-White+Flare"
+            ),
+        },
+    },
 }
 
 # Preferred GemRate parallel names for each catalog rarity (order = preference).
@@ -154,6 +212,7 @@ PARALLEL_BY_RARITY: dict[str, list[str]] = {
     "AR": ["Art Rare", "Illustration Rare"],
     "SAR": ["Special Art Rare", "Special Illustration Rare"],
     "MUR": ["Mega Ultra Rare", "Mega Hyper Rare", "MUR", "Hyper Rare", "Gold"],
+    "BWR": ["BWR", "Black White Red", "Special Illustration Rare", "Special Art Rare"],
     "SR": ["Super Rare"],
     "UR": ["Ultra Rare", "Hyper Rare", "Secret Rare"],
     "RR": ["Base", "Regular", "Holo", "Holofoil"],
@@ -167,6 +226,7 @@ PARALLEL_BY_RARITY_EN: dict[str, list[str]] = {
     "AR": ["Illustration Rare", "Art Rare"],
     "SAR": ["Special Illustration Rare", "Special Art Rare"],
     "MUR": ["Mega Hyper Rare", "Mega Ultra Rare", "MUR", "Hyper Rare", "Gold"],
+    "BWR": ["BWR", "Black White Red", "Special Illustration Rare", "Special Art Rare", "Illustration Rare"],
     "SR": ["Ultra Rare", "Super Rare"],
     "UR": ["Hyper Rare", "Secret Rare", "Ultra Rare"],
     "RR": ["Base", "Regular", "Holo", "Holofoil"],

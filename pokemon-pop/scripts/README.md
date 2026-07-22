@@ -89,6 +89,8 @@ python pokemon-pop/scripts/gemrate_pop.py --pack sv2a-151 --langs jp,kr,en
 | `m1l-mega-brave` | fetch | fetch | fetch (`Pokemon Meg EN-Mega Evolution`) |
 | `m1s-mega-symphonia` | fetch | fetch | **reuse** Brave EN dump (same GemRate page) |
 | `sv10-rocket-glory` | fetch | fetch | fetch (`Pokemon Dri EN-Destined Rivals`) |
+| `sv11b-black-bolt` | fetch | fetch | fetch (`Pokemon Blk EN-Black Bolt`) |
+| `sv11w-white-flare` | fetch | fetch | fetch (`Pokemon Wht EN-White Flare`) |
 
 `fetch_live.py` restores previous GemRate PSA (`source: gemrate`) so hourly BRG refresh does not wipe them.
 

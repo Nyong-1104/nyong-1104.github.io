@@ -63,9 +63,13 @@
     }
   }
 
-  function filterCards(list, type) {
+  function filterCards(list, type, editionLang) {
     return list.filter((c) => {
       if (type && type !== "all" && c.type !== type) return false;
+      const editions = c.editions;
+      if (Array.isArray(editions) && editions.length) {
+        if (editions.indexOf(editionLang) === -1) return false;
+      }
       return true;
     });
   }
@@ -144,7 +148,7 @@
   langSelect.value = packLangs.indexOf("jp") !== -1 ? "jp" : packLangs[0];
   function render() {
     const editionLang = langSelect.value || packLangs[0];
-    const filtered = filterCards(packCards, typeSelect.value);
+    const filtered = filterCards(packCards, typeSelect.value, editionLang);
     const sorted = sortCards(filtered, sortSelect.value, editionLang);
     grid.innerHTML = "";
 
