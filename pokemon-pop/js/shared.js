@@ -112,10 +112,17 @@ window.PopTracker = window.PopTracker || {};
   };
 
   PT.priceAmountForGrade = function (price, grade) {
-    if (!price) return null;
+    if (!price || price.source === "seed") return null;
     if (price.grades && price.grades[grade] != null) return Number(price.grades[grade]);
     if (grade === "10" && price.amount != null) return Number(price.amount);
     return null;
+  };
+
+  PT.isLivePrice = function (price) {
+    if (!price || price.source === "seed") return false;
+    return PT.PRICE_GRADES.some(function (g) {
+      return PT.priceAmountForGrade(price, g) != null;
+    });
   };
 
   PT.priceAmountForLang = function (card, lang) {
@@ -134,6 +141,13 @@ window.PopTracker = window.PopTracker || {};
     return Math.max.apply(null, amounts);
   };
 
+  PT.tierLabel = function (tier) {
+    if (tier === "A") return "Tier A";
+    if (tier === "B") return "Tier B";
+    if (tier === "C") return "Tier C";
+    return tier || "";
+  };
+
   PT.formatMoney = function (amount, currency) {
     if (amount == null) return "—";
     const n = Number(amount);
@@ -143,6 +157,7 @@ window.PopTracker = window.PopTracker || {};
   };
 
   PT.formatPrice = function (price) {
+    if (!PT.isLivePrice(price)) return "—";
     return PT.formatMoney(PT.priceAmountForGrade(price, "10"), price?.currency);
   };
 

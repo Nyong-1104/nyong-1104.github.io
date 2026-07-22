@@ -1,21 +1,30 @@
 {
-  "ranAt": "2026-07-22T08:52:29+09:00",
+  "ranAt": "2026-07-22T09:28:08+09:00",
   "stats": {
     "asOf": "2026-07-22",
-    "asOfIso": "2026-07-22T08:52:29+09:00",
+    "asOfIso": "2026-07-22T09:28:08+09:00",
     "cardsTotal": 3887,
-    "cardsLive": 3887,
-    "variantsWritten": 8521,
+    "cardsLive": 1628,
+    "skippedTierC": 2259,
+    "variantsWritten": 3629,
     "variantsKept": 0,
     "variantsFailed": 0,
+    "tiers": {
+      "A": 1134,
+      "B": 494,
+      "C": 2259
+    },
     "ebayPricesRestored": 0,
-    "brgPopsRestored": 1812,
+    "brgPopsRestored": 1438,
     "brg": {
       "brgEnabled": true,
-      "setsResolved": 73,
-      "setsMissing": 5,
-      "cardsMatched": 1788,
-      "cardsUnmatched": 5985,
+      "setsResolved": 75,
+      "setsMissing": 0,
+      "setsUnavailable": 3,
+      "cardsMatched": 1429,
+      "cardsNoBrgEntry": 2032,
+      "cardsAttempted": 3461,
+      "brgEntriesFetched": 2374,
       "dryRun": false,
       "setMap": [
         {
@@ -288,7 +297,8 @@
         {
           "packId": "sv11b-black-bolt",
           "lang": "en",
-          "setName": null
+          "setName": "POKEMON S&V BLKEN",
+          "year": 2025
         },
         {
           "packId": "sv11w-white-flare",
@@ -305,7 +315,8 @@
         {
           "packId": "sv11w-white-flare",
           "lang": "en",
-          "setName": null
+          "setName": "POKEMON S&V WHTEN",
+          "year": 2025
         },
         {
           "packId": "sv7-stellar-miracle",
@@ -482,11 +493,12 @@
           "year": 2026
         }
       ],
-      "errors": []
+      "errors": [],
+      "matchRate": 0.4129,
+      "cardsUnmatched": 2032
     },
     "ebay": {
-      "ebayEnabled": false,
-      "note": "Set EBAY_CLIENT_ID and EBAY_CLIENT_SECRET to enable eBay prices"
+      "ebayEnabled": false
     },
     "liveSource": "seed+BRG"
   }

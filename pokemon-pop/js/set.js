@@ -158,6 +158,7 @@
         <div class="card-meta__sub">
           <span class="${PT.typeBadgeClass(card.type)}">${PT.typeLabel(card.type)}</span>
           <span>${card.rarity}</span>
+          ${card.tier ? `<span class="badge badge--tier badge--tier-${String(card.tier).toLowerCase()}">${card.tier}</span>` : ""}
           <span>${card.number}</span>
           <span>${listPriceLabel(card, editionLang)}</span>
         </div>

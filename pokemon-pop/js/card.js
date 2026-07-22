@@ -62,12 +62,18 @@
   function renderPrice(variant, lang) {
     const gradesEl = document.getElementById("price-grades");
     const metaEl = document.getElementById("price-meta");
-    if (!variant?.price) {
-      gradesEl.innerHTML = PT.PRICE_GRADES.map(
-        (g) =>
-          `<div class="price-grade"><span class="price-grade__label">PSA ${g}</span><span class="price-grade__value">—</span></div>`
-      ).join("");
-      metaEl.textContent = `${PT.langLabel(lang)} · ${PT.t("noData")}`;
+    const emptyGrades = PT.PRICE_GRADES.map(
+      (g) =>
+        `<div class="price-grade"><span class="price-grade__label">PSA ${g}</span><span class="price-grade__value">—</span></div>`
+    ).join("");
+
+    if (!variant?.price || !PT.isLivePrice(variant.price)) {
+      gradesEl.innerHTML = emptyGrades;
+      const why =
+        variant?.price?.source === "seed" || !variant?.price
+          ? PT.t("pricePendingEbay")
+          : PT.t("noData");
+      metaEl.textContent = `${PT.langLabel(lang)} · ${why}`;
       return;
     }
 
@@ -82,8 +88,7 @@
     }).join("");
 
     const priceWhen = price.asOf || variant.updatedAt;
-    const source = price.source === "eBay" ? "eBay" : price.source === "seed" ? "seed" : price.source || "—";
-    metaEl.textContent = `${source} · ${PT.langLabel(lang)} · ${PT.formatUpdatedDisplay(priceWhen)}`;
+    metaEl.textContent = `eBay · ${PT.langLabel(lang)} · ${PT.formatUpdatedDisplay(priceWhen)}`;
   }
 
   function renderEmptyState(lang) {

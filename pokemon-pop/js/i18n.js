@@ -26,6 +26,7 @@ window.PopTracker = window.PopTracker || {};
       emptyData: "데이터를 불러오지 못했습니다. 페이지를 새로고침 해주세요.",
       emptyCard: "카드를 찾을 수 없습니다.",
       priceLabel: "eBay 시세 (PSA)",
+      pricePendingEbay: "eBay 시세 대기 (시드 가격은 표시하지 않음)",
       popTitle: "POP REPORT",
       popGrader: "그레이딩",
       popTotalRow: "전체 합계",
@@ -36,9 +37,9 @@ window.PopTracker = window.PopTracker || {};
       updatedPrefix: "데이터 갱신:",
       snapshotPrefix: "POP/가격 스냅샷:",
       footnote:
-        "BRG는 break.co.kr 실POP(열: 10=BRG100 · 9.5=BRG90 · 9=BRG85 · 8=BRG80). PSA·BGS·CGC 등은 아직 시드/미연동입니다.",
+        "BRG는 break.co.kr 실POP(열: 10=BRG100 · 9.5=BRG90 · 9=BRG85 · 8=BRG80). PSA·BGS·CGC 등은 아직 미연동. 가격은 eBay API 연동 시에만 표시됩니다.",
       credit:
-        "Holo effect adapted from simeydotme/pokemon-cards-css (GPL-3.0). Card images via Pokémon card sources. 가격은 eBay 활성 매물 중위값(PSA 10/9/8)이며, 미수집 카드는 시드값일 수 있어요.",
+        "Holo effect adapted from simeydotme/pokemon-cards-css (GPL-3.0). Card images via Pokémon card sources. BRG POP는 매시간 자동 갱신. eBay 시세는 GitHub Secrets(EBAY_CLIENT_ID/SECRET) 등록 후 수집됩니다.",
       setFallback: "세트",
       editionJp: "JP",
       editionKr: "KR",
@@ -79,6 +80,7 @@ window.PopTracker = window.PopTracker || {};
       emptyData: "Could not load data. Please refresh.",
       emptyCard: "Card not found.",
       priceLabel: "eBay Price (PSA)",
+      pricePendingEbay: "Waiting for eBay (seed placeholders hidden)",
       popTitle: "POP REPORT",
       popGrader: "Grader",
       popTotalRow: "All graders",
@@ -89,9 +91,9 @@ window.PopTracker = window.PopTracker || {};
       updatedPrefix: "Updated:",
       snapshotPrefix: "POP/price snapshot:",
       footnote:
-        "BRG is live from break.co.kr (cols: 10=BRG100 · 9.5=BRG90 · 9=BRG85 · 8=BRG80). PSA/BGS/CGC etc. are still seed or empty.",
+        "BRG is live from break.co.kr (cols: 10=BRG100 · 9.5=BRG90 · 9=BRG85 · 8=BRG80). PSA/BGS/CGC are not wired yet. Prices appear only after eBay API credentials are set.",
       credit:
-        "Holo effect adapted from simeydotme/pokemon-cards-css (GPL-3.0). Card images via Pokémon card sources. Prices are median eBay active listings (PSA 10/9/8); some cards may still show seed placeholders.",
+        "Holo effect adapted from simeydotme/pokemon-cards-css (GPL-3.0). Card images via Pokémon card sources. BRG POP refreshes hourly. eBay prices require GitHub Secrets EBAY_CLIENT_ID / EBAY_CLIENT_SECRET.",
       setFallback: "Set",
       editionJp: "JP",
       editionKr: "KR",
@@ -132,6 +134,7 @@ window.PopTracker = window.PopTracker || {};
       emptyData: "データを読み込めませんでした。再読み込みしてください。",
       emptyCard: "カードが見つかりません。",
       priceLabel: "eBay相場 (PSA)",
+      pricePendingEbay: "eBay相場待ち（シード価格は非表示）",
       popTitle: "POP REPORT",
       popGrader: "グレーディング",
       popTotalRow: "全社合計",
@@ -142,9 +145,9 @@ window.PopTracker = window.PopTracker || {};
       updatedPrefix: "データ更新:",
       snapshotPrefix: "POP/価格スナップショット:",
       footnote:
-        "BRGはbreak.co.krの実POP（列: 10=BRG100 · 9.5=BRG90 · 9=BRG85 · 8=BRG80）。PSA・BGS・CGCなどはシード/未連携です。",
+        "BRGはbreak.co.krの実POP（列: 10=BRG100 · 9.5=BRG90 · 9=BRG85 · 8=BRG80）。PSA・BGS・CGCは未連携。価格はeBay API設定後のみ表示されます。",
       credit:
-        "Holo effect adapted from simeydotme/pokemon-cards-css (GPL-3.0). Card images via Pokémon card sources. 価格はeBay出品中の中央値（PSA 10/9/8）。未取得カードはシード値の場合があります。",
+        "Holo effect adapted from simeydotme/pokemon-cards-css (GPL-3.0). Card images via Pokémon card sources. BRG POPは毎時自動更新。eBay相場はGitHub Secrets（EBAY_CLIENT_ID/SECRET）登録後に収集されます。",
       setFallback: "セット",
       editionJp: "JP",
       editionKr: "KR",

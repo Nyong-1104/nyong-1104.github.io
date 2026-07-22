@@ -28,7 +28,11 @@ from ebay_prices import (  # noqa: E402
     live_source_label,
     restore_ebay_prices,
 )
-from pokepop_snapshot import build_live_snapshot, write_data_bundle  # noqa: E402
+from pokepop_snapshot import (  # noqa: E402
+    assign_tiers_to_catalog,
+    build_live_snapshot,
+    write_data_bundle,
+)
 
 
 def load_dotenv(path: Path) -> None:
@@ -113,11 +117,13 @@ def main(argv: list[str] | None = None) -> int:
     asof_iso = now.isoformat(timespec="seconds")
     packs = load_json(DATA / "packs.json")
     catalog = load_json(DATA / "catalog.json")
+    tier_counts = assign_tiers_to_catalog(catalog)
 
     live_path = DATA / "live" / "pop-price.json"
     previous = load_json(live_path) if live_path.exists() else {}
 
     live, stats = build_live_snapshot(catalog, packs, asof_iso, previous)
+    stats["tiers"] = tier_counts
     stats["ebayPricesRestored"] = restore_ebay_prices(live, previous)
     stats["brgPopsRestored"] = restore_brg_pops(live, previous)
 

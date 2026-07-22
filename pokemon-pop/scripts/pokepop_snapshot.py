@@ -4,14 +4,36 @@ import hashlib
 import json
 from pathlib import Path
 
+TIER_A = {"SAR", "SIR", "HR", "UR", "SR", "AR", "SSR", "S_2", "RRR"}
+TIER_B = {"RR", "PRISM", "R", "PROMO"}
+# U, C, and anything else → Tier C (catalog only)
+
 
 def seed_int(key: str) -> int:
     return int(hashlib.md5(key.encode()).hexdigest()[:8], 16)
 
 
+def tier_for_rarity(rarity: str | None) -> str:
+    r = (rarity or "").strip().upper()
+    if r in TIER_A:
+        return "A"
+    if r in TIER_B:
+        return "B"
+    return "C"
+
+
+def ensure_card_tier(card: dict) -> str:
+    tier = card.get("tier")
+    if tier in ("A", "B", "C"):
+        return tier
+    tier = tier_for_rarity(card.get("rarity"))
+    card["tier"] = tier
+    return tier
+
+
 def full_pop(key: str, base_pop10: int, lang: str) -> dict:
     """POP shell. BRG is filled later from break.co.kr; other graders stay empty until wired."""
-    _ = (key, base_pop10, lang)  # reserved for future seed/live sources
+    _ = (key, base_pop10, lang)
     return {
         "PSA": None,
         "BGS": None,
@@ -24,17 +46,16 @@ def full_pop(key: str, base_pop10: int, lang: str) -> dict:
 
 
 def price_snapshot(key: str, base_price: int, lang: str, asof_iso: str) -> dict:
-    """Placeholder PSA-grade prices (seed). Overridden by eBay when credentials are set."""
-    s = seed_int(f"{key}-{lang}")
-    mult = 0.42 if lang == "kr" else 1.0 if lang == "jp" else 0.95
-    p10 = max(8, int(base_price * mult * (0.85 + (s % 30) / 100)))
-    p9 = max(5, int(p10 * (0.42 + (s % 18) / 100)))
-    p8 = max(3, int(p10 * (0.18 + (s % 12) / 100)))
+    """Placeholder price shell. Real grades come from eBay when credentials are set.
+
+    Seed amounts are intentionally omitted so the UI never shows fake prices.
+    """
+    _ = (key, base_price, lang)
     return {
         "source": "seed",
         "currency": "USD",
         "asOf": asof_iso[:10],
-        "grades": {"10": p10, "9": p9, "8": p8},
+        "grades": {},
     }
 
 
@@ -50,11 +71,12 @@ def finalize_catalog_card(card: dict) -> dict:
     out = {k: v for k, v in card.items() if k != "_seed"}
     if "_seed" in card:
         out["seed"] = card["_seed"]
+    ensure_card_tier(out)
     return out
 
 
 def build_live_snapshot(catalog, packs, asof_iso: str, previous=None):
-    """Build live POP/price data for every catalog card."""
+    """Build live POP/price data for Tier A/B cards only (Tier C = catalog only)."""
     previous = previous or {}
     prev_cards = previous.get("cards") or {}
     packs_by_id = {p["id"]: p for p in packs}
@@ -65,12 +87,18 @@ def build_live_snapshot(catalog, packs, asof_iso: str, previous=None):
         "asOfIso": asof_iso,
         "cardsTotal": len(catalog),
         "cardsLive": 0,
+        "skippedTierC": 0,
         "variantsWritten": 0,
         "variantsKept": 0,
         "variantsFailed": 0,
     }
 
     for card in catalog:
+        tier = ensure_card_tier(card)
+        if tier == "C":
+            stats["skippedTierC"] += 1
+            continue
+
         pack = packs_by_id.get(card["packId"])
         if not pack:
             continue
@@ -90,6 +118,11 @@ def build_live_snapshot(catalog, packs, asof_iso: str, previous=None):
                     lang,
                     asof_iso,
                 )
+                # Keep prior eBay/BRG if restore helpers miss a path
+                prev_variant = prev_card.get(lang) or {}
+                prev_price = prev_variant.get("price") or {}
+                if prev_price.get("source") == "eBay" and prev_price.get("grades"):
+                    variants[lang]["price"] = prev_price
                 stats["variantsWritten"] += 1
             except Exception:
                 if lang in prev_card:
@@ -108,6 +141,14 @@ def build_live_snapshot(catalog, packs, asof_iso: str, previous=None):
         "cards": live_cards,
     }
     return live, stats
+
+
+def assign_tiers_to_catalog(catalog: list[dict]) -> dict:
+    counts = {"A": 0, "B": 0, "C": 0}
+    for card in catalog:
+        tier = ensure_card_tier(card)
+        counts[tier] = counts.get(tier, 0) + 1
+    return counts
 
 
 def write_data_bundle(data_dir: Path, packs, catalog, live, last_run=None) -> None:

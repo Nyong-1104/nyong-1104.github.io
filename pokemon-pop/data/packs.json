@@ -2796,7 +2796,13 @@
       "sv11b-172",
       "sv11b-173",
       "sv11b-174"
-    ]
+    ],
+    "brgSets": {
+      "en": {
+        "setName": "POKEMON S&V BLKEN",
+        "year": 2025
+      }
+    }
   },
   {
     "id": "sv11w-white-flare",
@@ -2990,7 +2996,13 @@
       "sv11w-172",
       "sv11w-173",
       "sv11w-174"
-    ]
+    ],
+    "brgSets": {
+      "en": {
+        "setName": "POKEMON S&V WHTEN",
+        "year": 2025
+      }
+    }
   },
   {
     "id": "sv7-stellar-miracle",

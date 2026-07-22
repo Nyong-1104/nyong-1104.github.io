@@ -12,13 +12,21 @@ python pokemon-pop/scripts/build_catalog.py
 python pokemon-pop/scripts/fetch_live.py
 ```
 
-GitHub Actions runs **hourly** (`.github/workflows/daily-pokepop.yml`) so BRG POP stays fresher.
+GitHub Actions runs **hourly** (`.github/workflows/daily-pokepop.yml`).
 
 | Field | Source |
 |-------|--------|
 | **BRG POP** | [break.co.kr](https://break.co.kr/pop-report) (`gate.break.co.kr`, no key) |
-| **PSA / BGS / … POP** | seed / empty (not live yet) |
-| **Prices** | eBay Browse medians when credentials set; else seed |
+| **PSA / BGS / … POP** | empty (not live yet) |
+| **Prices** | eBay Browse medians when credentials set; otherwise hidden (no fake seed prices) |
+
+**Tiers**
+
+| Tier | Rarity | Live snapshot |
+|------|--------|---------------|
+| A | SAR, SIR, HR, UR, SR, AR, SSR, S_2, RRR | POP + price shell |
+| B | RR, PRISM, R, PROMO | POP + price shell |
+| C | U, C, other | Catalog only (skipped in live) |
 
 BRG column map: **10←100 · 9.5←90 · 9←85 · 8←80**.
 
@@ -28,9 +36,23 @@ BRG column map: **10←100 · 9.5←90 · 9←85 · 8←80**.
 python pokemon-pop/scripts/fetch_live.py --skip-ebay --pack sv2a-151 --langs jp,kr
 ```
 
-### eBay setup
+### eBay setup (required for real prices)
 
-Copy `pokemon-pop/.env.example` → `.env` with Production App ID / Cert ID from [developer.ebay.com](https://developer.ebay.com).
+1. Create a Production keyset at [developer.ebay.com](https://developer.ebay.com) (App ID + Cert ID).
+2. Local: copy `pokemon-pop/.env.example` → `pokemon-pop/.env` and fill:
+
+```env
+EBAY_CLIENT_ID=...
+EBAY_CLIENT_SECRET=...
+EBAY_FETCH_LIMIT=200
+```
+
+3. GitHub Actions (hourly job): repo **Settings → Secrets and variables → Actions** → add:
+
+- `EBAY_CLIENT_ID`
+- `EBAY_CLIENT_SECRET`
+
+Until these secrets exist, the site shows **—** for prices (seed placeholders are not shown).
 
 ```bash
 python pokemon-pop/scripts/fetch_live.py --ebay-limit 5 --pack sv2a-151 --langs jp --force

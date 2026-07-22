@@ -23,6 +23,9 @@ LANG_MARKER = {
     "en": "ENGLISH",
 }
 
+# break.co.kr often names EN sets as "... BLKEN" / "... WHTEN" without the word ENGLISH.
+EN_EXCLUDE = ("JAPANESE", "KOREAN", "CHINESE", "ASIAN-ENGLISH")
+
 # Table columns are PSA-style; map BRG manualScore → display column.
 BRG_TO_COL = {
     "100": "10",
@@ -30,6 +33,19 @@ BRG_TO_COL = {
     "85": "9",
     "80": "8",
 }
+
+
+def _is_english_set_name(name: str) -> bool:
+    upper = (name or "").upper().strip()
+    if not upper.startswith("POKEMON"):
+        return False
+    if any(x in upper for x in EN_EXCLUDE):
+        return False
+    if "ENGLISH" in upper:
+        return True
+    # e.g. POKEMON S&V BLKEN / WHTEN / TEFEN
+    token = upper.split()[-1] if upper.split() else ""
+    return token.endswith("EN") and len(token) >= 4
 
 
 def _get_json(path: str, params: dict[str, Any]) -> dict[str, Any]:
@@ -95,16 +111,18 @@ def resolve_brg_set(
     code = (pack.get("code") or "").strip().upper()
     if not code:
         return None
-    marker = LANG_MARKER.get(lang)
-    if not marker:
-        return None
-
     year_hint = pack.get("releaseYear")
+
     # Prefer full code; also try last segment after hyphen (MG-PROMO → PROMO)
     search_keys = [code]
     if "-" in code:
         search_keys.append(code.split("-")[-1])
         search_keys.append(code.split("-")[0])
+    if lang == "en":
+        # Name tokens help find BLKEN / WHTEN style sets
+        for part in str(pack.get("nameEn") or "").replace("—", " ").replace("-", " ").split():
+            if len(part) >= 4 and part.isascii():
+                search_keys.append(part)
 
     candidates: list[tuple[str, int]] = []
     seen: set[tuple[str, int]] = set()
@@ -119,13 +137,21 @@ def resolve_brg_set(
             if key in seen:
                 continue
             upper = name.upper()
-            token = upper.split()[-1] if upper.split() else ""
-            # Allow exact code match OR last segment match (PROMO)
-            code_ok = token == code or token == key_code or code in upper.replace(" ", "")
-            if not code_ok and key_code not in upper:
+            if "POKEMON" not in upper:
                 continue
-            if marker not in upper:
-                continue
+
+            if lang == "en":
+                if not _is_english_set_name(name):
+                    continue
+            else:
+                marker = LANG_MARKER.get(lang)
+                if not marker or marker not in upper:
+                    continue
+                token = upper.split()[-1] if upper.split() else ""
+                code_ok = token == code or token == key_code.upper() or code in upper.replace(" ", "")
+                if not code_ok and key_code.upper() not in upper:
+                    continue
+
             seen.add(key)
             candidates.append(key)
 
@@ -189,12 +215,23 @@ def pick_brg_card(
         return same_num[0]
 
     want_name = normalize_name(catalog_card.get("nameEn"))
-    named = [
-        c
-        for c in same_num
-        if want_name and normalize_name(c.get("playerName")) == want_name
-    ]
-    pool = named or same_num
+    if want_name:
+        exact = [
+            c
+            for c in same_num
+            if normalize_name(c.get("playerName")) == want_name
+        ]
+        if exact:
+            same_num = exact
+        else:
+            partial = [
+                c
+                for c in same_num
+                if want_name in normalize_name(c.get("playerName"))
+                or normalize_name(c.get("playerName")) in want_name
+            ]
+            if partial:
+                same_num = partial
 
     def total_of(c: dict) -> int:
         try:
@@ -202,7 +239,7 @@ def pick_brg_card(
         except (TypeError, ValueError):
             return 0
 
-    return max(pool, key=total_of)
+    return max(same_num, key=total_of)
 
 
 def apply_brg_to_live(
@@ -246,18 +283,25 @@ def fetch_brg_for_packs(
     sleep_s: float = 0.25,
     dry_run: bool = False,
 ) -> dict[str, Any]:
-    """Resolve BRG sets per pack×lang and overlay BRG pop onto matching cards."""
+    """Resolve BRG sets per pack×lang and overlay BRG pop onto matching live cards."""
     packs_by_id = {p["id"]: p for p in packs}
+    live_ids = set((live.get("cards") or {}).keys())
     catalog_by_pack: dict[str, list[dict]] = {}
     for card in catalog:
+        # Only attempt BRG for cards that exist in the live snapshot (Tier A/B)
+        if live_ids and card["id"] not in live_ids:
+            continue
         catalog_by_pack.setdefault(card["packId"], []).append(card)
 
     stats: dict[str, Any] = {
         "brgEnabled": True,
         "setsResolved": 0,
         "setsMissing": 0,
+        "setsUnavailable": 0,
         "cardsMatched": 0,
-        "cardsUnmatched": 0,
+        "cardsNoBrgEntry": 0,
+        "cardsAttempted": 0,
+        "brgEntriesFetched": 0,
         "dryRun": dry_run,
         "setMap": [],
         "errors": [],
@@ -282,7 +326,11 @@ def fetch_brg_for_packs(
                 continue
 
             if not resolved:
-                stats["setsMissing"] += 1
+                # EN often missing on break.co.kr — track separately from lookup failures
+                if lang == "en":
+                    stats["setsUnavailable"] += 1
+                else:
+                    stats["setsMissing"] += 1
                 stats["setMap"].append(
                     {"packId": pack["id"], "lang": lang, "setName": None}
                 )
@@ -314,10 +362,12 @@ def fetch_brg_for_packs(
                 )
                 continue
 
+            stats["brgEntriesFetched"] += len(brg_cards)
             for card in catalog_by_pack.get(pack["id"], []):
+                stats["cardsAttempted"] += 1
                 hit = pick_brg_card(card, brg_cards)
                 if not hit:
-                    stats["cardsUnmatched"] += 1
+                    stats["cardsNoBrgEntry"] += 1
                     continue
                 apply_brg_to_live(
                     live, card["id"], lang, brg_pop_object(hit, asof_iso), asof_iso
@@ -327,4 +377,9 @@ def fetch_brg_for_packs(
             if sleep_s > 0:
                 time.sleep(sleep_s)
 
+    attempted = stats["cardsAttempted"] or 0
+    matched = stats["cardsMatched"] or 0
+    stats["matchRate"] = round(matched / attempted, 4) if attempted else None
+    # Keep legacy key for older dashboards
+    stats["cardsUnmatched"] = stats["cardsNoBrgEntry"]
     return stats
