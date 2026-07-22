@@ -57,10 +57,13 @@ RARITY_MAP = {
     "rare_ur_c": "UR",
     "rare_ur": "UR",
     "rare_hr": "HR",
+    "rare_bwr": "BWR",
+    "bwr": "BWR",
     "prismstar": "PRISM",
 }
 
 SEED_BY_RARITY = {
+    "BWR": (280, 120),
     "SAR": (220, 900),
     "SIR": (200, 850),
     "HR": (160, 220),
@@ -235,10 +238,27 @@ TRAINER_KO = {
 }
 
 
-def map_rarity(raw: str | None) -> str:
-    if not raw:
-        return "C"
-    return RARITY_MAP.get(raw, raw.upper().replace("RARE_", "").replace("_C", "")[:6] or "C")
+def map_rarity(raw: str | None, card: dict | None = None) -> str:
+    """Map PTCG-database rarity codes. Missing rarity on secret #s → BWR (Black/White Rare)."""
+    if raw:
+        mapped = RARITY_MAP.get(raw)
+        if mapped:
+            return mapped
+        cleaned = raw.upper().replace("RARE_", "").replace("_C", "")
+        if cleaned in {"BWR", "SAR", "SIR", "SSR", "S_2", "HR", "UR", "SR", "AR", "RR", "RRR", "PRISM", "R", "U", "C", "PROMO"}:
+            return cleaned
+        return cleaned[:6] or "C"
+
+    # Black Bolt / White Flare BWR arts ship with rarity=null in PTCG-database
+    if card:
+        try:
+            num = int(str(card.get("number") or "0").split("/")[0])
+            total = int(str(card.get("set_total") or "0").split("/")[0])
+        except ValueError:
+            num, total = 0, 0
+        if total and num > total:
+            return "BWR"
+    return "C"
 
 
 def map_type(card: dict) -> tuple[str, str]:
@@ -252,11 +272,11 @@ def map_type(card: dict) -> tuple[str, str]:
 
 
 def holo_for_rarity(rarity: str) -> str:
-    if rarity in {"SAR", "SIR"}:
+    if rarity in {"SAR", "SIR", "BWR"}:
         return "sar"
     if rarity == "AR":
         return "reverse"
-    if rarity in {"SR", "HR", "UR", "RR", "PRISM"}:
+    if rarity in {"SR", "HR", "UR", "RR", "PRISM", "SSR", "S_2"}:
         return "holo"
     return "reverse"
 
@@ -346,7 +366,7 @@ def to_catalog_card(
     ja_index: dict[str, int],
 ) -> dict:
     num = str(card.get("number") or "").split("/")[0].zfill(3)
-    rarity = map_rarity(card.get("rarity"))
+    rarity = map_rarity(card.get("rarity"), card)
     type_id, type_ko = map_type(card)
     jp_name = card.get("name") or f"Card {num}"
     base_jp, suffix, mega = split_suffix(jp_name)

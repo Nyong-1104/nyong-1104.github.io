@@ -67102,10 +67102,10 @@
     "nameEn": "Zekrom ex",
     "nameJa": "ゼクロムex",
     "number": "174/086",
-    "rarity": "C",
+    "rarity": "BWR",
     "type": "lightning",
     "typeKo": "번개",
-    "holoStyle": "reverse",
+    "holoStyle": "sar",
     "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV11B/047998_P_ZEKUROMUEX.jpg",
     "images": {
       "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV11B/047998_P_ZEKUROMUEX.jpg",
@@ -67118,10 +67118,10 @@
       "en": null
     },
     "seed": {
-      "basePrice": 6,
-      "basePop": 128
+      "basePrice": 280,
+      "basePop": 120
     },
-    "tier": "C"
+    "tier": "A"
   },
   {
     "id": "sv11w-001",
@@ -71974,10 +71974,10 @@
     "nameEn": "Reshiram ex",
     "nameJa": "レシラムex",
     "number": "174/086",
-    "rarity": "C",
+    "rarity": "BWR",
     "type": "fire",
     "typeKo": "불",
-    "holoStyle": "reverse",
+    "holoStyle": "sar",
     "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV11W/048086_P_RESHIRAMUEX.jpg",
     "images": {
       "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV11W/048086_P_RESHIRAMUEX.jpg",
@@ -71990,10 +71990,10 @@
       "en": null
     },
     "seed": {
-      "basePrice": 6,
-      "basePop": 128
+      "basePrice": 280,
+      "basePop": 120
     },
-    "tier": "C"
+    "tier": "A"
   },
   {
     "id": "sv7-001",
