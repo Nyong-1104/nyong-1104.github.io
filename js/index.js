@@ -109,54 +109,105 @@ function initCardDrag() {
   const drags = [...document.querySelectorAll('.card-drag')];
   const count = drags.length;
   const EASE = 'left 0.52s cubic-bezier(0.45, 0, 0.55, 1), top 0.52s cubic-bezier(0.45, 0, 0.55, 1)';
+  const MOBILE_MQ = window.matchMedia('(max-width: 720px)');
   let order = readOrder(count) || drags.map((_, i) => i);
- 
+
+  function isMobile() {
+    return MOBILE_MQ.matches;
+  }
+
+  function cols() {
+    return isMobile() ? 2 : count;
+  }
+
   function getGap() {
+    if (isMobile()) return Math.max(12, Math.min(18, stage.clientWidth * 0.04));
     return Math.min(22, stage.clientWidth * 0.03);
   }
- 
+
   function getCardW() {
-    return drags[0].offsetWidth;
+    const sample = drags.find(el => !el.querySelector('.card-wrap.expanded')) || drags[0];
+    return sample.offsetWidth;
   }
- 
-  function slotXs() {
+
+  function getCardH() {
+    const sample = drags.find(el => !el.querySelector('.card-wrap.expanded')) || drags[0];
+    return sample.offsetHeight;
+  }
+
+  function slotPositions() {
     const gap = getGap();
     const cardW = getCardW();
-    const totalW = count * cardW + (count - 1) * gap;
+    const cardH = getCardH();
+    const colCount = cols();
+    const totalW = colCount * cardW + (colCount - 1) * gap;
     const startX = Math.max(0, (stage.clientWidth - totalW) / 2);
-    return Array.from({ length: count }, (_, i) => startX + i * (cardW + gap));
+
+    return Array.from({ length: count }, (_, i) => {
+      const col = i % colCount;
+      const row = Math.floor(i / colCount);
+      return {
+        x: startX + col * (cardW + gap),
+        y: row * (cardH + gap)
+      };
+    });
   }
- 
+
   function stagePoint(clientX, clientY) {
     const rect = stage.getBoundingClientRect();
     return { x: clientX - rect.left, y: clientY - rect.top };
   }
- 
+
   function layoutAll(excludeCardIdx = null, animate = true) {
-    const xs = slotXs();
+    const slots = slotPositions();
+    const gap = getGap();
+    const cardH = getCardH();
+    const rowCount = Math.ceil(count / cols());
+
     order.forEach((cardIdx, slotIdx) => {
       if (cardIdx === excludeCardIdx) return;
       const el = drags[cardIdx];
+      const slot = slots[slotIdx];
       el.style.transition = animate ? EASE : 'none';
-      el.style.left = `${xs[slotIdx]}px`;
-      el.style.top = '0px';
+      el.style.left = `${slot.x}px`;
+      el.style.top = `${slot.y}px`;
     });
-    stage.style.minHeight = `${drags[0].offsetHeight + 16}px`;
+
+    stage.style.minHeight = `${rowCount * cardH + (rowCount - 1) * gap + 16}px`;
+    stage.classList.toggle('is-mobile', isMobile());
   }
- 
-  function hoverSlotFromX(clientX) {
-    const { x: relX } = stagePoint(clientX, 0);
-    const xs = slotXs();
+
+  function hoverSlotFromPoint(clientX, clientY) {
+    const { x: relX, y: relY } = stagePoint(clientX, clientY);
+    const slots = slotPositions();
     const cardW = getCardW();
- 
-    let slot = 0;
-    for (let i = 0; i < count - 1; i++) {
-      const boundary = (xs[i] + cardW + xs[i + 1]) / 2;
-      if (relX > boundary) slot = i + 1;
+    const cardH = getCardH();
+    const colCount = cols();
+
+    if (colCount === 1 || !isMobile()) {
+      let slot = 0;
+      for (let i = 0; i < count - 1; i++) {
+        const boundary = (slots[i].x + cardW + slots[i + 1].x) / 2;
+        if (relX > boundary) slot = i + 1;
+      }
+      return slot;
     }
-    return slot;
+
+    // 2x2: pick nearest slot center
+    let best = 0;
+    let bestDist = Infinity;
+    for (let i = 0; i < count; i++) {
+      const cx = slots[i].x + cardW / 2;
+      const cy = slots[i].y + cardH / 2;
+      const dist = (relX - cx) ** 2 + (relY - cy) ** 2;
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = i;
+      }
+    }
+    return best;
   }
- 
+
   function shiftOthersAside(cardIdx, targetSlot) {
     const fromSlot = order.indexOf(cardIdx);
     if (fromSlot === targetSlot) return;
@@ -164,32 +215,34 @@ function initCardDrag() {
     order.splice(targetSlot, 0, cardIdx);
     layoutAll(cardIdx, true);
   }
- 
+
   function followPointer(dragEl, clientX, clientY, drag) {
     const { x, y } = stagePoint(clientX, clientY);
     dragEl.style.left = `${x - drag.offsetX}px`;
     dragEl.style.top = `${Math.max(0, y - drag.offsetY)}px`;
   }
- 
+
   function snapDraggedToSlot(dragEl, cardIdx) {
-    const xs = slotXs();
+    const slots = slotPositions();
     const slotIdx = order.indexOf(cardIdx);
+    const slot = slots[slotIdx];
     dragEl.style.transition = EASE;
-    dragEl.style.left = `${xs[slotIdx]}px`;
-    dragEl.style.top = '0px';
+    dragEl.style.left = `${slot.x}px`;
+    dragEl.style.top = `${slot.y}px`;
   }
- 
+
   layoutAll(null, false);
- 
+
   window.addEventListener('resize', () => layoutAll(null, false));
- 
+  MOBILE_MQ.addEventListener('change', () => layoutAll(null, false));
+
   const DRAG_THRESHOLD = 8;
- 
+
   drags.forEach((dragEl, cardIdx) => {
     const wrap = dragEl.querySelector('.card-wrap');
     const card = () => allCards.find(c => c.wrap === wrap);
     let drag = null;
- 
+
     function beginDrag(e) {
       const rect = dragEl.getBoundingClientRect();
       const stageRect = stage.getBoundingClientRect();
@@ -203,47 +256,47 @@ function initCardDrag() {
       dragEl.style.top = `${rect.top - stageRect.top}px`;
       card()?.clearTilt();
     }
- 
+
     function onPointerMove(e) {
       if (!drag || drag.id !== e.pointerId) return;
- 
+
       if (!drag.active) {
         const dx = e.clientX - drag.startX;
         const dy = e.clientY - drag.startY;
         if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return;
         beginDrag(e);
       }
- 
+
       drag.moved = true;
       followPointer(dragEl, e.clientX, e.clientY, drag);
- 
-      const hoverSlot = hoverSlotFromX(e.clientX);
+
+      const hoverSlot = hoverSlotFromPoint(e.clientX, e.clientY);
       if (hoverSlot !== drag.hoverSlot) {
         drag.hoverSlot = hoverSlot;
         shiftOthersAside(drag.cardIdx, hoverSlot);
       }
     }
- 
+
     function endDrag(e) {
       if (!drag || drag.id !== e.pointerId) return;
- 
+
       document.removeEventListener('pointermove', onPointerMove);
       document.removeEventListener('pointerup', endDrag);
       document.removeEventListener('pointercancel', endDrag);
- 
+
       if (drag.active) {
         if (drag.moved) {
-          shiftOthersAside(drag.cardIdx, hoverSlotFromX(e.clientX));
+          shiftOthersAside(drag.cardIdx, hoverSlotFromPoint(e.clientX, e.clientY));
           saveOrder(order);
           suppressFlipUntil = Date.now() + 280;
         }
         dragEl.classList.remove('is-dragging');
         snapDraggedToSlot(dragEl, drag.cardIdx);
       }
- 
+
       drag = null;
     }
- 
+
     dragEl.addEventListener('pointerdown', e => {
       if (e.target.closest('.open-btn')) return;
       drag = {

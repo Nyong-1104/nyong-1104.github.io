@@ -29,6 +29,7 @@ from ebay_prices import (  # noqa: E402
     live_source_label,
     restore_ebay_prices,
 )
+from gemrate_pop import restore_psa_pops  # noqa: E402
 from pokepop_snapshot import (  # noqa: E402
     assign_tiers_to_catalog,
     build_live_snapshot,
@@ -128,6 +129,7 @@ def main(argv: list[str] | None = None) -> int:
     stats["tiers"] = tier_counts
     stats["ebayPricesRestored"] = restore_ebay_prices(live, previous)
     stats["brgPopsRestored"] = restore_brg_pops(live, previous)
+    stats["psaPopsRestored"] = restore_psa_pops(live, previous)
 
     langs = [x.strip() for x in args.langs.split(",")] if args.langs else None
 

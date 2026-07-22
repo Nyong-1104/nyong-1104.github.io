@@ -15,6 +15,7 @@
 body {
   background: var(--black);
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -100,6 +101,8 @@ body {
   height: min(300px, 58vw);
   perspective: 1200px;
   flex-shrink: 0;
+  container-type: inline-size;
+  container-name: nyong-card;
   transition: width 0.45s cubic-bezier(0.23, 1, 0.32, 1),
               height 0.45s cubic-bezier(0.23, 1, 0.32, 1),
               transform 0.15s ease-out;
@@ -270,13 +273,14 @@ body {
 
 .poster-tilt-text {
   font-family: 'Archivo Black', sans-serif;
-  font-size: clamp(1.55rem, 7vw, 2.05rem);
+  font-size: clamp(1.15rem, 14cqw, 2.05rem);
   font-weight: 400;
   color: var(--white);
   line-height: 1.08;
   letter-spacing: -0.01em;
   text-align: left;
   text-transform: uppercase;
+  max-width: 100%;
 }
 
 .poster-logo {
@@ -301,11 +305,14 @@ body {
 
 .back-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(1.8rem, 7vw, 2.4rem);
+  font-size: clamp(1.45rem, 16cqw, 2.4rem);
   font-weight: 400;
   color: var(--black);
   letter-spacing: 0.03em;
   line-height: 0.95;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .back-desc {
@@ -338,8 +345,8 @@ body {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.2s ease 0.45s, visibility 0.2s ease 0.45s,
-              transform 0.12s, box-shadow 0.12s;
+  /* No opacity transition on default — prevents flash on page load */
+  transition: transform 0.12s, box-shadow 0.12s;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -352,10 +359,13 @@ body {
   cursor: pointer;
 }
 
-.card-wrap.flipped .open-btn {
+.card-wrap.flipped .open-btn,
+.card-wrap.flipped .soon-badge {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+  transition: opacity 0.2s ease 0.45s, visibility 0.2s ease 0.45s,
+              transform 0.12s, box-shadow 0.12s;
 }
 
 .open-btn:hover {
@@ -373,14 +383,138 @@ body {
   color: var(--white);
 }
 
-.card-wrap.flipped .soon-badge {
-  opacity: 1;
-  visibility: visible;
+@media (max-width: 720px) {
+  body {
+    justify-content: flex-start;
+    padding: 1.35rem 0.75rem 2.25rem;
+  }
+
+  .hero {
+    margin-bottom: 1.5rem;
+  }
+
+  .stage {
+    width: 100%;
+    max-width: 420px;
+    min-height: 0;
+  }
+
+  .card-drag {
+    width: calc((100% - 14px) / 2);
+  }
+
+  .card-wrap {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4.05;
+    --border: 3px;
+    --radius: 18px;
+    --shadow: 5px 5px 0 var(--black);
+  }
+
+  .card-drag:has(.card-wrap.expanded) {
+    width: calc((100% - 14px) / 2);
+    z-index: 40;
+  }
+
+  .card-wrap.expanded {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4.05;
+  }
+
+  .card-front--poster {
+    padding: 8px 8px 10px;
+  }
+
+  .app-poster {
+    gap: 6px;
+  }
+
+  .poster-tilt-wrap {
+    padding: 4px 2px 2px 4px;
+  }
+
+  .poster-geo {
+    width: 48%;
+    right: -2%;
+    top: 4%;
+    opacity: 0.9;
+  }
+
+  /* Softer clip + less rotate so text/shapes don't get cut */
+  .poster-tilt-box {
+    width: 100%;
+    max-height: none;
+    padding: 12px 10px 14px;
+    overflow: hidden;
+  }
+
+  .poster-tilt-box--cal,
+  .poster-tilt-box--stretch,
+  .poster-tilt-box--webd,
+  .poster-tilt-box--pop {
+    clip-path: polygon(4% 3%, 97% 1%, 98% 96%, 2% 98%);
+    transform: rotate(-1.5deg);
+  }
+
+  .poster-tilt-box--stretch,
+  .poster-tilt-box--pop {
+    transform: rotate(1.5deg);
+  }
+
+  .poster-tilt-text {
+    font-size: clamp(0.72rem, 10.8cqw, 1.05rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  .poster-logo {
+    width: 92%;
+    max-width: none;
+    margin-left: -2px;
+    /* Shrink stroked SVG text so outline doesn't clip */
+    transform: scale(0.9);
+    transform-origin: left center;
+  }
+
+  .card-back {
+    padding: 12px 12px 48px;
+    gap: 6px;
+  }
+
+  .back-tag {
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+  }
+
+  .back-title {
+    font-size: clamp(1.15rem, 14cqw, 1.55rem);
+  }
+
+  .back-desc {
+    font-size: clamp(0.68rem, 7.5cqw, 0.78rem);
+    line-height: 1.4;
+    -webkit-line-clamp: 4;
+  }
+
+  .open-btn,
+  .soon-badge {
+    bottom: 10px;
+    left: 10px;
+    font-size: 0.82rem;
+    padding: 5px 10px;
+    min-height: 30px;
+    border-width: 2px;
+  }
 }
 
-@media (max-width: 520px) {
-  .card-wrap.expanded {
-    width: min(320px, 92vw);
-    height: min(420px, 128vw);
+@media (max-width: 380px) {
+  .poster-tilt-text {
+    font-size: clamp(0.72rem, 10.5cqw, 1rem);
+  }
+
+  .back-desc {
+    -webkit-line-clamp: 3;
   }
 }

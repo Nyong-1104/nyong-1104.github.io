@@ -1,0 +1,373 @@
+card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,details
+001,Bulbasaur,Best Buy Exclusive,707,942,165,707,1860,f97042a168df9501518d021eea86d6f424f4f096,Bulbasaur Best Buy Exclusive 001
+001,Bulbasaur,Reverse Holo,174,225,50,174,461,3b3e4513736ca19ff0ca54b30e1a41ac928081fd,Bulbasaur Reverse Holo 001
+001,Bulbasaur,Base,62,107,29,62,207,689b2ae9d008fc37e64bbd9f077a92a361c3ee2e,Bulbasaur Base 001
+002,Ivysaur,Reverse Holo,59,69,13,59,142,592c785bbaf0b4c051e99f24894384fcc78b4e8e,Ivysaur Reverse Holo 002
+002,Ivysaur,Base,17,23,6,17,48,412ee9675ec051d260617c63e532c18cce27f5ef,Ivysaur Base 002
+003,Venusaur EX,Base,633,1109,385,633,2227,c0805586bc3cb5b95e7f656acbf180c9b54e47e2,Venusaur EX Base 003
+004,Charmander,Gamestop Exclusive,736,1441,263,736,2529,33c8c4c78dd33a22752fbde2cbb1e0cd9829d909,Charmander Gamestop Exclusive 004
+004,Charmander,EB Games Exclusive,239,319,49,239,618,d9c004ff3b09babccd6267d1575e5277e4be87ad,Charmander EB Games Exclusive 004
+004,Charmander,Reverse Holo,130,169,35,130,345,3c88e883661f9cf846db5b6145c49b15000e0c97,Charmander Reverse Holo 004
+004,Charmander,Base,58,90,20,58,177,a49a678c9a6cfb973d35e96c1bb7b85ea2dc8e71,Charmander Base 004
+005,Charmeleon,Reverse Holo,46,95,34,46,180,d11ebe71df8f34541a5b6eca34427c276fbe185b,Charmeleon Reverse Holo 005
+005,Charmeleon,Base,29,37,15,29,85,b434fbd8696f21c4fe34965d45be1c2ee8345c38,Charmeleon Base 005
+006,Charizard EX,Base,1846,2902,1048,1846,6053,f741321a9535b9a9ee0e25ac16399e530eb9f812,Charizard EX Base 006
+007,Squirtle,Pokemon Center 151 Pre-Order Promo,1417,2435,378,1417,4412,723f50db66b045c2d3e5c867fab85835651189f6,Squirtle Pokemon Center 151 Pre-Order Promo 007
+007,Squirtle,Reverse Holo,194,306,71,194,594,f02198c6602ef71efd7f48f8d12475e264fe2e93,Squirtle Reverse Holo 007
+007,Squirtle,Base,59,109,30,59,210,c3c1c2c1af7014befc3ea467cd1cfe013c63cc6b,Squirtle Base 007
+008,Wartortle,Reverse Holo,61,84,21,61,168,b71f0330cab1c913bb21e0112c92d4c0c342d2c4,Wartortle Reverse Holo 008
+008,Wartortle,Base,13,22,4,13,43,88108bf8b51e66915ebf26b858c138cc8452c479,Wartortle Base 008
+009,Blastoise EX,Base,1049,1624,561,1049,3363,7225aa01a7e5cf03430ab0e16d61e1aa68016088,Blastoise EX Base 009
+010,Caterpie,Reverse Holo,15,19,13,15,47,e9b2c3d8ad0ade850a98deaef31a37916f0994dd,Caterpie Reverse Holo 010
+010,Caterpie,Base,9,7,2,9,19,582fb61b7a888ca5c6700c8225a7842995a70ed4,Caterpie Base 010
+011,Metapod,Reverse Holo,13,30,3,13,48,b3795e068ccb0375b06b919140b668f045bcdff5,Metapod Reverse Holo 011
+011,Metapod,Base,4,3,0,4,7,14024902349b995e457c206eb86268ce390c9c36,Metapod Base 011
+012,Butterfree,Reverse Holo,23,21,6,23,54,f1984a0115d8cbaa3ca1631770c2f806d546be6d,Butterfree Reverse Holo 012
+012,Butterfree,Base,5,6,1,5,15,a36f9f1f21b43eebf38907071f13161ff491666d,Butterfree Base 012
+013,Weedle,Reverse Holo,11,16,4,11,33,fca12af1a9b31894ccec9ece914844a859374f07,Weedle Reverse Holo 013
+013,Weedle,Base,5,3,1,5,10,bbb299d8f66ebb5937c9f63965535397aeff956c,Weedle Base 013
+014,Kakuna,Reverse Holo,9,13,2,9,24,59f2ecd8249774cb7167f3bba450620090047d09,Kakuna Reverse Holo 014
+014,Kakuna,Base,1,3,4,1,8,b7a2b9239d463ee1aee35eb42ac43f3c49eb6df4,Kakuna Base 014
+015,Beedrill,Base,26,34,3,26,66,f839a22e2a9ffc0e10109341c7010871fc358ae4,Beedrill Base 015
+015,Beedrill,Reverse Holo,19,11,3,19,33,aeab877fcc08427835ed0148e3b262eac6b36b6e,Beedrill Reverse Holo 015
+016,Pidgey,Pokemon League,29,41,9,29,80,d88b5b4141f33c915b4724cae2651199203679bf,Pidgey Pokemon League 016
+016,Pidgey,Reverse Holo,11,21,9,11,42,e52a5a1b68a91003a06e8ebc63ff61ece6c20da5,Pidgey Reverse Holo 016
+016,Pidgey,Base,1,4,2,1,7,4c60a6f38234737287a7b47264a9fd982fd60d16,Pidgey Base 016
+017,Pidgeotto,Reverse Holo,10,13,2,10,25,74da05a580711d302a763bf60775068cb3e802f9,Pidgeotto Reverse Holo 017
+017,Pidgeotto,Base,3,2,1,3,7,df7f0d9ea345bfde6b944abf54423c3eb7675bd3,Pidgeotto Base 017
+018,Pidgeot,Reverse Holo,17,14,9,17,40,f8079a08a8d88ac844fb9f6e97b9dd352991ba8d,Pidgeot Reverse Holo 018
+018,Pidgeot,Base,6,5,1,6,13,047971bd241f4c31a83e603d4b599c9ec1094d0b,Pidgeot Base 018
+019,Rattata,Reverse Holo,11,19,2,11,33,a692991bafb659abf1457a1b5531ca659d2fd0b2,Rattata Reverse Holo 019
+019,Rattata,Base,5,2,1,5,8,b17434cf5d5ec8cee2613792453bb0bc21a85aa0,Rattata Base 019
+020,Raticate,Reverse Holo,14,14,4,14,34,66f1b6c4138afc4e95cd3178ecc01ac606769879,Raticate Reverse Holo 020
+020,Raticate,Base,6,6,1,6,13,0571c87bc6f1e37c85ac81c034bb59f3c38e4259,Raticate Base 020
+021,Spearow,Reverse Holo,8,15,4,8,27,fb3981fde98fde1902c55b9f61ba1b60c7ed8e20,Spearow Reverse Holo 021
+021,Spearow,Base,4,2,1,4,10,2305a0362369f8755b6d02c44dcd418701c6d711,Spearow Base 021
+022,Fearow,Reverse Holo,11,8,4,11,25,fcbabdb9fc205ad4a10261fc63a3d7d09c1fb5c1,Fearow Reverse Holo 022
+022,Fearow,Base,3,5,1,3,9,9289c21a6ded7a3bb14868f10a8d2fbc109b6468,Fearow Base 022
+023,Ekans,Reverse Holo,15,15,5,15,39,d83660830ea5ca599df63ca9518d39f1926c237f,Ekans Reverse Holo 023
+023,Ekans,Base,3,4,1,3,8,dc25e1cadf54e9bf08de6df01b1bef83625211bf,Ekans Base 023
+024,Arbok EX,Base,119,159,74,119,370,925fef86b417f900978641a8747b9a177c233579,Arbok EX Base 024
+025,Pikachu,Pokemon Together,298,1025,480,298,1943,f7e06e0b8c1020da0b0355133f1f679178dc8211,Pikachu Pokemon Together  025
+025,Pikachu,Reverse Holo,334,368,89,334,817,3055166cc356899681c3be124316206bbf6cff48,Pikachu Reverse Holo 025
+025,Pikachu,Base,104,186,56,104,376,594026207c61a166874ac5af0263cb994de30a82,Pikachu Base 025
+026,Raichu,Base,108,137,26,108,281,38260f7246b43a21ed40bd0f3bc2bbe1f7ee04b0,Raichu Base 026
+026,Raichu,Reverse Holo,27,48,10,27,88,b7b99cb094fd9d557af1dd775ca575127a82d682,Raichu Reverse Holo 026
+027,Sandshrew,Reverse Holo,15,26,8,15,49,ecc2c4a83a60cee479dd05856aa53a24cb8f6713,Sandshrew Reverse Holo 027
+027,Sandshrew,Base,3,3,0,3,8,7aa28ffb94234e04ffd2f13112abf042433dbd99,Sandshrew Base 027
+028,Sandslash,Reverse Holo,16,14,7,16,39,c9b1e76fdddc8c28c7056ad1693f06417fb6d015,Sandslash Reverse Holo 028
+028,Sandslash,Base,4,2,0,4,6,c3c2c113925e256e8f64b53c16cff111b80e0c04,Sandslash Base 028
+029,Nidoran,Reverse Holo,6,14,3,6,26,0e5bff080e13e63ac25ed5e20a8cdaf0bb19db04,Nidoran Reverse Holo 029
+029,Nidoran,Base,1,3,1,1,5,bb1241aa9936934d7068f59e556d2ae34353b951,Nidoran Base 029
+030,Nidorina,Reverse Holo,9,15,4,9,28,4415955fb1f4ceaf1a8a52fa9e22a46027d6cffc,Nidorina Reverse Holo 030
+030,Nidorina,Base,2,4,1,2,7,c4488b78d9f3b079a5f11bf266749c791770ebfb,Nidorina Base 030
+031,Nidoqueen,Reverse Holo,11,22,3,11,37,7b2ec1af7219bcd288bc7dd77c348ee24e1b78e5,Nidoqueen Reverse Holo 031
+031,Nidoqueen,Base,4,4,0,4,8,3666b7dc9790feba2a98508bf7c3385f477eec34,Nidoqueen Base 031
+032,Nidoran,Reverse Holo,4,13,4,4,22,4ebba5be2a7bc1deb0a71e275e896d47ab51da1a,Nidoran Reverse Holo 032
+032,Nidoran,Base,1,3,2,1,6,c599f9dd816fbbfd516959904eed35b89545e9ee,Nidoran Base 032
+033,Nidorino,Reverse-Holo,11,17,6,11,35,fe129a52cb84f4902b53b916628b91c64125c5d9,Nidorino Reverse-Holo 033
+033,Nidorino,Base,3,2,0,3,5,3554d9529e4300d3fee416d0565051b879e6fcc0,Nidorino Base 033
+034,Nidoking,Base,45,55,14,45,122,d4afa3b9b131f9908efb3aa4afea361fd13917de,Nidoking Base 034
+034,Nidoking,Reverse Holo,20,22,6,20,51,2654be7734b8b89b0cb28a51133fba8718ac83ed,Nidoking Reverse Holo 034
+035,Clefairy,Reverse Holo,17,29,3,17,51,74f5d2cb62ed1480a42cfa1205bf6634c25cffd3,Clefairy Reverse Holo 035
+035,Clefairy,Base,4,5,1,4,10,a5b66003ac84506f4ce7a040e4bc9daaf96170b9,Clefairy Base 035
+036,Clefable,Reverse Holo,17,17,2,17,37,5eb841ae3189f2fe805dccb1e6c3bfe886a9a17e,Clefable Reverse Holo 036
+036,Clefable,Base,3,5,1,3,9,6b7d9a1e188b3210a3d941f826001b12bd202d1a,Clefable Base 036
+037,Vulpix,Reverse Holo,20,20,6,20,49,d488e2731e67accd7afbf49b6bdb04d237e31177,Vulpix Reverse Holo 037
+037,Vulpix,Base,5,3,1,5,12,c22153b7284ceb9eed0e11f12a022848839ad660,Vulpix Base 037
+038,Ninetales EX,Base,263,379,156,263,833,e825a0933bfb3df2445a3f4a68b20b99a99109b4,Ninetales EX Base 038
+039,Jigglypuff,Reverse Holo,37,48,13,37,101,82f7da6702a6bf151348bbdd2dfea7d651aaab72,Jigglypuff Reverse Holo 039
+039,Jigglypuff,Base,7,16,4,7,29,e574b3d76d60b10c346f4e4a7368417b59894d0b,Jigglypuff Base 039
+040,Wigglytuff EX,Base,130,172,67,130,392,bc5596cc9b22a5ec3d8bd3e25bf68d019fe569cb,Wigglytuff EX Base 040
+041,Zubat,Reverse Holo,12,13,2,12,27,f093d193eaf5c0d28334190f0db53cfc62e14406,Zubat Reverse Holo 041
+041,Zubat,Base,4,3,0,4,7,4c802490fda7dc4a1559be20f016450e7f07c36f,Zubat Base 041
+042,Golbat,Reverse Holo,13,16,4,13,33,226e280b8dbfa25aa7c820d5d009c99308d23c2c,Golbat Reverse Holo 042
+042,Golbat,Base,4,0,2,4,6,9e371398c7bce01cf509be55d8780901f8da4afc,Golbat Base 042
+043,Oddish,Reverse Holo,13,15,5,13,35,74ac4273c5498f3fee292002456d5578ff8c8f2b,Oddish Reverse Holo 043
+043,Oddish,Base,6,8,2,6,16,c9d08ebed1701e7e12df122937a4b271050997a9,Oddish Base 043
+044,Gloom,Reverse Holo,10,19,6,10,35,cbfc7b903b6f432983747236b30546d2105d668f,Gloom Reverse Holo 044
+044,Gloom,Base,2,6,3,2,11,63ea46bcee11ca672bf063fce32b8f4d64d0f640,Gloom Base 044
+045,Vileplume,Base,38,34,16,38,93,119cd2d82659f9683e439d2d7281bcd8f5d43556,Vileplume Base 045
+045,Vileplume,Reverse Holo,10,10,6,10,27,924b12a5e05be1fd2b40e4ffd8ae4400976c8003,Vileplume Reverse Holo 045
+046,Paras,Reverse Holo,7,15,3,7,25,3314ceb63250efb5882bce2905bcc0b00331376a,Paras Reverse Holo 046
+046,Paras,Base,1,3,1,1,6,11cf371cae90b23c6e99d859506d6b1d28e93de9,Paras Base 046
+047,Parasect,Reverse Holo,10,12,1,10,23,508ad2e84d08775e29e0623ed401cd5486c013d8,Parasect Reverse Holo 047
+047,Parasect,Base,1,3,0,1,5,a6a36d81960168a27609fdb39c197fc8649df0de,Parasect Base 047
+048,Venonat,Reverse Holo,6,20,2,6,29,fd59db8438f09c7d75188b12ead09f000ece4ba9,Venonat Reverse Holo 048
+048,Venonat,Base,3,1,0,3,4,e784dd5178f0b4f79c686c9045989d7272e7d5aa,Venonat Base 048
+049,Venomoth,Reverse Holo,9,10,2,9,22,187a114e3209aaae74a2348d682184cb938d003f,Venomoth Reverse Holo 049
+049,Venomoth,Base,1,2,0,1,4,7e030fadd3e956db057726d25d704d90a7884554,Venomoth Base 049
+050,Diglett,Reverse Holo,9,19,4,9,32,0b3f5e2b1f2c727e484c5de167d4d6c1be07c30e,Diglett Reverse Holo 050
+050,Diglett,Base,2,4,0,2,6,fe4804933b75a5c7f330049cf5c2d96aefa5b18c,Diglett Base 050
+051,Dugtrio,Reverse Holo,10,15,4,10,29,d36eafe550f60302041bc4e9c477d0aa353b0ae8,Dugtrio Reverse Holo 051
+051,Dugtrio,Base,3,0,1,3,4,e31eb8e832c89d5954796d8639b36885357821f4,Dugtrio Base 051
+052,Meowth,Reverse Holo,20,35,10,20,69,ae8edaa81a8b9bee069c22cde1a77d1bee96df8a,Meowth Reverse Holo 052
+052,Meowth,Base,9,14,3,9,29,f49e0074fbd07b5eddea8f00cd8112f197bbb8a1,Meowth Base 052
+053,Persian,Reverse Holo,15,31,10,15,60,7a0c0d990560439791305093d9f02872604af5ea,Persian Reverse Holo 053
+053,Persian,Base,0,6,0,0,7,a0f3e74a7cb455af04d4ffbfc37a1f4c10f9c0c4,Persian Base 053
+054,Psyduck,Reverse Holo,22,55,25,22,121,fc08139b696b029c2bb2d5fb05187df7fafce76a,Psyduck Reverse Holo 054
+054,Psyduck,Base,13,35,7,13,59,2988c5cd465c075c6c141400894df6b6ed9139d8,Psyduck Base 054
+055,Golduck,Reverse Holo,14,17,2,14,33,bdfe18231ca1e087a7836478cdd1cf5eae7b6a3f,Golduck Reverse Holo 055
+055,Golduck,Base,5,1,2,5,8,7c78d862c81f8d6eec2ad7e70e21f5e538c8321d,Golduck Base 055
+056,Mankey,Reverse Holo,17,11,2,17,30,85f496155389f1d8afeda1d92d7b114fb3dd2088,Mankey Reverse Holo 056
+056,Mankey,Base,1,2,1,1,5,8e3271cef6885720adc2e0f3cdd8ae3fa0f9725d,Mankey Base 056
+057,Primeape,Reverse Holo,15,22,3,15,41,c28ce82ceef77a5fe1a3cca5de75a2fc81c30daf,Primeape Reverse Holo 057
+057,Primeape,Base,1,2,0,1,4,154a749ba73c914880208b77b93448b3ae79bb83,Primeape Base 057
+058,Growlithe,Reverse Holo,14,32,4,14,51,cba0ca748f4aa54755c2bceb5c1fd4c7cab418fb,Growlithe Reverse Holo 058
+058,Growlithe,Base,10,11,2,10,24,d255bae253301917e61b8d268cf69101db01f954,Growlithe Base 058
+059,Arcanine,Reverse Holo,37,49,17,37,106,e77633a31b26c297e648f62c66d52397c9b586d6,Arcanine Reverse Holo 059
+059,Arcanine,Base,17,15,4,17,37,848b4ab1556c8367fe3c67a29aee9515fc09d890,Arcanine Base 059
+060,Poliwag,Reverse Holo,10,14,3,10,27,59cc86b3338d9163f32a1c1695ecbd4fc0f34fd9,Poliwag Reverse Holo 060
+060,Poliwag,Base,3,7,0,3,10,a42a310325fcf2fb1e5ced75ef785171cfef1e87,Poliwag Base 060
+061,Poliwhirl,Reverse Holo,18,19,3,18,40,38d02a45e0bad39fd68f581e1ae34c2928fe7769,Poliwhirl Reverse Holo 061
+061,Poliwhirl,Base,1,2,1,1,4,19102b4f6fdc4147c4f99b5ee7f25ec6bff2be16,Poliwhirl Base 061
+062,Poliwrath,Reverse Holo,18,21,7,18,47,7f0e9bb7baade8a0601d616c48bdf45a1faa7067,Poliwrath Reverse Holo 062
+062,Poliwrath,Base,5,3,0,5,8,df35f4b44230f65caf5d85cf6a9f047520af82f7,Poliwrath Base 062
+063,Abra,Alakazam EX Box,204,251,77,204,544,2da413dbdfb3b29a8db00bd46ee6740c6ec3cf8d,Abra Alakazam EX Box 063
+063,Abra,Reverse Holo,17,31,4,17,54,3080612ffb1c72cf55e90ddf08869397bc1300a0,Abra Reverse Holo 063
+063,Abra,Base,10,11,5,10,26,fe8f068dc40f07603392e31c19d0dab869fb9aa7,Abra Base 063
+064,Kadabra,Alakazam EX Box,169,229,54,169,460,d887be061a0ee54be2edf90ae40f839fb77b5bf3,Kadabra Alakazam EX Box 064
+064,Kadabra,Reverse Holo,22,35,6,22,63,4874719e77d53e43f5db7ad60875e38a094c7802,Kadabra Reverse Holo 064
+064,Kadabra,Base,14,12,1,14,28,0124e63916b198b8e7ea04402c9e0e88815443ce,Kadabra Base 064
+065,Alakazam EX,Base,185,321,128,185,661,94665f568788823ef31b6ffd1d2a280616b32f87,Alakazam EX Base 065
+066,Machop,Reverse Holo,16,24,5,16,46,180083a77c525fa7e1c2ed3a56e98a5d3df009e0,Machop Reverse Holo 066
+066,Machop,Base,2,2,1,2,5,e9e3cfc94d88d99ee6fae40b075033e9f90e4c33,Machop Base 066
+067,Machoke,Reverse Holo,16,18,8,16,43,fd4121643a03392bca377750f9ce383cd6298aa1,Machoke Reverse Holo 067
+067,Machoke,Base,0,7,1,0,8,c94499637a106f1151b48da798218d329b5dcc61,Machoke Base 067
+068,Machamp,Base,35,64,21,35,128,7f2cb0ed2b6f9f6099f324a0d3d93def71698242,Machamp Base 068
+068,Machamp,Reverse Holo,25,14,4,25,44,cbce7528d6745323297059e4fa8289d02528f280,Machamp Reverse Holo 068
+069,Bellsprout,Reverse Holo,9,12,1,9,23,0bd126e76a23b30fe27c2485f53405e8e8d95ad3,Bellsprout Reverse Holo 069
+069,Bellsprout,Base,2,1,1,2,4,3f479322bf934c96a705706de2b02f880d106f90,Bellsprout Base 069
+070,Weepinbell,Reverse Holo,9,10,2,9,22,899be5cef1e688914e6378d59f9e990140c36dbd,Weepinbell Reverse Holo 070
+070,Weepinbell,Base,3,1,1,3,5,729c4cdba89e8d940051a05a5c3c528602a5c314,Weepinbell Base 070
+071,Victreebel,Reverse Holo,16,19,1,16,37,78696cc6e9044b380daf88a34c485c88ead85ab8,Victreebel Reverse Holo 071
+071,Victreebel,Base,1,1,1,1,4,ef56f76801dafc58a910d8269a6a233173eff0f6,Victreebel Base 071
+072,Tentacool,Reverse Holo,11,13,2,11,28,9fb2686725c5e08b9986fb5d3a5dae256b85f33d,Tentacool Reverse Holo 072
+072,Tentacool,Base,1,2,0,1,3,8d5bf00f6f807f7e73b778f5128f9447e9d3a99b,Tentacool Base 072
+073,Tentacruel,Reverse Holo,9,17,2,9,30,b598a7ed61373e9ec5a51c26e8eaaac59ab766a0,Tentacruel Reverse Holo 073
+073,Tentacruel,Base,3,1,0,3,5,3883c795812cd71ea38b9a9b33f6619b5d929bab,Tentacruel Base 073
+074,Geodude,Reverse Holo,15,9,3,15,28,5c9e3644782291d017ef5d126a358928acef1ff4,Geodude Reverse Holo 074
+074,Geodude,Base,2,1,0,2,3,9d49dbe475a668ed55948511bc768c994bb6286b,Geodude Base 074
+075,Graveler,Reverse Holo,14,15,1,14,31,9cbf7d120b282fa97092cabb27d42a5f9d8bb014,Graveler Reverse Holo 075
+075,Graveler,Base,3,3,1,3,7,c7f280f3d9b0578de13c546379a48a59637580a9,Graveler Base 075
+076,Golem EX,Base,114,177,62,114,370,9b859348f16a2cda1e173164d236c61fcbe50d53,Golem EX Base 076
+077,Ponyta,Reverse Holo,15,13,5,15,33,95c4fcf486d0c86b164fa08566af3ffdec0ad373,Ponyta Reverse Holo 077
+077,Ponyta,Base,3,2,1,3,6,4b5d19765841ab117d4d8a4def6e715fd2408aa4,Ponyta Base 077
+078,Rapidash,Reverse Holo,16,15,3,16,36,74afb5f90d2a850ce8fdab3c54d1ecc7d064f8ee,Rapidash Reverse Holo 078
+078,Rapidash,Base,4,4,1,4,10,9cc9ab489f296df9178dc135b66837753e05de0b,Rapidash Base 078
+079,Slowpoke,Reverse Holo,23,24,10,23,59,2dc6a4d689a04bfb299d1f7cb0f9c5e40773b300,Slowpoke Reverse Holo 079
+079,Slowpoke,Base,5,6,1,5,14,6b0b16d9f2ef983d4d60382677bae65d7399858d,Slowpoke Base 079
+080,Slowbro,Reverse Holo,16,23,6,16,48,0df81dadab61bf344d2e49c8758835a459940903,Slowbro Reverse Holo 080
+080,Slowbro,Base,2,8,0,2,10,5d48308899d7cc3c1a8f6e2e7d3963294cedf26c,Slowbro Base 080
+081,Magnemite,Reverse Holo,18,19,3,18,41,eba06d212e50c360933eab31c26c04218a459bfa,Magnemite Reverse Holo 081
+081,Magnemite,Base,7,5,0,7,12,e4a210617ac24b7df69f9d7bf3975b44f2395837,Magnemite Base 081
+082,Magneton,Reverse Holo,8,20,3,8,32,e78928e3642ed286e79219650879b4b19b2dcf0b,Magneton Reverse Holo 082
+082,Magneton,Base,7,3,0,7,11,543913fd1e070110b0786e3aa3053f899ad6074f,Magneton Base 082
+083,Farfetch'd,Reverse Holo,14,19,5,14,38,e047b4142cc680e093ec7efd14e68f1438466c7b,Farfetch'd Reverse Holo 083
+083,Farfetch'd,Base,3,5,0,3,8,57c421ee1d702bc4e73956ac8d76babe4a3be4db,Farfetch'd Base 083
+084,Doduo,Reverse Holo,6,15,8,6,30,37faa31056e6762a4c9508a1db4068cc76def958,Doduo Reverse Holo 084
+084,Doduo,Base,1,3,0,1,4,1ded9e205591a91acd06a869a3f4dde67ba8bb3b,Doduo Base 084
+085,Dodrio,Base,21,33,12,21,67,f4a0026f2b7a7b4bb9605188621d093f474a007e,Dodrio Base 085
+085,Dodrio,Reverse Holo,10,15,0,10,27,99dff1ac4ab4ca980e7734ea881dbd92b11e762b,Dodrio Reverse Holo 085
+086,Seel,Reverse Holo,10,15,4,10,29,47bbef3d91e29b1deade871f5516103b09bc2a10,Seel Reverse Holo 086
+086,Seel,Base,1,2,1,1,4,51cefeb274da50b8799d34f438c5293e9b47f666,Seel Base 086
+087,Dewgong,Reverse Holo,9,11,2,9,23,199a7f9f985fcc95280cfc17d35a3bdcd11bc296,Dewgong Reverse Holo 087
+087,Dewgong,Base,2,3,0,2,5,05ab9780e06cdd45b76f2d9eb9869a2fe5af9b5c,Dewgong Base 087
+088,Grimer,Reverse Holo,10,9,2,10,21,88efe40a403ad21d760dbe30c2dc0884d1d94812,Grimer Reverse Holo 088
+088,Grimer,Base,5,3,1,5,9,ad1a530fc9bf4bc1ab2b1b4beaee5e3fd756c7b7,Grimer Base 088
+089,Muk,Reverse Holo,15,17,1,15,33,1731f366c100dbe0fbcfa13f88362baaaf168bcd,Muk Reverse Holo 089
+089,Muk,Base,3,2,0,3,6,7ad4bf3ce1dbb1665cd0890ace61fd59eab34672,Muk Base 089
+090,Shellder,Reverse Holo,7,18,3,7,28,7cc17b6da5ccae613e377d32e3e2427741ba0174,Shellder Reverse Holo 090
+090,Shellder,Base,2,1,1,2,4,ec8242e71989909013fedd314fde294b69fc5d44,Shellder Base 090
+091,Cloyster,Reverse Holo,24,15,1,24,42,a841bbf248aa1c89ad2d99e0f6ae8c77799ec1d7,Cloyster Reverse Holo 091
+091,Cloyster,Base,3,0,0,3,3,2858d8283d001ffe7b01b8f9a7ebe82e8878f7e4,Cloyster Base 091
+092,Gastly,Reverse Holo,40,68,18,40,128,cfc0d13745c9f1d1f0e73aa7e4d31b0424c2337e,Gastly Reverse Holo 092
+092,Gastly,Base,8,18,7,8,34,54b3fd81ce1295572bfe386a201a3ce7dbaa2987,Gastly Base 092
+093,Haunter,Reverse Holo,73,89,26,73,191,416fcf163e055fd5d1219cc22bcc55229c7805f6,Haunter Reverse Holo 093
+093,Haunter,Base,20,28,7,20,59,8fc35cbfce259232566c9de12cc811009de68446,Haunter Base 093
+094,Gengar,Base,829,1676,603,829,3271,0c442a282bf9992559ef0f660983fed4ca568877,Gengar Base 094
+094,Gengar,Reverse Holo,142,383,130,142,697,62d749db1d4af59f35bcb7320ab3665afbf9e597,Gengar Reverse Holo 094
+095,Onix,Reverse Holo,10,4,5,10,20,5a671d8a3af80bcf1059ed7f609033deba60c376,Onix Reverse Holo 095
+095,Onix,Base,1,3,0,1,5,bfd81f54dc85b1d16cf9bf4cab66825e5fb55c81,Onix Base 095
+096,Drowzee,Reverse Holo,13,17,7,13,39,276e6249d1af3de44a44851d42518b64b15f692e,Drowzee Reverse Holo 096
+096,Drowzee,Base,5,1,0,5,6,43e0baa4fdec08b1f7700f0c7dab6b02be468b74,Drowzee Base 096
+097,Hypno,Reverse Holo,13,3,2,13,18,6a9bbbe6bcfd4364b69fd78d4843c4e61dd0526a,Hypno Reverse Holo 097
+097,Hypno,Base,2,4,0,2,7,05f78ebe7ddfe93b62749c1ed73179df0fd8be85,Hypno Base 097
+098,Krabby,Reverse Holo,7,17,8,7,33,aaa3617209499a795692e8ba42213d408cbcd655,Krabby Reverse Holo 098
+098,Krabby,Base,1,5,0,1,7,b004624a0e632cd3e7549ccb4c81cb79aa4ae2ea,Krabby Base 098
+099,Kingler,Reverse Holo,8,15,2,8,27,52ecc34120b2f11d58bd63c1f0ea2970fff05bb2,Kingler Reverse Holo 099
+099,Kingler,Base,4,3,0,4,8,e9188f6b1d08ffcaf8620fac3b6d5bc456aa6a80,Kingler Base 099
+100,Voltorb,Reverse Holo,20,15,3,20,38,5b4bfc87fcaad558853da6445f405fa084e414f3,Voltorb Reverse Holo 100
+100,Voltorb,Base,2,4,0,2,8,8bf0bbb030cfc0e8e6efdad07058b5b3e49a1c01,Voltorb Base 100
+101,Electrode,Base,32,52,18,32,103,3fea3c3c131e22e83b07e31a0feea3edd4fdbedb,Electrode Base 101
+101,Electrode,Reverse Holo,7,10,5,7,29,df81ccdd2f7a08f712b3c35af139ffb48c7f9c1a,Electrode Reverse Holo 101
+102,Exeggcute,Reverse Holo,8,16,3,8,29,e6431aec4ebb12737b567ed646683a4bcc4591ed,Exeggcute Reverse Holo 102
+102,Exeggcute,Base,2,1,1,2,4,12ba5427b5b2df7f226bfdf9a36ec700a64c8e5b,Exeggcute Base 102
+103,Exeggutor,Reverse Holo,15,15,1,15,32,be567c8863d15451ed2a5e50a9ee71517031b64b,Exeggutor Reverse Holo 103
+103,Exeggutor,Base,3,1,1,3,7,e91a5d33d6f8e6aa0275230247bd572f0770a3bc,Exeggutor Base 103
+104,Cubone,Reverse Holo,28,34,11,28,73,38b79760c2c2ca285a86c629dd19f387169d5a6e,Cubone Reverse Holo 104
+104,Cubone,Base,6,15,1,6,22,b27067a53c1bf607536edee408cb779aaaeec4eb,Cubone Base 104
+105,Marowak,Base,36,57,22,36,123,53efaea68a379c75677016959c6a1652aaf6a486,Marowak Base 105
+105,Marowak,Reverse Holo,11,23,4,11,39,af8e7820cf9c318bffe42b147dc889cb6bfa53e0,Marowak Reverse Holo 105
+106,Hitmonlee,Reverse Holo,16,7,4,16,27,1348d3621aabf161909ce9a016b216eb43fdcf77,Hitmonlee Reverse Holo 106
+106,Hitmonlee,Base,4,6,2,4,12,aec2ebc039a4bf756677a96e365311ee2b9b8e38,Hitmonlee Base 106
+107,Hitmonchan,Reverse Holo,18,12,1,18,31,e6d164b786384940b34779ed06e9df00ee256036,Hitmonchan Reverse Holo 107
+107,Hitmonchan,Base,3,9,2,3,17,64eff0f3795231f52811a98d0cc5c100d49174cd,Hitmonchan Base 107
+108,Lickitung,Reverse Holo,17,13,8,17,39,c6771b7c9c530cf8921ada19623260bd013ddd5e,Lickitung Reverse Holo 108
+108,Lickitung,Base,6,7,2,6,16,7ae3a6d99e1207cbe74f90f37707f7e932f629cf,Lickitung Base 108
+109,Koffing,Reverse Holo,13,10,3,13,27,1ae485bdb3349a30929703c79d43b4a6aa7520a7,Koffing Reverse Holo 109
+109,Koffing,Base,2,3,0,2,7,06a544c66a33ab418a2634d83ef57b777bf239b3,Koffing Base 109
+110,Weezing,Base,26,35,12,26,74,77498bd840d580b6982a8558fec3fe83018ec7ba,Weezing Base 110
+110,Weezing,Reverse Holo,20,15,1,20,36,c62bb244f2481eeb58fa2318a12d26b71e729853,Weezing Reverse Holo 110
+111,Rhyhorn,Reverse Holo,11,21,1,11,35,f755bbccb49340ead0440c946e384f1ec77b3099,Rhyhorn Reverse Holo 111
+111,Rhyhorn,Base,3,2,0,3,6,25fa40fe6c55dcdf15b9b30f9532ad5bbef766c8,Rhyhorn Base 111
+112,Rhydon,Reverse Holo,13,26,4,13,45,33f1889ceaa53aa5e546cd1368a09461e4ea0a2e,Rhydon Reverse Holo 112
+112,Rhydon,Base,4,1,0,4,6,2bb44e9d1716c929e7cba43fa24e99bc43232682,Rhydon Base 112
+113,Chansey,Base,63,129,30,63,231,d6b81ddef43703772cca8c8404113fd04fb4e842,Chansey Base 113
+113,Chansey,Reverse Holo,34,25,8,34,70,4f3c1c752d89931ce2d1b058b7a5e3a00e36b06e,Chansey Reverse Holo 113
+114,Tangela,Reverse Holo,12,18,1,12,31,c041d51250f5ce3ed60eecded46dd2d68d5f1301,Tangela Reverse Holo 114
+114,Tangela,Base,2,4,1,2,9,6958b550999afaa8c8bc6daacccfc4b6520edb39,Tangela Base 114
+115,Kangaskhan EX,Base,109,175,65,109,373,e6ec1bca6165e923071cd3a5e46bb5103b8b1780,Kangaskhan EX Base 115
+116,Horsea,Reverse Holo,13,23,1,13,40,522aa722220c4321a1bc78e250602ee147699f41,Horsea Reverse Holo 116
+116,Horsea,Base,0,3,1,0,4,cdfb886728d87f8a2d6e0b92fd3ff6113664c3f1,Horsea Base 116
+117,Seadra,Reverse Holo,13,12,5,13,30,62f355c1b2e959d49add3dbbdb10573586ce5b51,Seadra Reverse Holo 117
+117,Seadra,Base,4,0,0,4,4,483df1093d019d77e9a0f9f604650348ad52f3cf,Seadra Base 117
+118,Goldeen,Reverse Holo,9,20,4,9,35,9f424f46a98b44e11c0ce4a5bac703b1bba92bd0,Goldeen Reverse Holo 118
+118,Goldeen,Base,3,6,2,3,11,b82f6315b2b2f704ead2149e28d3c8cacc1a844a,Goldeen Base 118
+119,Seaking,Reverse Holo,10,15,2,10,27,faebfb1bbbdbadeef0a481e0e8dfffddb6bdbb93,Seaking Reverse Holo 119
+119,Seaking,Base,1,4,0,1,6,bbc406dfc6be5bea7f2e7c6ba63a5488a502d279,Seaking Base 119
+120,Staryu,Reverse Holo,14,17,0,14,31,9c014d945e8933f9ed2a2814780c0564f92ffe93,Staryu Reverse Holo 120
+120,Staryu,Base,3,3,0,3,6,179839aa979500b98dc79537bf4d040c67785029,Staryu Base 120
+121,Starmie,Base,40,56,13,40,110,c4b293311c723ef7871f33655bfbcd9dd534b236,Starmie Base 121
+121,Starmie,Reverse Holo,14,15,3,14,33,855056b49c2a4dde12e803580a2a053fd71fb6e4,Starmie Reverse Holo 121
+122,Mr. Mime,Base,52,69,26,52,155,b62bc8537a08234e698d7d3d12f69bae8466717b,Mr. Mime Base 122
+122,Mr. Mime,Reverse Holo,27,17,4,27,50,4170ea5e1b96cd2630663386e6d94451f342eb9a,Mr. Mime Reverse Holo 122
+123,Scyther,Reverse Holo,16,37,9,16,65,0e7fb053578477d419f31370319d3b7c125dba8f,Scyther Reverse Holo 123
+123,Scyther,Base,4,5,1,4,11,2947258396b8be347305966ac1bcb782b03a2e82,Scyther Base 123
+124,Jynx EX,Base,115,165,56,115,351,b518b2243ca92c7ce511be67a31abbae00e76a6d,Jynx EX Base 124
+125,Electabuzz,Zapdos EX Box,118,197,40,118,362,421a62e0dac165875c9c16fc2974800872ac33bf,Electabuzz Zapdos EX Box 125
+125,Electabuzz,Base,11,16,4,11,32,7b5691187c709e1d9b276a097985e000d6dff787,Electabuzz Base 125
+125,Electabuzz,Reverse Holo,10,11,2,10,23,cc446df6916f301af73ac9d06b803f689407cd91,Electabuzz Reverse Holo 125
+126,Magmar,Reverse Holo,7,20,3,7,30,92046c0b35029aa8c1a69dcbd2a6d3d154de8b26,Magmar Reverse Holo 126
+126,Magmar,Base,3,1,1,3,5,139f06ac21be5dc899cfcb4de036709d3d0e2103,Magmar Base 126
+127,Pinsir,Reverse Holo,14,16,1,14,31,6a42c8878e4b46c64102a27d6923a0aaa5065af8,Pinsir Reverse Holo 127
+127,Pinsir,Base,4,2,0,4,6,c1cb19a641cc21d34e12b8ceb533aba886afad62,Pinsir Base 127
+128,Tauros,Reverse Holo,10,17,7,10,34,16f2d961262e895fd1c00b7292ef26ddc29a4f45,Tauros Reverse Holo 128
+128,Tauros,Base,5,3,1,5,10,5284d18e6c01bc5fb7e1e7669d34e5d38229d194,Tauros Base 128
+129,Magikarp,Reverse Holo,33,59,10,33,107,b1ca6a9b54e8fb5ca91ab2b1191853a57e70213d,Magikarp Reverse Holo 129
+129,Magikarp,Base,10,16,3,10,34,9dd2eb3835193d8e3a72f20a76afb98fb04e182c,Magikarp Base 129
+130,Gyarados,Base,142,174,45,142,374,c520a214f9a5a830db96e530125d1973f9413764,Gyarados Base 130
+130,Gyarados,Reverse Holo,28,62,18,28,115,f6f27f2f7d7159f42e60ccdc66baebe8636af1ae,Gyarados Reverse Holo 130
+131,Lapras,Reverse Holo,13,22,5,13,41,f4f9a92a825a2736ba84c24fa92ce513e64f333f,Lapras Reverse Holo 131
+131,Lapras,Base,3,13,1,3,18,a82e94094c192226a45d64254600857b03ef87f2,Lapras Base 131
+132,Ditto,Base,78,132,57,78,290,a5f234c601947c2a670d7de8197fe98423802dc1,Ditto Base 132
+132,Ditto,Reverse Holo,31,26,5,31,66,50df2526b245de4bb7e2f4b197bf6e7b7672220a,Ditto Reverse Holo 132
+132,Ditto,Trainer's Tool Kit,5,5,1,5,12,057d2d0d42650bc77674bfa096a598f8d7161456,Ditto Trainer's Tool Kit 132
+133,Eevee,Pokemon Together,183,877,560,183,1760,01d32e3172842d0d8598fb19424ed7b16ed4cf30,Eevee Pokemon Together 133
+133,Eevee,Reverse Holo,82,92,32,82,215,cb393acb2fae54764eeff0db590941d2a389211a,Eevee Reverse Holo 133
+133,Eevee,Base,52,52,18,52,126,8ed73c7e69d0af8053797454afc8e18a5c12dc0d,Eevee Base 133
+134,Vaporeon,Base,104,155,41,104,310,fcc39e42eb5683cebf255d82a35c4feb88012ca1,Vaporeon Base 134
+134,Vaporeon,Reverse Holo,20,41,10,20,76,e74f28e6b72f4f7e4ef0b60469d453b44788067c,Vaporeon Reverse Holo 134
+135,Jolteon,Base,120,182,39,120,351,27f58a243acd2dd903f6230aec66484c59c0a8c3,Jolteon Base 135
+135,Jolteon,Reverse Holo,43,45,16,43,108,5c38d680e156c2ae8dad6a2a9ddf3de5e37c24e8,Jolteon Reverse Holo 135
+136,Flareon,Base,106,143,33,106,288,ec198de3fe42e7d7314897084b69228a58da9799,Flareon Base 136
+136,Flareon,Reverse Holo,8,39,16,8,73,3fca138affc707f3baef73b2630cb1d79b927b68,Flareon Reverse Holo 136
+137,Porygon,Reverse Holo,16,32,3,16,53,30a7ab77ba6437cff4cdc0ef2c4ae7b5f75cdc98,Porygon Reverse Holo 137
+137,Porygon,Base,9,3,3,9,16,2a3bd4a3b0915821b0f95fc7d73b8f01b9763cdf,Porygon Base 137
+138,Omanyte,Reverse Holo,11,26,1,11,38,6d69994d81ff99e316d3f70ad29179f7a848b19f,Omanyte Reverse Holo 138
+138,Omanyte,Base,1,4,1,1,7,5c7bcaacb19bb2437ed12f1db3bf1b1d34be68ad,Omanyte Base 138
+139,Omastar,Base,29,57,7,29,99,1a16ccc224ec6ccbe3cea08f988171e07d4a5160,Omastar Base 139
+139,Omastar,Reverse Holo,22,17,2,22,41,51297fb5db24653e9be0fc99c212e7c15dd3653f,Omastar Reverse Holo 139
+140,Kabuto,Reverse Holo,8,14,2,8,25,1b8b7f775e8152609330691b64e5987b640c58d6,Kabuto Reverse Holo 140
+140,Kabuto,Base,4,3,0,4,7,630316ec9a8c590291148db99214097c50bc0b5a,Kabuto Base 140
+141,Kabutops,Base,32,52,13,32,100,0d8e797a63fce8406bf3bd2e2dda5e0c908e1835,Kabutops Base 141
+141,Kabutops,Reverse Holo,18,12,4,18,36,9b03ae4a67edf2d6539643d120e6f2199460b2dc,Kabutops Reverse Holo 141
+142,Aerodactyl,Base,129,184,58,129,386,ef823acba0a348721eb54509d284ad243e1882af,Aerodactyl Base 142
+142,Aerodactyl,Reverse Holo,40,46,16,40,102,a865150c27ff163e0cfa29bb38922a416167ab8c,Aerodactyl Reverse Holo 142
+143,Snorlax,Reverse Holo,38,86,17,38,146,3923d0f103d350d4caeb8f093db9546a13925e01,Snorlax Reverse Holo 143
+143,Snorlax,Base,36,40,10,36,95,d72d6433718900ec809bb69c7ddcedd860d23290,Snorlax Base 143
+144,Articuno,Base,83,101,25,83,215,8953f61a71d3592b241a7fc749090033c60a13dc,Articuno Base 144
+144,Articuno,Reverse Holo,35,39,6,35,82,c4ccc0670aeb055abee09b3162b3accd8880f7f5,Articuno Reverse Holo 144
+145,Zapdos EX,Base,244,411,143,244,832,1bc621eaf7de8b1f168e06fe0014b88a84206764,Zapdos EX Base 145
+146,Moltres,Base,84,85,17,84,188,d843e8a23989dc07dfd93766261294a00fbbb5c5,Moltres Base 146
+146,Moltres,Reverse Holo,37,36,8,37,82,e8c21b6c833b78a8d1b5de55ed77c4b358b67ba9,Moltres Reverse Holo 146
+146,Moltres,Charizard EX League Battle Deck,1,5,1,1,7,fc661443a4493514b0c1ffd2cbcd8c2878aa75f2,Moltres Charizard EX League Battle Deck 146
+147,Dratini,Reverse Holo,22,37,7,22,69,7c7207ad9115cb2ec641ef847963fa0a76e7af89,Dratini Reverse Holo 147
+147,Dratini,Base,5,4,5,5,15,da6fe94d9e196d99e04a6e20ea8edb025a9a7291,Dratini Base 147
+148,Dragonair,Reverse Holo,11,23,17,11,55,46862d5989018931f7248f99fcaaea48b884b9e2,Dragonair Reverse Holo 148
+148,Dragonair,Base,12,23,6,12,42,06300d4c1a0c0057853d6cd1c92faa878449ea81,Dragonair Base 148
+149,Dragonite,Base,163,297,121,163,614,3dd0fd92ff104a4808f9b13ace234f2964da311f,Dragonite Base 149
+149,Dragonite,Reverse Holo,35,105,56,35,207,1a387f1ee9113dce23e94ad7844fdeb165b45d01,Dragonite Reverse Holo 149
+150,Mewtwo,Base,497,822,208,497,1581,b79d3e38273c36567abe615ebff2ef357e5d631b,Mewtwo Base 150
+150,Mewtwo,Reverse Holo,225,252,77,225,570,a7838aaa9ccfa14e653d6f0a9465b48cad1de646,Mewtwo Reverse Holo 150
+151,Mew EX,Base,909,1640,655,909,3366,bebaed20bca1c06298787e010881bc8a89f828e6,Mew EX Base 151
+152,Antique Dome Fossil,Reverse Holo,9,20,7,9,37,3a352d4239958c16cceb0ba42bdc7e6234193ee7,Antique Dome Fossil Reverse Holo 152
+152,Antique Dome Fossil,Base,1,1,2,1,4,04514bfb3963e2729ac9023ec8ea12d1021dfaf6,Antique Dome Fossil Base 152
+153,Antique Helix Fossil,Reverse Holo,3,16,1,3,23,5767ee76122ebae7359a9b246fdb2092a2a34b3a,Antique Helix Fossil Reverse Holo 153
+153,Antique Helix Fossil,Base,0,3,1,0,4,f7f59f7b2a2948580f2616f7f56f430e2b8249df,Antique Helix Fossil Base 153
+154,Antique Old Amber,Reverse Holo,13,10,3,13,27,b3afefeed5be1c2b13ddeac961f6bf618689b56f,Antique Old Amber Reverse Holo 154
+154,Antique Old Amber,Base,2,0,1,2,3,2af7a98c2627fb39657d64cb7aca90a6e897d54e,Antique Old Amber Base 154
+155,Big Air Balloon,Reverse Holo,5,8,3,5,16,4067b036d9ac34713279f46a3712c8f3804fa79d,Big Air Balloon Reverse Holo 155
+155,Big Air Balloon,Base,2,2,0,2,5,a28dfcc7970391039b1927043d474ccf3692571d,Big Air Balloon Base 155
+156,Bill's Transfer,Reverse Holo,9,7,1,9,17,d77f2dca0a10fb915730d0a2b6a7b86434679c5e,Bill's Transfer Reverse Holo 156
+156,Bill's Transfer,Base,4,3,0,4,7,4503c82ad3eb8fd8828b155abb80b60757e9aaaa,Bill's Transfer Base 156
+157,Cycling Road,Reverse Holo,7,12,4,7,23,68653357bf412ab815b4041f95d360f66de58b44,Cycling Road Reverse Holo 157
+157,Cycling Road,Base,1,2,1,1,4,5b7ca9dab84950d869bdde9327f231f1943f404b,Cycling Road Base 157
+158,Daisy's Help,Reverse Holo,2,12,6,2,20,126af5ee8648d92e42579900db7b92061914824a,Daisy's Help Reverse Holo 158
+158,Daisy's Help,Base,1,2,0,1,5,e58b9826320019f51c77977bf64a3829c60d2468,Daisy's Help Base 158
+159,Energy Sticker,Reverse Holo,4,8,9,4,22,170b6fd120035c412489081dc3dbeee36950ff17,Energy Sticker Reverse Holo 159
+159,Energy Sticker,Base,0,2,3,0,6,4e98ad3dbdf7c8f14dd49ebe020a2d18275718e8,Energy Sticker Base 159
+160,Erika's Invitation,Reverse Holo,9,20,4,9,33,de063a9fac2001425d68bcb0740743d02863f4ca,Erika's Invitation Reverse Holo 160
+160,Erika's Invitation,Base,5,7,3,5,17,fe39b4465c2fc6cf771a4fca0622bf0786edcaf9,Erika's Invitation Base 160
+161,Giovanni's Charisma,Reverse Holo,5,19,4,5,29,75e90dd3c742d2a482e4ba6ea47c96de8cb0558c,Giovanni's Charisma Reverse Holo 161
+161,Giovanni's Charisma,Base,1,2,0,1,7,83539df8929a21acaa8dd6fa9d71b12b111402dc,Giovanni's Charisma Base 161
+162,Grabber,Reverse Holo,7,10,0,7,18,7e14a634d3a9228424f2b6302ca43c70909a1c70,Grabber Reverse Holo 162
+162,Grabber,Base,0,2,0,0,3,6bb52271ea05ae4c2f41eab6ea74fd7166e2c0b7,Grabber Base 162
+163,Leftovers,Reverse Holo,7,9,1,7,17,86dc2e365a684b22816862a5d571cd4cfec6fd07,Leftovers Reverse Holo 163
+163,Leftovers,Base,1,2,2,1,5,281f448c5a26d10740ad751f98be40f664b2d2ae,Leftovers Base 163
+164,Protective Goggles,Reverse Holo,10,4,5,10,19,95f34fa90794ff81a9a0772ad6dfa1af076ea8eb,Protective Goggles Reverse Holo 164
+164,Protective Goggles,Base,1,2,0,1,3,9055ed0158115da4d95a23142b79891ded4e7af2,Protective Goggles Base 164
+165,Rigid Band,Reverse Holo,6,10,0,6,16,1f1ba0072d7191c18e63ae7c926736e72bfbff37,Rigid Band Reverse Holo 165
+165,Rigid Band,Base,1,1,1,1,3,84d85e039c41938be1ddcddc2706ec9000933ea5,Rigid Band Base 165
+166,Bulbasaur,Illustration Rare,8408,16068,4371,8408,29733,f3c2557d5807290aebb181416085e3005d9c8196,Bulbasaur Illustration Rare 166
+167,Ivysaur,Illustration Rare,6534,13611,4124,6534,25155,0514c89d5184e5237ef82bbb74f685208738ac4c,Ivysaur Illustration Rare 167
+168,Charmander,Illustration Rare,8872,19604,7075,8872,37633,eb3082285fd78b3b34beed85c21ca6a0b168704c,Charmander Illustration Rare 168
+169,Charmeleon,Illustration Rare,7600,17292,5927,7600,32084,6a9eb9c29a23c2bdf745d2887a8c040fc32a7255,Charmeleon Illustration Rare 169
+170,Squirtle,Illustration Rare,9079,19120,5232,9079,34443,b87da1b94ba83e2cc46ccd3d6067f637501e8dc1,Squirtle Illustration Rare 170
+171,Wartortle,Illustration Rare,6691,14829,4304,6691,26764,ab4e56456ffd6b45e10807acc188b37b3b9c9877,Wartortle Illustration Rare 171
+172,Caterpie,Illustration Rare,1690,2820,771,1690,5495,e06860ad0575ac1d843c97933ade6b894df32ca5,Caterpie Illustration Rare 172
+173,Pikachu,Illustration Rare,8805,17224,5346,8805,32511,e752cf463f068032e5db0b4bcd628a82f028000c,Pikachu Illustration Rare 173
+174,Nidoking,Illustration Rare,3134,5059,1165,3134,9526,6cb23cd6b578f1bcaa5de5b25633435e4c0d7df2,Nidoking Illustration Rare 174
+175,Psyduck,Illustration Rare,5244,9335,2363,5244,17387,31812df09ae0502c4d5e45e035617b257601e2f6,Psyduck Illustration Rare 175
+176,Poliwhirl,Illustration Rare,4563,7924,2114,4563,14976,4954a95bd6c686a17e956ee55f3b37dcc71d1a9f,Poliwhirl Illustration Rare 176
+177,Machoke,Illustration Rare,2658,5077,1507,2658,9607,fafeafce68f2f0e1410c09ae04c11d93d11a8f4d,Machoke Illustration Rare 177
+178,Tangela,Illustration Rare,1497,2945,809,1497,5394,f11cb2aed6ec10d8947e6ae7d337e55ce0a697b6,Tangela Illustration Rare 178
+179,Mr. Mime,Illustration Rare,2058,3072,719,2058,5981,5b473f3e9c6521e409af804b365827af3b87246e,Mr. Mime Illustration Rare 179
+180,Omanyte,Illustration Rare,1555,2499,695,1555,4883,7d281223a8fea57a056448be56f740dea0e35254,Omanyte Illustration Rare 180
+181,Dragonair,Illustration Rare,4684,8491,2036,4684,15637,555bf13b7796293d273f74b0da8ce04a66ccaf85,Dragonair Illustration Rare 181
+182,Venusaur EX,Ultra Rare,2558,3271,857,2558,6834,81e09dbff4a697654eb80d95399c2af14112f83c,Venusaur EX Ultra Rare 182
+183,Charizard EX,Ultra Rare,8990,11832,2927,8990,24361,00f8fb5843acedc10ac078bb712400cf0b9c6988,Charizard EX Ultra Rare 183
+184,Blastoise EX,Ultra Rare,3563,4390,1323,3563,9638,f1141877171b953115d7b3975ccf97f7b7156d9f,Blastoise EX Ultra Rare 184
+185,Arbok EX,Ultra Rare,720,795,213,720,1771,ed31131696cf46e789ffeed072148b86b18e384c,Arbok EX Ultra Rare 185
+186,Ninetales EX,Ultra Rare,1375,1770,541,1375,3834,d4095060f34dc3ae10300296438c5053a51e3375,Ninetales EX Ultra Rare 186
+187,Wigglytuff EX,Ultra Rare,644,757,192,644,1644,1cb8c5b1fa2bf7ea5031cc866c4112ad50b279bc,Wigglytuff EX Ultra Rare 187
+188,Alakazam EX,Ultra Rare,1411,1795,420,1411,3712,119edcbdba2b500f1fb15452e7d4b9433c546ffe,Alakazam EX Ultra Rare 188
+189,Golem EX,Ultra Rare,632,722,170,632,1543,e5dd883987a229271e1b2450d68069c6f219f4ef,Golem EX Ultra Rare 189
+190,Kangaskhan EX,Ultra Rare,624,779,199,624,1634,0b8f112030caeafa270dff8f134a75e02a7c6b4f,Kangaskhan EX Ultra Rare 190
+191,Jynx EX,Ultra Rare,494,677,181,494,1396,63c0eb3056bf4547ea8a744165fac5fe008ea5d4,Jynx EX Ultra Rare 191
+192,Zapdos EX,Ultra Rare,1567,1914,525,1567,4112,62e1f62d6a61ed0dfa25c1b9f1a5b01862a506eb,Zapdos EX Ultra Rare 192
+193,Mew EX,Ultra Rare,3517,4215,1051,3517,8991,d9020590f2e58918def898792390e3ec78524428,Mew EX Ultra Rare 193
+194,Bill's Transfer,Ultra Rare,315,677,224,315,1264,8e237145b2dea1465b767eac5e5c9e30051ad90e,Bill's Transfer Ultra Rare 194
+195,Daisy's Help,Ultra Rare,430,723,237,430,1442,ce8cd05326fc6f667a849e9bbcdbac2d65aa0175,Daisy's Help Ultra Rare 195
+196,Erika's Invitation,Ultra Rare,1740,2851,926,1740,5675,94c7b01c917c28b445309ed10400dcac198bee1e,Erika's Invitation Ultra Rare 196
+197,Giovanni's Charisma,Ultra Rare,737,1425,514,737,2785,2b4a291de55ba15c2833fc14236618bb0d567526,Giovanni's Charisma Ultra Rare 197
+198,Venusaur EX,Special Illustration Rare,16062,27724,9165,16062,55000,c20259c57c80b35a3d9d4d0666438c901e3edb1a,Venusaur EX Special Illustration Rare 198
+199,Charizard EX,Special Illustration Rare,28173,49126,18822,28173,101497,0d0d77bf0ac8054da6c21b2ead1dfc38203edf70,Charizard EX Special Illustration Rare 199
+200,Blastoise EX,Special Illustration Rare,18540,30706,10174,18540,61604,1db15df4017e7ab1520c40c519e252df5c668bda,Blastoise EX Special Illustration Rare 200
+201,Alakazam EX,Special Illustration Rare,11327,19727,6552,11327,38986,eee04a46861688d4eaee6e0e47bd846815be5db1,Alakazam EX Special Illustration Rare 201
+202,Zapdos EX,Special Illustration Rare,13879,24009,8298,13879,48094,da4a6adbee5cb6720c7d8ff6096fbc9fb9d0bc83,Zapdos EX Special Illustration Rare 202
+203,Erika's Invitation,Special Illustration Rare,4878,9138,3068,4878,17627,7451075399b94ce3bd905b12d6539a2c71b76ee8,Erika's Invitation Special Illustration Rare 203
+204,Giovanni's Charisma,Special Illustration Rare,3461,6817,2337,3461,12993,9ae6d1a5884757c11ea7f636149c0ea6639de1c4,Giovanni's Charisma Special Illustration Rare 204
+205,Mew EX,Hyper Rare,5732,9426,3235,5732,19179,2ee37551be6c69a451597562a5247c6acf61ee4c,Mew EX Hyper Rare 205
+206,Switch,Hyper Rare,549,1137,493,549,2265,11fc8544fdc9a292d42c292bd8d3f9218602d872,Switch Hyper Rare 206
+207,Basic Psychic Energy,Hyper Rare,507,984,326,507,1890,72cdb4946a44498be0d8448117c6cc5c185dec19,Basic Psychic Energy Hyper Rare 207

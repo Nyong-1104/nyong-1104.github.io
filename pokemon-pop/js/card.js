@@ -52,7 +52,7 @@
 
     const rows = activeGraders.map((g) => {
       const data = pop[g] ?? null;
-      const live = data && data.source === "break";
+      const live = data && (data.source === "break" || data.source === "gemrate");
       return `<tr${live ? ' class="pop-live-row"' : ""}>
         <td>${g}${live ? ' <span class="pop-live-tag">live</span>' : ""}</td>
         ${PT.GRADE_COLS.map((col) => popCell(data, col)).join("")}
@@ -132,8 +132,10 @@
 
   const back = document.getElementById("nav-back");
   if (back && pack) {
+    const packLabel = PT.packName(pack);
     back.href = `./set.html?pack=${encodeURIComponent(pack.id)}`;
-    back.textContent = `← ${PT.packName(pack)}`;
+    back.textContent = `← ${packLabel}`;
+    back.title = packLabel;
   }
 
   const priceLabel = document.querySelector(".price-panel__label");
@@ -178,13 +180,26 @@
   PT.mountHoloCard(holo);
 
   document.getElementById("card-name").textContent = displayName;
-  document.getElementById("card-sub").innerHTML = `
-    <span>${card.nameEn || ""}</span>
-    <span>${card.number}</span>
-    <span class="${PT.typeBadgeClass(card.type)}">${PT.typeLabel(card.type)}</span>
-    <span class="badge">${card.rarity}</span>
-    ${pack ? `<a class="badge" href="./set.html?pack=${pack.id}">${PT.packName(pack)}</a>` : ""}
+  const subEl = document.getElementById("card-sub");
+  subEl.innerHTML = `
+    <span></span>
+    <span></span>
+    <span class="${PT.typeBadgeClass(card.type)}"></span>
+    <span class="badge"></span>
   `;
+  const subSpans = subEl.querySelectorAll(":scope > span");
+  subSpans[0].textContent = card.nameEn || "";
+  subSpans[1].textContent = card.number;
+  subSpans[2].textContent = PT.typeLabel(card.type);
+  subSpans[3].textContent = card.rarity;
+  if (pack) {
+    const packLink = document.createElement("a");
+    packLink.className = "badge badge--pack";
+    packLink.href = `./set.html?pack=${encodeURIComponent(pack.id)}`;
+    packLink.title = PT.packName(pack);
+    packLink.textContent = PT.packName(pack);
+    subEl.appendChild(packLink);
+  }
 
   const tabs = document.getElementById("lang-tabs");
 

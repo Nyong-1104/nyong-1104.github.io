@@ -17,7 +17,8 @@ GitHub Actions runs **hourly** (`.github/workflows/daily-pokepop.yml`).
 | Field | Source |
 |-------|--------|
 | **BRG POP** | [break.co.kr](https://break.co.kr/pop-report) (`gate.break.co.kr`, no key) |
-| **PSA / BGS / … POP** | empty (not live yet) |
+| **PSA POP** | GemRate set dumps → `gemrate_pop.py` (`source: gemrate`) |
+| **BGS / CGC / …** | empty (not live yet) |
 | **Prices** | eBay Browse medians when credentials set; otherwise hidden (no fake seed prices) |
 
 **Tiers**
@@ -62,6 +63,29 @@ python pokemon-pop/scripts/fetch_live.py --ebay-limit 5 --pack sv2a-151 --langs 
 ```
 
 Flags: `--pack`, `--langs`, `--skip-brg`, `--skip-ebay`, `--seed-only`, `--dry-run`, `--ebay-limit`.
+
+## GemRate PSA POP (pilot: 151)
+
+Daily GitHub Action (KST 00:00 / `0 15 * * *` UTC) runs Playwright → dump+CSV → `pop.PSA`.
+
+```bash
+# local: fetch + apply (needs Playwright Chromium)
+pip install -r pokemon-pop/scripts/requirements-gemrate.txt
+python -m playwright install chromium
+python pokemon-pop/scripts/fetch_gemrate.py --pack sv2a-151
+
+# apply existing dumps only
+python pokemon-pop/scripts/gemrate_pop.py --pack sv2a-151 --langs jp,kr,en
+```
+
+Only packs in `GEMRATE_SETS` inside `gemrate_pop.py` are fetched (currently `sv2a-151` jp/kr/en).  
+`fetch_live.py` restores previous GemRate PSA (`source: gemrate`) so hourly BRG refresh does not wipe them.
+
+Pilot URLs (2023 / PSA / TCG):
+
+- JP: Pokemon Japanese Sv2a-Pokemon Card 151
+- KR: Pokemon Korean Sv2a-Pokemon Card 151
+- EN: Pokemon Mew EN-151
 
 ## PSA set POP links
 

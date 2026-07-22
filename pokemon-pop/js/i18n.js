@@ -38,7 +38,7 @@ window.PopTracker = window.PopTracker || {};
       updatedPrefix: "데이터 갱신:",
       snapshotPrefix: "POP/가격 스냅샷:",
       footnote:
-        "BRG(live)만 표시됩니다. PSA·BGS·CGC 등은 아직 미연동. 가격은 eBay API 연동 시에만 표시됩니다. BRG 열: 10=100 · 9.5=90 · 9=85 · 8=80.",
+        "BRG(live)와 GemRate PSA(live)가 표시됩니다. BGS·CGC 등은 아직 미연동. 가격은 eBay API 연동 시에만 표시됩니다. BRG 열: 10=100 · 9.5=90 · 9=85 · 8=80.",
       credit:
         "Holo effect adapted from simeydotme/pokemon-cards-css (GPL-3.0). Card images via Pokémon card sources. BRG POP는 매시간 자동 갱신. eBay 시세는 GitHub Secrets(EBAY_CLIENT_ID/SECRET) 등록 후 수집됩니다.",
       setFallback: "세트",
@@ -93,7 +93,7 @@ window.PopTracker = window.PopTracker || {};
       updatedPrefix: "Updated:",
       snapshotPrefix: "POP/price snapshot:",
       footnote:
-        "Only live BRG rows are shown. PSA/BGS/CGC are not wired yet. Prices appear only after eBay API credentials are set. BRG cols: 10=100 · 9.5=90 · 9=85 · 8=80.",
+        "Live BRG and GemRate PSA rows are shown. BGS/CGC are not wired yet. Prices appear only after eBay API credentials are set. BRG cols: 10=100 · 9.5=90 · 9=85 · 8=80.",
       credit:
         "Holo effect adapted from simeydotme/pokemon-cards-css (GPL-3.0). Card images via Pokémon card sources. BRG POP refreshes hourly. eBay prices require GitHub Secrets EBAY_CLIENT_ID / EBAY_CLIENT_SECRET.",
       setFallback: "Set",
@@ -148,7 +148,7 @@ window.PopTracker = window.PopTracker || {};
       updatedPrefix: "データ更新:",
       snapshotPrefix: "POP/価格スナップショット:",
       footnote:
-        "BRG(live)のみ表示。PSA・BGS・CGCは未連携。価格はeBay API設定後のみ表示。BRG列: 10=100 · 9.5=90 · 9=85 · 8=80。",
+        "BRG(live)とGemRate PSA(live)を表示。BGS・CGCは未連携。価格はeBay API設定後のみ表示。BRG列: 10=100 · 9.5=90 · 9=85 · 8=80。",
       credit:
         "Holo effect adapted from simeydotme/pokemon-cards-css (GPL-3.0). Card images via Pokémon card sources. BRG POPは毎時自動更新。eBay相場はGitHub Secrets（EBAY_CLIENT_ID/SECRET）登録後に収集されます。",
       setFallback: "セット",
@@ -314,15 +314,44 @@ window.PopTracker = window.PopTracker || {};
     ]
       .map(
         (item) =>
-          `<button type="button" class="nav-lang__btn${item.id === active ? " is-active" : ""}" data-ui-lang="${item.id}">${item.label}</button>`
+          `<button type="button" class="nav-lang__btn${item.id === active ? " is-active" : ""}" data-ui-lang="${item.id}" aria-pressed="${item.id === active ? "true" : "false"}">${item.label}</button>`
       )
       .join("");
+
+    function closeLang() {
+      host.classList.remove("is-open");
+    }
+
     host.onclick = function (e) {
       const btn = e.target.closest("[data-ui-lang]");
       if (!btn) return;
+
+      const isActive = btn.classList.contains("is-active");
+      const expanded = host.classList.contains("is-open");
+
+      // First tap on active (collapsed): expand options on touch devices
+      if (isActive && !expanded) {
+        e.preventDefault();
+        host.classList.add("is-open");
+        return;
+      }
+
+      if (btn.dataset.uiLang === active) {
+        closeLang();
+        return;
+      }
+
       PT.setUiLang(btn.dataset.uiLang);
       window.location.reload();
     };
+
+    document.addEventListener(
+      "pointerdown",
+      function (e) {
+        if (!host.contains(e.target)) closeLang();
+      },
+      true
+    );
   };
 
   // Apply saved lang on load
