@@ -1,0 +1,5 @@
+# User: pokepop   (crontab -e)
+# KST 00:05 — a few minutes after midnight, server TZ should be Asia/Seoul
+SHELL=/bin/bash
+POKEPOP_ENV=/etc/pokepop-gemrate.env
+5 0 * * * /usr/local/bin/pokepop-gemrate

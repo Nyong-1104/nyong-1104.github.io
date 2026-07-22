@@ -75,6 +75,8 @@ def ensure_bwr_cards(catalog: list[dict], packs: list[dict]) -> list[dict]:
                 "nameShort": "Red Collection",
                 "code": "BW2",
                 "releaseYear": 2011,
+                # Not a tracked booster pack — Victini BWR only (hidden from home list).
+                "listHidden": True,
                 "languages": ["jp", "kr"],
                 "blurb": "BW 확장팩. 특수가공 BWR 비크티니가 수록된 세트로 유명합니다.",
                 "blurbEn": "BW expansion remembered for the special-finish BWR Victini.",
@@ -84,7 +86,10 @@ def ensure_bwr_cards(catalog: list[dict], packs: list[dict]) -> list[dict]:
                 "cardIds": ["bw2-070"],
             }
         )
-        packs_by_id = {p["id"]: p for p in packs}
+    else:
+        packs_by_id["bw2-red-collection"]["listHidden"] = True
+
+    packs_by_id = {p["id"]: p for p in packs}
 
     for card_id, meta in BWR_CARDS.items():
         if card_id in by_id:

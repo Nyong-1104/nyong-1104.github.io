@@ -32,7 +32,7 @@ GitHub Actions runs **hourly** (`.github/workflows/daily-pokepop.yml`).
 **BWR** (Black / White / Red special finish) is **not** a general rule — only three cards, listed in `scripts/bwr_cards.py`:
 제크로무 ex (Black Bolt), 레시라무 ex (White Flare), 비크티니 (Red Collection).
 
-BRG column map: **10←100 · 9.5←90 · 9←85 · 8←80**.
+BRG column map: **10←100 · 9←90(+85) · 8←80 · ≤7←rest**. PSA rightmost column is **≤7**, not full total.
 
 ### BRG-only test
 
@@ -67,6 +67,9 @@ Flags: `--pack`, `--langs`, `--skip-brg`, `--skip-ebay`, `--seed-only`, `--dry-r
 ## GemRate PSA POP (pilot: 151)
 
 Daily GitHub Action (KST 00:00 / `0 15 * * *` UTC) runs Playwright → dump+CSV → `pop.PSA`.
+Fetches **one set page per minute** (`--sleep 60`) so midnight traffic is spaced, not a burst.
+
+For a **Hetzner VPS** instead of Actions IP, see `pokemon-pop/scripts/vps/README.md`.
 
 ```bash
 # local: fetch + apply (needs Playwright Chromium)
@@ -78,7 +81,7 @@ python pokemon-pop/scripts/fetch_gemrate.py --pack sv2a-151
 python pokemon-pop/scripts/gemrate_pop.py --pack sv2a-151 --langs jp,kr,en
 ```
 
-Only packs in `GEMRATE_SETS` inside `gemrate_pop.py` are fetched (currently `sv2a-151` jp/kr/en).  
+Only packs in `GEMRATE_SETS` inside `gemrate_pop.py` are fetched (currently `sv2a-151`, `m1l-mega-brave` jp/kr/en).
 `fetch_live.py` restores previous GemRate PSA (`source: gemrate`) so hourly BRG refresh does not wipe them.
 
 Pilot URLs (2023 / PSA / TCG):
@@ -86,22 +89,6 @@ Pilot URLs (2023 / PSA / TCG):
 - JP: Pokemon Japanese Sv2a-Pokemon Card 151
 - KR: Pokemon Korean Sv2a-Pokemon Card 151
 - EN: Pokemon Mew EN-151
-
-## PSA set POP links
-
-`data/psa-sets.json` maps each pack × language to a PSA set POP URL.
-
-```bash
-python pokemon-pop/scripts/build_psa_sets.py
-```
-
-Edit `KNOWN` in that script (or fill `psa-sets.json` by hand), then rebuild `data.js`:
-
-```bash
-python pokemon-pop/scripts/build_data_js.py
-```
-
-If a URL is missing, the UI falls back to a PSA search query for that set.
 
 ## GitHub Actions
 

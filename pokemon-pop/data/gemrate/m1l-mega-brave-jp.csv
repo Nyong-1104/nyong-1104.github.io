@@ -1,0 +1,62 @@
+card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,details
+001,Bulbasaur,Base,6,1,0,6,7,b6fafdf1d75525e31be038c7a4e6b2a9b5ff9af7,Bulbasaur Base 001
+002,Ivysaur,Base,5,1,0,5,7,b6a6ef280ee9738b7d3c537e6eb79345b195299b,Ivysaur Base 002
+003,Mega Venusaur EX,Base,701,101,20,701,833,2fd10ca01ecd66b223c846390a9e86c38af45c4a,Mega Venusaur EX Base 003
+005,Exeggutor,Base,1,0,0,1,1,d4e3da6e47e348ab0de37451b9c75d8fa22e5720,Exeggutor Base 005
+011,Ninetales,Base,1,0,0,1,2,7700fc8ce3edae662cd877819182ec7cd5b66dfc,Ninetales Base 011
+013,Mega Camerupt EX,Base,143,36,7,143,190,0cd462b6ede3d960082f37e07234c0c4c795f031,Mega Camerupt EX Base 013
+017,Cinderace,Base,4,1,0,4,5,7e87b911b71c442bbcdedd3faa01ecf1a16c242c,Cinderace Base 017
+020,Sandshrew,Base,18,0,0,18,18,1afb0cf48ad8aef663505fcb81175fbcc53228db,Sandshrew Base 020
+022,Onix,Base,1,0,0,1,1,01e49a917f1f88420b573a9cf26fa3e28746a4a8,Onix Base 022
+024,Makuhita,Base,0,1,0,0,1,c85cb1d96af8c049a264dd6ad05761750e4fdb76,Makuhita Base 024
+025,Hariyama,Base,2,0,0,2,2,0cde6baea7dd5a6a7bac490955ddee3a8f1babdb,Hariyama Base 025
+026,Lunatone,Base,2,0,0,2,2,47d9a12f168b800e198b7330b58453ed27c28a44,Lunatone Base 026
+028,Riolu,Base,15,0,0,15,15,753e6b7a6fce38754bc61a187636730fc0f20b43,Riolu Base 028
+029,Mega Lucario EX,Base,408,61,7,408,481,b8f923fe00f663d79e047ddf7324c6e6b932e94e,Mega Lucario EX Base 029
+030,Croagunk,Base,1,0,0,1,1,6c7ba30dcd0e2ca04263c379f97d16128ed854c7,Croagunk Base 030
+032,Marshadow,Base,1,0,0,1,1,a3267fae63bb7620994a60e7bcae8f9179f223a0,Marshadow Base 032
+038,Mega Absol EX,Base,176,27,6,176,211,69577eb47186280083e6266fac249f28aef90c72,Mega Absol EX Base 038
+040,Yveltal,Base,2,1,0,2,3,821d5dbadc7417464e640d3e501b03505573099f,Yveltal Base 040
+041,Nickit,Base,1,0,0,1,1,39eb3b3719a5b409a047b9e10363dc6ab1a92a61,Nickit Base 041
+045,Steelix,Base,3,1,0,3,4,eb388689ed5a16dc1ac7fc260db8cfb9423b7080,Steelix Base 045
+046,Mega Mawile EX,Base,145,27,4,145,177,338de83a4165c5a4972eaa9712ac6f4e3cca897b,Mega Mawile EX Base 046
+047,Dialga,Base,3,2,0,3,5,612545ae0aa3fed36a93e92a7f017cd126075b94,Dialga Base 047
+052,Spearow,Base,0,1,0,0,1,45ee9705369664b85b4430ca52c419287df99c21,Spearow Base 052
+054,Miltank,Base,1,0,1,1,2,8f8f66b3d78b03fc76dbc77eff94297d092da550,Miltank Base 054
+055,Yungoos,Base,1,0,0,1,1,d0ba33b1d2ad95c30b0a2b016a0d4e0e5f45d1b2,Yungoos Base 055
+056,Gumshoos,Base,0,0,0,0,1,51861b098ffb6b537df3d76fdf102e688adf8ef8,Gumshoos Base 056
+061,LT. Surge's Deal,Base,2,3,0,2,5,6f85d131808181375ddb09a11781722262cff1b5,LT. Surge's Deal Base 061
+062,Lillie's Determination,Base,60,32,1,60,96,9f1e58be42fcc86b90bfe0b0da032b6acb66033a,Lillie's Determination Base 062
+064,Bulbasaur,Art Rare,14894,2058,829,14894,17960,301b7793265f04a5cd3717ffa833484d960e8994,Bulbasaur Art Rare 064
+065,Ivysaur,Art Rare,14360,1698,611,14360,16788,fd9758244e5c2dcfdb882fb664e7190ea5e41b62,Ivysaur Art Rare 065
+066,Exeggutor,Art Rare,6970,709,194,6970,7944,7c29ffcccd30bd08222c3ed35ce10b6ee0455d84,Exeggutor Art Rare 066
+067,Vulpix,Art Rare,6902,645,187,6902,7804,5e91935d68dc968871d423ba3d9f8f17c8d4e70e,Vulpix Art Rare 067
+068,Riolu,Art Rare,8150,825,239,8150,9282,690a47340e82421a6758f0063c572144d51e76f2,Riolu Art Rare 068
+069,Marshadow,Art Rare,12063,1481,699,12063,14374,ba4ef4da901d46c648dea72b6922f920c2e9ed03,Marshadow Art Rare 069
+070,Garganacl,Art Rare,7848,657,266,7848,8844,f05a2665597d24f8efb5ff1c9e025d09318607b1,Garganacl Art Rare 070
+071,Spiritomb,Art Rare,7188,740,309,7188,8308,da63ad2861cd82cc0bbc4b4d330e041c4984981b,Spiritomb Art Rare 071
+072,Shroodle,Art Rare,7404,689,252,7404,8406,1699f9e654b8fda1c0046716f586c6ec3d239876,Shroodle Art Rare 072
+073,Steelix,Art Rare,7827,904,256,7827,9065,3207dff5270ac7676037b51084a21cbb5c009325,Steelix Art Rare 073
+074,Spearow,Art Rare,6514,588,200,6514,7368,61f77085154b7eebe0b961f8daf909d586f2880d,Spearow Art Rare 074
+075,Gumshoos,Art Rare,7248,633,159,7248,8120,23d98544e981af65cb617428ee3f78d788dab2de,Gumshoos Art Rare 075
+076,Mega Venusaur EX,Super Rare,3343,368,59,3343,3796,392daf541fdbf2164a730b85ef2eb1c33fa8e416,Mega Venusaur EX Super Rare 076
+076,Mega Venusaur EX,Super Rare-Missing Texture,0,1,0,0,1,6bb91b6afa19afd00a07112b1d179cca8de086e5,Mega Venusaur EX Super Rare-Missing Texture 076
+077,Mega Camerupt EX,Super Rare,740,85,11,740,836,e499cf08032fa6c62b0c961d5177a2dabf639746,Mega Camerupt EX Super Rare 077
+078,Mega Lucario EX,Super Rare,3475,497,101,3475,4102,2c2e2a85391f8881028cd705e56390f16b9a133d,Mega Lucario EX Super Rare 078
+079,Mega Absol EX,Super Rare,1109,183,61,1109,1368,bb996f652cb7a83a30b29ede10527f916cecc013,Mega Absol EX Super Rare 079
+080,Mega Mawile EX,Super Rare,739,81,6,739,830,633773acc5aed2fcc405713b2eb0777498c9579f,Mega Mawile EX Super Rare 080
+081,Premium Power Pro,Super Rare,39,36,6,39,81,a268bed98b967f974d5153c8bbbecb6fd7c858e8,Premium Power Pro Super Rare 081
+082,Fight Gong,Super Rare,49,46,1,49,96,605f7b470eb9764b914e996882effc7947ff67bd,Fight Gong Super Rare 082
+083,Night Stretcher,Super Rare,36,39,1,36,76,8d173db22bc5217b064faf9c708e6decab5c5883,Night Stretcher Super Rare 083
+084,Air Balloon,Super Rare,39,42,4,39,86,d00040d80b7ae1e9c56ff29505f94cb4c0629311,Air Balloon Super Rare 084
+085,LT. Surge's Deal,Super Rare,114,74,11,114,200,3e6eeee001c50eb8181a4e6a2cca36af2d50ba07,LT. Surge's Deal Super Rare 085
+086,Lillie's Determination,Super Rare,11605,7469,1009,11605,20267,ab9c56c3e0b432a11dae48df2b01a7fd6a8e5490,Lillie's Determination Super Rare 086
+087,Mega Venusaur EX,Special Art Rare,11915,1127,327,11915,13463,4cdb929e92bd07d4c22e74f382a2ae9352855771,Mega Venusaur EX Special Art Rare 087
+087,Mega Venusaur EX,Special Art Rare-Missing Texture,2,0,0,2,2,3a7aed982f5cd4ccb9ed49baae2e8793bbdcd1e3,Mega Venusaur EX Special Art Rare-Missing Texture 087
+088,Mega Lucario EX,Special Art Rare,16610,1412,251,16610,18415,89c94d95a7df665699cdaba30a3a1bc047faabfe,Mega Lucario EX Special Art Rare 088
+088,Mega Lucario EX,Special Art Rare-Missing Texture,5,1,0,5,6,c70ecfdd0010cecef6e573126c25905707ef1827,Mega Lucario EX Special Art Rare-Missing Texture 088
+089,Mega Absol EX,Special Art Rare,4751,502,94,4751,5378,cb02903eabd6dc71594c6220bfaa6a10803f4828,Mega Absol EX Special Art Rare 089
+090,LT. Surge's Deal,Special Art Rare,499,252,43,499,802,93f96dacc39110e2beccbaf10eb31ec5445efa76,LT. Surge's Deal Special Art Rare 090
+091,Lillie's Determination,Special Art Rare,19384,16357,2532,19384,38687,3409cba8282165ea62699765eee2b07524385546,Lillie's Determination Special Art Rare 091
+091,Lillie's Determination,Special Art Rare-Missing Texture,2,1,0,2,3,f45a4160706f6ff9b71ccb3d69ab3db5fea89d45,Lillie's Determination Special Art Rare-Missing Texture 091
+092,Mega Lucario EX,Mega Ultra Rare,3489,2478,405,3489,6475,6ec0fb08d0ae51bf1917f40c26ebb78c025aa991,Mega Lucario EX Mega Ultra Rare 092

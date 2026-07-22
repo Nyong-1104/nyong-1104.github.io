@@ -1,6 +1,7 @@
 (function () {
   const PT = window.PopTracker;
   const RARITY_RANK = {
+    MUR: 110,
     BWR: 100,
     SAR: 90,
     SIR: 90,
@@ -93,19 +94,6 @@
   document.title = `${PT.packName(pack)} · PokePop`;
   document.getElementById("set-title").textContent = PT.packName(pack);
   document.getElementById("set-blurb").textContent = PT.packBlurb(pack);
-
-  const psaEl = document.getElementById("set-psa-link");
-  if (psaEl) {
-    const preferred =
-      (pack.languages || []).indexOf("jp") !== -1
-        ? "jp"
-        : (pack.languages || [])[0] || "jp";
-    const link = PT.psaSetPopLink(pack, preferred);
-    if (link) {
-      const label = link.exact ? PT.t("psaSetPopLink") : PT.t("psaSetPopSearch");
-      psaEl.innerHTML = `<a href="${link.href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
-    }
-  }
 
   const back = document.querySelector(".nav-back");
   if (back) back.textContent = PT.t("backPacks");

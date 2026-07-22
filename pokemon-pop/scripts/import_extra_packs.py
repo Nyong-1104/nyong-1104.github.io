@@ -170,7 +170,7 @@ EXTRA_PACKS = [
         "nameJa": "メガブレイブ",
         "code": "M1L",
         "releaseYear": 2025,
-        "languages": ["jp", "kr"],
+        "languages": ["jp", "kr", "en"],
         "blurb": "MEGA 시리즈의 브레이브 라인 확장팩입니다.",
         "blurbEn": "The Brave-line expansion of the MEGA series.",
         "blurbJa": "MEGAシリーズのブレイブライン拡張パックです。",

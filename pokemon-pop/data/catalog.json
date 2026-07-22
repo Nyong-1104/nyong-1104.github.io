@@ -108870,5 +108870,1769 @@
       "basePrice": 280,
       "basePop": 120
     }
+  },
+  {
+    "id": "m1l-092",
+    "packId": "m1l-mega-brave",
+    "nameKo": "메가 루카리오 ex",
+    "nameEn": "Mega Lucario ex",
+    "nameJa": "メガルカリオex",
+    "number": "092/063",
+    "rarity": "MUR",
+    "type": "fighting",
+    "typeKo": "격투",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048449_P_MRUKARIOEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048449_P_MRUKARIOEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048449_P_MRUKARIOEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48449,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 320,
+      "basePop": 80
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-064",
+    "packId": "m1l-mega-brave",
+    "nameKo": "フシギダネ",
+    "nameEn": "フシギダネ",
+    "nameJa": "フシギダネ",
+    "number": "064/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048421_P_FUSHIGIDANE.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048421_P_FUSHIGIDANE.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048421_P_FUSHIGIDANE.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48421,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-065",
+    "packId": "m1l-mega-brave",
+    "nameKo": "フシギソウ",
+    "nameEn": "フシギソウ",
+    "nameJa": "フシギソウ",
+    "number": "065/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048422_P_FUSHIGISOU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048422_P_FUSHIGISOU.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048422_P_FUSHIGISOU.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48422,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-066",
+    "packId": "m1l-mega-brave",
+    "nameKo": "ナッシー",
+    "nameEn": "ナッシー",
+    "nameJa": "ナッシー",
+    "number": "066/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048423_P_NASSHI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048423_P_NASSHI.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048423_P_NASSHI.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48423,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-067",
+    "packId": "m1l-mega-brave",
+    "nameKo": "ロコン",
+    "nameEn": "ロコン",
+    "nameJa": "ロコン",
+    "number": "067/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048424_P_ROKON.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048424_P_ROKON.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048424_P_ROKON.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48424,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-068",
+    "packId": "m1l-mega-brave",
+    "nameKo": "リオル",
+    "nameEn": "リオル",
+    "nameJa": "リオル",
+    "number": "068/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048425_P_RIORU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048425_P_RIORU.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048425_P_RIORU.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48425,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-069",
+    "packId": "m1l-mega-brave",
+    "nameKo": "マーシャドー",
+    "nameEn": "マーシャドー",
+    "nameJa": "マーシャドー",
+    "number": "069/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048426_P_MASHIXYADO.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048426_P_MASHIXYADO.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048426_P_MASHIXYADO.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48426,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-070",
+    "packId": "m1l-mega-brave",
+    "nameKo": "キョジオーン",
+    "nameEn": "キョジオーン",
+    "nameJa": "キョジオーン",
+    "number": "070/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048427_P_KIXYOJION.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048427_P_KIXYOJION.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048427_P_KIXYOJION.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48427,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-071",
+    "packId": "m1l-mega-brave",
+    "nameKo": "ミカルゲ",
+    "nameEn": "ミカルゲ",
+    "nameJa": "ミカルゲ",
+    "number": "071/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048428_P_MIKARUGE.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048428_P_MIKARUGE.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048428_P_MIKARUGE.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48428,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-072",
+    "packId": "m1l-mega-brave",
+    "nameKo": "シルシュルー",
+    "nameEn": "シルシュルー",
+    "nameJa": "シルシュルー",
+    "number": "072/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048429_P_SHIRUSHIXYURU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048429_P_SHIRUSHIXYURU.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048429_P_SHIRUSHIXYURU.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48429,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-073",
+    "packId": "m1l-mega-brave",
+    "nameKo": "ハガネール",
+    "nameEn": "ハガネール",
+    "nameJa": "ハガネール",
+    "number": "073/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048430_P_HAGANERU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048430_P_HAGANERU.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048430_P_HAGANERU.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48430,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-074",
+    "packId": "m1l-mega-brave",
+    "nameKo": "オニスズメ",
+    "nameEn": "オニスズメ",
+    "nameJa": "オニスズメ",
+    "number": "074/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048431_P_ONISUZUME.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048431_P_ONISUZUME.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048431_P_ONISUZUME.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48431,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-075",
+    "packId": "m1l-mega-brave",
+    "nameKo": "デカグース",
+    "nameEn": "デカグース",
+    "nameJa": "デカグース",
+    "number": "075/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048432_P_DEKAGUSU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048432_P_DEKAGUSU.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048432_P_DEKAGUSU.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48432,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-076",
+    "packId": "m1l-mega-brave",
+    "nameKo": "메가 이상해꽃 ex",
+    "nameEn": "Mega Venusaur ex",
+    "nameJa": "メガフシギバナex",
+    "number": "076/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048433_P_MFUSHIGIBANAEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048433_P_MFUSHIGIBANAEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048433_P_MFUSHIGIBANAEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48433,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-077",
+    "packId": "m1l-mega-brave",
+    "nameKo": "메가 폭타 ex",
+    "nameEn": "Mega Camerupt ex",
+    "nameJa": "メガバクーダex",
+    "number": "077/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048434_P_MBAKUDAEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048434_P_MBAKUDAEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048434_P_MBAKUDAEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48434,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-078",
+    "packId": "m1l-mega-brave",
+    "nameKo": "메가 루카리오 ex",
+    "nameEn": "Mega Lucario ex",
+    "nameJa": "メガルカリオex",
+    "number": "078/063",
+    "rarity": "SR",
+    "type": "fighting",
+    "typeKo": "격투",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048435_P_MRUKARIOEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048435_P_MRUKARIOEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048435_P_MRUKARIOEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48435,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-079",
+    "packId": "m1l-mega-brave",
+    "nameKo": "메가 앱솔 ex",
+    "nameEn": "Mega Absol ex",
+    "nameJa": "メガアブソルex",
+    "number": "079/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048436_P_MABUSORUEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048436_P_MABUSORUEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048436_P_MABUSORUEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48436,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-080",
+    "packId": "m1l-mega-brave",
+    "nameKo": "메가 입치트 ex",
+    "nameEn": "Mega Mawile ex",
+    "nameJa": "メガクチートex",
+    "number": "080/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048437_P_MKUCHITOEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048437_P_MKUCHITOEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048437_P_MKUCHITOEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48437,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-081",
+    "packId": "m1l-mega-brave",
+    "nameKo": "파워 프로틴",
+    "nameEn": "Power Protein",
+    "nameJa": "パワープロテイン",
+    "number": "081/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048438_T_PAWAPUROTEIN.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048438_T_PAWAPUROTEIN.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048438_T_PAWAPUROTEIN.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48438,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-082",
+    "packId": "m1l-mega-brave",
+    "nameKo": "파이트 공",
+    "nameEn": "Fighting Gong",
+    "nameJa": "ファイトゴング",
+    "number": "082/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048439_T_FUAITOGONGU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048439_T_FUAITOGONGU.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048439_T_FUAITOGONGU.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48439,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-083",
+    "packId": "m1l-mega-brave",
+    "nameKo": "밤의 들것",
+    "nameEn": "Night Stretcher",
+    "nameJa": "夜のタンカ",
+    "number": "083/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048440_T_YORUNOTANKA.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048440_T_YORUNOTANKA.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048440_T_YORUNOTANKA.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48440,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-084",
+    "packId": "m1l-mega-brave",
+    "nameKo": "풍선",
+    "nameEn": "Air Balloon",
+    "nameJa": "ふうせん",
+    "number": "084/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048441_T_FUUSEN.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048441_T_FUUSEN.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048441_T_FUUSEN.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48441,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-085",
+    "packId": "m1l-mega-brave",
+    "nameKo": "마티스의 거래",
+    "nameEn": "Lt. Surge's Bargain",
+    "nameJa": "マチスの取引",
+    "number": "085/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048442_T_MACHISUNOTORIHIKI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048442_T_MACHISUNOTORIHIKI.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048442_T_MACHISUNOTORIHIKI.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48442,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-086",
+    "packId": "m1l-mega-brave",
+    "nameKo": "릴리에의 결심",
+    "nameEn": "Lillie's Determination",
+    "nameJa": "リーリエの決心",
+    "number": "086/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048443_T_RIRIENOKESSHIN.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048443_T_RIRIENOKESSHIN.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048443_T_RIRIENOKESSHIN.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48443,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-087",
+    "packId": "m1l-mega-brave",
+    "nameKo": "메가 이상해꽃 ex",
+    "nameEn": "Mega Venusaur ex",
+    "nameJa": "メガフシギバナex",
+    "number": "087/063",
+    "rarity": "SAR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048444_P_MFUSHIGIBANAEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048444_P_MFUSHIGIBANAEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048444_P_MFUSHIGIBANAEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48444,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 220,
+      "basePop": 900
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-088",
+    "packId": "m1l-mega-brave",
+    "nameKo": "메가 루카리오 ex",
+    "nameEn": "Mega Lucario ex",
+    "nameJa": "メガルカリオex",
+    "number": "088/063",
+    "rarity": "SAR",
+    "type": "fighting",
+    "typeKo": "격투",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048445_P_MRUKARIOEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048445_P_MRUKARIOEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048445_P_MRUKARIOEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48445,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 220,
+      "basePop": 900
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-089",
+    "packId": "m1l-mega-brave",
+    "nameKo": "메가 앱솔 ex",
+    "nameEn": "Mega Absol ex",
+    "nameJa": "メガアブソルex",
+    "number": "089/063",
+    "rarity": "SAR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048446_P_MABUSORUEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048446_P_MABUSORUEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048446_P_MABUSORUEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48446,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 220,
+      "basePop": 900
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-090",
+    "packId": "m1l-mega-brave",
+    "nameKo": "마티스의 거래",
+    "nameEn": "Lt. Surge's Bargain",
+    "nameJa": "マチスの取引",
+    "number": "090/063",
+    "rarity": "SAR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048447_T_MACHISUNOTORIHIKI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048447_T_MACHISUNOTORIHIKI.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048447_T_MACHISUNOTORIHIKI.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48447,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 220,
+      "basePop": 900
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1l-091",
+    "packId": "m1l-mega-brave",
+    "nameKo": "릴리에의 결심",
+    "nameEn": "Lillie's Determination",
+    "nameJa": "リーリエの決心",
+    "number": "091/063",
+    "rarity": "SAR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048448_T_RIRIENOKESSHIN.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048448_T_RIRIENOKESSHIN.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1L/048448_T_RIRIENOKESSHIN.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48448,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 220,
+      "basePop": 900
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-064",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "ツボツボ",
+    "nameEn": "ツボツボ",
+    "nameJa": "ツボツボ",
+    "number": "064/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048450_P_TSUBOTSUBO.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048450_P_TSUBOTSUBO.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048450_P_TSUBOTSUBO.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48450,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-065",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "テッカニン",
+    "nameEn": "テッカニン",
+    "nameJa": "テッカニン",
+    "number": "065/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048451_P_TEKKANIN.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048451_P_TEKKANIN.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048451_P_TEKKANIN.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48451,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-066",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "シシコ",
+    "nameEn": "シシコ",
+    "nameJa": "シシコ",
+    "number": "066/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048452_P_SHISHIKO.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048452_P_SHISHIKO.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048452_P_SHISHIKO.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48452,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-067",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "ユキカブリ",
+    "nameEn": "ユキカブリ",
+    "nameJa": "ユキカブリ",
+    "number": "067/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048453_P_YUKIKABURI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048453_P_YUKIKABURI.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048453_P_YUKIKABURI.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48453,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-068",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "ブロスター",
+    "nameEn": "ブロスター",
+    "nameJa": "ブロスター",
+    "number": "068/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048454_P_BUROSUTA.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048454_P_BUROSUTA.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048454_P_BUROSUTA.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48454,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-069",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "インテレオン",
+    "nameEn": "インテレオン",
+    "nameJa": "インテレオン",
+    "number": "069/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048455_P_INTEREON.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048455_P_INTEREON.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048455_P_INTEREON.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48455,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-070",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "エリキテル",
+    "nameEn": "エリキテル",
+    "nameJa": "エリキテル",
+    "number": "070/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048456_P_ERIKITERU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048456_P_ERIKITERU.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048456_P_ERIKITERU.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48456,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-071",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "フーディン",
+    "nameEn": "フーディン",
+    "nameJa": "フーディン",
+    "number": "071/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048457_P_FUDEIN.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048457_P_FUDEIN.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048457_P_FUDEIN.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48457,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-072",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "ヌケニン",
+    "nameEn": "ヌケニン",
+    "nameJa": "ヌケニン",
+    "number": "072/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048458_P_NUKENIN.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048458_P_NUKENIN.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048458_P_NUKENIN.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48458,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-073",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "ハカドッグ",
+    "nameEn": "ハカドッグ",
+    "nameJa": "ハカドッグ",
+    "number": "073/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048459_P_HAKADOGGU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048459_P_HAKADOGGU.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048459_P_HAKADOGGU.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48459,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-074",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "デリバード",
+    "nameEn": "デリバード",
+    "nameJa": "デリバード",
+    "number": "074/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048460_P_DERIBADO.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048460_P_DERIBADO.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048460_P_DERIBADO.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48460,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-075",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "ヌイコグマ",
+    "nameEn": "ヌイコグマ",
+    "nameJa": "ヌイコグマ",
+    "number": "075/063",
+    "rarity": "AR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "reverse",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048461_P_NUIKOGUMA.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048461_P_NUIKOGUMA.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048461_P_NUIKOGUMA.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48461,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 2400
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-076",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "메가 눈설왕 ex",
+    "nameEn": "Mega Abomasnow ex",
+    "nameJa": "メガユキノオーex",
+    "number": "076/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048462_P_MYUKINOOEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048462_P_MYUKINOOEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048462_P_MYUKINOOEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48462,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-077",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "메가 썬더라이 ex",
+    "nameEn": "Mega Manectric ex",
+    "nameJa": "メガライボルトex",
+    "number": "077/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048463_P_MRAIBORUTOEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048463_P_MRAIBORUTOEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048463_P_MRAIBORUTOEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48463,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-078",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "메가 가디안 ex",
+    "nameEn": "Mega Gardevoir ex",
+    "nameJa": "メガサーナイトex",
+    "number": "078/063",
+    "rarity": "SR",
+    "type": "psychic",
+    "typeKo": "초",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048464_P_MSANAITOEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048464_P_MSANAITOEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048464_P_MSANAITOEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48464,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-079",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "메가 라티아스 ex",
+    "nameEn": "Mega Latias ex",
+    "nameJa": "メガラティアスex",
+    "number": "079/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048465_P_MRATEIASUEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048465_P_MRATEIASUEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048465_P_MRATEIASUEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48465,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-080",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "메가 캥카 ex",
+    "nameEn": "Mega Kangaskhan ex",
+    "nameJa": "メガガルーラex",
+    "number": "080/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048466_P_MGARURAEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048466_P_MGARURAEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048466_P_MGARURAEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48466,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-081",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "절친 포핀",
+    "nameEn": "Buddy-Buddy Poffin",
+    "nameJa": "なかよしポフィン",
+    "number": "081/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048467_T_NAKAYOSHIPOFUIN.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048467_T_NAKAYOSHIPOFUIN.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048467_T_NAKAYOSHIPOFUIN.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48467,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-082",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "이상한 사탕",
+    "nameEn": "Rare Candy",
+    "nameJa": "ふしぎなアメ",
+    "number": "082/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048468_T_FUSHIGINAAME.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048468_T_FUSHIGINAAME.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048468_T_FUSHIGINAAME.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48468,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-083",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "메가 시그널",
+    "nameEn": "Mega Signal",
+    "nameJa": "メガシグナル",
+    "number": "083/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048469_T_MSHIGUNARU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048469_T_MSHIGUNARU.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048469_T_MSHIGUNARU.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48469,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-084",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "아세로라의 장난",
+    "nameEn": "Acerola's Mischief",
+    "nameJa": "アセロラのいたずら",
+    "number": "084/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048470_T_ASERORANOITAZURA.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048470_T_ASERORANOITAZURA.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048470_T_ASERORANOITAZURA.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48470,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-085",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "미츠루의 배려",
+    "nameEn": "Mallow's Freshness",
+    "nameJa": "ミツルの思いやり",
+    "number": "085/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048471_T_MITSURUNOOMOIYARI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048471_T_MITSURUNOOMOIYARI.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048471_T_MITSURUNOOMOIYARI.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48471,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-086",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "미스터리 가든",
+    "nameEn": "Mystery Garden",
+    "nameJa": "ミステリーガーデン",
+    "number": "086/063",
+    "rarity": "SR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048472_T_MISUTERIGADEN.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048472_T_MISUTERIGADEN.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048472_T_MISUTERIGADEN.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48472,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-087",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "메가 가디안 ex",
+    "nameEn": "Mega Gardevoir ex",
+    "nameJa": "メガサーナイトex",
+    "number": "087/063",
+    "rarity": "SAR",
+    "type": "psychic",
+    "typeKo": "초",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048473_P_MSANAITOEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048473_P_MSANAITOEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048473_P_MSANAITOEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48473,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 220,
+      "basePop": 900
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-088",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "메가 라티아스 ex",
+    "nameEn": "Mega Latias ex",
+    "nameJa": "メガラティアスex",
+    "number": "088/063",
+    "rarity": "SAR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048474_P_MRATEIASUEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048474_P_MRATEIASUEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048474_P_MRATEIASUEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48474,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 220,
+      "basePop": 900
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-089",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "메가 캥카 ex",
+    "nameEn": "Mega Kangaskhan ex",
+    "nameJa": "メガガルーラex",
+    "number": "089/063",
+    "rarity": "SAR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048475_P_MGARURAEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048475_P_MGARURAEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048475_P_MGARURAEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48475,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 220,
+      "basePop": 900
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-090",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "아세로라의 장난",
+    "nameEn": "Acerola's Mischief",
+    "nameJa": "アセロラのいたずら",
+    "number": "090/063",
+    "rarity": "SAR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048476_T_ASERORANOITAZURA.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048476_T_ASERORANOITAZURA.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048476_T_ASERORANOITAZURA.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48476,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 220,
+      "basePop": 900
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-091",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "미츠루의 배려",
+    "nameEn": "Mallow's Freshness",
+    "nameJa": "ミツルの思いやり",
+    "number": "091/063",
+    "rarity": "SAR",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048477_T_MITSURUNOOMOIYARI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048477_T_MITSURUNOOMOIYARI.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048477_T_MITSURUNOOMOIYARI.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48477,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 220,
+      "basePop": 900
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m1s-092",
+    "packId": "m1s-mega-symphonia",
+    "nameKo": "메가 가디안 ex",
+    "nameEn": "Mega Gardevoir ex",
+    "nameJa": "メガサーナイトex",
+    "number": "092/063",
+    "rarity": "MUR",
+    "type": "psychic",
+    "typeKo": "초",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048478_P_MSANAITOEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048478_P_MSANAITOEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M1S/048478_P_MSANAITOEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48478,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 320,
+      "basePop": 80
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m2-116",
+    "packId": "m2-inferno-x",
+    "nameKo": "메가 리자몽X ex",
+    "nameEn": "Mega Charizard X ex",
+    "nameJa": "メガリザードンXex",
+    "number": "116/080",
+    "rarity": "MUR",
+    "type": "fire",
+    "typeKo": "불",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M2/048522_P_MRIZADONXEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M2/048522_P_MRIZADONXEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M2/048522_P_MRIZADONXEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 48522,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 320,
+      "basePop": 80
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m2a-250",
+    "packId": "m2a-mega-dream-ex",
+    "nameKo": "메가 망나뇽 ex",
+    "nameEn": "Mega Dragonite ex",
+    "nameJa": "メガカイリューex",
+    "number": "250/193",
+    "rarity": "MUR",
+    "type": "dragon",
+    "typeKo": "드래곤",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M2a/050010_P_MKAIRIXYUEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M2a/050010_P_MKAIRIXYUEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M2a/050010_P_MKAIRIXYUEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 50010,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 320,
+      "basePop": 80
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m4-098",
+    "packId": "m4-ninja-spinner",
+    "nameKo": "메가 개굴닌자 ex",
+    "nameEn": "Mega Greninja ex",
+    "nameJa": "メガゲッコウガex",
+    "number": "098/083",
+    "rarity": "SR",
+    "type": "water",
+    "typeKo": "물",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M4/050197_P_MGEKKOUGAEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M4/050197_P_MGEKKOUGAEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M4/050197_P_MGEKKOUGAEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 50197,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 95,
+      "basePop": 420
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m4-114",
+    "packId": "m4-ninja-spinner",
+    "nameKo": "메가 개굴닌자 ex",
+    "nameEn": "Mega Greninja ex",
+    "nameJa": "メガゲッコウガex",
+    "number": "114/083",
+    "rarity": "SAR",
+    "type": "water",
+    "typeKo": "물",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M4/050213_P_MGEKKOUGAEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M4/050213_P_MGEKKOUGAEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M4/050213_P_MGEKKOUGAEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 50213,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 220,
+      "basePop": 900
+    },
+    "tier": "A"
+  },
+  {
+    "id": "m4-120",
+    "packId": "m4-ninja-spinner",
+    "nameKo": "메가 개굴닌자 ex",
+    "nameEn": "Mega Greninja ex",
+    "nameJa": "メガゲッコウガex",
+    "number": "120/083",
+    "rarity": "MUR",
+    "type": "water",
+    "typeKo": "물",
+    "holoStyle": "sar",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/M4/050219_P_MGEKKOUGAEX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/M4/050219_P_MGEKKOUGAEX.jpg",
+      "kr": null,
+      "en": "https://www.pokemon-card.com/assets/images/card_images/large/M4/050219_P_MGEKKOUGAEX.jpg"
+    },
+    "catalogKeys": {
+      "jp": 50219,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 320,
+      "basePop": 80
+    },
+    "tier": "A"
   }
 ]

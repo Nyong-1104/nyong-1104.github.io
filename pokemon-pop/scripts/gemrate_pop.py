@@ -62,6 +62,37 @@ GEMRATE_SETS: dict[str, dict[str, dict[str, Any]]] = {
             ),
         },
     },
+    "m1l-mega-brave": {
+        "jp": {
+            "year": 2025,
+            "set_name": "Pokemon Japanese M1l-Mega Brave",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Japanese+M1l-Mega+Brave"
+            ),
+        },
+        "kr": {
+            "year": 2025,
+            "set_name": "Pokemon Korean M1l-Mega Brave",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Korean+M1l-Mega+Brave"
+            ),
+        },
+        # EN Mega Evolution bundles JP Mega Brave + Mega Symphonia product line.
+        # Confirm row overlap (Lucario / set numbers) when applying.
+        "en": {
+            "year": 2025,
+            "set_name": "Pokemon Meg EN-Mega Evolution",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Meg+EN-Mega+Evolution"
+            ),
+        },
+    },
 }
 
 # Preferred GemRate parallel names for each catalog rarity (order = preference).
@@ -69,6 +100,7 @@ GEMRATE_SETS: dict[str, dict[str, dict[str, Any]]] = {
 PARALLEL_BY_RARITY: dict[str, list[str]] = {
     "AR": ["Art Rare", "Illustration Rare"],
     "SAR": ["Special Art Rare", "Special Illustration Rare"],
+    "MUR": ["Mega Ultra Rare", "Mega Hyper Rare", "MUR", "Hyper Rare", "Gold"],
     "SR": ["Super Rare"],
     "UR": ["Ultra Rare", "Hyper Rare", "Secret Rare"],
     "RR": ["Base", "Regular", "Holo", "Holofoil"],
@@ -81,6 +113,7 @@ PARALLEL_BY_RARITY: dict[str, list[str]] = {
 PARALLEL_BY_RARITY_EN: dict[str, list[str]] = {
     "AR": ["Illustration Rare", "Art Rare"],
     "SAR": ["Special Illustration Rare", "Special Art Rare"],
+    "MUR": ["Mega Hyper Rare", "Mega Ultra Rare", "MUR", "Hyper Rare", "Gold"],
     "SR": ["Ultra Rare", "Super Rare"],
     "UR": ["Hyper Rare", "Secret Rare", "Ultra Rare"],
     "RR": ["Base", "Regular", "Holo", "Holofoil"],
@@ -178,11 +211,23 @@ def psa_pop_object(row: dict[str, Any], asof: str, *, set_name: str | None) -> d
     total = grade("card_total_grades")
     if total is None:
         total = grade("card_total_standard")
+
+    le7_parts = [grade(f"g{i}") for i in range(1, 8)]
+    le7_parts.append(grade("auth"))
+    known = [v for v in le7_parts if v is not None]
+    if known:
+        le7 = sum(known)
+    elif total is not None:
+        high = sum(v for v in (grade("g10"), grade("g9"), grade("g8")) if v is not None)
+        le7 = max(0, total - high)
+    else:
+        le7 = None
+
     return {
         "10": grade("g10"),
-        "9.5": None,  # PSA half-grades not exposed as 9.5 on GemRate set grid
         "9": grade("g9"),
         "8": grade("g8"),
+        "le7": le7,
         "total": total,
         "source": "gemrate",
         "asOf": asof[:10],
@@ -273,21 +318,33 @@ def pick_gemrate_row(
         return None
 
     picked = choose(same_num, require_parallel=len(same_num) > 1)
-    if picked:
-        return picked
 
-    # EN gold / number offsets: fall back to name + preferred parallel.
+    def name_matches_row(row: dict[str, Any] | None, want: str) -> bool:
+        if not row or not want:
+            return False
+        row_name = normalize_name(row.get("name"))
+        if not row_name:
+            return False
+        return want == row_name or want in row_name or row_name in want
+
+    # EN Mega Evolution (etc.) renumbers vs JP — reject number hits whose name
+    # clearly doesn't match, then fall back to name + parallel.
     want_name = normalize_name(catalog_name_en(catalog_card))
+    if picked:
+        if (lang or "").lower() != "en" or not want_name or name_matches_row(
+            picked, want_name
+        ):
+            return picked
+        # Number collided with a different card in a multi-set EN dump.
+
     if not want_name:
         return None
     by_name = []
     for r in rows:
-        row_name = normalize_name(r.get("name"))
-        if not row_name:
+        if not name_matches_row(r, want_name):
             continue
-        if want_name == row_name or want_name in row_name or row_name in want_name:
-            if any(parallel_matches(r.get("parallel"), w) for w in preferred):
-                by_name.append(r)
+        if any(parallel_matches(r.get("parallel"), w) for w in preferred):
+            by_name.append(r)
     return choose(by_name, require_parallel=True)
 
 

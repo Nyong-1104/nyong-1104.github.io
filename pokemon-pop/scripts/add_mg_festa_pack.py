@@ -28,6 +28,8 @@ PACK = {
     "nameShort": "MG Festa Seoul",
     "code": "MG-PROMO",
     "releaseYear": 2026,
+    "listGroup": "promo",
+    "listComplete": True,
     "languages": ["kr"],
     "blurb": "메가페스타 × Pokémon GO 서울 스탬프랠리 프로모 — 잉어킹.",
     "blurbEn": "Mega Festa × Pokémon GO Seoul Stamp Rally promo — Magikarp.",

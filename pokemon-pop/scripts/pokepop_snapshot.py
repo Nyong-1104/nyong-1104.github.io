@@ -4,7 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 
-TIER_A = {"SAR", "SIR", "HR", "UR", "SR", "AR", "SSR", "S_2", "RRR", "BWR"}
+TIER_A = {"SAR", "SIR", "HR", "UR", "SR", "AR", "SSR", "S_2", "RRR", "BWR", "MUR"}
 TIER_B = {"RR", "PRISM", "R", "PROMO"}
 # U, C, and anything else → Tier C (catalog only)
 
@@ -173,11 +173,6 @@ def write_data_bundle(data_dir: Path, packs, catalog, live, last_run=None) -> No
     if last_run is None and last_run_path.exists():
         last_run = json.loads(last_run_path.read_text(encoding="utf-8"))
 
-    psa_sets_path = data_dir / "psa-sets.json"
-    psa_sets = {}
-    if psa_sets_path.exists():
-        psa_sets = json.loads(psa_sets_path.read_text(encoding="utf-8"))
-
     data_js = (
         "window.POP_PACKS = "
         + json.dumps(packs, ensure_ascii=False, indent=2)
@@ -187,8 +182,6 @@ def write_data_bundle(data_dir: Path, packs, catalog, live, last_run=None) -> No
         + json.dumps(live, ensure_ascii=False, indent=2)
         + ";\nwindow.POP_LAST_RUN = "
         + json.dumps(last_run or {}, ensure_ascii=False, indent=2)
-        + ";\nwindow.POP_PSA_SETS = "
-        + json.dumps(psa_sets, ensure_ascii=False, indent=2)
         + ";\n"
     )
     (data_dir / "data.js").write_text(data_js, encoding="utf-8")

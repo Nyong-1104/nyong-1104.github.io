@@ -3,7 +3,7 @@
 
   function popCell(graderData, grade) {
     if (!graderData) return `<td class="pop-empty">—</td>`;
-    const v = graderData[grade];
+    const v = gradeValue(graderData, grade);
     if (v == null) return `<td class="pop-empty">—</td>`;
     return `<td>${Number(v).toLocaleString("en-US")}</td>`;
   }
@@ -13,22 +13,76 @@
     let any = false;
     PT.GRADERS.forEach((g) => {
       const data = pop?.[g];
-      if (!data || data[grade] == null) return;
-      sum += Number(data[grade]) || 0;
+      if (!data) return;
+      const v = gradeValue(data, grade);
+      if (v == null) return;
+      sum += Number(v) || 0;
       any = true;
     });
     return any ? sum : null;
   }
 
   function gradeHeader(col) {
-    if (col === "total") return "Total";
-    const brg = { "10": "100", "9.5": "90", "9": "85", "8": "80" }[col];
+    if (col === "le7") return "≤7";
+    // BRG has no 9.5: 100→10, 90(+85)→9, 80→8
+    const brg = { "10": "100", "9": "90", "8": "80" }[col];
     return brg ? `${col}<span class="pop-brg-hint">/${brg}</span>` : col;
+  }
+
+  function gradeValue(graderData, grade) {
+    if (!graderData) return null;
+
+    const scores = graderData.brgScores;
+    if (scores && typeof scores === "object" && graderData.source === "break") {
+      const num = (k) => {
+        const c = Number(scores[k]);
+        return Number.isFinite(c) ? c : 0;
+      };
+      if (grade === "10") return scores["100"] != null ? num("100") : null;
+      if (grade === "9") {
+        if (scores["90"] == null && scores["85"] == null) return null;
+        return num("90") + num("85");
+      }
+      if (grade === "8") return scores["80"] != null ? num("80") : null;
+      if (grade === "le7") {
+        let sum = 0;
+        let any = false;
+        Object.keys(scores).forEach((k) => {
+          if (k === "-1" || k === "100" || k === "90" || k === "85" || k === "80") return;
+          const c = Number(scores[k]);
+          if (!Number.isFinite(c)) return;
+          sum += c;
+          any = true;
+        });
+        return any ? sum : graderData.le7 ?? 0;
+      }
+    }
+
+    if (grade === "9") {
+      // Legacy BRG dumps mapped 90 → 9.5; fold into 9 for display.
+      const v9 = graderData["9"];
+      const v95 = graderData["9.5"];
+      if (v9 == null && v95 == null) return null;
+      return (Number(v9) || 0) + (Number(v95) || 0);
+    }
+
+    if (grade === "le7" && graderData.le7 == null) {
+      if (graderData.total != null) {
+        const high = ["10", "9", "8"]
+          .map((g) => gradeValue(graderData, g))
+          .filter((v) => v != null)
+          .reduce((a, b) => a + Number(b), 0);
+        return Math.max(0, Number(graderData.total) - high);
+      }
+      return null;
+    }
+
+    return graderData[grade] ?? null;
   }
 
   function graderHasData(graderData) {
     if (!graderData || typeof graderData !== "object") return false;
-    return PT.GRADE_COLS.some((col) => graderData[col] != null);
+    return PT.GRADE_COLS.some((col) => gradeValue(graderData, col) != null);
   }
 
   function renderPop(variant) {
@@ -141,23 +195,12 @@
   const priceLabel = document.querySelector(".price-panel__label");
   if (priceLabel) priceLabel.textContent = PT.t("priceLabel");
   const ebayLinkEl = document.getElementById("price-ebay-link");
-  const psaLinkEl = document.getElementById("psa-set-pop-link");
   function paintEbayLink(lang) {
     if (!ebayLinkEl) return;
     const href = PT.ebaySearchUrl(card, pack, lang);
     ebayLinkEl.innerHTML = `<a href="${href}" target="_blank" rel="noopener noreferrer">${PT.t(
       "ebayPriceLink"
     )}</a>`;
-  }
-  function paintPsaSetLink(lang) {
-    if (!psaLinkEl) return;
-    const link = PT.psaSetPopLink(pack, lang);
-    if (!link) {
-      psaLinkEl.innerHTML = "";
-      return;
-    }
-    const label = link.exact ? PT.t("psaSetPopLink") : PT.t("psaSetPopSearch");
-    psaLinkEl.innerHTML = `<a href="${link.href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
   }
   const popTitle = document.querySelector(".section-title");
   if (popTitle) popTitle.textContent = PT.t("popTitle");
@@ -169,7 +212,6 @@
   // Card detail defaults to Japanese edition
   let activeLang = packLangs.indexOf("jp") !== -1 ? "jp" : packLangs[0];
   paintEbayLink(activeLang);
-  paintPsaSetLink(activeLang);
 
   const holo = PT.createHoloCardEl({
     image: PT.cardImageForEdition(card, activeLang),
@@ -215,7 +257,6 @@
   function renderVariant(lang) {
     activeLang = lang;
     paintEbayLink(lang);
-    paintPsaSetLink(lang);
     document.querySelectorAll(".lang-tab").forEach((btn) => {
       btn.classList.toggle("is-active", btn.dataset.lang === lang);
     });

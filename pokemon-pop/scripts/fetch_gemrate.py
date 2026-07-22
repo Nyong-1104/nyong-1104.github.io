@@ -174,8 +174,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument(
         "--sleep",
         type=float,
-        default=2.0,
-        help="Seconds between set page fetches (default 2)",
+        default=60.0,
+        help="Seconds between set page fetches (default 60 — slower looks less bot-like)",
     )
     p.add_argument("--fetch-only", action="store_true", help="Save dumps/CSV only, do not apply")
     p.add_argument("--apply-only", action="store_true", help="Skip fetch; apply existing dumps")

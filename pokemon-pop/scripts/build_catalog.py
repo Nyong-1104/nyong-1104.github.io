@@ -61,10 +61,14 @@ RARITY_MAP = {
     "rare_bwr": "BWR",
     "bwr": "BWR",
     "prismstar": "PRISM",
+    "rare_mur": "MUR",
+    "mur": "MUR",
+    "MUR": "MUR",
 }
 
 SEED_BY_RARITY = {
     "BWR": (280, 120),
+    "MUR": (320, 80),
     "SAR": (220, 900),
     "SIR": (200, 850),
     "HR": (160, 220),
@@ -265,6 +269,7 @@ def map_rarity(raw: str | None, card: dict | None = None) -> str:
         "U",
         "C",
         "PROMO",
+        "MUR",
     }:
         return cleaned
     return cleaned[:6] or "C"
@@ -281,7 +286,7 @@ def map_type(card: dict) -> tuple[str, str]:
 
 
 def holo_for_rarity(rarity: str) -> str:
-    if rarity in {"SAR", "SIR", "BWR"}:
+    if rarity in {"SAR", "SIR", "BWR", "MUR"}:
         return "sar"
     if rarity == "AR":
         return "reverse"

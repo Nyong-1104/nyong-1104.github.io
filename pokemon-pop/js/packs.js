@@ -1,14 +1,42 @@
 (function () {
   const PT = window.PopTracker;
-  const packs = PT.getPacks().slice().sort(function (a, b) {
-    const aEmpty = !(a.cardIds && a.cardIds.length) ? 1 : 0;
-    const bEmpty = !(b.cardIds && b.cardIds.length) ? 1 : 0;
-    if (aEmpty !== bEmpty) return aEmpty - bEmpty;
-    const ya = Number(a.releaseYear) || 0;
-    const yb = Number(b.releaseYear) || 0;
-    if (yb !== ya) return yb - ya;
-    return String(a.id || "").localeCompare(String(b.id || ""));
-  });
+  const INCOMPLETE_CARD_CAP = 20;
+  const TAB_STORAGE_KEY = "pokepop-pack-group";
+
+  function packCardCount(pack) {
+    return (pack && pack.cardIds && pack.cardIds.length) || 0;
+  }
+
+  function packIncomplete(pack) {
+    if (pack && (pack.listComplete || pack.complete)) return false;
+    if (pack && pack.expectedCards != null) {
+      return packCardCount(pack) < Number(pack.expectedCards);
+    }
+    return packCardCount(pack) < INCOMPLETE_CARD_CAP;
+  }
+
+  function packGroup(pack) {
+    const g = String((pack && pack.listGroup) || "booster").toLowerCase();
+    return g === "promo" ? "promo" : "booster";
+  }
+
+  function sortPacks(list) {
+    return list.slice().sort(function (a, b) {
+      const aStub = packIncomplete(a) ? 1 : 0;
+      const bStub = packIncomplete(b) ? 1 : 0;
+      if (aStub !== bStub) return aStub - bStub;
+      const ya = Number(a.releaseYear) || 0;
+      const yb = Number(b.releaseYear) || 0;
+      if (yb !== ya) return yb - ya;
+      return String(a.id || "").localeCompare(String(b.id || ""));
+    });
+  }
+
+  const allPacks = sortPacks(
+    PT.getPacks().filter(function (pack) {
+      return !(pack && pack.listHidden);
+    })
+  );
   const cards = PT.getCards();
   const grid = document.getElementById("pack-grid");
   const searchPanel = document.getElementById("search-panel");
@@ -17,11 +45,21 @@
   const searchClear = document.getElementById("search-clear");
   const packsHead = document.getElementById("packs-section-head");
   const packsTitle = document.getElementById("packs-section-title");
+  const packsSection = document.getElementById("packs-section");
   const hero = document.querySelector(".hero-block");
+  const tabRoot = document.getElementById("pack-tabs");
   const packById = {};
-  packs.forEach(function (pack) {
+  PT.getPacks().forEach(function (pack) {
     packById[pack.id] = pack;
   });
+
+  let activeGroup = "booster";
+  try {
+    const saved = localStorage.getItem(TAB_STORAGE_KEY);
+    if (saved === "promo" || saved === "booster") activeGroup = saved;
+  } catch (e) {
+    /* ignore */
+  }
 
   function escapeHtml(value) {
     return String(value || "")
@@ -69,6 +107,7 @@
     if (searchGrid) searchGrid.innerHTML = "";
     if (hero) hero.hidden = false;
     if (grid) grid.hidden = false;
+    if (packsSection) packsSection.hidden = false;
     setPacksSectionMode(false);
   }
 
@@ -83,7 +122,6 @@
       return;
     }
 
-    // Keep pack list visible below search results
     if (hero) hero.hidden = false;
     if (grid) grid.hidden = false;
     setPacksSectionMode(true);
@@ -105,36 +143,25 @@
     const frag = document.createDocumentFragment();
     hits.forEach(function (card) {
       try {
-        const pack = packById[card.packId];
+        const pack = packById[card.packId] || PT.getPacks().find((p) => p.id === card.packId);
         const a = document.createElement("a");
         a.className = "card-link";
         a.href = `./card.html?id=${encodeURIComponent(card.id)}`;
-        a.setAttribute("tabindex", "0");
-
-        const name = PT.cardName(card) || card.nameKo || card.nameEn || card.id;
-        const img =
-          PT.cardImageForEdition(card, "jp") ||
-          (card.images && (card.images.jp || card.images.kr || card.images.en)) ||
-          card.image ||
-          "";
-
         const holo = PT.createHoloCardEl({
-          image: img,
-          name: name,
-          holoStyle: card.holoStyle || "reverse",
+          image: PT.cardImage(card, "jp") || card.image,
+          name: PT.cardName(card),
+          holoStyle: card.holoStyle || "holo",
           compact: true,
         });
-
         const meta = document.createElement("div");
-        meta.className = "card-meta";
-        const packLabel = pack ? PT.packName(pack) : card.packId || "";
+        meta.className = "card-link__meta";
         meta.innerHTML = `
-          <div class="card-meta__name">${escapeHtml(name)}</div>
-          <div class="card-meta__sub">${escapeHtml(card.number || "")} · ${escapeHtml(
-          PT.t("searchPack")
-        )}: ${escapeHtml(packLabel)}</div>
+          <div class="card-link__name">${escapeHtml(PT.cardName(card))}</div>
+          <div class="card-link__sub">${escapeHtml(card.number || "")} · ${escapeHtml(card.rarity || "")}</div>
+          <div class="card-link__pack">${escapeHtml(PT.t("searchPack"))}: ${escapeHtml(
+          pack ? PT.packName(pack) : card.packId || ""
+        )}</div>
         `;
-
         a.appendChild(holo);
         a.appendChild(meta);
         frag.appendChild(a);
@@ -156,75 +183,144 @@
     input.setAttribute("enterkeyhint", "search");
 
     const params = new URLSearchParams(window.location.search);
-    const initial = params.get("q") || "";
+    const initial = params.get("q");
     if (initial) {
       input.value = initial;
       showSearchResults(initial);
     }
 
     let timer = null;
-    function apply(value, pushUrl) {
-      const q = String(value || "").trim();
+    function run(q) {
+      const url = new URL(window.location.href);
+      if (q) url.searchParams.set("q", q);
+      else url.searchParams.delete("q");
+      history.replaceState(null, "", url);
       showSearchResults(q);
-      if (pushUrl) {
-        const url = new URL(window.location.href);
-        if (q) url.searchParams.set("q", q);
-        else url.searchParams.delete("q");
-        window.history.replaceState({}, "", url);
-      }
     }
 
-    function schedule() {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(function () {
-        apply(input.value, true);
-      }, 120);
-    }
-
-    input.addEventListener("input", schedule);
-    input.addEventListener("compositionend", function () {
-      window.clearTimeout(timer);
-      apply(input.value, true);
+    input.addEventListener("input", function () {
+      const q = input.value.trim();
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        run(q);
+      }, 180);
     });
     input.addEventListener("search", function () {
-      apply(input.value, true);
+      run(input.value.trim());
     });
-    input.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        window.clearTimeout(timer);
-        const q = String(input.value || "").trim();
-        apply(q, true);
-        const hits = searchCards(q);
-        if (hits.length === 1) {
-          window.location.href = `./card.html?id=${encodeURIComponent(hits[0].id)}`;
-        } else if (hits.length > 1) {
-          const first = searchGrid && searchGrid.querySelector(".card-link");
-          if (first) first.focus();
-          searchPanel && searchPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    input.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter") {
+        ev.preventDefault();
+        const q = input.value.trim();
+        run(q);
+        if (q) {
+          const hits = searchCards(q);
+          if (hits.length === 1) {
+            const first = searchGrid && searchGrid.querySelector(".card-link");
+            if (first) first.click();
+          } else {
+            searchPanel && searchPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
         }
-      }
-      if (e.key === "Escape") {
-        input.value = "";
-        apply("", true);
-        input.blur();
       }
     });
     if (searchClear) {
       searchClear.addEventListener("click", function () {
         input.value = "";
-        apply("", true);
+        run("");
         input.focus();
       });
     }
   }
 
+  function syncTabUi() {
+    if (!tabRoot) return;
+    const buttons = tabRoot.querySelectorAll(".pack-tabs__btn");
+    buttons.forEach(function (btn) {
+      const group = btn.getAttribute("data-pack-group");
+      const on = group === activeGroup;
+      btn.classList.toggle("is-active", on);
+      btn.setAttribute("aria-selected", on ? "true" : "false");
+      if (group === "booster") btn.textContent = PT.t("tabBoosters");
+      if (group === "promo") btn.textContent = PT.t("tabPromos");
+    });
+  }
+
+  function renderPackGrid() {
+    if (!grid) return;
+    const packs = allPacks.filter(function (pack) {
+      return packGroup(pack) === activeGroup;
+    });
+    grid.innerHTML = "";
+    grid.classList.add("pack-grid--boosters");
+
+    if (!packs.length) {
+      grid.innerHTML = `<p class="empty-state">${escapeHtml(PT.t("emptyPackGroup"))}</p>`;
+      return;
+    }
+
+    packs.forEach((pack) => {
+      const displayName = PT.packName(pack);
+      const longName = displayName.length > 28;
+      const a = document.createElement("a");
+      a.className = "pack-entry";
+      a.href = `./set.html?pack=${encodeURIComponent(pack.id)}`;
+
+      const holo = PT.createHoloCardEl({
+        image: pack.packImage,
+        name: displayName,
+        holoStyle: "pack",
+        compact: false,
+      });
+      holo.classList.add("holo-card--pack");
+
+      const meta = document.createElement("div");
+      meta.className = "pack-entry__meta";
+      const emptyNote = packIncomplete(pack)
+        ? `<p class="pack-entry__blurb pack-entry__blurb--warn">${PT.t("packNoCardsYet")}</p>`
+        : `<p class="pack-entry__blurb">${PT.packBlurb(pack)}</p>`;
+      meta.innerHTML = `
+        <div class="pack-entry__code">${pack.code} · ${pack.releaseYear}</div>
+        <div class="pack-entry__name${longName ? " pack-entry__name--long" : ""}">${displayName}</div>
+        ${emptyNote}
+        <span class="pack-entry__cta">${PT.t("open")}</span>
+      `;
+
+      a.appendChild(holo);
+      a.appendChild(meta);
+      grid.appendChild(a);
+      PT.mountHoloCard(holo);
+    });
+  }
+
+  function setActiveGroup(group) {
+    activeGroup = group === "promo" ? "promo" : "booster";
+    try {
+      localStorage.setItem(TAB_STORAGE_KEY, activeGroup);
+    } catch (e) {
+      /* ignore */
+    }
+    syncTabUi();
+    renderPackGrid();
+  }
+
+  function mountTabs() {
+    if (!tabRoot) return;
+    syncTabUi();
+    tabRoot.addEventListener("click", function (ev) {
+      const btn = ev.target.closest(".pack-tabs__btn");
+      if (!btn) return;
+      setActiveGroup(btn.getAttribute("data-pack-group"));
+    });
+  }
+
   PT.mountLangSwitcher(document.querySelector(".site-nav"));
   mountPokemonSearch();
+  mountTabs();
 
   if (!grid) return;
 
-  if (!packs.length || !cards.length) {
+  if (!allPacks.length || !cards.length) {
     grid.innerHTML = `<p class="empty-state">${PT.t("emptyData")}</p>`;
     return;
   }
@@ -234,40 +330,6 @@
   const credit = document.querySelector(".credit");
   if (credit) credit.textContent = PT.t("credit");
 
-  grid.classList.add("pack-grid--boosters");
-
-  packs.forEach((pack) => {
-    const displayName = PT.packName(pack);
-    const longName = displayName.length > 28;
-    const a = document.createElement("a");
-    a.className = "pack-entry";
-    a.href = `./set.html?pack=${encodeURIComponent(pack.id)}`;
-
-    const holo = PT.createHoloCardEl({
-      image: pack.packImage,
-      name: displayName,
-      holoStyle: "pack",
-      compact: false,
-    });
-    holo.classList.add("holo-card--pack");
-
-    const meta = document.createElement("div");
-    meta.className = "pack-entry__meta";
-    const emptyNote = !(pack.cardIds && pack.cardIds.length)
-      ? `<p class="pack-entry__blurb pack-entry__blurb--warn">${PT.t("packNoCardsYet")}</p>`
-      : `<p class="pack-entry__blurb">${PT.packBlurb(pack)}</p>`;
-    meta.innerHTML = `
-      <div class="pack-entry__code">${pack.code} · ${pack.releaseYear}</div>
-      <div class="pack-entry__name${longName ? " pack-entry__name--long" : ""}">${displayName}</div>
-      ${emptyNote}
-      <span class="pack-entry__cta">${PT.t("open")}</span>
-    `;
-
-    a.appendChild(holo);
-    a.appendChild(meta);
-    grid.appendChild(a);
-    PT.mountHoloCard(holo);
-  });
-
+  renderPackGrid();
   PT.mountSiteUpdated(document.getElementById("site-updated"));
 })();

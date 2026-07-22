@@ -319,6 +319,42 @@ img {
   border: 0;
 }
 
+.pack-tabs {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin: 0 auto 1.15rem;
+  padding: 0.28rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pack-tabs__btn {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
+  background: transparent;
+  padding: 0.55rem 1.15rem;
+  border-radius: 999px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.pack-tabs__btn:hover {
+  color: var(--ink);
+}
+
+.pack-tabs__btn.is-active {
+  color: #0b0d12;
+  background: #f3f5f8;
+}
+
 .hero-block p {
   font-size: 1.05rem;
   line-height: 1.55;

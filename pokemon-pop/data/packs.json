@@ -797,7 +797,11 @@
     "blurbJa": "ニンジャ＆スピード感のMEGA拡張パックです。",
     "packImage": "./assets/pack-m4.png",
     "coverCardId": null,
-    "cardIds": []
+    "cardIds": [
+      "m4-098",
+      "m4-114",
+      "m4-120"
+    ]
   },
   {
     "id": "sv3a-raging-surf",
@@ -1070,7 +1074,8 @@
     "releaseYear": 2025,
     "languages": [
       "jp",
-      "kr"
+      "kr",
+      "en"
     ],
     "blurb": "MEGA 시리즈의 브레이브 라인 확장팩입니다.",
     "blurbEn": "The Brave-line expansion of the MEGA series.",
@@ -1140,7 +1145,36 @@
       "m1l-060",
       "m1l-061",
       "m1l-062",
-      "m1l-063"
+      "m1l-063",
+      "m1l-092",
+      "m1l-064",
+      "m1l-065",
+      "m1l-066",
+      "m1l-067",
+      "m1l-068",
+      "m1l-069",
+      "m1l-070",
+      "m1l-071",
+      "m1l-072",
+      "m1l-073",
+      "m1l-074",
+      "m1l-075",
+      "m1l-076",
+      "m1l-077",
+      "m1l-078",
+      "m1l-079",
+      "m1l-080",
+      "m1l-081",
+      "m1l-082",
+      "m1l-083",
+      "m1l-084",
+      "m1l-085",
+      "m1l-086",
+      "m1l-087",
+      "m1l-088",
+      "m1l-089",
+      "m1l-090",
+      "m1l-091"
     ]
   },
   {
@@ -1222,7 +1256,36 @@
       "m1s-060",
       "m1s-061",
       "m1s-062",
-      "m1s-063"
+      "m1s-063",
+      "m1s-064",
+      "m1s-065",
+      "m1s-066",
+      "m1s-067",
+      "m1s-068",
+      "m1s-069",
+      "m1s-070",
+      "m1s-071",
+      "m1s-072",
+      "m1s-073",
+      "m1s-074",
+      "m1s-075",
+      "m1s-076",
+      "m1s-077",
+      "m1s-078",
+      "m1s-079",
+      "m1s-080",
+      "m1s-081",
+      "m1s-082",
+      "m1s-083",
+      "m1s-084",
+      "m1s-085",
+      "m1s-086",
+      "m1s-087",
+      "m1s-088",
+      "m1s-089",
+      "m1s-090",
+      "m1s-091",
+      "m1s-092"
     ]
   },
   {
@@ -3658,7 +3721,9 @@
     "blurbJa": "炎テーマのMEGA拡張パックです。",
     "packImage": "./assets/pack-m2.png",
     "coverCardId": null,
-    "cardIds": []
+    "cardIds": [
+      "m2-116"
+    ]
   },
   {
     "id": "s7r-blue-sky-stream",
@@ -4420,7 +4485,9 @@
     "blurbJa": "MEGAシリーズのハイクラスパックです。",
     "packImage": "./assets/pack-m2a.png",
     "coverCardId": null,
-    "cardIds": []
+    "cardIds": [
+      "m2a-250"
+    ]
   },
   {
     "id": "sv3-ruler-of-black-flame",
@@ -4590,6 +4657,8 @@
     "nameShort": "MG Festa Seoul",
     "code": "MG-PROMO",
     "releaseYear": 2026,
+    "listGroup": "promo",
+    "listComplete": true,
     "languages": [
       "kr"
     ],
@@ -4616,6 +4685,7 @@
     "nameShort": "Red Collection",
     "code": "BW2",
     "releaseYear": 2011,
+    "listHidden": true,
     "languages": [
       "jp",
       "kr"

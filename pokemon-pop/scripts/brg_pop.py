@@ -27,9 +27,10 @@ LANG_MARKER = {
 EN_EXCLUDE = ("JAPANESE", "KOREAN", "CHINESE", "ASIAN-ENGLISH")
 
 # Table columns are PSA-style; map BRG manualScore → display column.
+# BRG has no 9.5: 100→10, 90(+85)→9, 80→8; lower scores roll into ≤7.
 BRG_TO_COL = {
     "100": "10",
-    "90": "9.5",
+    "90": "9",
     "85": "9",
     "80": "8",
 }
@@ -169,9 +170,9 @@ def brg_pop_object(brg_card: dict[str, Any], asof_iso: str) -> dict[str, Any]:
     """Convert break.co.kr card pop into our table shape."""
     out: dict[str, Any] = {
         "10": None,
-        "9.5": None,
         "9": None,
         "8": None,
+        "le7": None,
         "total": None,
         "source": "break",
         "asOf": asof_iso[:10],
@@ -179,6 +180,7 @@ def brg_pop_object(brg_card: dict[str, Any], asof_iso: str) -> dict[str, Any]:
         "setName": brg_card.get("setName"),
         "brgId": brg_card.get("id"),
     }
+    le7 = 0
     for row in brg_card.get("pop") or []:
         score = str(row.get("manualScore") or "").strip()
         try:
@@ -189,16 +191,14 @@ def brg_pop_object(brg_card: dict[str, Any], asof_iso: str) -> dict[str, Any]:
         col = BRG_TO_COL.get(score)
         if col:
             out[col] = (out[col] or 0) + count
+        elif score not in {"", "-1"}:
+            le7 += count
+    out["le7"] = le7
     try:
         out["total"] = int(brg_card.get("total"))
     except (TypeError, ValueError):
         scored = [v for k, v in out["brgScores"].items() if k not in {"-1"} and v]
         out["total"] = sum(scored) if scored else None
-    # Drop empty grade keys to None for cleaner JSON (keep structure for UI)
-    for col in ("10", "9.5", "9", "8"):
-        if out[col] == 0:
-            # keep 0 as real zero
-            pass
     return out
 
 

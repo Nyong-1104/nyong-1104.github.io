@@ -38,7 +38,7 @@ window.PopTracker = window.PopTracker || {};
       updatedPrefix: "데이터 갱신:",
       snapshotPrefix: "POP/가격 스냅샷:",
       footnote:
-        "BRG(live)와 GemRate PSA(live)가 표시됩니다. BGS·CGC 등은 아직 미연동. 가격은 eBay API 연동 시에만 표시됩니다. BRG 열: 10=100 · 9.5=90 · 9=85 · 8=80.",
+        "BRG(live)와 GemRate PSA(live)가 표시됩니다. BGS·CGC 등은 아직 미연동. 가격은 eBay API 연동 시에만 표시됩니다. BRG 열: 10=100 · 9=90(+85) · 8=80 · ≤7=그 외.",
       credit:
         "Holo effect adapted from simeydotme/pokemon-cards-css (GPL-3.0). Card images via Pokémon card sources. BRG POP는 매시간 자동 갱신. eBay 시세는 GitHub Secrets(EBAY_CLIENT_ID/SECRET) 등록 후 수집됩니다.",
       setFallback: "세트",
@@ -57,10 +57,11 @@ window.PopTracker = window.PopTracker || {};
       packsSectionTitle: "팩 목록",
       packNoCardsYet: "카드 목록 준비 중 (JP 데이터 소스에 세트 미등록)",
       ebayPriceLink: "eBay에서 검색 →",
-      psaSetPopLink: "PSA 세트 POP →",
-      psaSetPopSearch: "PSA에서 세트 검색 →",
       emptyPackCards:
         "이 팩은 아직 카드 데이터가 없습니다. JP 카드 DB에 세트가 등록되면 추가됩니다.",
+      tabBoosters: "확장팩",
+      tabPromos: "프로모",
+      emptyPackGroup: "이 분류에 표시할 팩이 없습니다.",
     },
     en: {
       siteTagline: "Browse packs and check grading POP counts with eBay PSA asking prices.",
@@ -93,7 +94,7 @@ window.PopTracker = window.PopTracker || {};
       updatedPrefix: "Updated:",
       snapshotPrefix: "POP/price snapshot:",
       footnote:
-        "Live BRG and GemRate PSA rows are shown. BGS/CGC are not wired yet. Prices appear only after eBay API credentials are set. BRG cols: 10=100 · 9.5=90 · 9=85 · 8=80.",
+        "Live BRG and GemRate PSA rows are shown. BGS/CGC are not wired yet. Prices appear only after eBay API credentials are set. BRG cols: 10=100 · 9=90(+85) · 8=80 · ≤7=rest.",
       credit:
         "Holo effect adapted from simeydotme/pokemon-cards-css (GPL-3.0). Card images via Pokémon card sources. BRG POP refreshes hourly. eBay prices require GitHub Secrets EBAY_CLIENT_ID / EBAY_CLIENT_SECRET.",
       setFallback: "Set",
@@ -112,10 +113,11 @@ window.PopTracker = window.PopTracker || {};
       packsSectionTitle: "Packs",
       packNoCardsYet: "Card list pending (set not in JP data source yet)",
       ebayPriceLink: "Search on eBay →",
-      psaSetPopLink: "PSA set POP →",
-      psaSetPopSearch: "Search set on PSA →",
       emptyPackCards:
         "No card data for this pack yet. It will appear once the set is in the JP card database.",
+      tabBoosters: "Booster Sets",
+      tabPromos: "Promos",
+      emptyPackGroup: "No packs in this category yet.",
     },
     ja: {
       siteTagline: "パックを選んでグレーディングPOPとeBay相場をまとめて確認できます。",
@@ -148,7 +150,7 @@ window.PopTracker = window.PopTracker || {};
       updatedPrefix: "データ更新:",
       snapshotPrefix: "POP/価格スナップショット:",
       footnote:
-        "BRG(live)とGemRate PSA(live)を表示。BGS・CGCは未連携。価格はeBay API設定後のみ表示。BRG列: 10=100 · 9.5=90 · 9=85 · 8=80。",
+        "BRG(live)とGemRate PSA(live)を表示。BGS・CGCは未連携。価格はeBay API設定後のみ表示。BRG列: 10=100 · 9=90(+85) · 8=80 · ≤7=その他。",
       credit:
         "Holo effect adapted from simeydotme/pokemon-cards-css (GPL-3.0). Card images via Pokémon card sources. BRG POPは毎時自動更新。eBay相場はGitHub Secrets（EBAY_CLIENT_ID/SECRET）登録後に収集されます。",
       setFallback: "セット",
@@ -167,10 +169,11 @@ window.PopTracker = window.PopTracker || {};
       packsSectionTitle: "パック一覧",
       packNoCardsYet: "カード一覧準備中（JPデータソース未登録）",
       ebayPriceLink: "eBayで検索 →",
-      psaSetPopLink: "PSAセットPOP →",
-      psaSetPopSearch: "PSAでセット検索 →",
       emptyPackCards:
         "このパックのカードデータはまだありません。JPカードDBにセットが追加されると反映されます。",
+      tabBoosters: "拡張パック",
+      tabPromos: "プロモ",
+      emptyPackGroup: "この分類のパックはまだありません。",
     },
   };
 
@@ -367,34 +370,5 @@ window.PopTracker = window.PopTracker || {};
     ].filter(Boolean);
     const q = parts.join(" ");
     return `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(q)}&_sacat=183454`;
-  };
-
-  PT.getPsaSets = function () {
-    return window.POP_PSA_SETS || {};
-  };
-
-  /** Exact PSA set POP URL if mapped; otherwise a PSA search URL for that set. */
-  PT.psaSetPopLink = function (pack, lang) {
-    if (!pack) return null;
-    const row = PT.getPsaSets()[pack.id] || {};
-    const exact =
-      row[lang] ||
-      (lang !== "jp" && row.jp) ||
-      (lang !== "en" && row.en) ||
-      null;
-    if (exact) {
-      return { href: exact, exact: true };
-    }
-    const year = pack.releaseYear || "";
-    const code = String(pack.code || "").toUpperCase();
-    const langWord =
-      lang === "jp" ? "Japanese" : lang === "kr" ? "Korean" : lang === "en" ? "" : "";
-    const q = [year, "Pokemon", langWord, code, pack.nameEn || pack.nameShort || ""]
-      .filter(Boolean)
-      .join(" ");
-    return {
-      href: `https://www.psacard.com/pop/search?search=${encodeURIComponent(q)}`,
-      exact: false,
-    };
   };
 })(window.PopTracker);
