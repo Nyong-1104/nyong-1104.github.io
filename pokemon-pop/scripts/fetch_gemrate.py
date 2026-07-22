@@ -4,7 +4,8 @@
 Uses Playwright (real Chromium) because plain HTTP gets Cloudflare 403.
 Writes slim JSON dumps + CSV under data/gemrate/, then applies into live pop.PSA.
 
-Only packs listed in gemrate_pop.GEMRATE_SETS are fetched (pilot: sv2a-151).
+Only packs listed in gemrate_pop.GEMRATE_SETS are fetched.
+EN Mega Evolution is shared by Mega Brave + Mega Symphonia (reuseFrom).
 """
 from __future__ import annotations
 
@@ -30,7 +31,9 @@ from gemrate_pop import (  # noqa: E402
     GEMRATE_SETS,
     apply_dump_to_live,
     dump_path_for,
+    lang_meta,
     mark_live_source,
+    resolve_dump_path,
 )
 from pokepop_snapshot import write_data_bundle  # noqa: E402
 
@@ -211,13 +214,37 @@ def main(argv: list[str] | None = None) -> int:
                         {"packId": pack_id, "lang": lang, "error": "lang not configured"}
                     )
                     continue
+                reuse = meta.get("reuseFrom") if isinstance(meta, dict) else None
+                if isinstance(reuse, dict) and reuse.get("packId"):
+                    src_pack = str(reuse["packId"])
+                    src_lang = str(reuse.get("lang") or lang)
+                    src_path = dump_path_for(src_pack, src_lang)
+                    fetch_stats.append(
+                        {
+                            "packId": pack_id,
+                            "lang": lang,
+                            "ok": src_path.is_file(),
+                            "reusedFrom": f"{src_pack}/{src_lang}",
+                            "skippedFetch": True,
+                            "json": str(src_path.relative_to(ROOT)) if src_path.is_file() else None,
+                            "error": None
+                            if src_path.is_file()
+                            else f"missing shared dump: {src_path.name}",
+                        }
+                    )
+                    continue
                 url = build_url(meta)
                 try:
+                    print(f"[gemrate] fetch {pack_id}/{lang} …", flush=True)
                     rows = fetch_row_data_with_playwright(url)
                     if not rows:
                         raise RuntimeError("empty RowData")
                     json_path = write_dump(pack_id, lang, meta, rows, fetched_at)
                     csv_path = write_csv(pack_id, lang, rows)
+                    print(
+                        f"[gemrate] ok {pack_id}/{lang} rows={len(rows)}",
+                        flush=True,
+                    )
                     fetch_stats.append(
                         {
                             "packId": pack_id,
@@ -229,6 +256,7 @@ def main(argv: list[str] | None = None) -> int:
                         }
                     )
                 except Exception as e:
+                    print(f"[gemrate] FAIL {pack_id}/{lang}: {e}", flush=True)
                     fetch_stats.append(
                         {
                             "packId": pack_id,
@@ -255,24 +283,28 @@ def main(argv: list[str] | None = None) -> int:
         pack_meta = packs_cfg.get(pack_id) or {}
         langs = lang_filter or list(pack_meta.keys()) or ["jp", "kr", "en"]
         for lang in langs:
-            path = dump_path_for(pack_id, lang)
+            path = resolve_dump_path(pack_id, lang)
             if not path.is_file():
                 apply_stats.append(
                     {"packId": pack_id, "lang": lang, "error": f"missing dump: {path.name}"}
                 )
                 continue
             dump = json.loads(path.read_text(encoding="utf-8"))
-            apply_stats.append(
-                apply_dump_to_live(
-                    live,
-                    catalog,
-                    dump,
-                    pack_id=pack_id,
-                    lang=lang,
-                    asof_iso=asof_iso,
-                    dry_run=args.dry_run,
-                )
+            # Shared EN dump still says lang=en / Mega Evolution set name — OK for matching.
+            meta = lang_meta(pack_id, lang) or {}
+            reuse = meta.get("reuseFrom") if isinstance(meta, dict) else None
+            stat = apply_dump_to_live(
+                live,
+                catalog,
+                dump,
+                pack_id=pack_id,
+                lang=lang,
+                asof_iso=asof_iso,
+                dry_run=args.dry_run,
             )
+            if isinstance(reuse, dict) and reuse.get("packId"):
+                stat["reusedFrom"] = f"{reuse['packId']}/{reuse.get('lang') or lang}"
+            apply_stats.append(stat)
 
     if not args.dry_run and any(s.get("matched") for s in apply_stats):
         mark_live_source(live)

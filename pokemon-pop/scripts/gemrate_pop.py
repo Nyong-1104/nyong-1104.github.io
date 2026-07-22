@@ -81,8 +81,8 @@ GEMRATE_SETS: dict[str, dict[str, dict[str, Any]]] = {
                 "&set_name=Pokemon+Korean+M1l-Mega+Brave"
             ),
         },
-        # EN Mega Evolution bundles JP Mega Brave + Mega Symphonia product line.
-        # Confirm row overlap (Lucario / set numbers) when applying.
+        # EN Mega Evolution = JP Mega Brave + Mega Symphonia combined on GemRate.
+        # Fetched once here; m1s-mega-symphonia reuses this dump for lang=en.
         "en": {
             "year": 2025,
             "set_name": "Pokemon Meg EN-Mega Evolution",
@@ -91,6 +91,30 @@ GEMRATE_SETS: dict[str, dict[str, dict[str, Any]]] = {
                 "?grader=PSA&category=tcg-cards&year=2025"
                 "&set_name=Pokemon+Meg+EN-Mega+Evolution"
             ),
+        },
+    },
+    "m1s-mega-symphonia": {
+        "jp": {
+            "year": 2025,
+            "set_name": "Pokemon Japanese M1s-Mega Symphonia",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Japanese+M1s-Mega+Symphonia"
+            ),
+        },
+        "kr": {
+            "year": 2025,
+            "set_name": "Pokemon Korean M1s-Mega Symphonia",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2025"
+                "&set_name=Pokemon+Korean+M1s-Mega+Symphonia"
+            ),
+        },
+        # Same GemRate EN page as Mega Brave — do not fetch twice.
+        "en": {
+            "reuseFrom": {"packId": "m1l-mega-brave", "lang": "en"},
         },
     },
 }
@@ -391,6 +415,21 @@ def dump_path_for(pack_id: str, lang: str) -> Path:
     return GEMRATE_DIR / f"{pack_id}-{lang}.json"
 
 
+def lang_meta(pack_id: str, lang: str) -> dict[str, Any] | None:
+    pack = GEMRATE_SETS.get(pack_id) or {}
+    meta = pack.get(lang)
+    return meta if isinstance(meta, dict) else None
+
+
+def resolve_dump_path(pack_id: str, lang: str) -> Path:
+    """Dump JSON path, following reuseFrom (shared EN Mega Evolution, etc.)."""
+    meta = lang_meta(pack_id, lang) or {}
+    reuse = meta.get("reuseFrom")
+    if isinstance(reuse, dict) and reuse.get("packId"):
+        return dump_path_for(str(reuse["packId"]), str(reuse.get("lang") or lang))
+    return dump_path_for(pack_id, lang)
+
+
 def apply_dump_to_live(
     live: dict,
     catalog: list[dict],
@@ -506,7 +545,7 @@ def main(argv: list[str] | None = None) -> int:
         )
     else:
         for lang in langs:
-            path = dump_path_for(args.pack, lang)
+            path = resolve_dump_path(args.pack, lang)
             if not path.is_file():
                 stats.append(
                     {

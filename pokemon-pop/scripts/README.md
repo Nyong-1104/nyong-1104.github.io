@@ -64,31 +64,32 @@ python pokemon-pop/scripts/fetch_live.py --ebay-limit 5 --pack sv2a-151 --langs 
 
 Flags: `--pack`, `--langs`, `--skip-brg`, `--skip-ebay`, `--seed-only`, `--dry-run`, `--ebay-limit`.
 
-## GemRate PSA POP (pilot: 151)
+## GemRate PSA POP
 
-Daily GitHub Action (KST 00:00 / `0 15 * * *` UTC) runs Playwright → dump+CSV → `pop.PSA`.
+Daily VPS cron (KST 00:05) runs Playwright → dump+CSV → `pop.PSA`.
 Fetches **one set page per minute** (`--sleep 60`) so midnight traffic is spaced, not a burst.
-
-For a **Hetzner VPS** instead of Actions IP, see `pokemon-pop/scripts/vps/README.md`.
+See `pokemon-pop/scripts/vps/README.md`.
 
 ```bash
 # local: fetch + apply (needs Playwright Chromium)
 pip install -r pokemon-pop/scripts/requirements-gemrate.txt
 python -m playwright install chromium
-python pokemon-pop/scripts/fetch_gemrate.py --pack sv2a-151
+python pokemon-pop/scripts/fetch_gemrate.py
 
-# apply existing dumps only
+# one pack / apply-only
+python pokemon-pop/scripts/fetch_gemrate.py --pack m1s-mega-symphonia --langs jp,kr
 python pokemon-pop/scripts/gemrate_pop.py --pack sv2a-151 --langs jp,kr,en
 ```
 
-Only packs in `GEMRATE_SETS` inside `gemrate_pop.py` are fetched (currently `sv2a-151`, `m1l-mega-brave` jp/kr/en).
+`GEMRATE_SETS` (`gemrate_pop.py`):
+
+| Pack | JP | KR | EN |
+|------|----|----|-----|
+| `sv2a-151` | fetch | fetch | fetch |
+| `m1l-mega-brave` | fetch | fetch | fetch (`Pokemon Meg EN-Mega Evolution`) |
+| `m1s-mega-symphonia` | fetch | fetch | **reuse** Brave EN dump (same GemRate page) |
+
 `fetch_live.py` restores previous GemRate PSA (`source: gemrate`) so hourly BRG refresh does not wipe them.
-
-Pilot URLs (2023 / PSA / TCG):
-
-- JP: Pokemon Japanese Sv2a-Pokemon Card 151
-- KR: Pokemon Korean Sv2a-Pokemon Card 151
-- EN: Pokemon Mew EN-151
 
 ## GitHub Actions
 
