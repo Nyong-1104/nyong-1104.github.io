@@ -474,7 +474,8 @@
   function getUpdatedText() {
     const variant = card.variants?.[activeLang];
     if (!variant) return `${PT.langLabel(activeLang)} · ${PT.t("notCollected")}`;
-    const ts = variant.updatedAt || PT.getSiteUpdatedAt();
+    // Site snapshot time (hourly BRG / batch runs), not per-card eBay stamp.
+    const ts = PT.getSiteUpdatedAt() || variant.updatedAt;
     return `${PT.t("snapshotPrefix")} ${PT.formatUpdatedDisplay(ts)} (${PT.langLabel(activeLang)})`;
   }
 
