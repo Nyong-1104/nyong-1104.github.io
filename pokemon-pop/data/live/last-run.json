@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-07-23T16:18:52+09:00",
+  "ranAt": "2026-07-23T19:03:04+09:00",
   "stats": {
     "asOf": "2026-07-23",
-    "asOfIso": "2026-07-23T16:18:52+09:00",
+    "asOfIso": "2026-07-23T19:03:04+09:00",
     "cardsTotal": 3953,
     "cardsLive": 1696,
     "skippedTierC": 2257,
@@ -22,10 +22,10 @@
       "setsResolved": 77,
       "setsMissing": 0,
       "setsUnavailable": 4,
-      "cardsMatched": 1499,
-      "cardsNoBrgEntry": 2102,
+      "cardsMatched": 1498,
+      "cardsNoBrgEntry": 2103,
       "cardsAttempted": 3601,
-      "brgEntriesFetched": 2399,
+      "brgEntriesFetched": 2333,
       "dryRun": false,
       "setMap": [
         {
@@ -478,7 +478,7 @@
           "packId": "m2a-mega-dream-ex",
           "lang": "kr",
           "setName": "POKEMON MG KOREAN M2A",
-          "year": 2026
+          "year": 2025
         },
         {
           "packId": "sv3-ruler-of-black-flame",
@@ -512,11 +512,12 @@
         }
       ],
       "errors": [],
-      "matchRate": 0.4163,
-      "cardsUnmatched": 2102
+      "matchRate": 0.416,
+      "cardsUnmatched": 2103
     },
     "ebay": {
-      "ebayEnabled": false
+      "ebayEnabled": false,
+      "note": "Set EBAY_CLIENT_ID and EBAY_CLIENT_SECRET to enable eBay prices"
     },
     "liveSource": "eBay+seed+BRG"
   }
