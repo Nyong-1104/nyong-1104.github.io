@@ -2,9 +2,14 @@ name: Hourly PokePop update
 
 on:
   schedule:
-    # Every hour (GitHub may delay a few minutes)
-    - cron: "0 * * * *"
+    # GitHub cron is often delayed/skipped; dual slots improve hit rate.
+    - cron: "5 * * * *"
+    - cron: "35 * * * *"
   workflow_dispatch:
+
+concurrency:
+  group: hourly-pokepop
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -12,9 +17,12 @@ permissions:
 jobs:
   update-live:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -38,4 +46,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore(pokepop): hourly live snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
-          git push
+          git pull --rebase origin main
+          git push origin HEAD:main
