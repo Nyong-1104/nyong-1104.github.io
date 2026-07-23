@@ -93,8 +93,9 @@ window.PopTracker = window.PopTracker || {};
     const img = document.createElement("img");
     img.className = "holo-card__img";
     img.loading = "lazy";
-    if (opts.image) img.src = opts.image;
     img.alt = opts.name || "";
+    PT.bindHoloImageFallback(img, opts.image, opts.fallbackImage, opts.onFallback);
+    if (opts.image) img.src = opts.image;
 
     const rotator = document.createElement("div");
     rotator.className = "holo-card__rotator";
@@ -114,11 +115,26 @@ window.PopTracker = window.PopTracker || {};
     return wrap;
   };
 
-  PT.setHoloCardImage = function (root, image, name) {
+  PT.bindHoloImageFallback = function (img, primary, fallback, onFallback) {
+    if (!img) return;
+    img.onerror = null;
+    if (!fallback || !primary || fallback === primary) return;
+    img.onerror = function () {
+      img.onerror = null;
+      if (img.getAttribute("src") === fallback) return;
+      img.src = fallback;
+      if (typeof onFallback === "function") onFallback();
+    };
+  };
+
+  PT.setHoloCardImage = function (root, image, name, opts) {
     if (!root) return;
     const img = root.querySelector(".holo-card__img");
     if (!img) return;
-    if (image) img.src = image;
+    opts = opts || {};
     if (name != null) img.alt = name;
+    PT.bindHoloImageFallback(img, image, opts.fallbackImage, opts.onFallback);
+    if (image) img.src = image;
+    else if (opts.fallbackImage) img.src = opts.fallbackImage;
   };
 })(window.PopTracker);

@@ -158,10 +158,10 @@ def grades_from_listings(items: list[dict[str, Any]]) -> dict[str, list[float]]:
     return buckets
 
 
-def median_int(values: list[float]) -> int | None:
+def mean_int(values: list[float]) -> int | None:
     if not values:
         return None
-    return int(round(statistics.median(values)))
+    return int(round(statistics.mean(values)))
 
 
 def price_from_buckets(
@@ -169,11 +169,17 @@ def price_from_buckets(
 ) -> dict[str, Any] | None:
     grades: dict[str, int] = {}
     samples: dict[str, int] = {}
+    ranges: dict[str, dict[str, int]] = {}
     for g in ("10", "9", "8"):
-        m = median_int(buckets.get(g) or [])
-        if m is not None:
-            grades[g] = m
-            samples[g] = len(buckets[g])
+        vals = buckets.get(g) or []
+        avg = mean_int(vals)
+        if avg is not None:
+            grades[g] = avg
+            samples[g] = len(vals)
+            ranges[g] = {
+                "min": int(round(min(vals))),
+                "max": int(round(max(vals))),
+            }
     if not grades:
         return None
     return {
@@ -181,8 +187,10 @@ def price_from_buckets(
         "currency": "USD",
         "asOf": asof_iso[:10],
         "grades": grades,
+        "range": ranges,
         "sampleSize": samples,
-        "method": "median-active",
+        "listingCount": sum(samples.values()),
+        "method": "mean-active",
     }
 
 

@@ -45,7 +45,10 @@
 
         <div class="price-panel">
           <div class="price-panel__label">eBay Price (PSA)</div>
-          <div class="price-grades" id="price-grades"></div>
+          <div class="price-grades" id="price-grades" role="tablist" aria-label="PSA grade"></div>
+          <div class="price-chart" id="price-chart" hidden>
+            <div class="price-chart__bars" id="price-chart-bars"></div>
+          </div>
           <div class="price-panel__meta" id="price-meta"></div>
           <p class="price-panel__seed" id="price-ebay-link"></p>
         </div>
@@ -58,9 +61,6 @@
           </table>
         </div>
         <p class="footnote" id="updated"></p>
-        <p class="footnote">
-          PSA · BGS · CGC · BRG · TAG · ACE · AGS. 값이 비어 있으면 아직 스냅샷에 없는 업체입니다.
-        </p>
       </div>
     </div>
   </main>

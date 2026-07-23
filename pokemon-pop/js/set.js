@@ -162,8 +162,13 @@
       a.className = "card-link";
       a.href = `./card.html?id=${encodeURIComponent(card.id)}`;
 
+      const primary = PT.hasEditionImage(card, editionLang)
+        ? card.images[editionLang]
+        : "";
+      const fallback = PT.fallbackEditionImage(card, editionLang);
       const holo = PT.createHoloCardEl({
-        image: PT.cardImageForEdition(card, editionLang),
+        image: primary || fallback || PT.cardImageForEdition(card, editionLang),
+        fallbackImage: primary ? fallback : "",
         name: PT.cardName(card),
         holoStyle: card.holoStyle,
         compact: true,

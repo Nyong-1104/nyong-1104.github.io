@@ -1,11 +1,22 @@
 (function () {
   const PT = window.PopTracker;
 
+  function popNumCell(v) {
+    if (v == null) return `<td class="pop-empty">—</td>`;
+    const n = Number(v);
+    if (!Number.isFinite(n)) return `<td class="pop-empty">—</td>`;
+    const text = n.toLocaleString("en-US");
+    const digits = String(Math.abs(Math.trunc(n))).length;
+    const sizeClass =
+      digits >= 6 ? " pop-num--xs" : digits >= 5 ? " pop-num--sm" : digits >= 4 ? " pop-num--md" : "";
+    return `<td class="pop-num${sizeClass}">${text}</td>`;
+  }
+
   function popCell(graderData, grade) {
     if (!graderData) return `<td class="pop-empty">—</td>`;
     const v = gradeValue(graderData, grade);
     if (v == null) return `<td class="pop-empty">—</td>`;
-    return `<td>${Number(v).toLocaleString("en-US")}</td>`;
+    return popNumCell(v);
   }
 
   function sumPopColumn(pop, grade) {
@@ -106,19 +117,14 @@
 
     const rows = activeGraders.map((g) => {
       const data = pop[g] ?? null;
-      const live = data && (data.source === "break" || data.source === "gemrate");
-      return `<tr${live ? ' class="pop-live-row"' : ""}>
-        <td>${g}${live ? ' <span class="pop-live-tag">live</span>' : ""}</td>
+      return `<tr>
+        <td>${g}</td>
         ${PT.GRADE_COLS.map((col) => popCell(data, col)).join("")}
       </tr>`;
     });
 
     if (activeGraders.length > 1) {
-      const totals = PT.GRADE_COLS.map((col) => {
-        const v = sumPopColumn(pop, col);
-        if (v == null) return `<td class="pop-empty">—</td>`;
-        return `<td>${v.toLocaleString("en-US")}</td>`;
-      });
+      const totals = PT.GRADE_COLS.map((col) => popNumCell(sumPopColumn(pop, col)));
       rows.push(
         `<tr class="pop-total-row"><td>${PT.t("popTotalRow")}</td>${totals.join("")}</tr>`
       );
@@ -130,13 +136,20 @@
   function renderPrice(variant, lang) {
     const gradesEl = document.getElementById("price-grades");
     const metaEl = document.getElementById("price-meta");
-    const emptyGrades = PT.PRICE_GRADES.map(
-      (g) =>
-        `<div class="price-grade"><span class="price-grade__label">PSA ${g}</span><span class="price-grade__value">—</span></div>`
-    ).join("");
+    const chartEl = document.getElementById("price-chart");
+    const barsEl = document.getElementById("price-chart-bars");
+
+    function paintEmpty() {
+      gradesEl.innerHTML = PT.PRICE_GRADES.map(
+        (g) =>
+          `<div class="price-grade is-disabled"><span class="price-grade__label">PSA ${g}</span><span class="price-grade__value">—</span></div>`
+      ).join("");
+      if (chartEl) chartEl.hidden = true;
+      if (barsEl) barsEl.innerHTML = "";
+    }
 
     if (!variant?.price || !PT.isLivePrice(variant.price)) {
-      gradesEl.innerHTML = emptyGrades;
+      paintEmpty();
       const why =
         variant?.price?.source === "seed" || !variant?.price
           ? PT.t("pricePendingEbay")
@@ -147,16 +160,204 @@
 
     const price = variant.price;
     const currency = price.currency || "USD";
+    const available = PT.PRICE_GRADES.filter((g) => PT.priceAmountForGrade(price, g) != null);
+    let selected =
+      renderPrice._selectedGrade && available.indexOf(renderPrice._selectedGrade) !== -1
+        ? renderPrice._selectedGrade
+        : available[0] || "10";
+    renderPrice._selectedGrade = selected;
+
+    function paintChart(grade) {
+      const stats = PT.priceRangeForGrade(price, grade);
+      if (!chartEl || !barsEl || !stats) {
+        if (chartEl) chartEl.hidden = true;
+        return;
+      }
+
+      const series = [
+        { key: "low", label: PT.t("priceChartLow"), value: stats.min },
+        { key: "avg", label: PT.t("priceChartMedian"), value: stats.avg },
+        { key: "high", label: PT.t("priceChartHigh"), value: stats.max },
+      ];
+      const values = series.map((s) => s.value);
+      const lo = Math.min.apply(null, values);
+      const hi = Math.max.apply(null, values);
+      const span = Math.max(hi - lo, hi * 0.08, 1);
+      const yMin = Math.max(0, lo - span * 0.2);
+      const yMax = hi + span * 0.18;
+
+      const W = 360;
+      const H = 168;
+      const left = 8;
+      const right = W - 8;
+      const top = 34;
+      const bottom = 118;
+      const xs = [left + 36, (left + right) / 2, right - 36];
+      const yAt = function (v) {
+        return bottom - ((v - yMin) / (yMax - yMin)) * (bottom - top);
+      };
+      const pts = series.map(function (s, i) {
+        return { x: xs[i], y: yAt(s.value), value: s.value, label: s.label, key: s.key };
+      });
+
+      const c1x = (pts[0].x + pts[1].x) / 2;
+      const c2x = (pts[1].x + pts[2].x) / 2;
+      const linePath =
+        "M " +
+        pts[0].x +
+        " " +
+        pts[0].y +
+        " C " +
+        c1x +
+        " " +
+        pts[0].y +
+        ", " +
+        c1x +
+        " " +
+        pts[1].y +
+        ", " +
+        pts[1].x +
+        " " +
+        pts[1].y +
+        " S " +
+        c2x +
+        " " +
+        pts[2].y +
+        ", " +
+        pts[2].x +
+        " " +
+        pts[2].y;
+      const areaPath =
+        linePath +
+        " L " +
+        pts[2].x +
+        " " +
+        bottom +
+        " L " +
+        pts[0].x +
+        " " +
+        bottom +
+        " Z";
+
+      const gridCount = 4;
+      let grids = "";
+      for (let i = 0; i < gridCount; i++) {
+        const gy = top + ((bottom - top) * i) / (gridCount - 1);
+        grids +=
+          '<line class="price-chart__grid" x1="' +
+          left +
+          '" y1="' +
+          gy +
+          '" x2="' +
+          right +
+          '" y2="' +
+          gy +
+          '" />';
+      }
+
+      const dots = pts
+        .map(function (p) {
+          return (
+            '<g class="price-chart__point price-chart__point--' +
+            p.key +
+            '">' +
+            '<text class="price-chart__value" x="' +
+            p.x +
+            '" y="' +
+            (p.y - 12) +
+            '">' +
+            PT.formatMoney(p.value, currency) +
+            "</text>" +
+            '<circle class="price-chart__dot-ring" cx="' +
+            p.x +
+            '" cy="' +
+            p.y +
+            '" r="7" />' +
+            '<circle class="price-chart__dot" cx="' +
+            p.x +
+            '" cy="' +
+            p.y +
+            '" r="3.5" />' +
+            '<text class="price-chart__xlabel" x="' +
+            p.x +
+            '" y="' +
+            (bottom + 22) +
+            '">' +
+            p.label +
+            "</text>" +
+            "</g>"
+          );
+        })
+        .join("");
+
+      barsEl.innerHTML =
+        '<svg class="price-chart__svg" viewBox="0 0 ' +
+        W +
+        " " +
+        H +
+        '" role="img" aria-label="' +
+        PT.t("priceChartLow") +
+        " / " +
+        PT.t("priceChartMedian") +
+        " / " +
+        PT.t("priceChartHigh") +
+        '">' +
+        "<defs>" +
+        '<linearGradient id="priceAreaFill" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0%" stop-color="#ff9a4a" stop-opacity="0.42" />' +
+        '<stop offset="100%" stop-color="#ff9a4a" stop-opacity="0" />' +
+        "</linearGradient>" +
+        "</defs>" +
+        grids +
+        '<path class="price-chart__area" d="' +
+        areaPath +
+        '" />' +
+        '<path class="price-chart__line" d="' +
+        linePath +
+        '" />' +
+        dots +
+        "</svg>";
+      chartEl.hidden = false;
+    }
+
+    function paintMeta(grade) {
+      const stats = PT.priceRangeForGrade(price, grade);
+      const n = stats?.samples || 0;
+      const listings = String(PT.t("priceMetaListings"))
+        .replace("{grade}", grade)
+        .replace("{n}", Number(n).toLocaleString());
+      metaEl.innerHTML =
+        '<div class="price-panel__meta-line">' +
+        PT.t("priceMetaExplain") +
+        '</div><div class="price-panel__meta-line price-panel__meta-line--muted">' +
+        listings +
+        "</div>";
+    }
+
     gradesEl.innerHTML = PT.PRICE_GRADES.map((g) => {
       const amount = PT.priceAmountForGrade(price, g);
-      return `<div class="price-grade">
+      const disabled = amount == null;
+      const selectedCls = !disabled && g === selected ? " is-selected" : "";
+      const disabledCls = disabled ? " is-disabled" : "";
+      return `<button type="button" class="price-grade${selectedCls}${disabledCls}" data-grade="${g}" ${
+        disabled ? "disabled" : ""
+      } role="tab" aria-selected="${!disabled && g === selected ? "true" : "false"}">
         <span class="price-grade__label">PSA ${g}</span>
         <span class="price-grade__value">${PT.formatMoney(amount, currency)}</span>
-      </div>`;
+      </button>`;
     }).join("");
 
-    const priceWhen = price.asOf || variant.updatedAt;
-    metaEl.textContent = `eBay · ${PT.langLabel(lang)} · ${PT.formatUpdatedDisplay(priceWhen)}`;
+    gradesEl.querySelectorAll(".price-grade[data-grade]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const g = btn.getAttribute("data-grade");
+        if (!g || btn.disabled) return;
+        renderPrice._selectedGrade = g;
+        renderPrice(variant, lang);
+      });
+    });
+
+    paintChart(selected);
+    paintMeta(selected);
   }
 
   function renderEmptyState(lang) {
@@ -204,8 +405,6 @@
   }
   const popTitle = document.querySelector(".section-title");
   if (popTitle) popTitle.textContent = PT.t("popTitle");
-  const footnote = document.querySelectorAll(".footnote")[1];
-  if (footnote) footnote.textContent = PT.t("footnote");
 
   const visual = document.getElementById("detail-visual");
   const packLangs = pack?.languages?.length ? pack.languages : ["jp", "kr"];
@@ -220,12 +419,33 @@
   paintEbayLink(activeLang);
 
   const holo = PT.createHoloCardEl({
-    image: PT.cardImageForEdition(card, activeLang),
+    image: (function () {
+      const primary = PT.hasEditionImage(card, activeLang) ? card.images[activeLang] : "";
+      const fallback = PT.fallbackEditionImage(card, activeLang);
+      return primary || fallback;
+    })(),
+    fallbackImage: PT.hasEditionImage(card, activeLang)
+      ? PT.fallbackEditionImage(card, activeLang)
+      : "",
+    onFallback: function () {
+      const imageNote = document.getElementById("image-lang-note");
+      if (!imageNote) return;
+      imageNote.hidden = false;
+      imageNote.textContent = PT.t("imageFallback");
+    },
     name: displayName,
     holoStyle: card.holoStyle,
   });
   visual.appendChild(holo);
   PT.mountHoloCard(holo);
+
+  if (!PT.hasEditionImage(card, activeLang) && PT.fallbackEditionImage(card, activeLang)) {
+    const imageNote = document.getElementById("image-lang-note");
+    if (imageNote) {
+      imageNote.hidden = false;
+      imageNote.textContent = PT.t("imageFallback");
+    }
+  }
 
   document.getElementById("card-name").textContent = displayName;
   const subEl = document.getElementById("card-sub");
@@ -267,18 +487,31 @@
       btn.classList.toggle("is-active", btn.dataset.lang === lang);
     });
 
-    PT.setHoloCardImage(holo, PT.cardImageForEdition(card, lang), displayName);
-
     const imageNote = document.getElementById("image-lang-note");
+    const primaryImage = PT.hasEditionImage(card, lang) ? card.images[lang] : "";
+    const fallbackImage = PT.fallbackEditionImage(card, lang);
+    const showFallbackNote = function () {
+      if (!imageNote) return;
+      imageNote.hidden = false;
+      imageNote.textContent = PT.t("imageFallback");
+    };
+
     if (imageNote) {
-      if (PT.hasEditionImage(card, lang)) {
+      if (primaryImage) {
         imageNote.hidden = true;
         imageNote.textContent = "";
+      } else if (fallbackImage) {
+        showFallbackNote();
       } else {
-        imageNote.hidden = false;
-        imageNote.textContent = PT.t("imageFallback");
+        imageNote.hidden = true;
+        imageNote.textContent = "";
       }
     }
+
+    PT.setHoloCardImage(holo, primaryImage || fallbackImage, displayName, {
+      fallbackImage: primaryImage ? fallbackImage : "",
+      onFallback: showFallbackNote,
+    });
 
     const variant = card.variants?.[lang];
     if (!variant) {

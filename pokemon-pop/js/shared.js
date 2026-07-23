@@ -118,6 +118,17 @@ window.PopTracker = window.PopTracker || {};
     return null;
   };
 
+  PT.priceRangeForGrade = function (price, grade) {
+    if (!price || price.source === "seed") return null;
+    const avg = PT.priceAmountForGrade(price, grade);
+    if (avg == null) return null;
+    const r = (price.range && price.range[grade]) || null;
+    const min = r && r.min != null ? Number(r.min) : avg;
+    const max = r && r.max != null ? Number(r.max) : avg;
+    const samples = (price.sampleSize && price.sampleSize[grade]) || 0;
+    return { min: min, max: max, avg: avg, samples: samples };
+  };
+
   PT.isLivePrice = function (price) {
     if (!price || price.source === "seed") return false;
     return PT.PRICE_GRADES.some(function (g) {

@@ -868,6 +868,113 @@ body.nav-drawer-open {
   gap: 0.65rem;
 }
 
+.price-grade {
+  appearance: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  color: inherit;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.price-grade:not(:disabled):hover {
+  border-color: rgba(255, 168, 90, 0.55);
+  transform: translateY(-1px);
+}
+
+.price-grade.is-selected {
+  border-color: rgba(255, 168, 90, 0.85);
+  background: rgba(255, 138, 61, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(255, 168, 90, 0.25);
+}
+
+.price-grade.is-disabled,
+.price-grade:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.price-chart {
+  margin-top: 0.95rem;
+  padding: 0.55rem 0.35rem 0.35rem;
+  border-radius: 12px;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(255, 138, 61, 0.12), transparent 55%),
+    rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.price-chart__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.price-chart__grid {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  vector-effect: non-scaling-stroke;
+}
+
+.price-chart__area {
+  fill: url(#priceAreaFill);
+  opacity: 0.95;
+}
+
+.price-chart__line {
+  fill: none;
+  stroke: #ffb06a;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px rgba(255, 138, 61, 0.35));
+}
+
+.price-chart__dot-ring {
+  fill: rgba(18, 14, 12, 0.9);
+  stroke: #ffb06a;
+  stroke-width: 1.6;
+}
+
+.price-chart__dot {
+  fill: #fff4e8;
+}
+
+.price-chart__point--low .price-chart__dot-ring {
+  stroke: #8eb7ef;
+}
+
+.price-chart__point--high .price-chart__dot-ring {
+  stroke: #ff8f73;
+}
+
+.price-chart__value {
+  fill: rgba(255, 244, 232, 0.95);
+  font-size: 11px;
+  font-weight: 650;
+  text-anchor: middle;
+}
+
+.price-chart__xlabel {
+  fill: rgba(255, 255, 255, 0.62);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-anchor: middle;
+}
+
+.price-panel__meta-line + .price-panel__meta-line {
+  margin-top: 0.25rem;
+}
+
+.price-panel__meta-line--muted {
+  opacity: 0.72;
+  font-size: 0.86em;
+  line-height: 1.45;
+}
+
 @media (max-width: 800px) {
   .detail {
     grid-template-columns: 1fr;
@@ -934,40 +1041,51 @@ body.nav-drawer-open {
   }
 
   .pop-table-wrap {
-    -webkit-overflow-scrolling: touch;
     max-width: 100%;
+    overflow: hidden;
   }
 
   .pop-table {
-    min-width: 0;
     width: 100%;
-    font-size: 0.75rem;
+    min-width: 0;
+    font-size: 0.7rem;
     table-layout: fixed;
   }
 
   .pop-table th,
   .pop-table td {
-    padding: 0.55rem 0.28rem;
+    padding: 0.5rem 0.18rem;
+    word-break: normal;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pop-num--md {
+    font-size: 0.88em;
+  }
+
+  .pop-num--sm {
+    font-size: 0.76em;
+  }
+
+  .pop-num--xs {
+    font-size: 0.66em;
   }
 
   .pop-table th:first-child,
   .pop-table td:first-child {
-    width: 4.6rem;
-    padding-left: 0.55rem;
-    padding-right: 0.25rem;
+    width: 4.2rem;
+    padding-left: 0.4rem;
+    padding-right: 0.12rem;
+    font-size: 0.65rem;
+    line-height: 1.25;
   }
 
   .pop-brg-hint {
-    display: block;
-    margin-top: 0.1rem;
+    display: inline;
+    margin-top: 0;
+    margin-left: 0.05rem;
     font-size: 0.58rem;
     line-height: 1.1;
-  }
-
-  .pop-live-tag {
-    display: block;
-    width: fit-content;
-    margin: 0.2rem 0 0;
   }
 
   .footnote {
@@ -1089,7 +1207,7 @@ body.nav-drawer-open {
 }
 
 .pop-table-wrap {
-  overflow-x: auto;
+  overflow-x: visible;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
@@ -1099,7 +1217,7 @@ body.nav-drawer-open {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
-  min-width: 520px;
+  table-layout: fixed;
 }
 
 .pop-table th,
@@ -1107,6 +1225,25 @@ body.nav-drawer-open {
   padding: 0.7rem 0.85rem;
   text-align: center;
   border-bottom: 1px solid var(--line);
+}
+
+.pop-num {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.pop-num--md {
+  font-size: 0.92em;
+}
+
+.pop-num--sm {
+  font-size: 0.8em;
+  letter-spacing: -0.02em;
+}
+
+.pop-num--xs {
+  font-size: 0.7em;
+  letter-spacing: -0.03em;
 }
 
 .pop-table th:first-child,
@@ -1142,24 +1279,6 @@ body.nav-drawer-open {
   font-weight: 600;
   text-transform: none;
   letter-spacing: 0;
-}
-
-.pop-live-tag {
-  display: inline-block;
-  margin-left: 0.35rem;
-  padding: 0.05rem 0.35rem;
-  border-radius: 4px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #1a3d2a;
-  background: rgba(72, 187, 120, 0.85);
-  vertical-align: middle;
-}
-
-.pop-live-row td:first-child {
-  color: #9ae6b4;
 }
 
 .footnote {
