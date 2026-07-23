@@ -1,0 +1,242 @@
+card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,details
+001,Snivy,Master Ball Reverse Holo,101,14,14,101,130,2daa41ca2701e63aa658c07200aff596befd1e1f,Snivy Master Ball Reverse Holo 001
+001,Snivy,Reverse Holo,1,4,0,1,5,9c30666069414ffdec2338e07fb8ae82364bb016,Snivy Reverse Holo 001
+001,Snivy,Base,1,0,0,1,1,2e54707bc8c839b6877f6b62bcd40bf6df8ad33d,Snivy Base 001
+002,Servine,Master Ball Reverse Holo,78,17,5,78,101,14cd17e27a7d74503c0bafb7fe9704179bbc0193,Servine Master Ball Reverse Holo 002
+002,Servine,Reverse Holo,2,1,1,2,4,53d8bff2e8a0462cfcbdcdc0c5d2f5a3e328c9a7,Servine Reverse Holo 002
+003,Serperior EX,Base,22,8,0,22,30,ffebd89b09588883f4f82d07d7a4a58a5e45f424,Serperior EX Base 003
+004,Pansage,Master Ball Reverse Holo,52,6,1,52,59,3d529e28d6ae82e01cbc3a9638eb956320537998,Pansage Master Ball Reverse Holo 004
+005,Simisage,Master Ball Reverse Holo,84,8,2,84,94,8e5e84a57d4034eac795af5482f6ffdaf94aea59,Simisage Master Ball Reverse Holo 005
+005,Simisage,Reverse Holo,0,4,0,0,4,1da8e27d143b8ea375fd4a7261ba558135aa1d69,Simisage Reverse Holo 005
+006,Petilil,Master Ball Reverse Holo,78,10,2,78,90,85399c78da7a8b4c76c74eaeecfb0166550e1389,Petilil Master Ball Reverse Holo 006
+006,Petilil,Reverse Holo,0,1,0,0,1,5955d346dfb9aef2d9c78f0edfc319d7b9112e4f,Petilil Reverse Holo 006
+007,Lilligant,Master Ball Reverse Holo,53,7,3,53,64,0356a425dc8dd4e21493d0b4f64fc8bdd0c9f553,Lilligant Master Ball Reverse Holo 007
+007,Lilligant,Reverse Holo,1,0,0,1,1,cd75905ecb07a80d2b7edebd5bfd5891c9de0f5d,Lilligant Reverse Holo 007
+008,Maractus,Master Ball Reverse Holo,60,6,3,60,69,eb45984bc602a7071f5dac13eb4249d881c40576,Maractus Master Ball Reverse Holo 008
+009,Karrablast,Master Ball Reverse Holo,59,8,1,59,69,7564e04f0475b63117e880981fa9c9242b8bba7f,Karrablast Master Ball Reverse Holo 009
+010,Foongus,Master Ball Reverse Holo,50,7,1,50,59,36de57900842be6386aafa784a625e775edb6cb9,Foongus Master Ball Reverse Holo 010
+010,Foongus,Reverse Holo,0,1,0,0,1,7530c81c9daadd5d03e675ef7e3315a431db198c,Foongus Reverse Holo 010
+011,Amoonguss,Master Ball Reverse Holo,31,3,0,31,34,b5b6a845c81a99b5b064cb443ed9a438a957453c,Amoonguss Master Ball Reverse Holo 011
+012,Victini,Master Ball Reverse Holo,794,91,45,794,939,199b7ee16c159d198209c274896cfda28e58a1e3,Victini Master Ball Reverse Holo 012
+012,Victini,Base,40,6,1,40,47,5742bacf7616bea4e4880490fb1bf4ae8ab28732,Victini Base 012
+012,Victini,Reverse Holo,6,31,3,6,40,60e64af2c14eb473bb4b3af80fdf32d9334e75d4,Victini Reverse Holo 012
+013,Darumaka,Master Ball Reverse Holo,53,5,4,53,64,32553ded78a7211e8840b13392dd54da922f203b,Darumaka Master Ball Reverse Holo 013
+013,Darumaka,Reverse Holo,0,2,0,0,2,9e3ccd7fc221e476176485cef95fa4df22b7f800,Darumaka Reverse Holo 013
+013,Darumaka,Base,1,0,0,1,1,dec8710c672f0d300e2709d3f74c62776b77e4e2,Darumaka Base 013
+014,Darmanitan,Master Ball Reverse Holo,45,9,4,45,59,36e20492aaf008ade54c75c7b81df379346d9197,Darmanitan Master Ball Reverse Holo 014
+015,Litwick,Master Ball Reverse Holo,60,14,6,60,80,269c26681195f3a3fe85cc21ad40f110a90e0526,Litwick Master Ball Reverse Holo 015
+015,Litwick,Base,0,0,2,0,2,3e94ffada7c51a77edfd61777e9c2cf19c2015f2,Litwick Base 015
+016,Lampent,Master Ball Reverse Holo,45,10,2,45,57,b4a6802c84260336728ad82124c96dacbfac207b,Lampent Master Ball Reverse Holo 016
+016,Lampent,Base,0,1,0,0,1,1424c3b284a748b62202b9bfc9e63f5b59303f9c,Lampent Base 016
+016,Lampent,Reverse Holo,0,1,0,0,1,a7e609d26d0b21bad6f19c73f7347164aef8e2eb,Lampent Reverse Holo 016
+017,Chandelure,Master Ball Reverse Holo,48,5,5,48,58,380a12e609d852fbbb05d759e37e6648607b12fc,Chandelure Master Ball Reverse Holo 017
+017,Chandelure,Base,4,2,1,4,7,af706d34807d1fec2cd085abfa0eaffc45cab143,Chandelure Base 017
+017,Chandelure,Reverse Holo,1,1,0,1,2,238b0694adf5eb36538f76a4e31115c01a09df2b,Chandelure Reverse Holo 017
+018,Larvesta,Master Ball Reverse Holo,46,5,2,46,54,7c8aa8c692e605839498528f00f9794622df22ce,Larvesta Master Ball Reverse Holo 018
+018,Larvesta,Reverse Holo,0,2,0,0,2,476b55afa8b3c8094a6b8af955de612540f8acc0,Larvesta Reverse Holo 018
+019,Volcarona,Master Ball Reverse Holo,61,5,5,61,72,1ac5c58588e8766f054e231cd84e6c116681b372,Volcarona Master Ball Reverse Holo 019
+019,Volcarona,Base,6,0,0,6,6,44ced726e7fa943a80311a66c0e6ed97e6627252,Volcarona Base 019
+019,Volcarona,Reverse Holo,0,1,0,0,1,96062839f361156384d20480a2aa16bf0f6c6fa6,Volcarona Reverse Holo 019
+020,Panpour,Master Ball Reverse Holo,92,10,1,92,103,68158bf38c0759e3390ede123011183510470ef2,Panpour Master Ball Reverse Holo 020
+020,Panpour,Reverse Holo,2,0,0,2,2,2c13cd7884016dce9038a1a0f0ba968115652858,Panpour Reverse Holo 020
+021,Simipour,Master Ball Reverse Holo,81,24,2,81,107,dfaa17d5b74ff6585186cbf06c867107b8b01bd9,Simipour Master Ball Reverse Holo 021
+021,Simipour,Reverse Holo,1,0,0,1,1,3d574e3dcd11bd5e06b880326b5ec8bee55f5947,Simipour Reverse Holo 021
+022,Tympole,Master Ball Reverse Holo,58,13,1,58,72,27d0b18bdabe652d2eb7f9f49de0d66cbd33afff,Tympole Master Ball Reverse Holo 022
+023,Palpitoad,Master Ball Reverse Holo,39,5,3,39,47,286d08ec5c9069c26f300d4c6ae06b2dcceb541f,Palpitoad Master Ball Reverse Holo 023
+023,Palpitoad,Reverse Holo,0,1,0,0,1,51bc0ae4fe2f426a1cdd7d41ef8b39747d620517,Palpitoad Reverse Holo 023
+024,Seismitoad,Master Ball Reverse Holo,76,10,1,76,88,99d5c95dc555f582b29a33160fc78f6ca3174236,Seismitoad Master Ball Reverse Holo 024
+024,Seismitoad,Reverse Holo,2,0,0,2,3,613689191ab50f99cd0e175c62336b0046c165eb,Seismitoad Reverse Holo 024
+024,Seismitoad,Base,1,0,0,1,1,2caed2ef40a3861a611f70094048dab8416454e7,Seismitoad Base 024
+025,Tirtouga,Master Ball Reverse Holo,33,8,2,33,43,f34663f8dd9bd9c7ebe4123f7d5dd647657f6034,Tirtouga Master Ball Reverse Holo 025
+025,Tirtouga,Reverse Holo,0,1,0,0,1,c2c69e26e7cb6f54ff09dc7e5f77e2a7f227245a,Tirtouga Reverse Holo 025
+026,Carracosta,Master Ball Reverse Holo,50,12,5,50,67,eaacc861c5c48a6e52c726fa01605247e4e3daee,Carracosta Master Ball Reverse Holo 026
+026,Carracosta,Base,6,1,0,6,7,d2811bf71b69fb7ffe7f7a600bc3d51b00f6090f,Carracosta Base 026
+027,Alomomola,Master Ball Reverse Holo,76,7,2,76,86,81fa55adcded374cc7b9406d82c3075b6ddda2e7,Alomomola Master Ball Reverse Holo 027
+027,Alomomola,Reverse Holo,1,1,0,1,2,1d03469a8d98969b7443e3eaf4917c259a831463,Alomomola Reverse Holo 027
+028,Cubchoo,Master Ball Reverse Holo,68,10,3,68,82,7fd3e538103c89196348cba72b1a042302be57c8,Cubchoo Master Ball Reverse Holo 028
+028,Cubchoo,Reverse Holo,0,2,0,0,2,23353f19fe7cc287c2bf31b3d8db12f994287b4e,Cubchoo Reverse Holo 028
+029,Beartic,Master Ball Reverse Holo,62,9,6,62,78,bd13050985854ade2894a222223415deb1fb2364,Beartic Master Ball Reverse Holo 029
+029,Beartic,Base,5,0,0,5,5,7ff7947273c3123c2ccc044e927b17a263e1e2b0,Beartic Base 029
+029,Beartic,Reverse Holo,2,2,0,2,4,f85b8a71a5fd59a08ffc7e0e16699eb67c7d1a37,Beartic Reverse Holo 029
+030,Cryogonal,Master Ball Reverse Holo,40,5,4,40,49,e7453189c0f958624282b26d74977a267d7083cd,Cryogonal Master Ball Reverse Holo 030
+030,Cryogonal,Reverse Holo,1,2,0,1,3,92a4b576f20e74b4760bf33448797bed99dc059f,Cryogonal Reverse Holo 030
+031,Kyurem EX,Base,41,7,0,41,49,11ba76c009d09b8c28e3eb4dfdef2f17e2233c6c,Kyurem EX Base 031
+032,Emolga,Master Ball Reverse Holo,86,9,6,86,101,caafe05057aee8d13a1f838e8e3866de33421b9c,Emolga Master Ball Reverse Holo 032
+032,Emolga,Reverse Holo,0,5,0,0,5,eb71d626bc72a721883bc3a03e36dc4f7e523c50,Emolga Reverse Holo 032
+033,Tynamo,Master Ball Reverse Holo,31,4,2,31,38,9903fdafd9f7c395d00a3e6befe55f5dc2d19f04,Tynamo Master Ball Reverse Holo 033
+033,Tynamo,Reverse Holo,0,2,0,0,2,c0d3e31ae319d09426266fc0a01d69adfeb99e99,Tynamo Reverse Holo 033
+034,Eelektrik,Master Ball Reverse Holo,33,6,0,33,40,cfea3b7fddad3ebdd65773fff450bc918ac8519e,Eelektrik Master Ball Reverse Holo 034
+034,Eelektrik,Reverse Holo,0,2,0,0,2,24f85371ba6eed0dc631d8d3afd30a2b506a5b00,Eelektrik Reverse Holo 034
+035,Eelektross,Master Ball Reverse Holo,44,6,1,44,51,d64989d36fdfca556af3d7714585326ab47f2820,Eelektross Master Ball Reverse Holo 035
+036,Thundurus,Master Ball Reverse Holo,58,14,3,58,76,629d8db60a2f6c467c6145c2c446062c522f2737,Thundurus Master Ball Reverse Holo 036
+036,Thundurus,Base,7,3,0,7,11,38e2f2d6a08f2d1049f9e28a26eb0a5c24792843,Thundurus Base 036
+036,Thundurus,Reverse Holo,0,4,0,0,4,a442671ef1c8189620a1004dcedb7d8263cd735f,Thundurus Reverse Holo 036
+037,Zekrom EX,Base,90,8,5,90,105,d34d84c1fef04747e9fe72c518e5b6126a9f0a76,Zekrom EX Base 037
+038,Munna,Master Ball Reverse Holo,58,5,2,58,66,f55252b5f88f708fd86cb12f968476843e0b4a25,Munna Master Ball Reverse Holo 038
+038,Munna,Reverse Holo,0,2,0,0,2,22ea40f08ab39296c88774c972732f578968bfc5,Munna Reverse Holo 038
+039,Musharna,Master Ball Reverse Holo,80,11,1,80,93,1acd768b14a8c72623d97ab79da920c3db7edaf4,Musharna Master Ball Reverse Holo 039
+040,Solosis,Master Ball Reverse Holo,97,5,2,97,105,3751907e718889ff0651eb0cc7db1561a7b4bf69,Solosis Master Ball Reverse Holo 040
+041,Duosion,Master Ball Reverse Holo,44,3,4,44,51,0805c90435418902ff41c5847f42bf82f96806f5,Duosion Master Ball Reverse Holo 041
+041,Duosion,Reverse Holo,1,0,0,1,1,2fb2e3f93346d6c80a74d33e1446cee37b8261a1,Duosion Reverse Holo 041
+042,Reuniclus,Master Ball Reverse Holo,65,0,2,65,67,3f29e192c90aedb2de5129509fe260ad63ff6f73,Reuniclus Master Ball Reverse Holo 042
+043,Elgyem,Master Ball Reverse Holo,59,3,3,59,67,66d56e4ec77f134b02d8feea23f8e2e66f2cb311,Elgyem Master Ball Reverse Holo 043
+043,Elgyem,Reverse Holo,1,0,0,1,1,1e7b941a0f9adb02f3106007367c2938a805c42e,Elgyem Reverse Holo 043
+044,Beheeyem,Master Ball Reverse Holo,110,13,4,110,127,536fbbe97b024b6382827d27434b318e188292c5,Beheeyem Master Ball Reverse Holo 044
+045,Golett,Master Ball Reverse Holo,57,7,1,57,66,dae91dd14b6d73cffa581988e921abe01102b370,Golett Master Ball Reverse Holo 045
+045,Golett,Reverse Holo,0,1,0,0,1,c8676a3c0c2ac226573f18dbd96df99452f08d15,Golett Reverse Holo 045
+046,Golurk,Master Ball Reverse Holo,54,1,1,54,56,975854cabd817c1d9e43f52eec605633cfc47e9b,Golurk Master Ball Reverse Holo 046
+047,Meloetta EX,Base,16,7,0,16,23,d23d88797a1064733532344722c658ef982021e7,Meloetta EX Base 047
+048,Drilbur,Master Ball Reverse Holo,47,4,3,47,54,81135370019b52ac8db092e73bf0a11269454628,Drilbur Master Ball Reverse Holo 048
+048,Drilbur,Reverse Holo,0,1,0,0,1,e5abafa8aea138e666ccc9c1f1d954e4bae3890e,Drilbur Reverse Holo 048
+049,Excadrill EX,Base,14,3,0,14,17,533349e981a175c25d7c2ced95370cfbed8ddf65,Excadrill EX Base 049
+050,Timburr,Master Ball Reverse Holo,80,7,1,80,91,1ca27c0b7d0fa8c47ff7a19ea1d3e029ccba7eff,Timburr Master Ball Reverse Holo 050
+051,Gurdurr,Master Ball Reverse Holo,83,9,1,83,93,a1f75be1a0d649d274243c3710463023162202ff,Gurdurr Master Ball Reverse Holo 051
+051,Gurdurr,Reverse Holo,1,0,0,1,1,7e2a453d5530eb93a531ac48345bbbb99ee9051d,Gurdurr Reverse Holo 051
+052,Conkeldurr,Master Ball Reverse Holo,53,5,3,53,61,7f4d9dd6297437d92805705292f9611f0210d40e,Conkeldurr Master Ball Reverse Holo 052
+052,Conkeldurr,Base,3,0,0,3,3,8fcee868763a6da064d365f5c0e03f5424cec224,Conkeldurr Base 052
+052,Conkeldurr,Reverse Holo,0,1,0,0,1,cd0f10211712ad27b03078f3fc84813c252a6a87,Conkeldurr Reverse Holo 052
+053,Throh,Master Ball Reverse Holo,58,7,1,58,66,d4ec7f1e8b12f9b995ccf78f9a248787e2903255,Throh Master Ball Reverse Holo 053
+053,Throh,Reverse Holo,1,1,1,1,3,50b9b807123d204d43db60aa2d3d4d8e3bcaf462,Throh Reverse Holo 053
+053,Throh,Base,1,0,0,1,1,19dc645a8da7d3fe680bf717d39b1be4ba19f6e8,Throh Base 053
+054,Dwebble,Master Ball Reverse Holo,64,4,0,64,68,e6075c50bcded1e3490d64668a0d94bc575f878f,Dwebble Master Ball Reverse Holo 054
+055,Crustle,Master Ball Reverse Holo,32,3,2,32,37,18782079b2806b8a7a2c3b9e92d2f5f6e8b97ac6,Crustle Master Ball Reverse Holo 055
+055,Crustle,Reverse Holo,0,1,0,0,1,151c368ecb47d1ae029e1c04dba778ecfed15976,Crustle Reverse Holo 055
+056,Landorus,Master Ball Reverse Holo,102,6,1,102,109,3eb3b7091b64e66daff96f98a1c903f06e086fbc,Landorus Master Ball Reverse Holo 056
+056,Landorus,Base,10,0,0,10,10,78f9d362668c9a59473b8bebfe35142d0b56eee3,Landorus Base 056
+056,Landorus,Reverse Holo,0,2,0,0,2,4106edcefc29ae8b7a141ce31e4cb2a9c18d2f4d,Landorus Reverse Holo 056
+057,Venipede,Master Ball Reverse Holo,72,10,3,72,87,c35c188af112abbb7d9045e9d00aa878efae2ba5,Venipede Master Ball Reverse Holo 057
+057,Venipede,Reverse Holo,1,0,0,1,1,ed7a7d23e3e672b9c7e0c9eba1ddfe69ff540f0b,Venipede Reverse Holo 057
+058,Whirlipede,Master Ball Reverse Holo,38,4,2,38,44,f65af41e72e85f4fb6272a932c5dec30484a8ec8,Whirlipede Master Ball Reverse Holo 058
+059,Scolipede,Master Ball Reverse Holo,35,5,1,35,41,83e521c161bc05e7277afdc2bb5cadc0a7f48a81,Scolipede Master Ball Reverse Holo 059
+059,Scolipede,Reverse Holo,0,2,0,0,2,c4d8f0f8740d02094bf0ea7f8fe99836fdf68eab,Scolipede Reverse Holo 059
+060,Sandile,Master Ball Reverse Holo,55,8,1,55,64,ac5462f0ba546a7ea2dc70d484baa5af1d90d9a5,Sandile Master Ball Reverse Holo 060
+060,Sandile,Base,1,0,0,1,1,294fe2b7de6078a1f08e744ede0c9a6ef5f45301,Sandile Base 060
+061,Krokorok,Master Ball Reverse Holo,57,8,2,57,67,696b42334841e22ef3bedc16c9ee7fd86dd16675,Krokorok Master Ball Reverse Holo 061
+061,Krokorok,Reverse Holo,1,1,0,1,2,fa60a8506faa7e77f5abb375bf5c6dd0349b5ee4,Krokorok Reverse Holo 061
+062,Krookodile,Master Ball Reverse Holo,49,6,2,49,57,4d792660d1a40ba53e511131f013595b3ce93612,Krookodile Master Ball Reverse Holo 062
+062,Krookodile,Base,1,0,0,1,1,1e0986b04c198063ceabc6c988a28c590c7e048e,Krookodile Base 062
+063,Vullaby,Master Ball Reverse Holo,63,10,0,63,74,cee4b0900337ed613a05a2895215826620ca69ef,Vullaby Master Ball Reverse Holo 063
+063,Vullaby,Reverse Holo,1,0,0,1,1,15286b9ab48e7c847fe99488397c6beba7f95ae0,Vullaby Reverse Holo 063
+064,Mandibuzz,Master Ball Reverse Holo,43,5,2,43,50,7b70b6d18c43a62592fb309dc669052bd92503d0,Mandibuzz Master Ball Reverse Holo 064
+064,Mandibuzz,Reverse Holo,0,1,0,0,1,ae11b3618bb785588c4921158ded90d43c1d6ef7,Mandibuzz Reverse Holo 064
+065,Escavalier,Master Ball Reverse Holo,33,9,0,33,42,c38e2e171954f3b0a0ec82760fdb30bb87744a29,Escavalier Master Ball Reverse Holo 065
+065,Escavalier,Reverse Holo,1,0,0,1,1,99fe6a005ec8f87e91da0bd9640e3afe6c51e8bf,Escavalier Reverse Holo 065
+066,Pawniard,Master Ball Reverse Holo,57,7,1,57,67,c2407822e0a08d5a0b3b575d235d8339ba351e42,Pawniard Master Ball Reverse Holo 066
+067,Bisharp,Master Ball Reverse Holo,74,12,2,74,89,1670c80b0ac7a0222f5cc65d5f92fa24bff892d6,Bisharp Master Ball Reverse Holo 067
+067,Bisharp,Reverse Holo,0,1,0,0,1,d9b5eb0a718607403744227a8c025b4f017bc0d6,Bisharp Reverse Holo 067
+068,Cobalion,Master Ball Reverse Holo,45,15,2,45,63,102224608b23d8eee1c13a5bccc5d2b8ba2cb545,Cobalion Master Ball Reverse Holo 068
+068,Cobalion,Base,5,0,0,5,5,604cdcaa621d282c877d10d77d056133e0311933,Cobalion Base 068
+068,Cobalion,Reverse Holo,1,3,1,1,5,710325c8a669b6ab02252751a8d21f62aeb02ced,Cobalion Reverse Holo 068
+069,Genesect EX,Base,31,5,2,31,38,f20f597adda06a25b3a4e3b5e2b3adee9ad2c4b7,Genesect EX Base 069
+070,Axew,Master Ball Reverse Holo,64,5,3,64,72,c02b54566b579c2e76d5e50f97696f50a906e797,Axew Master Ball Reverse Holo 070
+071,Fraxure,Master Ball Reverse Holo,68,16,19,68,105,75ed6e0ca7625b294a3ebf26644ff5f20e339ca4,Fraxure Master Ball Reverse Holo 071
+071,Fraxure,Reverse Holo,2,1,0,2,3,1c3b416e7e1252f669ef903e95d9c0c8c1e7bc32,Fraxure Reverse Holo 071
+072,Haxorus,Master Ball Reverse Holo,53,11,3,53,67,e3a1dbc4adc04153e72ca846b069b31aa5035c4f,Haxorus Master Ball Reverse Holo 072
+072,Haxorus,Base,6,0,0,6,6,6434aba966cabc6deaa4dc978fb538e03138b44c,Haxorus Base 072
+072,Haxorus,Reverse Holo,0,3,0,0,3,5d51aaf10725a4906f74ab425010e4e49eb81ae7,Haxorus Reverse Holo 072
+073,Pidove,Master Ball Reverse Holo,74,5,2,74,81,1257ea4fb7bb6f4d372ae9f6e61adfefb65822bc,Pidove Master Ball Reverse Holo 073
+073,Pidove,Base,0,0,1,0,1,3ba73b0cb529805e66aeb05c35cccef8d5e36049,Pidove Base 073
+074,Tranquill,Master Ball Reverse Holo,81,10,3,81,94,dfcb982a22578904c62223dcd0951accbfba86e8,Tranquill Master Ball Reverse Holo 074
+075,Unfezant,Master Ball Reverse Holo,54,10,3,54,67,c5e11985e97414a50a2865dc1eee23e37516ee36,Unfezant Master Ball Reverse Holo 075
+076,Audino,Master Ball Reverse Holo,32,6,3,32,41,3f67f3aad1004a1214efe3c1c5b8aae7f8114958,Audino Master Ball Reverse Holo 076
+076,Audino,Reverse Holo,2,0,0,2,2,f0391513630f0a70efe104879a1358937b5abee8,Audino Reverse Holo 076
+077,Minccino,Master Ball Reverse Holo,80,13,8,80,102,56afacff88f449c9185b02060918f63bce74223d,Minccino Master Ball Reverse Holo 077
+078,Cinccino,Master Ball Reverse Holo,75,15,3,75,93,dbb3aed1d8c01a1a152151c7032423878e1fb762,Cinccino Master Ball Reverse Holo 078
+078,Cinccino,Reverse Holo,0,3,0,0,3,a2f4b930a188114a98d3a2f0c44ee4995d122425,Cinccino Reverse Holo 078
+079,Energy Coin,Reverse Holo,0,1,0,0,1,c903de061f6e3bbddcb2ea630ed882ed2c4d547f,Energy Coin Reverse Holo 079
+080,Antique Cover Fossil,Reverse Holo,1,0,0,1,1,538f9ba2a8cc0c7ec63b0fbeb1a48edf8171ae84,Antique Cover Fossil Reverse Holo 080
+082,Air Balloon,Base,1,0,0,1,1,02dee9387810fe4e85703672362af78a613d4788,Air Balloon Base 082
+082,Air Balloon,Reverse Holo,0,1,0,0,1,47b7410e5dd6acaae7cb67fedaa28e9da08963dc,Air Balloon Reverse Holo 082
+083,N's Plot,Reverse Holo,2,7,0,2,9,4f98fec48b4e0388f452f178a1b6dddd2c96ff04,N's Plot Reverse Holo 083
+083,N's Plot,Base,1,1,0,1,2,3610146bfb7960f8942edb448ea1e22e3dd3d26d,N's Plot Base 083
+085,Fennel,Reverse Holo,0,1,0,0,1,26ceea54252b516a1134f038039079b6cb834b5e,Fennel Reverse Holo 085
+086,Prism Energy,Reverse Holo,1,0,0,1,1,37271f40fbef7e0fc9aa00d970eff31018ea9d0b,Prism Energy Reverse Holo 086
+087,Snivy,Art Rare,1246,81,31,1246,1369,01213f608545b0b52c726f47ffaee80dca01e757,Snivy Art Rare 087
+088,Servine,Art Rare,693,39,13,693,751,198a5d374addc57c01b2c2e27b2732df96466c4a,Servine Art Rare 088
+089,Pansage,Art Rare,467,41,6,467,526,09914f4ab11501bc589b9013b68b01961b0333ec,Pansage Art Rare 089
+090,Simisage,Art Rare,497,35,16,497,552,86a507d0d47e3bf663305d23c4e56e86d57030a8,Simisage Art Rare 090
+091,Petilil,Art Rare,252,24,4,252,282,4cbce0bd0cffd56e24a0097753cf33950a8051fb,Petilil Art Rare 091
+092,Lilligant,Art Rare,306,59,10,306,378,1f9672f0a3d5732cce42d90d29371028dd33e82e,Lilligant Art Rare 092
+093,Maractus,Art Rare,344,39,12,344,401,b0078007ff9c70099bd8ca08c967a664a08ce7a5,Maractus Art Rare 093
+094,Karrablast,Art Rare,588,38,11,588,645,381f37bdc74334de35bf5965c87f8610bb085ae7,Karrablast Art Rare 094
+095,Foongus,Art Rare,362,33,14,362,413,cb683dc6d3f36562d42c21e732cda3fae3ad167f,Foongus Art Rare 095
+096,Amoonguss,Art Rare,369,38,5,369,416,1e15e7866e877b23325e335468c97a62b5b887c5,Amoonguss Art Rare 096
+097,Victini,Art Rare,3670,530,132,3670,4393,7bb2de47c2572ab6752443f3a776ed0791ae719a,Victini Art Rare 097
+098,Darumaka,Art Rare,387,36,11,387,437,4323b6cbd77f5215704763538ca3548d3bab8e63,Darumaka Art Rare 098
+099,Darmanitan,Art Rare,536,36,10,536,582,50dc52bac14be1b130e79776e52d8615c526e2bb,Darmanitan Art Rare 099
+100,Litwick,Art Rare,368,47,9,368,425,6620af38c034fe797dac31f92237383a1db0ff7a,Litwick Art Rare 100
+101,Lampent,Art Rare,443,25,15,443,491,f1cdd49754efabc91a9c61e9b018248ee0dfee41,Lampent Art Rare 101
+102,Chandelure,Art Rare,714,38,9,714,770,5106613c0367deb07773517253f561c44fa67503,Chandelure Art Rare 102
+103,Larvesta,Art Rare,421,32,8,421,465,1f7677a315ab373392d17ef349502e9c790fdf5a,Larvesta Art Rare 103
+104,Volcarona,Art Rare,752,47,16,752,826,dd2964345270227f71246bc76427131742cc5911,Volcarona Art Rare 104
+105,Panpour,Art Rare,444,44,11,444,503,b94b9c38eda9771e6281fc11dcbfccf385e0c65e,Panpour Art Rare 105
+106,Simipour,Art Rare,351,50,9,351,415,74333e4ceb70b14a7fed36f4218020502c979a73,Simipour Art Rare 106
+107,Tympole,Art Rare,438,29,13,438,485,8225ca961abc6b7f8b68d275241d6573a2f329e9,Tympole Art Rare 107
+108,Palpitoad,Art Rare,407,39,10,407,463,44a5335d999efff23944830da1d8c4db4b08bdc6,Palpitoad Art Rare 108
+109,Seismitoad,Art Rare,9365,936,211,9365,10653,a18c15bfb7deae2dcac55badf5f46991a1400e4d,Seismitoad Art Rare 109
+110,Tirtouga,Art Rare,340,47,14,340,410,69cc9beb4135214470a1aabfe5b290ced3c25ad4,Tirtouga Art Rare 110
+111,Carracosta,Art Rare,315,24,9,315,352,c9f4621d2cb377d5fb3fce2209511731a6f9b497,Carracosta Art Rare 111
+112,Alomomola,Art Rare,375,36,12,375,428,50dc7461e1e8474a5879d0e1b47a8de952e28bdb,Alomomola Art Rare 112
+113,Cubchoo,Art Rare,290,75,17,290,389,c51c3569f6dd5a3677b812a729803a4cf34e5014,Cubchoo Art Rare 113
+114,Beartic,Art Rare,384,50,7,384,446,ed2c942b5ed7d2b77ca1995db2a5331f5b1c1ffe,Beartic Art Rare 114
+115,Cryogonal,Art Rare,298,46,8,298,356,e7ff201e330cd1b732d540c3040cc587c1c21990,Cryogonal Art Rare 115
+116,Emolga,Art Rare,496,60,14,496,579,e50762ac33afce480f75e0a549759a3aaaa60ca0,Emolga Art Rare 116
+117,Tynamo,Art Rare,265,41,20,265,330,41e26cad9c03d482893c1cc25df9377e2b384ee1,Tynamo Art Rare 117
+118,Eelektrik,Art Rare,372,28,6,372,417,3f7cc21cc7bd2a9bbc8cf093293fded5233f2f9b,Eelektrik Art Rare 118
+119,Eelektross,Art Rare,417,69,15,417,506,82b3fffe62ad0a2a56ea11f632716dd9710cbae8,Eelektross Art Rare 119
+120,Thundurus,Art Rare,1017,56,20,1017,1105,30e2ddd8d4fd3ba1ad2199bf019bf7b40480cf11,Thundurus Art Rare 120
+121,Munna,Art Rare,362,48,8,362,421,9c0cb36ebf9e817937c2fb375c9e55a3073f3af3,Munna Art Rare 121
+122,Musharna,Art Rare,387,25,14,387,431,3f03867ac3f1dcc8c2df387ed93f92084cc03423,Musharna Art Rare 122
+123,Solosis,Art Rare,1263,295,49,1263,1636,d0a514e1f2bfc091bfce5d9756db6ed4ba54b36c,Solosis Art Rare 123
+124,Duosion,Art Rare,323,29,11,323,369,78a7f9ab924c5207c96f53e3389b02a66606f63f,Duosion Art Rare 124
+125,Reuniclus,Art Rare,168,48,13,168,231,6689de105dde42d0365a23327a747aae5ebb55dd,Reuniclus Art Rare 125
+126,Elgyem,Art Rare,344,25,5,344,377,9eba4f5320c4361ccf321208cf7ffa327f4bbebc,Elgyem Art Rare 126
+127,Beheeyem,Art Rare,487,20,8,487,520,7cb0999dd87ee8a04bf284717fa3aa716c46e5e2,Beheeyem Art Rare 127
+128,Golett,Art Rare,344,41,12,344,404,c4470e990c55bdfb5212e67896d595f1aaf55a3e,Golett Art Rare 128
+129,Golurk,Art Rare,259,48,9,259,320,4a3c9490661005d672bce961153f9c35c62c20d7,Golurk Art Rare 129
+130,Drilbur,Art Rare,674,60,20,674,766,98f79b15dc007f635acd0567f67e66c185ba2fd0,Drilbur Art Rare 130
+131,Timburr,Art Rare,578,38,14,578,637,e8cc30db05e82ca3d820f145c683ea32a895cc7b,Timburr Art Rare 131
+132,Gurdurr,Art Rare,480,21,6,480,513,188f26f577879293395d28c08d7f78366e3cefe7,Gurdurr Art Rare 132
+133,Conkeldurr,Art Rare,514,22,9,514,550,dae66bcf86a83172f198f56ed1990e1cc9ee2c75,Conkeldurr Art Rare 133
+134,Throh,Art Rare,414,52,12,414,484,c8fb17bd70f2b55318a665f740e0b7f8f263d6e0,Throh Art Rare 134
+135,Dwebble,Art Rare,319,53,16,319,393,333d504d41b6e9629344f9ef3593b42ab8b4e307,Dwebble Art Rare 135
+136,Crustle,Art Rare,429,39,3,429,482,acbf5ff5d3e3b3feee6d468a6f5499501fc9b10c,Crustle Art Rare 136
+137,Landorus,Art Rare,949,65,19,949,1048,ebaa702fddfcc1cad6a0dacef809d0e13322bff5,Landorus Art Rare 137
+138,Venipede,Art Rare,396,34,9,396,442,c32170de602a355d307a096cd1e30890a0c5f71d,Venipede Art Rare 138
+139,Whirlipede,Art Rare,402,36,15,402,457,a4fea3f24e564d811339295e3410123a11acdc4f,Whirlipede Art Rare 139
+140,Scolipede,Art Rare,425,39,13,425,487,1a8cd6131a661ceb3fd3af37d1871af39bc8dd46,Scolipede Art Rare 140
+141,Sandile,Art Rare,333,53,8,333,397,a8455e0a6715f7431ebf8064a4e02f4fc63f0bde,Sandile Art Rare 141
+142,Krokorok,Art Rare,303,53,12,303,371,114df566d09c25e50869981e17d352615eb1da85,Krokorok Art Rare 142
+143,Krookodile,Art Rare,448,72,12,448,534,fbbd79c26d348d88f7d49172e33f39102fca92b3,Krookodile Art Rare 143
+144,Vullaby,Art Rare,394,50,7,394,454,a36691104b2e1c1773dd10928dacc0bd9eb567a2,Vullaby Art Rare 144
+145,Mandibuzz,Art Rare,398,44,18,398,466,e2967440a831669b1ec0a2600e77299d3a097050,Mandibuzz Art Rare 145
+146,Escavalier,Art Rare,515,27,13,515,560,816cd19dc20ee7c295dffa36e93c86b647b4c3e5,Escavalier Art Rare 146
+147,Pawniard,Art Rare,415,30,11,415,457,6f26b1f4febf02bff9bda87745525f9d637f12d7,Pawniard Art Rare 147
+148,Bisharp,Art Rare,468,43,12,468,529,2d016a6cc15a3d9557ce3c1a091b7229af39bcc7,Bisharp Art Rare 148
+149,Cobalion,Art Rare,514,38,14,514,571,b74f6704e331a10356e770b16d141ea79e7ed4ba,Cobalion Art Rare 149
+150,Axew,Art Rare,384,80,14,384,482,ceac7803a498f08a06e603f37cfcd16dbc807641,Axew Art Rare 150
+151,Fraxure,Art Rare,374,45,13,374,434,7142ac71f8d05e9b305a6fbfdcd564ac5749d233,Fraxure Art Rare 151
+152,Haxorus,Art Rare,831,73,19,831,937,b0cbf23ae4b60326c601ecdd2d52863d81d4d244,Haxorus Art Rare 152
+153,Pidove,Art Rare,389,33,9,389,433,be43911f6928c66f20148a0f9b3711645df9ef73,Pidove Art Rare 153
+154,Tranquill,Art Rare,470,33,10,470,519,3c8c9b71f39f1a6487e6791c1d4809ea098bfac2,Tranquill Art Rare 154
+155,Unfezant,Art Rare,350,44,9,350,407,fd723f1f51268e22f571f6c35869a164a24fa735,Unfezant Art Rare 155
+156,Audino,Art Rare,297,53,11,297,368,8da511674fae8a804458d3920195c298739c230b,Audino Art Rare 156
+157,Minccino,Art Rare,462,47,7,462,519,f308d7a9215f965ce50489823c55dff417a31520,Minccino Art Rare 157
+158,Cinccino,Art Rare,320,62,7,320,394,f94c941efe926ecc5e9bf07dfc0c2e1f4e7186a6,Cinccino Art Rare 158
+159,Serperior EX,Super Rare,465,22,2,465,492,1545e0bdb769a6b673b2ae0ef4165bbfedbcde7c,Serperior EX Super Rare 159
+160,Kyurem EX,Super Rare,533,24,9,533,568,8df7681e285a00ebed3ff322f94185feea27c95b,Kyurem EX Super Rare 160
+161,Zekrom EX,Super Rare,1849,123,19,1849,2000,01f37b83948e5a86c7bde9dfd81e6413ed2e34f3,Zekrom EX Super Rare 161
+162,Meloetta EX,Super Rare,485,60,8,485,555,ad543b510f2be6b5432cc76ed0db5c283c231336,Meloetta EX Super Rare 162
+163,Excadrill EX,Super Rare,477,34,2,477,515,7bc48a3f69414a385153f5d87627dfd5222c2c64,Excadrill EX Super Rare 163
+164,Genesect EX,Super Rare,535,31,3,535,574,fccb25f33084ee0d8a7a57da8106c3dd7b705b4a,Genesect EX Super Rare 164
+165,N's Plot,Super Rare,596,516,62,596,1189,6f1cefd7a77ddb752cf0755de5ab989c5ce3a94e,N's Plot Super Rare 165
+165,N's Plot,Super Rare-Missing Texture,0,1,0,0,1,5736942309219fe0598fe5aca260d2cda3e89e05,N's Plot Super Rare-Missing Texture 165
+166,Fennel,Super Rare,254,119,11,254,386,1377cd54f3f49a6209648e095f0cf4bbba6ec077,Fennel Super Rare 166
+167,Serperior EX,Special Art Rare,1884,155,27,1884,2082,52b12ab4a5ad64d424189fa36ae369f7fe470af1,Serperior EX Special Art Rare 167
+168,Kyurem EX,Special Art Rare,3382,219,47,3382,3668,f6afb16b9161f6537a8ee0f507001f10e9a145e8,Kyurem EX Special Art Rare 168
+169,Zekrom EX,Special Art Rare,12423,941,196,12423,13680,442314d2a6b9e0fda8cf5bc7ac35fec5eb728840,Zekrom EX Special Art Rare 169
+170,Meloetta EX,Special Art Rare,2203,156,28,2203,2414,9714fac9d9e4a5574a2bb155414fa8eaa0e439f3,Meloetta EX Special Art Rare 170
+171,Excadrill EX,Special Art Rare,556,64,5,556,629,e319bb244728040e693a82dce87438ccdccd99d9,Excadrill EX Special Art Rare 171
+172,Genesect EX,Special Art Rare,1304,106,18,1304,1441,c0be6fdcd3d67a48b3dde6f65f891d87a53082b9,Genesect EX Special Art Rare 172
+173,N's Plot,Special Art Rare,2803,3186,569,2803,6628,a3bafc97841071148f18fa7bdfb38bdc7c11d229,N's Plot Special Art Rare 173
+174,Zekrom EX,BW Rare,12762,2442,399,12762,15929,3ea3d2262b725665750b78a30ff74dc3d748d552,Zekrom EX BW Rare 174

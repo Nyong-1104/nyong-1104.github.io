@@ -95,7 +95,31 @@ def parse_row_data(raw: Any) -> list[dict[str, Any]]:
     return [r for r in raw if isinstance(r, dict)]
 
 
-def fetch_row_data_with_playwright(url: str, *, timeout_ms: int = 90_000) -> list[dict[str, Any]]:
+def _page_debug_snapshot(page: Any) -> str:
+    try:
+        title = page.title()
+        href = page.url
+        body = (page.inner_text("body") or "").strip().replace("\n", " ")[:240]
+        rd_type = page.evaluate(
+            """() => {
+              const rd = window.RowData;
+              if (rd == null) return 'null';
+              if (typeof rd === 'string') return 'string:' + rd.length;
+              if (Array.isArray(rd)) return 'array:' + rd.length;
+              return typeof rd;
+            }"""
+        )
+        return f"title={title!r} url={href!r} RowData={rd_type} body={body!r}"
+    except Exception as e:  # noqa: BLE001
+        return f"debug-failed: {e}"
+
+
+def fetch_row_data_with_playwright(
+    url: str,
+    *,
+    timeout_ms: int = 180_000,
+    retries: int = 2,
+) -> list[dict[str, Any]]:
     try:
         from playwright.sync_api import sync_playwright
     except ImportError as e:
@@ -105,32 +129,66 @@ def fetch_row_data_with_playwright(url: str, *, timeout_ms: int = 90_000) -> lis
             "  python -m playwright install chromium"
         ) from e
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context(
-            viewport={"width": 1400, "height": 900},
-            user_agent=(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
-            ),
-            locale="en-US",
-        )
-        page = context.new_page()
-        page.goto(url, wait_until="domcontentloaded", timeout=timeout_ms)
-        page.wait_for_function(
-            """() => {
-              const rd = window.RowData;
-              if (rd == null) return false;
-              if (typeof rd === 'string') {
-                try { return JSON.parse(rd).length > 0; } catch (e) { return false; }
-              }
-              return Array.isArray(rd) && rd.length > 0;
-            }""",
-            timeout=timeout_ms,
-        )
-        raw = page.evaluate("() => window.RowData")
-        browser.close()
-    return parse_row_data(raw)
+    last_err: Exception | None = None
+    for attempt in range(1, max(1, retries) + 1):
+        with sync_playwright() as p:
+            # Prefer full Chromium over headless_shell — Cloudflare is less twitchy.
+            browser = p.chromium.launch(
+                headless=True,
+                args=[
+                    "--disable-blink-features=AutomationControlled",
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage",
+                ],
+            )
+            context = browser.new_context(
+                viewport={"width": 1400, "height": 900},
+                user_agent=(
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                    "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+                ),
+                locale="en-US",
+                java_script_enabled=True,
+            )
+            page = context.new_page()
+            try:
+                page.add_init_script(
+                    "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});"
+                )
+                page.goto(url, wait_until="domcontentloaded", timeout=timeout_ms)
+                # Give Cloudflare / SPA a moment before polling RowData.
+                page.wait_for_timeout(3_000)
+                try:
+                    page.wait_for_load_state("networkidle", timeout=min(30_000, timeout_ms))
+                except Exception:  # noqa: BLE001
+                    pass
+                page.wait_for_function(
+                    """() => {
+                      const rd = window.RowData;
+                      if (rd == null) return false;
+                      if (typeof rd === 'string') {
+                        try { return JSON.parse(rd).length > 0; } catch (e) { return false; }
+                      }
+                      return Array.isArray(rd) && rd.length > 0;
+                    }""",
+                    timeout=timeout_ms,
+                )
+                raw = page.evaluate("() => window.RowData")
+                browser.close()
+                return parse_row_data(raw)
+            except Exception as e:  # noqa: BLE001
+                snap = _page_debug_snapshot(page)
+                browser.close()
+                last_err = RuntimeError(f"{e} | {snap}")
+                print(
+                    f"[gemrate] attempt {attempt}/{retries} failed: {last_err}",
+                    flush=True,
+                )
+                if attempt < retries:
+                    time.sleep(5 * attempt)
+                    continue
+    assert last_err is not None
+    raise last_err
 
 
 def write_dump(
@@ -179,6 +237,18 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=float,
         default=60.0,
         help="Seconds between set page fetches (default 60 — slower looks less bot-like)",
+    )
+    p.add_argument(
+        "--timeout-ms",
+        type=int,
+        default=180_000,
+        help="Playwright timeout per page (default 180000)",
+    )
+    p.add_argument(
+        "--retries",
+        type=int,
+        default=2,
+        help="Fetch retries per set page (default 2)",
     )
     p.add_argument("--fetch-only", action="store_true", help="Save dumps/CSV only, do not apply")
     p.add_argument("--apply-only", action="store_true", help="Skip fetch; apply existing dumps")
@@ -236,7 +306,11 @@ def main(argv: list[str] | None = None) -> int:
                 url = build_url(meta)
                 try:
                     print(f"[gemrate] fetch {pack_id}/{lang} …", flush=True)
-                    rows = fetch_row_data_with_playwright(url)
+                    rows = fetch_row_data_with_playwright(
+                        url,
+                        timeout_ms=args.timeout_ms,
+                        retries=args.retries,
+                    )
                     if not rows:
                         raise RuntimeError("empty RowData")
                     json_path = write_dump(pack_id, lang, meta, rows, fetched_at)

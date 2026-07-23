@@ -1,0 +1,61 @@
+card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,details
+001,Tangela,Base,0,1,0,0,1,5c3e9093288ad8d823b954dc15c2cc83e772cc2d,Tangela Base 001
+002,Tangrowth,Base,1,1,0,1,2,f2e8a06493ebf6241fdc539c681929fff8add9b5,Tangrowth Base 002
+004,Bayleef,Base,0,1,0,0,1,1151120accf0a9ec40803736e5246ce6735a83d7,Bayleef Base 004
+005,Meganium,Base,1,0,0,1,1,a23bc4a8ba9a621e69eec7c52b58635d5000992d,Meganium Base 005
+006,Shuckle,Base,4,1,0,4,5,8a67952af547a7a9a1b430feaf2a771a56c0587e,Shuckle Base 006
+007,Nincada,Base,0,1,0,0,1,dbd3f7ff1b52b5d9901eedf43c9182c067fb038b,Nincada Base 007
+012,Sizzlipede,Base,1,0,0,1,1,bd1359763b4692bd0c0fec2bf5abf762f57d8f8b,Sizzlipede Base 012
+016,Kyogre,Base,27,3,1,27,31,7464715790978919e304e2f22d29f846b5f1cde4,Kyogre Base 016
+017,Snover,Base,0,1,0,0,1,f26b09b307fe797cc627f77ccb5aac71ebc5ebd3,Snover Base 017
+018,Mega Abomasnow EX,Base,120,11,7,120,144,e3e3d0f8270005b82b4a12155ddf4ff847ecbae3,Mega Abomasnow EX Base 018
+019,Clauncher,Base,1,0,0,1,1,d40f4e6ccbe5f4468936de8e90f60a4d06de1077,Clauncher Base 019
+020,Clawitzer,Base,2,0,0,2,2,923c3a6add368c6d9e7f3dbda31aea05b309d1ae,Clawitzer Base 020
+021,Sobble,Base,1,0,0,1,1,21b1abd1b2a3a218244eb773d5d6798be2f9e16e,Sobble Base 021
+024,Snom,Base,2,0,0,2,2,d5936d8cb02d341bc7170968ff42af82a8817745,Snom Base 024
+029,Magnezone,Base,1,0,0,1,1,f34366153d9997c69030a6607359b0862e92a57f,Magnezone Base 029
+030,Raikou,Base,6,1,0,6,7,607c33fb73d768f9fd289198412229a3840462d3,Raikou Base 030
+032,Mega Manectric EX,Base,103,26,4,103,140,a99723bd3c98b75426c0a789d1b7ef2950e4bf74,Mega Manectric EX Base 032
+033,Pachirisu,Base,0,0,0,0,1,1c40d7ae3e88072d4bc3779f071ed0b6e19ae3e6,Pachirisu Base 033
+035,Heliolisk,Base,1,0,0,1,1,7b31eff05638841bc5f74c9485d7cdbacd41acc4,Heliolisk Base 035
+036,Abra,Base,1,0,0,1,1,9c4e6217235913e1822ce787b993b93e587fa55d,Abra Base 036
+038,Alakazam,Base,36,14,1,36,52,430438c92f116010ed4b73d46f5929237ae9898b,Alakazam Base 038
+040,Ralts,Base,6,0,0,6,6,e97ffba5ae995bfddc6f41e05af202a784f1bc3c,Ralts Base 040
+041,Kirlia,Base,2,0,0,2,2,db6a7b3497a739a18273f51dae973b1a8033f97c,Kirlia Base 041
+042,Mega Gardevoir EX,Base,320,66,23,320,431,222e98f597febf06faca395956b8ffc0969666da,Mega Gardevoir EX Base 042
+046,Xerneas,Base,3,1,0,3,4,8e7c814339611a6047c16a05c21ef82d46099aed,Xerneas Base 046
+049,Mega Latias EX,Base,581,79,17,581,692,e3b4cd7f368f75f3ab88e1f0956d02c96185674a,Mega Latias EX Base 049
+050,Latios,Base,5,0,0,5,5,61ed86e4ea53eac82464d06ee2b5803c43f72f64,Latios Base 050
+051,Mega Kangaskhan EX,Base,223,43,4,223,282,b29a42b07cf80ed749117e12169746a78b6cb748,Mega Kangaskhan EX Base 051
+058,Mega Signal,Base,1,0,0,1,1,f05ff6b1733f20e8555dc31a06b77553a9283652,Mega Signal Base 058
+059,Acerola's Mischief,Base,8,7,1,8,16,a7da82ad256c384b67ab3e7cc9a64f8721cf3273,Acerola's Mischief Base 059
+060,Wally's Compassion,Base,2,3,0,2,5,6a169f7ced35b46cb93dcf16dc6155cc8a9b1def,Wally's Compassion Base 060
+064,Shuckle,Art Rare,4094,575,71,4094,4784,a0df03998e87469a3c7f199a05be9f6af81c1b4e,Shuckle Art Rare 064
+065,Ninjask,Art Rare,6259,695,114,6259,7132,7e090bbbf85a1322295bad80b34c4f7439a9d4ec,Ninjask Art Rare 065
+066,Litleo,Art Rare,5454,662,76,5454,6255,3427c6bc05d138e944379f20ac57a1ee6fbf9c81,Litleo Art Rare 066
+067,Snover,Art Rare,3899,893,115,3899,4964,a3f9af087508f6bc47d2d55fced76bf9bcacb440,Snover Art Rare 067
+068,Clawitzer,Art Rare,5783,498,100,5783,6453,b877e2725299deca1188c934e684f424246f3d63,Clawitzer Art Rare 068
+069,Inteleon,Art Rare,6398,537,97,6398,7097,63c95663440702b3db91059d61c7f72da1eb0628,Inteleon Art Rare 069
+070,Helioptile,Art Rare,5852,605,90,5852,6615,bb8116c0c281046365b2de21f7c0e7cf13133b13,Helioptile Art Rare 070
+071,Alakazam,Art Rare,7258,908,99,7258,8331,c10e0f30c93c32c5d43c8746f885a22b04c8bc62,Alakazam Art Rare 071
+072,Shedinja,Art Rare,6383,504,79,6383,7035,3086733d16b52217aaa8d3f1ed460132b264b33d,Shedinja Art Rare 072
+073,Houndstone,Art Rare,6308,490,86,6308,6950,b5573781b755c7ba07b4fb4e2063ef6c2dea9ac5,Houndstone Art Rare 073
+074,Delibird,Art Rare,5012,693,119,5012,5894,f81ba9ef2c9658e492ea478517f84f7ebc789268,Delibird Art Rare 074
+075,Stufful,Art Rare,5615,450,89,5615,6200,4a8238a8fd6e52d4862a2c629714a820c24c6207,Stufful Art Rare 075
+076,Mega Abomasnow EX,Super Rare,742,49,8,742,810,a23599c0234f77e3ce369691b194afb0c025c500,Mega Abomasnow EX Super Rare 076
+077,Mega Manectric EX,Super Rare,895,48,13,895,977,5f4de7c4f6a968d07d47b55b00b8f719e7933f04,Mega Manectric EX Super Rare 077
+078,Mega Gardevoir EX,Super Rare,2638,199,58,2638,2971,97cd50b5a327a707b6bd9a4cf8d3a940358ef59e,Mega Gardevoir EX Super Rare 078
+079,Mega Latias EX,Super Rare,2444,206,55,2444,2752,0c65d77d504b58111bb2b03d9c89cebcb9369699,Mega Latias EX Super Rare 079
+080,Mega Kangaskhan EX,Super Rare,1252,112,26,1252,1417,2f80519db327ca311500066aa1fa97519dfdf550,Mega Kangaskhan EX Super Rare 080
+081,Buddy-Buddy Poffin,Super Rare,52,22,3,52,81,db85efc36f6aed5f89f389234f1ebaa5d61e6783,Buddy-Buddy Poffin Super Rare 081
+082,Rare Candy,Super Rare,65,27,4,65,98,603fbd078faebeb45462d4debc635afa81baa5e2,Rare Candy Super Rare 082
+083,Mega Signal,Super Rare,73,45,6,73,125,19ff6289c0a7be11c5e4417c40d42dad963acb65,Mega Signal Super Rare 083
+084,Acerola's Mischief,Super Rare,5200,2500,726,5200,9080,fa3f9eca2efb799cb769f5285b27e29360ed79df,Acerola's Mischief Super Rare 084
+085,Wally's Compassion,Super Rare,134,65,16,134,230,80a54611afb0589d5788ebb119e66245a21225b8,Wally's Compassion Super Rare 085
+086,Mystery Garden,Super Rare,64,64,13,64,146,51573872dd33d375abcd3427d5a6fe74ed46b600,Mystery Garden Super Rare 086
+087,Mega Gardevoir EX,Special Art Rare,19817,1233,597,19817,22460,52fd70411a72c245a58b3022c3d7afe8baa3a1d3,Mega Gardevoir EX Special Art Rare 087
+088,Mega Latias EX,Special Art Rare,12017,874,324,12017,13572,1f9a26aa021fe966ad722ac64a08190fabd47b7d,Mega Latias EX Special Art Rare 088
+089,Mega Kangaskhan EX,Special Art Rare,6382,486,137,6382,7301,51c7bdd5e8527c431573f52ca79d48fa0a914660,Mega Kangaskhan EX Special Art Rare 089
+090,Acerola's Mischief,Special Art Rare,8447,5653,728,8447,15437,b863265cb8a371f42b57a99091577b7f4727ae5b,Acerola's Mischief Special Art Rare 090
+091,Wally's Compassion,Special Art Rare,609,471,58,609,1170,c2d5859d709f79d8c9bdacbaed583ad7fea7e6f4,Wally's Compassion Special Art Rare 091
+092,Mega Gardevoir EX,Mega Ultra Rare,2403,2405,241,2403,5158,435fbb4745efa83702a9eb60c072410acf26eb6c,Mega Gardevoir EX Mega Ultra Rare 092

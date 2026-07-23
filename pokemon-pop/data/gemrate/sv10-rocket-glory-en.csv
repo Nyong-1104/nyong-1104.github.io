@@ -1,0 +1,390 @@
+card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,details
+001,Ethan's Pinsir,Reverse Holo,1,3,0,1,4,e06f71eab7c58f4a912b09882cdfe43770e3c913,Ethan's Pinsir Reverse Holo 001
+002,Yanma,Reverse Holo,1,3,0,1,4,84a08d3ff91c05ef9438765b51657df79e44f071,Yanma Reverse Holo 002
+002,Yanma,Base,0,1,0,0,1,74733ce2f58960aa79c3adc6cec514ae00704a4c,Yanma Base 002
+003,Yanmega EX,Base,62,73,17,62,155,9f7eac9b10ccc16d31c2ec4f2578f0d4b7c8f4db,Yanmega EX Base 003
+004,Pineco,Reverse Holo,0,1,0,0,1,a32046185ce31bfc64efeb92d10ac0b65507b081,Pineco Reverse Holo 004
+004,Pineco,Base,0,1,0,0,1,eb0fe06e2ae37d907bf4c4341ee18debcc4428d5,Pineco Base 004
+005,Shroomish,Reverse Holo,0,1,0,0,1,8fd5105812eec213bc59c71eee450f59d9611dd7,Shroomish Reverse Holo 005
+007,Cynthia's Roselia,Base,0,2,2,0,5,25b72e87db1b052fb5fa335409320dc7d3047ed5,Cynthia's Roselia Base 007
+007,Cynthia's Roselia,Reverse Holo,0,0,1,0,2,3887f334ba768ec3710cc67f7ab5cf62af19f964,Cynthia's Roselia Reverse Holo 007
+008,Cynthia's Roserade,Base,2,6,6,2,15,755ac1d7c9e7b2cef1b5e5351366af57ebb4a118,Cynthia's Roserade Base 008
+008,Cynthia's Roserade,Reverse Holo,1,0,1,1,2,ede6162b71090a1284cc41651aa7d2eaebddb597,Cynthia's Roserade Reverse Holo 008
+009,Mow Rotom,Reverse Holo,1,1,1,1,3,38495e80c90486ff2263ff22aeacae3f0ec6bd6e,Mow Rotom Reverse Holo 009
+009,Mow Rotom,Base,1,0,0,1,1,0ab3b983fa6b0e141d43f40b1e376487e9141e21,Mow Rotom Base 009
+010,Shaymin,Base,0,3,2,0,6,c3218125fe4655d1fca915a41c9ca5adc31f4bab,Shaymin Base 010
+010,Shaymin,Reverse Holo,1,1,0,1,3,6936f75463483be4a023e1fcdbc353d677879d6b,Shaymin Reverse Holo 010
+011,Dwebble,Base,0,1,0,0,1,0d9fab34e5a88b4ea5ea2cf4b0ff7cd3056d0e89,Dwebble Base 011
+011,Dwebble,Reverse Holo,0,1,0,0,1,1a512e7693ee192da53cabdcacc77d43ecf3e1b0,Dwebble Reverse Holo 011
+012,Crustle,Base,1,7,2,1,10,998e2c671512d6ad5d09a2bbe82a99c441e90024,Crustle Base 012
+012,Crustle,Reverse Holo,0,0,0,0,1,71f10369081a8db18cce40240c2a27b019a7867b,Crustle Reverse Holo 012
+013,Fomantis,Reverse Holo,2,1,1,2,5,5a83e5231db63cb50876a3ca3cc35605703bc185,Fomantis Reverse Holo 013
+013,Fomantis,Base,0,0,1,0,1,949c45d035d06371b26ab7f46f5f4f89ae1e65f9,Fomantis Base 013
+014,Lurantis,Base,1,0,0,1,1,90f438f4f7f61c1c4b54cb7992cbd8b1a24ba050,Lurantis Base 014
+015,Team Rocket's Blipbug,Base,0,1,0,0,1,e757b340259be5a5a15999370d3b87d7f271fa0f,Team Rocket's Blipbug Base 015
+016,Applin,Base,1,1,0,1,2,3bc00a3f95134ff8f255b13f41d48db5c883bbe5,Applin Base 016
+016,Applin,Reverse Holo,0,0,1,0,1,a1afbbb8d1ec196e714bc0d61a815f15196c1d30,Applin Reverse Holo 016
+017,Dipplin,Reverse Holo,0,1,0,0,1,f784fe98f3a5988a4e0e5c3cdd2ef692c692cb4c,Dipplin Reverse Holo 017
+018,Hydrapple,Base,2,12,5,2,21,0acb6164b30fd3d5ef964773b74fb28b1041f0b8,Hydrapple Base 018
+018,Hydrapple,Phantasmal Flames Premium Checklane Blister,3,1,2,3,6,bc184003c7c72e63fd4ca05c49b9286f08039542,Hydrapple Phantasmal Flames Premium Checklane Blister 018
+019,Team Rocket's Tarountula,Base,1,1,2,1,4,ad00032fb2a037fc66fdc75fb70d2479636c70e5,Team Rocket's Tarountula Base 019
+019,Team Rocket's Tarountula,Reverse Holo,0,1,0,0,1,62a3bc6be0ef8299463d358ed7d20bfc73302068,Team Rocket's Tarountula Reverse Holo 019
+020,Team Rocket's Spidops,Base,4,7,4,4,16,4ecc6cf57e944100e8e6f3b8ff082c766e9314dd,Team Rocket's Spidops Base 020
+020,Team Rocket's Spidops,Reverse Holo,0,0,1,0,1,ceb31f90418eb1f053608975c19e0fb5e7e69045,Team Rocket's Spidops Reverse Holo 020
+021,Smoliv,Reverse Holo,2,2,0,2,4,63e7b690cd61dde747797501034ccfe782472e3c,Smoliv Reverse Holo 021
+021,Smoliv,Base,1,1,1,1,3,b475d2afdaeb74f1139421f63320815cce46f3cc,Smoliv Base 021
+022,Dolliv,Reverse Holo,1,1,0,1,2,a2e12ae64ddad1de4092b0a691b5af1e2e297a66,Dolliv Reverse Holo 022
+023,Arboliva EX,Base,55,63,12,55,135,276a0ac9da546a057259bfc89aa07344af215339,Arboliva EX Base 023
+024,Rellor,Base,0,1,1,0,2,89caa4c527f5305b54a56972f00568f30c2a7d01,Rellor Base 024
+025,Rabsca EX,Base,58,44,17,58,126,99874007cb630ecac9ccf5c17914d43abaad23e2,Rabsca EX Base 025
+026,Teal Mask Ogerpon,Base,0,2,0,0,3,370fcb25cfb0faced3668f4900561b330c3466c3,Teal Mask Ogerpon Base 026
+026,Teal Mask Ogerpon,Reverse Holo,0,1,1,0,2,dac700d3249a4d0147c9f0788c64f40ded2ea15a,Teal Mask Ogerpon Reverse Holo 026
+027,Growlithe,Reverse Holo,3,5,1,3,9,780e8dfeb1ccba5526624b07fd54b329d3b43751,Growlithe Reverse Holo 027
+027,Growlithe,Base,1,3,0,1,4,4d95e14168e14ab6e618f24ada15b2d161e5ccb4,Growlithe Base 027
+028,Arcanine,Reverse Holo,2,12,2,2,16,9d708fd967a9e066bf92cdcb41983b7cd1655923,Arcanine Reverse Holo 028
+028,Arcanine,Base,3,10,1,3,14,3b16ada049dac50756fc21f1b7b9671b1fc6679b,Arcanine Base 028
+029,Ponyta,Reverse Holo,2,3,0,2,5,d1f6564476548969bb52697f993070c6be100599,Ponyta Reverse Holo 029
+029,Ponyta,Base,1,1,0,1,3,19cec2bec95936bb65f32171c772e2f09db21a4a,Ponyta Base 029
+030,Rapidash,Base,1,1,1,1,3,d970d001944dca9631ca909c7878427dec7e6cbe,Rapidash Base 030
+030,Rapidash,Reverse Holo,1,1,0,1,3,c8922f49598ed9ba42b8524c8b59498f3e2ec7cb,Rapidash Reverse Holo 030
+031,Team Rocket's Moltres EX,Team Rocket's Moltres EX Ultra-Premium Collection,218,447,107,218,789,356dff4260fdfcf55c834bb1c56202e620c11b18,Team Rocket's Moltres EX Team Rocket's Moltres EX Ultra-Premium Collection 031
+031,Team Rocket's Moltres EX,Base,305,260,62,305,647,4234aae3617b9793082045ebcad25ca40df94ebe,Team Rocket's Moltres EX Base 031
+032,Ethan's Cyndaquil,Base,34,25,8,34,72,e6e15e1994c3d3c0701218ed49994be9f5e82d61,Ethan's Cyndaquil Base 032
+032,Ethan's Cyndaquil,Reverse Holo,5,12,3,5,21,8a11b0a4b3f2fb07b2513398425d3bf3123785cf,Ethan's Cyndaquil Reverse Holo 032
+033,Ethan's Quilava,Base,9,3,0,9,12,1d64c6ec64302f13738eca00d23349130938af59,Ethan's Quilava Base 033
+033,Ethan's Quilava,Reverse Holo,2,4,1,2,9,063185b5a48171cb64775a9c4939852a8253e5ea,Ethan's Quilava Reverse Holo 033
+034,Ethan's Typhlosion,Prerelease-Staff,683,430,64,683,1192,b9ab8fa2080987632acaa4661f7e2767d5066f64,Ethan's Typhlosion Prerelease-Staff 034
+034,Ethan's Typhlosion,Prerelease,229,368,418,229,1069,17313cc1213f00ca8edd0dcac13eed3e97837599,Ethan's Typhlosion Prerelease 034
+034,Ethan's Typhlosion,Base,24,207,100,24,365,bd88f3dae74cbb1fb2a0480e1bfc36317dfe64c2,Ethan's Typhlosion Base 034
+034,Ethan's Typhlosion,Build & Battle Box,31,36,9,31,77,4feb99da3a645b4b564119e0d8b830a090477705,Ethan's Typhlosion Build & Battle Box 034
+034,Ethan's Typhlosion,Reverse Holo,12,36,7,12,58,74c34ca096998e3815e8ad1a54fe74041a1caf67,Ethan's Typhlosion Reverse Holo 034
+035,Ethan's Slugma,Reverse Holo,1,4,0,1,6,c0cf7b3a4572d2c8951ab91e05c10fbb9037efab,Ethan's Slugma Reverse Holo 035
+035,Ethan's Slugma,Base,0,1,1,0,2,e31d4c1e1fe8d6e8e3618105e1104678eba2b09a,Ethan's Slugma Base 035
+036,Ethan's Magcargo,Base,3,15,11,3,31,16c8e6a9b27af4bc5f04d73bbf9f6b83c1587a09,Ethan's Magcargo Base 036
+036,Ethan's Magcargo,Destined Rivals Checklane Blister,1,3,0,1,4,a5e90ad099c245589084144f4fe245281f5bdc95,Ethan's Magcargo Destined Rivals Checklane Blister 036
+036,Ethan's Magcargo,Reverse Holo,0,1,0,0,1,de4468dadafa80828dfc371db608f669968f88a6,Ethan's Magcargo Reverse Holo 036
+037,Team Rocket's Houndour,Reverse Holo,0,3,1,0,5,8c47eb44848078c5d272f0e95fda4ec5169ddd68,Team Rocket's Houndour Reverse Holo 037
+037,Team Rocket's Houndour,Base,1,2,1,1,4,1f87a83803b7dcf3a3f8ea3c1cd2bb617f441d45,Team Rocket's Houndour Base 037
+038,Team Rocket's Houndoom,Base,4,10,3,4,17,ffe4ca8623650cd9347b92089fc41a6697909ab3,Team Rocket's Houndoom Base 038
+038,Team Rocket's Houndoom,Reverse Holo,4,7,3,4,15,70564c68f476787f694e82a49cca2cf9f7621643,Team Rocket's Houndoom Reverse Holo 038
+039,Ethan's HO-Oh EX,Base,327,244,44,327,637,7f6233fe0fbdfd747762ad4505b7c9b3909aa7be,Ethan's HO-Oh EX Base 039
+040,Torchic,Base,1,4,1,1,8,e5b2ba7347ace6c11ad923ea1f09a716d4680d8f,Torchic Base 040
+040,Torchic,Reverse Holo,0,0,1,0,2,430c6ba79bc1e7a0aeed06c0d3abf22a0824eebf,Torchic Reverse Holo 040
+041,Combusken,Reverse Holo,1,2,0,1,3,982fde9e752ee28c0f285bb86d2bed35d3dcbbda,Combusken Reverse Holo 041
+041,Combusken,Base,0,1,1,0,3,f679f00a6ebf1a1430a3db7c14a2e39234ca606e,Combusken Base 041
+042,Blaziken,Base,13,55,32,13,103,71b321accc28f31264d6e73c6e014ad3965db8d8,Blaziken Base 042
+042,Blaziken,Phantasmal Flames Premium Checklane Blister,7,15,3,7,25,abfda9e0624a1a3fcbc9be2a93f02f757fbf1b3b,Blaziken Phantasmal Flames Premium Checklane Blister 042
+042,Blaziken,Reverse Holo,1,8,2,1,11,ecdf9f989303bd026ceda98169a2308bc8a71b91,Blaziken Reverse Holo 042
+043,Heat Rotom,Reverse Holo,1,2,1,1,4,fee86e7ed4931d0ec305aa88d723df98ae09e8ba,Heat Rotom Reverse Holo 043
+043,Heat Rotom,Base,0,2,0,0,3,9ac6528d25c39390cb1b7d42699348be9eed3d49,Heat Rotom Base 043
+044,Hearthflame Mask Ogerpon,Reverse Holo,1,2,0,1,4,9cb7b6e4373278cdcaa5ac2ac7aa0ce9bbde3560,Hearthflame Mask Ogerpon Reverse Holo 044
+044,Hearthflame Mask Ogerpon,Base,0,1,0,0,1,78f6f5fdb90efad0c8f1eae9a6814cf016eb78f8,Hearthflame Mask Ogerpon Base 044
+045,Misty's Psyduck,Base,25,40,31,25,107,7ffe0a8d49c324446e99f78eefae842ea2e3570b,Misty's Psyduck Base 045
+045,Misty's Psyduck,Reverse Holo,8,42,19,8,77,cd26bb5c5f068dd8ac229069161bd8995c254744,Misty's Psyduck Reverse Holo 045
+046,Misty's Staryu,Base,6,1,4,6,12,2a12740d71c1d42f09aa7313eaff812c184899e5,Misty's Staryu Base 046
+046,Misty's Staryu,Reverse Holo,1,3,2,1,6,2bd4786f832ff21401afbffc1190cdc27e0d2c4f,Misty's Staryu Reverse Holo 046
+047,Misty's Starmie,Base,41,26,9,41,79,1334b7c2269d1bf8d8d00c42c29488bb199a6b24,Misty's Starmie Base 047
+047,Misty's Starmie,Reverse Holo,1,3,5,1,9,50c305ac06d57ec497dad131262241fb35e51bd0,Misty's Starmie Reverse Holo 047
+048,Misty's Magikarp,Base,28,67,14,28,117,3c533d88d352fe678cc00cfda95039032432ae1d,Misty's Magikarp Base 048
+048,Misty's Magikarp,Reverse Holo,9,31,5,9,46,aa36a6627c478c77aa3e9dcf369cc51f292ce8a2,Misty's Magikarp Reverse Holo 048
+049,Misty's Gyarados,Prerelease-Staff,668,491,41,668,1212,d4c2a260528b2d5dde17abd299797155dd5c65fe,Misty's Gyarados Prerelease-Staff 049
+049,Misty's Gyarados,Prerelease,219,404,429,219,1118,50caaa746358a581f9e8f94157f60c8062c7d9ed,Misty's Gyarados Prerelease 049
+049,Misty's Gyarados,Base,75,409,242,75,793,e58c756dfd4498cb7755aea981ba5905eaea565d,Misty's Gyarados Base 049
+049,Misty's Gyarados,Reverse Holo,22,77,39,22,142,85427eaaa3c4f35b3d0a8f647b9c7bbf4433f2a5,Misty's Gyarados Reverse Holo 049
+049,Misty's Gyarados,Build & Battle Box,23,26,4,23,53,37bf4e81502cebf9c39001e9014fcd12b3754a3d,Misty's Gyarados Build & Battle Box 049
+050,Misty's Lapras,Base,8,7,13,8,28,96275cfcfb451250d5571c40a821c94a64410e38,Misty's Lapras Base 050
+050,Misty's Lapras,Reverse Holo,3,10,3,3,17,530a216ea3173a37b9c1f1a5991a9e5bdd8f6d94,Misty's Lapras Reverse Holo 050
+051,Team Rocket's Articuno,Best Buy Exclusive,1150,839,49,1150,2105,7fb8507db004fc3d58a657b1397df7719184b032,Team Rocket's Articuno Best Buy Exclusive 051
+051,Team Rocket's Articuno,Base,86,498,186,86,796,f23848f81deb34475114a0a0c37c430d77b53937,Team Rocket's Articuno Base 051
+051,Team Rocket's Articuno,Enhanced 2 Pack Blister,2,53,28,2,88,2ac690d1b087ea6f0522345e869e400f28c8ecc8,Team Rocket's Articuno Enhanced 2 Pack Blister 051
+051,Team Rocket's Articuno,Reverse Holo,21,37,16,21,76,fcfd41358424e44e9d4189815aaa5568854e43bb,Team Rocket's Articuno Reverse Holo 051
+051,Team Rocket's Articuno,Team Rocket's Mewtwo EX League Battle Deck,0,2,0,0,2,f27da7dd788430611623334d183f7a8641e2dbd0,Team Rocket's Articuno Team Rocket's Mewtwo EX League Battle Deck 051
+052,Cynthia's Feebas,Base,1,1,1,1,3,53553410df30a6e652b3c5e4d68554f2dfab8ea7,Cynthia's Feebas Base 052
+052,Cynthia's Feebas,Reverse Holo,1,1,0,1,2,e2e81de2ce0c9a7ddde561abeecf9b09cd5bbfe7,Cynthia's Feebas Reverse Holo 052
+053,Cynthia's Milotic,Base,3,2,2,3,7,f9b12de93c2a9d3d2f2acb5084be6238daa472a6,Cynthia's Milotic Base 053
+053,Cynthia's Milotic,Reverse Holo,0,2,2,0,4,a6d8df343ef6a31f4eb979c1b2a117bf8b89b38c,Cynthia's Milotic Reverse Holo 053
+054,Clamperl,Base,0,1,0,0,1,588634f39b499a43bc6cdff1bfc5c001887c9747,Clamperl Base 054
+054,Clamperl,Reverse Holo,0,0,1,0,1,e4c567f885e6cf1f4b45a216745d1b9c4bf67d4c,Clamperl Reverse Holo 054
+055,Huntail,Base,0,0,0,0,1,3cefb9c92540bc7f6c223a3d4947624f95df6f4b,Huntail Base 055
+055,Huntail,Reverse Holo,1,0,0,1,1,6522bbfbf93ca17a02010db0a037d24bfde1a1dc,Huntail Reverse Holo 055
+056,Gorebyss,Base,2,5,2,2,12,5f20efb9d08b17fd1e4937824fd463b5e0ade1d8,Gorebyss Base 056
+057,Buizel,Base,3,4,1,3,8,00770d53be5cc6ed145e62ca9f0f69fdf0c46e61,Buizel Base 057
+057,Buizel,Reverse Holo,0,3,1,0,4,269da9ec51a581c535951cf218fc4e6ff62524de,Buizel Reverse Holo 057
+058,Floatzel,Reverse Holo,1,1,0,1,2,aee4cadb3badb890c8f1f2d4a7ba1abd44a655ac,Floatzel Reverse Holo 058
+058,Floatzel,Base,1,0,0,1,1,cb71993904a2854490f3aa0439a1b590a5bc0a8b,Floatzel Base 058
+059,Snover,Reverse Holo,1,1,3,1,5,b19fe2197f231c58b115c55a807f6d1a3dad32f8,Snover Reverse Holo 059
+059,Snover,Base,0,1,0,0,1,dd5e9693ce9f396e3d8a5642fdcb2204dade4517,Snover Base 059
+060,Abomasnow,Base,0,0,1,0,1,7cc5ce8c020897ae3d2872fc1474aac8a1738dc0,Abomasnow Base 060
+061,Wash Rotom,Reverse Holo,2,5,1,2,8,93b486ccd0d7fdbf2e0686526200dabed2f76788,Wash Rotom Reverse Holo 061
+061,Wash Rotom,Base,0,0,1,0,2,e48a787a7326f67e4b6152d90e593f6f2c9a22c0,Wash Rotom Base 061
+062,Arrokuda,Reverse Holo,0,0,0,0,1,2c4a8b4b15e66f94e179f066d1e6c79619829c84,Arrokuda Reverse Holo 062
+065,Cetitan EX,Base,50,42,15,50,112,f6f87f739903638bc6ab4b2d0ef14b9e4f0a6729,Cetitan EX Base 065
+066,Dondozo EX,Base,55,51,18,55,132,f8a2a772d6c36fbcba120018092744b33a288e95,Dondozo EX Base 066
+067,Wellspring Mask Ogerpon,Reverse Holo,0,5,0,0,5,2581a5d2da4815bddd74fa38aa6085cf4946c221,Wellspring Mask Ogerpon Reverse Holo 067
+067,Wellspring Mask Ogerpon,Base,0,0,1,0,1,40e1948691f912db96181d7a49ac5a9cb705f177,Wellspring Mask Ogerpon Base 067
+068,Electabuzz,Reverse Holo,0,4,0,0,5,1a58d3558da9eeeb079c1ca9cda217b308ffeb40,Electabuzz Reverse Holo 068
+068,Electabuzz,Base,0,2,3,0,5,d79b5a0592845a9336c892a735b17c21f39d85f3,Electabuzz Base 068
+069,Electivire EX,Base,100,104,18,100,229,befeda9d4033a534652d1074bcf16cd8abc3e3f1,Electivire EX Base 069
+070,Team Rocket's Zapdos,Gamestop Exclusive,1165,631,68,1165,1913,3fda88d730e90f3909537e93d11d49aafdfe91e2,Team Rocket's Zapdos Gamestop Exclusive 070
+070,Team Rocket's Zapdos,Purchase Bonus-Asia,1123,178,17,1123,1324,834e0aab7af91233952b577e851fa83d5fe71767,Team Rocket's Zapdos Purchase Bonus-Asia 070
+070,Team Rocket's Zapdos,Base,53,348,185,53,628,4b5e59c5d4bd691b74c65e13d14d0e18c9b7df69,Team Rocket's Zapdos Base 070
+070,Team Rocket's Zapdos,EB Games Exclusive,344,74,2,344,421,a83789a10f6fe49932f2b455c34bf68389684947,Team Rocket's Zapdos EB Games Exclusive 070
+070,Team Rocket's Zapdos,Enhanced 2 Pack Blister,15,45,17,15,80,e74e10d77fb65d9f4d0cc73504a3c54a3448d91a,Team Rocket's Zapdos Enhanced 2 Pack Blister 070
+070,Team Rocket's Zapdos,Reverse Holo,10,45,12,10,69,4a2b85f7393e8d83ee72be1b851ceff4d97ec93e,Team Rocket's Zapdos Reverse Holo 070
+071,Ethan's Pichu,Base,35,56,20,35,116,36bd45f5db9c16df9ae4cf66235c72eba2fd0143,Ethan's Pichu Base 071
+071,Ethan's Pichu,Reverse Holo,18,52,16,18,91,576cde14dc3a9ca17424feeec87d3c6547bc7ddf,Ethan's Pichu Reverse Holo 071
+072,Team Rocket's Mareep,Reverse Holo,3,4,1,3,9,cb158de4140394e47d286b946b00ad85f3a50e4c,Team Rocket's Mareep Reverse Holo 072
+072,Team Rocket's Mareep,Base,0,6,0,0,7,1fcebcecdbeefaea013187606344d8bc2e82eef8,Team Rocket's Mareep Base 072
+073,Team Rocket's Flaaffy,Base,3,4,0,3,7,4f8e6ba78a142753761c5d7da80cf9c8922704bb,Team Rocket's Flaaffy Base 073
+073,Team Rocket's Flaaffy,Reverse Holo,1,3,0,1,4,a27aae1ef9799ef45a3696199b663faddbeddd75,Team Rocket's Flaaffy Reverse Holo 073
+074,Team Rocket's Ampharos,Reverse Holo,2,5,4,2,11,30851f89855d5b428253ffe57424d78bdaea0f98,Team Rocket's Ampharos Reverse Holo 074
+074,Team Rocket's Ampharos,Base,2,4,1,2,7,b6e4e05cd7ac6968dbedcd85b215f4cf2985fd68,Team Rocket's Ampharos Base 074
+075,Electrike,Reverse Holo,0,1,1,0,2,9887c33586ee71e820cd39b20509a2e4e90d319a,Electrike Reverse Holo 075
+076,Manectric,Reverse Holo,1,1,0,1,2,752589630e21a83ff9000512931a3ee6578fe86b,Manectric Reverse Holo 076
+076,Manectric,Base,0,0,0,0,1,531cd6031de1f4a3ddc8bc3f0f3931473e182f7a,Manectric Base 076
+077,Rotom,Base,2,0,1,2,4,3ce2bd6ed1958d63109f7953bdb9d9980f197fb6,Rotom Base 077
+077,Rotom,Reverse Holo,1,2,1,1,4,64426fe60848c320e683c346698000c456147f1a,Rotom Reverse Holo 077
+078,Zeraora,Base,5,23,12,5,42,f009ef9a54e67e19d0d6cbdf2e7db05b612f654c,Zeraora Base 078
+078,Zeraora,Reverse Holo,1,3,0,1,4,7ed843b01d73fefc8b2de02323abcd057803b494,Zeraora Reverse Holo 078
+079,Team Rocket's Drowzee,Reverse Holo,0,3,2,0,5,b01e087982706082696a50548a1f2ddad863cb4e,Team Rocket's Drowzee Reverse Holo 079
+079,Team Rocket's Drowzee,Base,1,2,0,1,3,5360bedbea6975e90f938d714020804400253971,Team Rocket's Drowzee Base 079
+080,Team Rocket's Hypno,Base,4,5,1,4,11,27fe99494c432e172a2e684c446e2d0b6db8914f,Team Rocket's Hypno Base 080
+080,Team Rocket's Hypno,Reverse Holo,2,2,1,2,5,f24e7865e35f7a2bbb0ab9ec5024f990a731ac08,Team Rocket's Hypno Reverse Holo 080
+081,Team Rocket's Mewtwo EX,Base,1086,983,191,1086,2343,83980eedaecbabb3b51ff6326a4b728463abba15,Team Rocket's Mewtwo EX Base 081
+081,Team Rocket's Mewtwo EX,Premier Ball League-Top 4,2,0,0,2,2,9e117ec71964e15f3b2da50011a5495006e49746,Team Rocket's Mewtwo EX Premier Ball League-Top 4 081
+082,Team Rocket's Wobbuffet,Base,14,61,18,14,107,49702ede6c7554b17e6dbb897559c90ff7416ef4,Team Rocket's Wobbuffet Base 082
+082,Team Rocket's Wobbuffet,Reverse Holo,2,10,4,2,16,2f29055d47519861be3dc7560af365f134d434ab,Team Rocket's Wobbuffet Reverse Holo 082
+083,Steven's Baltoy,Reverse Holo,1,1,0,1,2,410e48cfd692bf6ce21ac603faaa2a64532444fc,Steven's Baltoy Reverse Holo 083
+085,Team Rocket's Chingling,Reverse Holo,0,3,1,0,4,b7ddf7c4e6e425de1625b5212acc9fb1048319e1,Team Rocket's Chingling Reverse Holo 085
+085,Team Rocket's Chingling,Base,0,1,0,0,1,5e4094039788261633c458a3452a70839958944d,Team Rocket's Chingling Base 085
+086,Steven's Carbink,Base,1,0,0,1,1,6982dd971d44447eeedc30589df18aa0ef64c969,Steven's Carbink Base 086
+087,Team Rocket's Mimikyu,Prerelease-Staff,634,443,30,634,1117,fc7de6dd1090522f111f6174e582b13117db21c8,Team Rocket's Mimikyu Prerelease-Staff 087
+087,Team Rocket's Mimikyu,Prerelease,162,416,295,162,888,63376ef8b3f01b1ae7b468429432db23f440c887,Team Rocket's Mimikyu Prerelease 087
+087,Team Rocket's Mimikyu,Base,12,41,14,12,74,9181d61ff630d9e0ca8b8b106c6cec862cbc887a,Team Rocket's Mimikyu Base 087
+087,Team Rocket's Mimikyu,Reverse Holo,12,41,10,12,67,9e8c69659ad70ce3b977bd50ff6ef1f1bfd3f84c,Team Rocket's Mimikyu Reverse Holo 087
+088,Team Rocket's Dottler,Base,0,0,1,0,1,9acc2f0d93f9bd2bb5d417d0a5984fdbf93f8e67,Team Rocket's Dottler Base 088
+088,Team Rocket's Dottler,Reverse Holo,0,0,1,0,1,cb8a3494f89971aa35abb69e405ffa44c044ca04,Team Rocket's Dottler Reverse Holo 088
+090,Mankey,Reverse Holo,2,3,1,2,6,fe0d829ed022cb05fc169f4d06d8381e93202586,Mankey Reverse Holo 090
+090,Mankey,Base,1,4,0,1,5,ba822098078d84100e49d41bf6180d8381476870,Mankey Base 090
+091,Primeape,Reverse Holo,0,1,1,0,4,6e882a8a289acf21da78cfc63aa7a6194fd82c27,Primeape Reverse Holo 091
+092,Annihilape,Base,4,21,6,4,36,40ad8a9836aa6a21c119cad9cc0b0704782702d7,Annihilape Base 092
+092,Annihilape,Reverse Holo,1,4,0,1,5,d92660129baec62ecdc47366987466270fc29f98,Annihilape Reverse Holo 092
+093,Ethan's Sudowoodo,Base,1,3,0,1,4,ae868f1ed06fcf16ac234a2526db1ca72c870825,Ethan's Sudowoodo Base 093
+093,Ethan's Sudowoodo,Reverse Holo,0,3,0,0,3,6ed16db4711a49f3b8e4e2f74266960ce3f906b7,Ethan's Sudowoodo Reverse Holo 093
+094,Team Rocket's Larvitar,Base,11,3,3,11,17,9abdfe88efb708ad666d8cc2eec0d7f46bdcdfff,Team Rocket's Larvitar Base 094
+094,Team Rocket's Larvitar,Reverse Holo,5,5,3,5,13,309530809fdc301cb588ee5e5ea24157ce900442,Team Rocket's Larvitar Reverse Holo 094
+095,Team Rocket's Pupitar,Base,7,1,0,7,9,fb7801cf57bea4a785e1a99cebe02e1c6ba69fb2,Team Rocket's Pupitar Base 095
+095,Team Rocket's Pupitar,Reverse Holo,1,4,2,1,7,25f4f6a8060c6832817bd667260e4f41c9076e73,Team Rocket's Pupitar Reverse Holo 095
+096,Team Rocket's Tyranitar,Pokemon Center Exclusive,2676,1566,227,2676,5945,f05b252829460004465a9ca8eeb25ace32e7feea,Team Rocket's Tyranitar Pokemon Center Exclusive 096
+096,Team Rocket's Tyranitar,Prerelease-Staff,658,465,53,658,1200,5744fa0ebd2a1d064a197a601c5e4cca6baaad4b,Team Rocket's Tyranitar Prerelease-Staff 096
+096,Team Rocket's Tyranitar,Prerelease,202,439,357,202,1059,22ef3dc1e4f5bef0c31da62f4c9119505a4ce7df,Team Rocket's Tyranitar Prerelease 096
+096,Team Rocket's Tyranitar,Base,81,374,148,81,653,a788468a2b204182798a0360eac9ad671b831436,Team Rocket's Tyranitar Base 096
+096,Team Rocket's Tyranitar,Reverse Holo,14,49,24,14,90,d802c31533d7d819e300cf7cf6f0fe0fe81efea3,Team Rocket's Tyranitar Reverse Holo 096
+096,Team Rocket's Tyranitar,Build & Battle Box,45,29,4,45,82,b34abde8c8fe7e7015f318a08810db0b7dbbc89d,Team Rocket's Tyranitar Build & Battle Box 096
+096,Team Rocket's Tyranitar,Enhanced 2 Pack Blister,6,40,27,6,75,b24731278f4485d94070440c17e36d2d2f1d35b7,Team Rocket's Tyranitar Enhanced 2 Pack Blister 096
+097,Nosepass,Base,1,2,1,1,4,396794396522626d030ca3efdfb7537201731c9d,Nosepass Base 097
+097,Nosepass,Reverse Holo,0,4,0,0,4,6d3881568014613032ed56ae7511bc45e35ea710,Nosepass Reverse Holo 097
+098,Probopass,Base,1,0,1,1,2,bb26ff2827cece9628ce6b3969e8f2e83d0bc1a8,Probopass Base 098
+100,Medicham,Base,0,2,0,0,2,79c7f6c326475ef18f10ac0287297a999b3f9d5a,Medicham Base 100
+100,Medicham,Reverse Holo,0,0,0,0,1,bc58eda10bac8e76a42dd866308a49b7cab77067,Medicham Reverse Holo 100
+101,Regirock EX,Base,69,66,12,69,148,85b14e5c67b5bf85debdf170dc3b404707f5f3f2,Regirock EX Base 101
+102,Cynthia's Gible,Cynthia's Garchomp EX Premium Collection,133,41,4,133,179,f8a4de28f7a545090afb3041bb880c767b730de7,Cynthia's Gible Cynthia's Garchomp EX Premium Collection 102
+102,Cynthia's Gible,Base,1,4,3,1,9,299e8a0f323d7ff2549eccf53688562c03fa15d7,Cynthia's Gible Base 102
+102,Cynthia's Gible,Reverse Holo,0,2,0,0,3,063b069cbe52f35a9190a00769822cbdabf61e40,Cynthia's Gible Reverse Holo 102
+103,Cynthia's Gabite,Cynthia's Garchomp EX Premium Collection,80,68,7,80,162,253c3e67f8cdf424329966ab47ec34738d01f3b3,Cynthia's Gabite Cynthia's Garchomp EX Premium Collection 103
+103,Cynthia's Gabite,Reverse Holo,2,15,8,2,26,b22a4b816c9e67b335b379f078178432621ba8a5,Cynthia's Gabite Reverse Holo 103
+103,Cynthia's Gabite,Base,3,4,3,3,10,79d72250d932318f38232b38d03067599bd0f3ac,Cynthia's Gabite Base 103
+104,Cynthia's Garchomp EX,Base,217,193,53,217,473,64e33ad86d9ae454d6dfefcb85705a8b7bfea4c5,Cynthia's Garchomp EX Base 104
+106,Hippowdon,Reverse Holo,0,1,0,0,1,79b92ae23726bd803c82fd9da540a8481cdd6a01,Hippowdon Reverse Holo 106
+107,Mudbray,Reverse Holo,2,0,0,2,2,66eaeab91d47110c7aa14915752f71daae81fa7f,Mudbray Reverse Holo 107
+108,Mudsdale,Base,1,1,1,1,3,a6eaa187216eadfa4f650a10177ad465fb463429,Mudsdale Base 108
+108,Mudsdale,Reverse Holo,0,1,0,0,1,ebe73f0efc9c33376ee59de0d7f30cb99d5c35d2,Mudsdale Reverse Holo 108
+109,Arven's Toedscool,Base,1,2,0,1,3,991299e0a9bb1bd80c3fc36c5e6db679d146ca90,Arven's Toedscool Base 109
+109,Arven's Toedscool,Reverse Holo,0,1,0,0,1,86524f41cc2f383ddb81ef6bfa1cbad6afc18223,Arven's Toedscool Reverse Holo 109
+110,Arven's Toedscruel,Reverse Holo,0,1,0,0,1,09eedad9d676f2ed2ef36b062700f8dde7600a08,Arven's Toedscruel Reverse Holo 110
+111,Cornerstone Mask Ogerpon,Reverse Holo,1,1,1,1,3,48b256bbca9a15bf81f6a2c773f5925a2c01744e,Cornerstone Mask Ogerpon Reverse Holo 111
+111,Cornerstone Mask Ogerpon,Base,0,1,0,0,1,c8bfec6a00a30183a455e4f230f2f0dbf6caf4ed,Cornerstone Mask Ogerpon Base 111
+112,Team Rocket's Ekans,Base,0,1,0,0,1,0c68fb17ab24685d44411690bb3b015c10899cf7,Team Rocket's Ekans Base 112
+112,Team Rocket's Ekans,Reverse Holo,0,1,0,0,1,393a9ae4f60c9c7a7367b9c1894f37a35a6cebec,Team Rocket's Ekans Reverse Holo 112
+113,Team Rocket's Arbok,Base,5,6,3,5,14,91f98ac7f664619ccdd8a3a548c3a2fa8d5c7fc6,Team Rocket's Arbok Base 113
+113,Team Rocket's Arbok,Reverse Holo,0,2,1,0,3,8237de37956bbd7ddf6447efc7476eb637e6b2e7,Team Rocket's Arbok Reverse Holo 113
+114,Team Rocket's Nidoran,Base,1,3,0,1,4,11506ea424b23053543bc1f2f786d9970df07494,Team Rocket's Nidoran Base 114
+114,Team Rocket's Nidoran,Reverse Holo,1,1,0,1,2,10ea8806e1439b539662bdb5425c04ece09c9651,Team Rocket's Nidoran Reverse Holo 114
+115,Team Rocket's Nidorina,Reverse Holo,1,1,1,1,3,199d9198e5603bbb2a64c591e3f56291a763de17,Team Rocket's Nidorina Reverse Holo 115
+115,Team Rocket's Nidorina,Base,0,1,0,0,1,6f32975f690d64cc46919c4bd9c7f8ac5a66330c,Team Rocket's Nidorina Base 115
+116,Team Rocket's Nidoqueen,Reverse Holo,0,3,0,0,3,ff1ea7b238100cf4cb5bbcb3e03e8501a25a2ad6,Team Rocket's Nidoqueen Reverse Holo 116
+116,Team Rocket's Nidoqueen,Base,0,0,1,0,2,281cf2de0b0e2738623b564d53e96a68d5649d6b,Team Rocket's Nidoqueen Base 116
+117,Team Rocket's Nidoran,Reverse Holo,0,2,1,0,3,49763a949a7f89d7bbfe4a5e68359f172385bb06,Team Rocket's Nidoran Reverse Holo 117
+117,Team Rocket's Nidoran,Base,0,1,1,0,2,f07b602d8fc656c46896aeaef3e9c84f52da441a,Team Rocket's Nidoran Base 117
+118,Team Rocket's Nidorino,Base,0,0,2,0,2,c0669b4b00b06977dbb2e925a3863bd8d010191b,Team Rocket's Nidorino Base 118
+119,Team Rocket's Nidoking EX,Base,166,147,41,166,364,0c2adbc30e5d5688bcb7f4df67f5b672afdf8763,Team Rocket's Nidoking EX Base 119
+120,Team Rocket's Zubat,Base,1,3,2,1,6,d221728dd7e5a784da9386c9afcde3a9fbc44853,Team Rocket's Zubat Base 120
+120,Team Rocket's Zubat,Reverse Holo,2,0,0,2,3,464d72a6e9e87a99ec2004a16101b021bfda1e22,Team Rocket's Zubat Reverse Holo 120
+121,Team Rocket's Golbat,Base,0,2,1,0,4,887cbafb309695fa76a7c4738402c893e14f813b,Team Rocket's Golbat Base 121
+121,Team Rocket's Golbat,Reverse Holo,0,2,0,0,3,cc31a6874eff9ff5b9acc3917fca04ab534f9034,Team Rocket's Golbat Reverse Holo 121
+122,Team Rocket's Crobat EX,Base,129,147,48,129,331,ec571f532acd65699c118e1b3e70684f1f2c27fa,Team Rocket's Crobat EX Base 122
+123,Team Rocket's Grimer,Base,1,1,0,1,2,92c9f6a017e8373cb6928fe5e9cbd10477dfef7b,Team Rocket's Grimer Base 123
+124,Team Rocket's Muk,Base,3,4,1,3,8,12a1ef678285cc31d0bfd12ce0e20c4b8985de24,Team Rocket's Muk Base 124
+124,Team Rocket's Muk,Reverse Holo,0,2,4,0,6,a27ce795df22b5cd408d2f925599d74a86a4286c,Team Rocket's Muk Reverse Holo 124
+125,Team Rocket's Koffing,Base,6,5,3,6,16,281394b5a7820de834aaf452d8e542689de63025,Team Rocket's Koffing Base 125
+125,Team Rocket's Koffing,Reverse Holo,1,4,0,1,5,26b1a7ce0b937b8aceafcf68d476a0bd946c7973,Team Rocket's Koffing Reverse Holo 125
+126,Team Rocket's Weezing,Base,13,9,3,13,26,bae84a4b201544f972818a53c0b25dc9d40a48c5,Team Rocket's Weezing Base 126
+126,Team Rocket's Weezing,Reverse Holo,0,2,1,0,3,4560749e1afa268d127c2289be341c0a6e0889b3,Team Rocket's Weezing Reverse Holo 126
+127,Team Rocket's Murkrow,Base,7,4,1,7,12,c6de8707850d0e59515b86bc0b7e5bdecf10ca0c,Team Rocket's Murkrow Base 127
+127,Team Rocket's Murkrow,Reverse Holo,1,2,0,1,3,dbdbefc55504df254c03ac7088170b37388b980c,Team Rocket's Murkrow Reverse Holo 127
+128,Team Rocket's Sneasel,Base,4,14,6,4,28,2e79f39bb1f2daac8d7743bc1c979e6a1d32e9e7,Team Rocket's Sneasel Base 128
+128,Team Rocket's Sneasel,Reverse Holo,0,0,1,0,2,a5faf7bf3a32f99c656ab8f15d94d25fdd9fae5e,Team Rocket's Sneasel Reverse Holo 128
+129,Cynthia's Spiritomb,Reverse Holo,0,2,0,0,3,87897d32b70f966f34177164ddc4322bc572f147,Cynthia's Spiritomb Reverse Holo 129
+129,Cynthia's Spiritomb,Base,0,0,0,0,1,0ec68bebbbfbe8baee9cd4c2274450c915ea3fea,Cynthia's Spiritomb Base 129
+130,Marnie's Purrloin,Reverse Holo,0,3,2,0,5,9ead14dcab16e29cee1b6b322cc2602609fe2e0c,Marnie's Purrloin Reverse Holo 130
+130,Marnie's Purrloin,Base,1,2,0,1,3,cf7941455065e617141af997c9bae0c98fcd9ffe,Marnie's Purrloin Base 130
+131,Marnie's Liepard,Base,2,2,3,2,7,1ca8b990ba6109557cc87f999a733c403af9a77f,Marnie's Liepard Base 131
+131,Marnie's Liepard,Reverse Holo,0,2,0,0,2,14cf56bfac5efa5cbadddb00a92d14a384e9bbeb,Marnie's Liepard Reverse Holo 131
+132,Marnie's Scraggy,Base,3,1,1,3,5,f32e3ebceef8b8d0e04e19efc0796ac765302be6,Marnie's Scraggy Base 132
+132,Marnie's Scraggy,Reverse Holo,0,0,2,0,2,4ca452d12e50b1274e77a1059c837b4122fd215d,Marnie's Scraggy Reverse Holo 132
+133,Marnie's Scrafty,Base,1,6,0,1,7,2cfdad49c10d9175d40034545a7e3f3af94f4e9a,Marnie's Scrafty Base 133
+133,Marnie's Scrafty,Reverse Holo,0,2,0,0,2,c32d72b51dd0c5220913cff324317197c93beaf8,Marnie's Scrafty Reverse Holo 133
+134,Marnie's Impidimp,Base,0,9,1,0,11,b2515c0c63f66f2e461c9e0ebe2bbc6b5bca5c7a,Marnie's Impidimp Base 134
+134,Marnie's Impidimp,Reverse Holo,0,4,1,0,5,7a00943fe6c30b903a4a10833c1c488e4d98a94d,Marnie's Impidimp Reverse Holo 134
+135,Marnie's Morgrem,Base,1,7,0,1,8,02723ad285237bdd1170290bc4c67f896ed216eb,Marnie's Morgrem Base 135
+135,Marnie's Morgrem,Reverse Holo,0,3,0,0,3,1510da842d8f3f97d7a93195b7c1fbd1fde718c4,Marnie's Morgrem Reverse Holo 135
+136,Marnie's Grimmsnarl EX,Base,146,98,32,146,284,194c12c92973394a9923c86dce997fea72ebfde3,Marnie's Grimmsnarl EX Base 136
+137,Marnie's Morpeko,Base,5,2,2,5,9,9131d76ee120684e4350c283eb08d66f0425a53d,Marnie's Morpeko Base 137
+137,Marnie's Morpeko,Reverse Holo,1,4,1,1,6,db17cbbc2e49f17e285111fd8a7c1aa2e73b7558,Marnie's Morpeko Reverse Holo 137
+138,Arven's Maschiff,Reverse Holo,2,2,1,2,5,9b2fb86fbf29fe82e3aa35f1caed0c3a1a347c47,Arven's Maschiff Reverse Holo 138
+138,Arven's Maschiff,Base,1,1,0,1,3,5c6ba99046821caea8e0dc95aa0f60754942d955,Arven's Maschiff Base 138
+139,Arven's Mabosstiff EX,Base,66,68,21,66,158,fd6b531fe5e20c617c4ecca0c6c42740fc81365a,Arven's Mabosstiff EX Base 139
+140,Forretress,Reverse Holo,0,2,0,0,2,e99722d4d59ad2b3e9e2a085175c1df1b7327a88,Forretress Reverse Holo 140
+140,Forretress,Base,1,0,0,1,1,e216051502117c71823e37698f04827e8491b9da,Forretress Base 140
+141,Skarmory,Reverse Holo,1,3,1,1,5,e3efa6f7bc3f3607a9133870674dd0b1662ed3af,Skarmory Reverse Holo 141
+141,Skarmory,Base,0,0,1,0,1,2b8d3d3ef38593118b57d302be540a70d4f4ff2f,Skarmory Base 141
+142,Steven's Skarmory,Reverse Holo,1,6,4,1,11,4d720a3fbe717cd18ea4a0351279566b81833bbd,Steven's Skarmory Reverse Holo 142
+144,Steven's Metang,Reverse Holo,1,1,0,1,2,b2911c71db2aff29194761fccc3038c04ae2978d,Steven's Metang Reverse Holo 144
+145,Steven's Metagross EX,Base,152,142,30,152,333,8b9b0e574a1136a57cc2ea09f96bc806eeba3440,Steven's Metagross EX Base 145
+146,Zamazenta,Base,5,20,10,5,35,000c8e5c7a4c66aeb4a9ff33e1585c7f815baa55,Zamazenta Base 146
+146,Zamazenta,Reverse Holo,0,5,1,0,6,47845f5ea759cba7103165026e2326c634aa2bab,Zamazenta Reverse Holo 146
+147,Team Rocket's Rattata,Reverse Holo,1,3,0,1,4,df9145927ff9e5cc61419a9a846da9837dcf9f27,Team Rocket's Rattata Reverse Holo 147
+147,Team Rocket's Rattata,Base,1,2,0,1,3,4c7a40c36490a388a2433a3d7817ab1abc0d09b4,Team Rocket's Rattata Base 147
+148,Team Rocket's Raticate,Base,2,3,2,2,7,2d5d7789f0ce93234bb7c3d10f0fa3cae3361958,Team Rocket's Raticate Base 148
+148,Team Rocket's Raticate,Reverse Holo,2,3,0,2,5,31b9fb162a98d4e08e58fa79d053db555b00d644,Team Rocket's Raticate Reverse Holo 148
+149,Team Rocket's Meowth,Team Rocket's Mewtwo EX Box,428,149,12,428,596,e44935ad8f6a7ebe291b3dd2c3230bf262265808,Team Rocket's Meowth Team Rocket's Mewtwo EX Box 149
+149,Team Rocket's Meowth,Base,13,32,7,13,54,5d6b77a8fb4ee44fdbc1370a0519b4a0f2f9be0a,Team Rocket's Meowth Base 149
+149,Team Rocket's Meowth,Reverse Holo,10,29,11,10,52,4841d9cebca275a8d41d735ad4bc4917b1078ca5,Team Rocket's Meowth Reverse Holo 149
+150,Team Rocket's Persian EX,Base,259,187,22,259,477,451c31747443d3c7dafb82c7d353d26f53ae02cb,Team Rocket's Persian EX Base 150
+151,Kangaskhan,Reverse Holo,0,4,0,0,4,44eb78125af186d080481b0dec4274b0d36d718d,Kangaskhan Reverse Holo 151
+151,Kangaskhan,Base,0,1,1,0,2,f1f9df98b1f7e2e5cc5a6916c5029daacb356c61,Kangaskhan Base 151
+152,Tauros,Reverse Holo,1,0,1,1,3,c9f298f969df1825b1dc9c1452e640ae1424d3c6,Tauros Reverse Holo 152
+152,Tauros,Base,0,1,0,0,1,18c1b6e3f52576b91314233c3f2b46ace61ba7ae,Tauros Base 152
+153,Team Rocket's Porygon,Base,5,10,5,5,21,c8d2f2dca813b9c169faef3a89b5e38cfef08248,Team Rocket's Porygon Base 153
+153,Team Rocket's Porygon,Reverse Holo,1,7,2,1,11,38d42243bd60b96b1916f41d34be1c567b3ea0cf,Team Rocket's Porygon Reverse Holo 153
+154,Team Rocket's PORYGON2,Reverse Holo,1,4,2,1,7,8c92c96591091197736da75ec2029dfe3fe6f906,Team Rocket's PORYGON2 Reverse Holo 154
+154,Team Rocket's PORYGON2,Base,1,0,0,1,2,92e506a44c5be4763de214426e5e39137c590e02,Team Rocket's PORYGON2 Base 154
+155,Team Rocket's Porygon-Z,Base,2,3,0,2,5,f38806bf15c51d9405735b3c9d19cd97fccff2df,Team Rocket's Porygon-Z Base 155
+155,Team Rocket's Porygon-Z,Reverse Holo,0,1,2,0,4,1641da0cf21148381cafad7038b7692d0e3a84aa,Team Rocket's Porygon-Z Reverse Holo 155
+157,Swellow,Reverse Holo,0,2,1,0,3,4fa13f840a8b1f3ebad37db53113a94ecdf670be,Swellow Reverse Holo 157
+158,Arven's Skwovet,Reverse Holo,1,3,1,1,5,4480d7d4a9dab6ac0afb88b86047fa41fea14069,Arven's Skwovet Reverse Holo 158
+158,Arven's Skwovet,Base,1,1,1,1,3,2103fa05279c22eb84fbe9e9372e3a37b3d48156,Arven's Skwovet Base 158
+159,Arven's Greedent,Base,1,13,7,1,22,2db818aa5be5745318f87009328005485f777049,Arven's Greedent Base 159
+159,Arven's Greedent,Destined Rivals Checklane Blister,0,2,1,0,3,f94aa5ec693a5a9e781ea7d403df25bf271f081d,Arven's Greedent Destined Rivals Checklane Blister 159
+159,Arven's Greedent,Reverse Holo,0,2,0,0,2,8c95a7605afdbd536ff4b08e0488af6a249fdb7f,Arven's Greedent Reverse Holo 159
+160,Squawkabilly,Reverse Holo,1,1,2,1,5,e6b11835f504c099a8738cc95f69d34ae9c14528,Squawkabilly Reverse Holo 160
+160,Squawkabilly,Base,0,0,1,0,1,fc14cb3e3aa9aa96bdd7f84422ff18d18c520248,Squawkabilly Base 160
+161,Arven's Sandwich,Base,1,4,3,1,14,f5deb1eb3efcdd8def1b478f370a28ff179f0cbb,Arven's Sandwich Base 161
+161,Arven's Sandwich,Reverse Holo,0,4,2,0,6,16785d1d9f043ae5af294b507515e96a3fa15b91,Arven's Sandwich Reverse Holo 161
+162,Cynthia's Power Weight,Base,0,0,1,0,2,e4b934b316f735e97cbe86b3592a19865ed4d308,Cynthia's Power Weight Base 162
+163,Emcee's Hype,Reverse Holo,1,4,0,1,5,4a49a50b7810313bc64759f8a4824a3d3ebaba69,Emcee's Hype Reverse Holo 163
+163,Emcee's Hype,Base,0,1,0,0,2,4026439bff76cd1a8c1ea353678f7eea85f15b37,Emcee's Hype Base 163
+164,Energy Recycler,Reverse Holo,0,2,0,0,2,d751a1b756b7a13f75b931ea6d2bde4f2a91ef15,Energy Recycler Reverse Holo 164
+164,Energy Recycler,Base,0,1,0,0,2,a805fb2e95b612147edbb4f7fb26bbb4f73537a1,Energy Recycler Base 164
+165,Ethan's Adventure,Reverse Holo,1,4,0,1,5,99dab9042b31ae1933f263f312f6c5affb515d07,Ethan's Adventure Reverse Holo 165
+165,Ethan's Adventure,Base,0,3,1,0,4,c0b49c956b01d4a72ab61174a654e723be7544ff,Ethan's Adventure Base 165
+166,Granite Cave,Base,1,1,0,1,2,05c01f78a0ca899331cbe08c3dab9cf790c3dd80,Granite Cave Base 166
+166,Granite Cave,Reverse Holo,0,0,2,0,2,14f1eddcc372eff51154f22182af86dc6a724060,Granite Cave Reverse Holo 166
+167,Judge,Professor Program,0,1,1,0,2,af7f6e99a60e3cccbd459add5553302b0e1557b1,Judge Professor Program 167
+167,Judge,Reverse Holo,0,0,0,0,1,8a7b0fe1a1077393b34aa1533814e16554cb9747,Judge Reverse Holo 167
+167,Judge,Base,0,0,1,0,1,c9c06cbaedb41a612412854ba6f649fcbc9f2eee,Judge Base 167
+171,Team Rocket's Ariana,Base,1,0,0,1,1,1a66d2bf8c04fe83103498e1d89165827001281e,Team Rocket's Ariana Base 171
+172,Team Rocket's Bother-Bot,Base,1,0,0,1,1,b0b50edf1eef8224a6fe2a02d4cac5fc15bbea19,Team Rocket's Bother-Bot Base 172
+173,Team Rocket's Factory,Base,0,3,0,0,3,51f9c986b650f48fb4c1cc80cbe9490312b28f51,Team Rocket's Factory Base 173
+173,Team Rocket's Factory,Reverse Holo,0,0,0,0,1,4023cb95532bc9a43533a371e75799f940cd1b2d,Team Rocket's Factory Reverse Holo 173
+174,Team Rocket's Giovanni,Team Rocket's Mewtwo EX Box,28,88,21,28,143,77cef1e529faf70adfdaadab153c34a8d469ff3a,Team Rocket's Giovanni Team Rocket's Mewtwo EX Box 174
+174,Team Rocket's Giovanni,Regional Championship,3,13,14,3,31,67e877caf1a5945376abfc264490d47dde872509,Team Rocket's Giovanni Regional Championship 174
+174,Team Rocket's Giovanni,Base,2,7,1,2,12,4a5d7aa7a974c1066f1d67c7d7fbf7e2f9f9e323,Team Rocket's Giovanni Base 174
+174,Team Rocket's Giovanni,Reverse Holo,1,3,3,1,7,fb0a853ca064fabc0d8ab85d02ed32e6b1695be3,Team Rocket's Giovanni Reverse Holo 174
+174,Team Rocket's Giovanni,Regional Championship-Staff,0,2,2,0,6,87014e25b4cc2f05432cd7ff37ad2391025d18c6,Team Rocket's Giovanni Regional Championship-Staff 174
+175,Team Rocket's Great Ball,Reverse Holo,0,4,1,0,5,81b4f2c1d05f3794ad72569684e582c9aefeb024,Team Rocket's Great Ball Reverse Holo 175
+175,Team Rocket's Great Ball,Base,0,1,0,0,1,ee6f4977bc4be8994be707115ce0af43b72ca1bb,Team Rocket's Great Ball Base 175
+176,Team Rocket's Petrel,Base,0,1,2,0,3,8b6e4426c2538c65249e95493775dc543cb73516,Team Rocket's Petrel Base 176
+176,Team Rocket's Petrel,Reverse Holo,0,0,0,0,1,e48ca2241c75579f19237976010644187170bf95,Team Rocket's Petrel Reverse Holo 176
+178,Team Rocket's Transceiver,Base,0,2,0,0,2,2591fb74359c8d19b84d0592fc1ece2cfd92f91f,Team Rocket's Transceiver Base 178
+179,Team Rocket's Venture Bomb,Base,1,2,2,1,5,ce8de28314fa687f340e0024dbcf172379acbe5a,Team Rocket's Venture Bomb Base 179
+179,Team Rocket's Venture Bomb,Reverse Holo,0,1,0,0,1,e0e98332feac192f1683674685b8cf2b00d39890,Team Rocket's Venture Bomb Reverse Holo 179
+180,Team Rocket's Watchtower,Base,1,5,1,1,7,71fd3ba36c9ab98f544abff83200beb73b71c7f5,Team Rocket's Watchtower Base 180
+180,Team Rocket's Watchtower,Reverse Holo,0,1,0,0,1,4685bd0d08ce0d635ce95994ef644ce85f1cfcab,Team Rocket's Watchtower Reverse Holo 180
+181,TM Machine,Reverse Holo,0,1,0,0,1,0153ead21b5b605b9e119fbf46736b8e5580596e,TM Machine Reverse Holo 181
+182,Team Rocket's Energy,Reverse Holo,3,3,1,3,8,8bd4d2b0f471b4d73a6c6e621db67f6fada33140,Team Rocket's Energy Reverse Holo 182
+182,Team Rocket's Energy,Base,0,3,0,0,3,a6b469b141beae6315abb7ce237454e62f9f5de2,Team Rocket's Energy Base 182
+183,Yanma,Illustration Rare,315,693,186,315,1215,6d0ee45612549e6ad107f7a61d33a73fc80b6b2c,Yanma Illustration Rare 183
+184,Cynthia's Roserade,Illustration Rare,1908,4285,1281,1908,7714,7ec70a801c8273d13e264c03aa9aeb0c6acd438c,Cynthia's Roserade Illustration Rare 184
+185,Shaymin,Illustration Rare,1190,2136,480,1190,3880,db8274373aac457edf5cdbdf61440fc6f1599e33,Shaymin Illustration Rare 185
+186,Crustle,Illustration Rare,190,452,117,190,782,7b2f9b7542a0dcb547f8998f166368b727907839,Crustle Illustration Rare 186
+187,Team Rocket's Spidops,Illustration Rare,614,1186,347,614,2222,04705194cc0ac26e72aa37ad46b5b1088218bf52,Team Rocket's Spidops Illustration Rare 187
+188,Hydrapple,Illustration Rare,764,1311,272,764,2396,529a9bfec43b16717ae284dca3bd25f46cdb4962,Hydrapple Illustration Rare 188
+189,Rapidash,Illustration Rare,1240,2780,667,1240,4816,7048511ba20bcc3441e8013075f27552deaf83c9,Rapidash Illustration Rare 189
+190,Ethan's Typhlosion,Illustration Rare,4035,9834,2662,4035,17070,a658a8ed294ddc3fe69406321c2c23de149b1cff,Ethan's Typhlosion Illustration Rare 190
+191,Team Rocket's Houndoom,Illustration Rare,3203,6285,1387,3203,11131,06b80e6c234677d5af1742d31c0b202582a62e5a,Team Rocket's Houndoom Illustration Rare 191
+192,Blaziken,Illustration Rare,2071,4327,1057,2071,7628,bbbfa0a74540b4d3f4a19928d9292439d5d3c2a0,Blaziken Illustration Rare 192
+193,Misty's Psyduck,Illustration Rare,7770,14974,3459,7770,26836,772cb6540752717c699342ea724d63d6febbabc9,Misty's Psyduck Illustration Rare 193
+194,Misty's Lapras,Illustration Rare,3374,7889,2270,3374,14017,26e3fbf77a37537a59c4e36a29cc15037e43676c,Misty's Lapras Illustration Rare 194
+195,Clamperl,Illustration Rare,588,1029,229,588,1877,d9ed7ae35e242310d29ac5beffa8e9230a18df5d,Clamperl Illustration Rare 195
+196,Electrike,Illustration Rare,469,862,207,469,1559,b786f21844e32642042f8bc17f996f9f5e850224,Electrike Illustration Rare 196
+197,Rotom,Illustration Rare,541,1233,371,541,2200,bc4698d07c7580a599ff4ad0ec4d9ca3f093c9f8,Rotom Illustration Rare 197
+198,Team Rocket's Orbeetle,Illustration Rare,559,1099,308,559,2020,cf030448ff3ab7eaaf9489f4247559727c811e30,Team Rocket's Orbeetle Illustration Rare 198
+199,Team Rocket's Weezing,Illustration Rare,1678,3079,710,1678,5602,60f162ecd8109dada6f212c91c4efe7239df6cef,Team Rocket's Weezing Illustration Rare 199
+200,Team Rocket's Murkrow,Illustration Rare,1442,2786,553,1442,4863,3c57bd42fd0afef9400658c3f3163835abe7a71c,Team Rocket's Murkrow Illustration Rare 200
+201,Zamazenta,Illustration Rare,662,1627,489,662,2930,71ef76eddd4a64a68ea8d579136c3fcfc6802785,Zamazenta Illustration Rare 201
+202,Team Rocket's Raticate,Illustration Rare,1027,2162,524,1027,3810,3ace611a5adf6d9231dbf08cb3ead59a521bab4e,Team Rocket's Raticate Illustration Rare 202
+203,Team Rocket's Meowth,Illustration Rare,3964,8187,1803,3964,14294,81a92b1f596c85942f43035bf8fb76b1cbb2ddbd,Team Rocket's Meowth Illustration Rare 203
+204,Kangaskhan,Illustration Rare,1605,3200,791,1605,5743,fff829c9b6ab3b0a787138f521b947f002bf3db8,Kangaskhan Illustration Rare 204
+205,Arven's Greedent,Illustration Rare,396,855,238,396,1545,bddba7c6141dbfc8ae92c418253d3c62115b5410,Arven's Greedent Illustration Rare 205
+206,Yanmega EX,Ultra Rare,251,149,22,251,427,b878f5992ef1716e64b55e6e6c9c5ea884658cd0,Yanmega EX Ultra Rare 206
+207,Arboliva EX,Ultra Rare,215,93,9,215,320,4c2dba47545a1e72ee519057d548eaf1e6638f0e,Arboliva EX Ultra Rare 207
+208,Team Rocket's Moltres EX,Ultra Rare,3464,1589,202,3464,5328,99304e6479d5e998a551f829ed131340be494f44,Team Rocket's Moltres EX Ultra Rare 208
+208,Team Rocket's Moltres EX,Team Rocket's Moltres EX Ultra-Premium Collection,961,707,100,961,1798,0e8cd2a584dc664e3eea6aa5bae315686a9afe85,Team Rocket's Moltres EX Team Rocket's Moltres EX Ultra-Premium Collection 208
+209,Ethan's HO-Oh EX,Ultra Rare,2508,1213,170,2508,3922,d20945372a50911efb2e316f421ae8590776fd22,Ethan's HO-Oh EX Ultra Rare 209
+210,Cetitan EX,Ultra Rare,215,100,14,215,336,49007884e9db52911d085cda6f6d2e6dcdc103d6,Cetitan EX Ultra Rare 210
+211,Dondozo EX,Ultra Rare,218,154,18,218,399,e748298a7e71f4736af89b815b891f5e92d6efba,Dondozo EX Ultra Rare 211
+212,Electivire EX,Ultra Rare,403,202,21,403,631,10fe827a69471f24bc4e8eed2844951cece3caaf,Electivire EX Ultra Rare 212
+213,Team Rocket's Mewtwo EX,Ultra Rare,9726,4689,554,9726,15148,8e17dde420da6d2d0e52fcbc24c307cbfee759e1,Team Rocket's Mewtwo EX Ultra Rare 213
+214,Regirock EX,Ultra Rare,361,166,19,361,552,300171671297bfd3c0e9cfa2b92ab33502214448,Regirock EX Ultra Rare 214
+215,Cynthia's Garchomp EX,Ultra Rare,2428,1265,209,2428,3963,6a33710d6a9dbb73c0023c4ec679d9aa9b066c53,Cynthia's Garchomp EX Ultra Rare 215
+216,Team Rocket's Nidoking EX,Ultra Rare,2151,1022,129,2151,3336,42cc8d1782c07dc766d02217ec9b82490c9b82f6,Team Rocket's Nidoking EX Ultra Rare 216
+217,Team Rocket's Crobat EX,Ultra Rare,1104,477,56,1104,1654,e8b593cd6181001fc8f127d667fcbcb2a55117a3,Team Rocket's Crobat EX Ultra Rare 217
+218,Arven's Mabosstiff EX,Ultra Rare,545,268,47,545,876,4a45a17796bed9e8f94c7b3e66763ec84acee847,Arven's Mabosstiff EX Ultra Rare 218
+219,Team Rocket's Persian EX,Ultra Rare,2296,965,110,2296,3426,935ee2aacff0a889f98a8cf995168dc6e6e6cf4c,Team Rocket's Persian EX Ultra Rare 219
+220,Emcee's Hype,Ultra Rare,600,338,92,600,1051,5aab3b36d0ba5e150e1cdb8546ccf49b5073a715,Emcee's Hype Ultra Rare 220
+221,Ethan's Adventure,Ultra Rare,627,462,113,627,1253,8ed9f4a549e802ac94a39edc8c7cf704d6671bd1,Ethan's Adventure Ultra Rare 221
+222,Judge,Ultra Rare,149,101,29,149,285,a49094fb5ddd29c759b2fa1abf1c50566d151213,Judge Ultra Rare 222
+223,Team Rocket's Archer,Ultra Rare,247,170,43,247,474,372d9978775577e170ac146b03fb28cdbe0f3ab0,Team Rocket's Archer Ultra Rare 223
+224,Team Rocket's Ariana,Ultra Rare,473,338,84,473,917,8e194a1361aa0daaa9b8bf94d4d6d3049cec354a,Team Rocket's Ariana Ultra Rare 224
+225,Team Rocket's Giovanni,Ultra Rare,1263,770,187,1263,2281,ec42733d181353c507e6f49c7e9737f54875318f,Team Rocket's Giovanni Ultra Rare 225
+226,Team Rocket's Petrel,Ultra Rare,449,371,86,449,936,6ef5b429bfc6e7f9b415ce148a436a8671ce5afb,Team Rocket's Petrel Ultra Rare 226
+227,Team Rocket's Proton,Ultra Rare,283,202,59,283,559,17a8d1ca4c42ed875922930a49b3e6d05b54ece9,Team Rocket's Proton Ultra Rare 227
+228,Yanmega EX,Special Illustration Rare,1726,604,247,1726,2681,c64e91d38f88d2190b5a042fec3324f6974efdb3,Yanmega EX Special Illustration Rare 228
+229,Team Rocket's Moltres EX,Special Illustration Rare,7012,3564,1116,7012,12195,d1390104152102cb05e0e89848fb7a5a1bb95c14,Team Rocket's Moltres EX Special Illustration Rare 229
+229,Team Rocket's Moltres EX,Team Rocket's Moltres EX Ultra-Premium Collection,3112,2589,463,3112,6324,0e16edbc1ff9a197066d767c74b8534b19947cf0,Team Rocket's Moltres EX Team Rocket's Moltres EX Ultra-Premium Collection 229
+230,Ethan's HO-Oh EX,Special Illustration Rare,8859,4599,1275,8859,15312,a08258a9641521474bd8656506eb55321d499bf4,Ethan's HO-Oh EX Special Illustration Rare 230
+231,Team Rocket's Mewtwo EX,Special Illustration Rare,15048,7836,2420,15048,26318,6e0d20d079a840db9a8b9fa71f128863298dac94,Team Rocket's Mewtwo EX Special Illustration Rare 231
+232,Cynthia's Garchomp EX,Special Illustration Rare,10127,4659,1552,10127,16953,351426ad419d9014a89cb98790c7d199d8fc9b99,Cynthia's Garchomp EX Special Illustration Rare 232
+233,Team Rocket's Nidoking EX,Special Illustration Rare,6820,3324,1035,6820,11614,c9aafb304f9b0bcb88fd5c1da558172e8b54f87f,Team Rocket's Nidoking EX Special Illustration Rare 233
+234,Team Rocket's Crobat EX,Special Illustration Rare,5539,2314,750,5539,8888,752783c5a69993cf03c1fbc02b9b3e563d1861f8,Team Rocket's Crobat EX Special Illustration Rare 234
+235,Arven's Mabosstiff EX,Special Illustration Rare,1813,731,253,1813,2889,18905a5896b62354e9be922da1acb58827353de8,Arven's Mabosstiff EX Special Illustration Rare 235
+236,Ethan's Adventure,Special Illustration Rare,2702,2429,994,2702,6429,05b7ad8c33e52684d13080752051a519eb42b603,Ethan's Adventure Special Illustration Rare 236
+237,Team Rocket's Ariana,Special Illustration Rare,1344,875,360,1344,2709,ff959c47e2910076cb5d25238553704a4579a724,Team Rocket's Ariana Special Illustration Rare 237
+238,Team Rocket's Giovanni,Special Illustration Rare,1970,1233,498,1970,3862,7bcab7ddac24dfc7c8cc1018778eabb013614b88,Team Rocket's Giovanni Special Illustration Rare 238
+239,Ethan's HO-Oh EX,Hyper Rare,3218,1603,193,3218,5060,9484279b170c0d93a3e5306db7711f6978154865,Ethan's HO-Oh EX Hyper Rare 239
+240,Team Rocket's Mewtwo EX,Hyper Rare,6762,3765,486,6762,11156,ce08261aa5578839ed93788c4ca8adba766686be,Team Rocket's Mewtwo EX Hyper Rare 240
+241,Cynthia's Garchomp EX,Hyper Rare,3814,1689,191,3814,5758,1020819a7861a5925767ee8f9e2bf86f8d59e6b5,Cynthia's Garchomp EX Hyper Rare 241
+242,Team Rocket's Crobat EX,Hyper Rare,1852,932,111,1852,2924,47da15ee7e045f1716a415827dcf7ecbf2f17976,Team Rocket's Crobat EX Hyper Rare 242
+243,Jamming Tower,Hyper Rare,358,301,61,358,740,14402083b956f9701ae04e15e8a803b8b5b9a41b,Jamming Tower Hyper Rare 243
+244,Levincia,Hyper Rare,234,176,40,234,460,832d2212cd95ccf0a766a5942b17bd10f1d839ce,Levincia Hyper Rare 244

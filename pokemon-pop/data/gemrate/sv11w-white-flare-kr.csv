@@ -1,0 +1,73 @@
+card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,details
+017,Reshiram EX,Base,3,3,1,3,7,57a86cda6163fe426f8387df384b2d0d08434b7c,Reshiram EX Base 017
+018,Oshawott,Master Ball Reverse Holo,1,0,0,1,1,1508e8aaffdcc2d531c608453d2e4a7e30d1a8b7,Oshawott Master Ball Reverse Holo 018
+020,Samurott,Base,0,0,1,0,1,321b6bf31e29bb4780e8d763023e94fc1a80a554,Samurott Base 020
+027,Keldeo EX,Base,1,0,0,1,1,010b11ae29cdafb77f5f806fe6d3dc6fe3548048,Keldeo EX Base 027
+028,Blitzle,Master Ball Reverse Holo,0,1,0,0,1,1ba64c88e7c763f8a4c8c1c049825571dae9fdd3,Blitzle Master Ball Reverse Holo 028
+042,Jellicent EX,Base,1,0,0,1,1,dd00dded9fe06c11c68db3e7cea11074dee43c14,Jellicent EX Base 042
+050,Mienshao,Reverse Holo,1,0,0,1,1,7d35218b23544997f7b7e21a0e95c323ae7705f1,Mienshao Reverse Holo 050
+059,Zoroark,Master Ball Reverse Holo,2,2,0,2,4,9d5da1544f50b3fc036c7d2f69cbc8ee73f4bbe8,Zoroark Master Ball Reverse Holo 059
+062,Hydreigon EX,Base,0,1,0,0,1,9a57c5514a4ab76e1da444453cf1853daacf3606,Hydreigon EX Base 062
+075,Bouffalant EX,Base,2,0,0,2,2,62315c316d10ec84db24eecd845dd6fb508c0825,Bouffalant EX Base 075
+087,Sewaddle,Art Rare,2,0,0,2,2,c272c9f55e10a811d7f60deb647dca9eaae68fa5,Sewaddle Art Rare 087
+090,Cottonee,Art Rare,2,2,0,2,4,1f1d1a1efc23b17db1caa2c287a5b79efb81cac6,Cottonee Art Rare 090
+091,Deerling,Art Rare,2,0,0,2,2,7d7d42cb9796d46b0d2e0bba88488c39dfe85e00,Deerling Art Rare 091
+093,Shelmet,Art Rare,2,0,1,2,3,5f9532b52f1f9edd3c8ad5a67ca6366fcd97b547,Shelmet Art Rare 093
+095,Virizion,Art Rare,2,0,0,2,2,91915baffb86dc63716aa933a477347c0429a307,Virizion Art Rare 095
+096,Tepig,Art Rare,6,0,0,6,6,927693e82a1288796e2c515c4086f680923d8b8c,Tepig Art Rare 096
+097,Pignite,Art Rare,1,1,0,1,2,192e8ebb63e40dca3e757ebf99f17ce24923eef8,Pignite Art Rare 097
+098,Emboar,Art Rare,1,0,0,1,1,a6ea0a290d24df011b34883061fe9615c234003f,Emboar Art Rare 098
+099,Pansear,Art Rare,2,0,0,2,2,ced41d987d4e2acea90e53cbf387371703164433,Pansear Art Rare 099
+100,Simisear,Art Rare,1,0,0,1,1,b1a02db3b4e3dd3c44fcb02b942938b2cf5a5de0,Simisear Art Rare 100
+102,Oshawott,Art Rare,11,1,0,11,14,60f378da935368a61158f04a493d10be8a5939fc,Oshawott Art Rare 102
+103,Dewott,Art Rare,0,1,0,0,1,05464c9a2f5f371e86877625e69e5cace7a750d8,Dewott Art Rare 103
+104,Samurott,Art Rare,2,0,0,2,2,0919f6730facfe71e0dbc5bb35a2ba00681762bf,Samurott Art Rare 104
+105,Basculin,Art Rare,2,0,0,2,2,664864214c9f231f9fcb06351dd971862d140be1,Basculin Art Rare 105
+106,Ducklett,Art Rare,3,0,0,3,3,415ecbbf56a55d130262696f5b4a63163beedbe3,Ducklett Art Rare 106
+110,Vanilluxe,Art Rare,1,0,0,1,1,2ef9e808d58eae142e3434814ff89b017cdef74c,Vanilluxe Art Rare 110
+112,Zebstrika,Art Rare,1,0,0,1,1,bdaf80d02c0bb5b8456b2e3d9ac050ea373a6c26,Zebstrika Art Rare 112
+113,Joltik,Art Rare,2,0,1,2,3,185ddb8e548562e7a54475bf6d39a89b5ac2d4f6,Joltik Art Rare 113
+118,Sigilyph,Art Rare,0,1,0,0,1,7e3f3fd18d399b66aea92d4d9d4765485de82c4c,Sigilyph Art Rare 118
+120,Cofagrigus,Art Rare,1,0,0,1,1,fc058d79e664879e90e28386dc580f3938b588d9,Cofagrigus Art Rare 120
+121,Gothita,Art Rare,2,0,0,2,2,6d264db8dbaeff4c1a9cd10f655a17dbcf03ff18,Gothita Art Rare 121
+123,Gothitelle,Art Rare,3,0,0,3,3,6cfecfade385d7d0907c77bc54971607f076cbf5,Gothitelle Art Rare 123
+125,Roggenrola,Art Rare,3,0,0,3,3,6ddcdee1f83e5d0c0623e5cbb221f34c28fe3cec,Roggenrola Art Rare 125
+128,Sawk,Art Rare,2,0,0,2,2,7621bdfaf037f649014c5dfc20bbede3cc5ee737,Sawk Art Rare 128
+129,Archen,Art Rare,2,0,0,2,2,0e74d0bda5e3bf213b79d4730a125baa417da93f,Archen Art Rare 129
+130,Archeops,Art Rare,1,0,0,1,1,4522b111c3a995f1e6ece99f31fef7ef782c9452,Archeops Art Rare 130
+131,Mienfoo,Art Rare,2,0,0,2,2,5fdd88324fa3e2823390d1955d17becd2f9c6eee,Mienfoo Art Rare 131
+133,Terrakion,Art Rare,1,0,1,1,2,e92ea2315f6c07dc372dc9c9a415a01f79b6ba87,Terrakion Art Rare 133
+134,Purrloin,Art Rare,2,1,1,2,4,2a90d2d8a2142ecf63a3ea874aff7468a91faf11,Purrloin Art Rare 134
+137,Scrafty,Art Rare,1,0,1,1,2,2caa323683d0f1ce728c91c41e22a23445341d58,Scrafty Art Rare 137
+139,Garbodor,Art Rare,1,0,0,1,1,ca3c6fb55039382b137894dd5740b15718fa3b83,Garbodor Art Rare 139
+140,Zorua,Art Rare,0,2,0,0,2,1ee687fd4d482c1df1c3d136701154048d6e90ab,Zorua Art Rare 140
+141,Zoroark,Art Rare,9,0,0,9,9,447828a287b6346fc9660c363aafbf051dc4306d,Zoroark Art Rare 141
+142,Deino,Art Rare,1,1,0,1,2,9e367c9cad23924dc23450e4645289a855cd63f7,Deino Art Rare 142
+143,Zweilous,Art Rare,1,0,0,1,1,1bf2d8e2da77c2cd0d3bfcd774b5bc9599520ffa,Zweilous Art Rare 143
+145,Ferrothorn,Art Rare,1,0,0,1,1,742000a327af9da89449421ab4661ab87bd5af84,Ferrothorn Art Rare 145
+146,Klink,Art Rare,1,0,0,1,1,67f22a300cee2b3d45d9cb47ff1d59ef5d7a3099,Klink Art Rare 146
+147,Klang,Art Rare,0,0,1,0,1,357d7b46f936b46bdbf0c88c0910f26e48dc19dc,Klang Art Rare 147
+149,Durant,Art Rare,1,0,0,1,1,d6ad9b9e16587549118b79f91dcd4f579d0fefae,Durant Art Rare 149
+150,Druddigon,Art Rare,1,0,0,1,1,2813f4df518e2ad40f08c738e5dfbae88628ea2f,Druddigon Art Rare 150
+151,Patrat,Art Rare,1,1,0,1,2,49582def394ab9894ffe07992906d663405172a2,Patrat Art Rare 151
+152,Watchog,Art Rare,1,0,0,1,1,d1962c19551f5fb04a08e0986a86fb59f6791c1c,Watchog Art Rare 152
+153,Lillipup,Art Rare,4,0,0,4,4,0c32f2454208695ff9b71a134ffda32e7c25f116,Lillipup Art Rare 153
+154,Herdier,Art Rare,1,0,0,1,1,7fbc23b6954abc2609b2a3e11be21fe153f146a7,Herdier Art Rare 154
+155,Stoutland,Art Rare,1,0,0,1,1,0d76b851bb119d49b485c8e098b41cda0e669ce5,Stoutland Art Rare 155
+156,Rufflet,Art Rare,1,0,0,1,1,a928a2e6826ba97a013a9a6b0e68db229cb5cb63,Rufflet Art Rare 156
+157,Braviary,Art Rare,1,0,0,1,1,47bc280e63af3c7f42fc069f13e154e2cdf1f511,Braviary Art Rare 157
+159,Whimsicott EX,Super Rare,1,1,0,1,2,e10a6e7d5f57377c64995a975e26fb9380fa1eac,Whimsicott EX Super Rare 159
+160,Reshiram EX,Super Rare,4,0,0,4,4,7b45204b5fc32395a42a6cfe5193904b16421c45,Reshiram EX Super Rare 160
+161,Keldeo EX,Super Rare,2,1,1,2,4,07ec07d6ac2172a5c3ac34d40ef3b9851410d376,Keldeo EX Super Rare 161
+163,Hydreigon EX,Super Rare,1,1,0,1,2,d6f388c20b87777909bd54e2dc78e3ccb014aa10,Hydreigon EX Super Rare 163
+164,Bouffalant EX,Super Rare,1,0,0,1,1,a8bb428a793fbfb6d70148884d5ee6e2ab64339b,Bouffalant EX Super Rare 164
+165,Harlequin,Super Rare,1,0,0,1,1,213750920ee00e33257cfe926b28eebf780ca651,Harlequin Super Rare 165
+166,Hilda,Super Rare,2,5,5,2,12,819b7738914fe65d696411dd33d0aa3fd93500a8,Hilda Super Rare 166
+167,Whimsicott EX,Special Art Rare,4,0,0,4,4,a8e58d918756ffa041c853abdcc61d234be00d95,Whimsicott EX Special Art Rare 167
+168,Reshiram EX,Special Art Rare,18,56,3,18,78,d7190d27eb852206796abac6a0dc4b5ecb0a3f30,Reshiram EX Special Art Rare 168
+169,Keldeo EX,Special Art Rare,2,6,0,2,8,1d93670a607503454f7af24b8cda9684cefe0f11,Keldeo EX Special Art Rare 169
+170,Jellicent EX,Special Art Rare,4,1,0,4,5,4c36b0c2d363d7794c308b6c270c7ec16ac46af3,Jellicent EX Special Art Rare 170
+171,Hydreigon EX,Special Art Rare,9,11,2,9,22,56198a7cc300688caed4fe022c0942483e636fda,Hydreigon EX Special Art Rare 171
+172,Bouffalant EX,Special Art Rare,2,1,0,2,3,6a686ee119a89e5086d744b2f8654137824149cf,Bouffalant EX Special Art Rare 172
+173,Hilda,Special Art Rare,11,15,26,11,53,236a606ccb6fe24776045aae3e86058b8acd3ffd,Hilda Special Art Rare 173
+174,Reshiram EX,BW Rare,241,123,8,241,379,406b34805d2bc1c51230d2bbc0ca51ea17490949,Reshiram EX BW Rare 174

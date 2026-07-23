@@ -1,0 +1,45 @@
+card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,details
+012,Arboliva EX,Base,1,0,0,1,1,2c273abb8ac23aa450c1e18f54aad62e971f4bb7,Arboliva EX Base 012
+015,Team Rocket's Moltres EX,Base,1,1,0,1,2,d4c1e18a5038193e3a47a337305b21360a6903ce,Team Rocket's Moltres EX Base 015
+016,Team Rocket's Houndour,Base,1,3,1,1,5,2c0855b7ead68addac102cd4a952973d19d75ed0,Team Rocket's Houndour Base 016
+017,Team Rocket's Houndoom,Base,3,2,0,3,5,1a943fdb428a8a1323ea179fd9e1f1e1fdc86cab,Team Rocket's Houndoom Base 017
+020,Blaziken,Base,1,0,0,1,1,a5013e266f1d13d7abdb1fea0a5639712d0101f5,Blaziken Base 020
+032,Cetitan EX,Base,0,1,0,0,1,833e4bb844abaa8b7296cac5cb450de4326efb85,Cetitan EX Base 032
+039,Team Rocket's Mewtwo EX,Base,6,3,1,6,11,c1844766fa6b97d16cf33efdabfe185df716f0ff,Team Rocket's Mewtwo EX Base 039
+050,Team Rocket's Tyranitar,Base,0,1,0,0,1,d227f7e6989fc5f67b592bb7fbf70b99ad6825b2,Team Rocket's Tyranitar Base 050
+063,Team Rocket's Nidoking EX,Base,1,1,0,1,2,0b42e54fcf1fe238a9caa1ae4383b44b6cbfb666,Team Rocket's Nidoking EX Base 063
+066,Team Rocket's Crobat EX,Base,0,1,0,0,1,cb3538b6dc457fd7877c79a9f2d827b113bfd087,Team Rocket's Crobat EX Base 066
+079,Rocket's Persian EX,Base,2,0,0,2,2,1066a11181b1546eb43d600210078ab8ae07ee93,Rocket's Persian EX Base 079
+099,Team Rocket's Spidops,Art Rare,16,4,2,16,22,33fbbf9c31474aeef8a0d5fecd68f44a09a4f58d,Team Rocket's Spidops Art Rare 099
+100,Team Rocket's Houndoom,Art Rare,43,5,2,43,51,ca43a8ade61eaf244b99fc46f807c149ffb93e48,Team Rocket's Houndoom Art Rare 100
+101,Blaziken,Art Rare,18,2,2,18,23,3ea051374d96181fec3b0983ab559567d5e19416,Blaziken Art Rare 101
+102,Clamperl,Art Rare,5,0,0,5,5,a7738c4d21c8c6077f4d4f8f0c70095641da7ea0,Clamperl Art Rare 102
+103,Team Rocket's Wobbuffet,Art Rare,23,5,3,23,31,dd62be7bc275965af02becd3bd720704895859ad,Team Rocket's Wobbuffet Art Rare 103
+104,Team Rocket's Orbeetle,Art Rare,14,2,2,14,19,dbc50e651d38734be91092c0284b0db79178e028,Team Rocket's Orbeetle Art Rare 104
+105,Team Rocket's Weezing,Art Rare,14,4,0,14,20,72f163c6a16d480c905ab890fef78712a366414a,Team Rocket's Weezing Art Rare 105
+106,Team Rocket's Murkrow,Art Rare,20,3,3,20,26,9a03b1012d62c6e26b7d4f5ed61895d78ecdb29c,Team Rocket's Murkrow Art Rare 106
+107,Zamazenta,Art Rare,11,4,1,11,16,d1d3606b624447bcb8da39984c34a2c0319350ea,Zamazenta Art Rare 107
+108,Team Rocket's Raticate,Art Rare,15,3,0,15,18,04ae2f33a6be4f7eb0295a74f2246c3c4431e00a,Team Rocket's Raticate Art Rare 108
+109,Team Rocket's Meowth,Art Rare,61,13,4,61,78,ba96dd0bfb1547f133d0b72c12fe22271ee520be,Team Rocket's Meowth Art Rare 109
+110,Kangaskhan,Art Rare,17,7,2,17,26,95f0651a1c02ea80fb9f3f792162772a6bb0d39a,Kangaskhan Art Rare 110
+112,Team Rocket's Moltres EX,Super Rare,15,3,1,15,19,7327a0646101134148af65f34ad97dd783bbf46a,Team Rocket's Moltres EX Super Rare 112
+113,Cetitan EX,Super Rare,1,1,0,1,2,286cc65515be9fe5844d5b8aaf2ad3237dc5cf81,Cetitan EX Super Rare 113
+114,Team Rocket's Mewtwo EX,Super Rare,46,4,4,46,55,66ed93dcc214ce7269f24b4984043782bdb303e0,Team Rocket's Mewtwo EX Super Rare 114
+115,Regirock EX,Super Rare,1,0,0,1,1,b13b80b69588a9ed1d64abb5f747e8392051bc4a,Regirock EX Super Rare 115
+116,Team Rocket's Nidoking EX,Super Rare,11,1,0,11,12,6ff0702c4af65db44691f120ce436f3e5c9d2643,Team Rocket's Nidoking EX Super Rare 116
+117,Team Rocket's Crobat EX,Super Rare,3,3,0,3,6,82e55be5b0c7fc02b7c443578c926207040ed0b2,Team Rocket's Crobat EX Super Rare 117
+118,Team Rocket's Persian EX,Super Rare,10,1,0,10,11,710612485e13529f261582c88cab39e3d89fa194,Team Rocket's Persian EX Super Rare 118
+119,Team Rocket's Petrel,Super Rare,2,2,1,2,6,ac8543dccc015f0c98557cefb49f4c61ec94e120,Team Rocket's Petrel Super Rare 119
+120,Team Rocket's Proton,Super Rare,2,2,0,2,4,705dda9c43f7614cd485ddb91a1379c2ef3f379a,Team Rocket's Proton Super Rare 120
+121,Team Rocket's Giovanni,Super Rare,10,0,2,10,12,6b4e2f91fd640793888263a5e3c28b1c4cc21d6c,Team Rocket's Giovanni Super Rare 121
+122,Team Rocket's Ariana,Super Rare,5,3,0,5,8,2d3f6ceffc58724b3471cb5ab7130154a7ebe188,Team Rocket's Ariana Super Rare 122
+123,Team Rocket's Archer,Super Rare,1,2,1,1,4,5b19211bc4b4d8dfcb9a5e029d89b432855f1ef3,Team Rocket's Archer Super Rare 123
+124,Team Rocket's Moltres EX,Special Art Rare,113,16,13,113,148,0e6bfd85fa6b90098e09506bfe054d6b10a9bbc8,Team Rocket's Moltres EX Special Art Rare 124
+125,Team Rocket's Mewtwo EX,Special Art Rare,402,57,11,402,486,9fd39900ae8ddb818cbc93b29da89e5f91fde5ce,Team Rocket's Mewtwo EX Special Art Rare 125
+126,Team Rocket's Nidoking EX,Special Art Rare,69,14,4,69,91,9983e551316d571fc980c4912d04eefc37814377,Team Rocket's Nidoking EX Special Art Rare 126
+127,Team Rocket's Crobat EX,Special Art Rare,40,17,2,40,60,9a5b45fe7dea39f12dc5ae5442e316b1d98f58f1,Team Rocket's Crobat EX Special Art Rare 127
+128,Team Rocket's Giovanni,Special Art Rare,25,16,2,25,45,88a870ddf4b79c033e26233134e0156df74bd136,Team Rocket's Giovanni Special Art Rare 128
+129,Team Rocket's Ariana,Special Art Rare,20,15,8,20,44,be721b29c27646f7ad4926448870b2e7334e4f50,Team Rocket's Ariana Special Art Rare 129
+130,Team Rocket's Mewtwo EX,Ultra Rare,50,14,3,50,68,6587a6a47139e549bc4a4b6ff7393c7a39d0afa6,Team Rocket's Mewtwo EX Ultra Rare 130
+131,Team Rocket's Crobat EX,Ultra Rare,13,1,4,13,18,241fe81878e1fc2d62bebb0aa72f4535f9a364e2,Team Rocket's Crobat EX Ultra Rare 131
+132,Jamming Tower,Ultra Rare,3,2,0,3,5,c7d74bb5af29421719294be012974e8bdb7f32b1,Jamming Tower Ultra Rare 132
