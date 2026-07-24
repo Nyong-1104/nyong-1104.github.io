@@ -1,14 +1,9 @@
 {
-  "ranAt": "2026-07-24T13:49:00+09:00",
+  "ranAt": "2026-07-24T13:52:15+09:00",
   "stats": {
-    "asOf": "2026-07-24",
-    "asOfIso": "2026-07-24T13:49:00+09:00",
-    "cardsTotal": 3995,
-    "cardsLive": 1738,
-    "skippedTierC": 2257,
-    "variantsWritten": 3876,
-    "variantsKept": 0,
-    "variantsFailed": 0,
-    "note": "rebase-merge promo packs onto hourly live"
+    "ebayPromoRetry": {
+      "emptyBefore": 18,
+      "ok": 6
+    }
   }
 }
