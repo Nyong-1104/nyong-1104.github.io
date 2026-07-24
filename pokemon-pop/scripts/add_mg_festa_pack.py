@@ -14,6 +14,7 @@ sys.path.insert(0, str(SCRIPTS))
 
 from brg_pop import fetch_brg_for_packs, restore_brg_pops  # noqa: E402
 from ebay_prices import restore_ebay_prices  # noqa: E402
+from gemrate_pop import restore_psa_pops  # noqa: E402
 from pokepop_snapshot import build_live_snapshot, write_data_bundle  # noqa: E402
 
 KST = timezone(timedelta(hours=9))
@@ -80,10 +81,11 @@ def main() -> int:
     live, stats = build_live_snapshot(catalog, packs, asof_iso, previous)
     restore_ebay_prices(live, previous)
     restore_brg_pops(live, previous)
+    restore_psa_pops(live, previous)
     brg_stats = fetch_brg_for_packs(
         catalog, packs, live, asof_iso, pack_id=PACK_ID, langs=["kr"], sleep_s=0.1
     )
-    live["source"] = "seed+BRG"
+    live["source"] = previous.get("source") or "seed+BRG"
     live["generatedAt"] = asof_iso
     keep_ids = {c["id"] for c in catalog}
     live["cards"] = {k: v for k, v in (live.get("cards") or {}).items() if k in keep_ids}

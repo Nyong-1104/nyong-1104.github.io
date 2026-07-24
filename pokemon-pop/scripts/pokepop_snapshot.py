@@ -75,8 +75,68 @@ def finalize_catalog_card(card: dict) -> dict:
     return out
 
 
+def load_previous_live(data_dir: Path) -> dict:
+    """Load existing live pop-price.json so rebuilds do not wipe PSA/BRG/eBay."""
+    path = Path(data_dir) / "live" / "pop-price.json"
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def merge_preserved_overlays(live: dict, previous: dict | None) -> dict:
+    """Copy gemrate PSA, break BRG, and eBay prices from previous onto live.
+
+    Used as a last line of defense so catalog/pack scripts cannot blank live POP.
+    Fresh seed shells (None / empty / source=seed) lose to prior live overlays.
+    """
+    if not previous:
+        return live
+    prev_cards = previous.get("cards") or {}
+    live_cards = live.setdefault("cards", {})
+    for cid, langs in prev_cards.items():
+        if cid not in live_cards:
+            continue
+        for lang, prev_variant in (langs or {}).items():
+            if lang not in live_cards[cid]:
+                continue
+            cur = live_cards[cid][lang]
+            prev_price = (prev_variant or {}).get("price") or {}
+            cur_price = cur.get("price") or {}
+            if prev_price.get("source") == "eBay" and prev_price.get("grades"):
+                if cur_price.get("source") != "eBay" or not cur_price.get("grades"):
+                    cur["price"] = prev_price
+            prev_pop = (prev_variant or {}).get("pop") or {}
+            cur_pop = cur.setdefault("pop", {})
+            prev_psa = prev_pop.get("PSA")
+            cur_psa = cur_pop.get("PSA")
+            if isinstance(prev_psa, dict) and prev_psa.get("source") == "gemrate":
+                if not isinstance(cur_psa, dict) or cur_psa.get("source") != "gemrate":
+                    cur_pop["PSA"] = prev_psa
+            prev_brg = prev_pop.get("BRG")
+            cur_brg = cur_pop.get("BRG")
+            if isinstance(prev_brg, dict) and prev_brg.get("source") == "break":
+                if not isinstance(cur_brg, dict) or cur_brg.get("source") != "break":
+                    cur_pop["BRG"] = prev_brg
+    # Keep the richer source label when we preserved overlays.
+    prev_source = previous.get("source") or ""
+    cur_source = live.get("source") or "seed"
+    if "PSA" in prev_source and "PSA" not in cur_source:
+        live["source"] = (cur_source + "+PSA").replace("seed+seed", "seed")
+    if "BRG" in prev_source and "BRG" not in (live.get("source") or ""):
+        live["source"] = ((live.get("source") or cur_source) + "+BRG")
+    return live
+
+
 def build_live_snapshot(catalog, packs, asof_iso: str, previous=None):
-    """Build live POP/price data for Tier A/B cards only (Tier C = catalog only)."""
+    """Build live POP/price data for Tier A/B cards only (Tier C = catalog only).
+
+    Pass the prior live file as ``previous`` (or use ``load_previous_live``).
+    GemRate PSA, Break BRG, and eBay prices are copied onto the fresh seed shell
+    so one-off catalog scripts cannot wipe live overlays.
+    """
     previous = previous or {}
     prev_cards = previous.get("cards") or {}
     packs_by_id = {p["id"]: p for p in packs}
@@ -118,11 +178,19 @@ def build_live_snapshot(catalog, packs, asof_iso: str, previous=None):
                     lang,
                     asof_iso,
                 )
-                # Keep prior eBay/BRG if restore helpers miss a path
+                # Keep prior live overlays even if callers forget restore_* helpers.
                 prev_variant = prev_card.get(lang) or {}
                 prev_price = prev_variant.get("price") or {}
                 if prev_price.get("source") == "eBay" and prev_price.get("grades"):
                     variants[lang]["price"] = prev_price
+                prev_pop = prev_variant.get("pop") or {}
+                pop = variants[lang].setdefault("pop", {})
+                prev_psa = prev_pop.get("PSA")
+                if isinstance(prev_psa, dict) and prev_psa.get("source") == "gemrate":
+                    pop["PSA"] = prev_psa
+                prev_brg = prev_pop.get("BRG")
+                if isinstance(prev_brg, dict) and prev_brg.get("source") == "break":
+                    pop["BRG"] = prev_brg
                 stats["variantsWritten"] += 1
             except Exception:
                 if lang in prev_card:
@@ -155,6 +223,10 @@ def write_data_bundle(data_dir: Path, packs, catalog, live, last_run=None) -> No
     data_dir.mkdir(parents=True, exist_ok=True)
     live_dir = data_dir / "live"
     live_dir.mkdir(parents=True, exist_ok=True)
+
+    # Last line of defense: never blank gemrate PSA / break BRG / eBay on disk.
+    on_disk = load_previous_live(data_dir)
+    merge_preserved_overlays(live, on_disk)
 
     (data_dir / "packs.json").write_text(
         json.dumps(packs, ensure_ascii=False, indent=2) + "\n",

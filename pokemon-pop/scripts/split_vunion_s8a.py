@@ -17,7 +17,14 @@ ASSETS = ROOT / "assets"
 SCRIPTS = ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
-from pokepop_snapshot import build_live_snapshot, write_data_bundle  # noqa: E402
+from pokepop_snapshot import (  # noqa: E402
+    build_live_snapshot,
+    load_previous_live,
+    write_data_bundle,
+)
+from ebay_prices import restore_ebay_prices  # noqa: E402
+from brg_pop import restore_brg_pops  # noqa: E402
+from gemrate_pop import restore_psa_pops  # noqa: E402
 
 KST = timezone(timedelta(hours=9))
 UA = {"User-Agent": "PokePopVUnion/1.0"}
@@ -175,16 +182,13 @@ def main() -> int:
         pack["cardIds"] = ordered
 
     asof = datetime.now(KST).isoformat(timespec="seconds")
-    live, stats = build_live_snapshot(catalog, packs, asof)
-    (DATA / "catalog.json").write_text(
-        json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
-    (DATA / "packs.json").write_text(
-        json.dumps(packs, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
-    (DATA / "live" / "pop-price.json").write_text(
-        json.dumps(live, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
+    previous = load_previous_live(DATA)
+    live, stats = build_live_snapshot(catalog, packs, asof, previous)
+    restore_ebay_prices(live, previous)
+    restore_brg_pops(live, previous)
+    restore_psa_pops(live, previous)
+    live["source"] = previous.get("source") or live.get("source") or "seed"
+    live["generatedAt"] = asof
     write_data_bundle(DATA, packs, catalog, live)
     print(json.dumps({"added": [c["id"] for c in new_cards], **stats}, ensure_ascii=False, indent=2))
     return 0

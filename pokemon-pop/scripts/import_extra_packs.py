@@ -26,7 +26,14 @@ from build_catalog import (  # noqa: E402
     load_species_names,
     to_catalog_card,
 )
-from pokepop_snapshot import build_live_snapshot, write_data_bundle  # noqa: E402
+from pokepop_snapshot import (  # noqa: E402
+    build_live_snapshot,
+    load_previous_live,
+    write_data_bundle,
+)
+from ebay_prices import restore_ebay_prices  # noqa: E402
+from brg_pop import restore_brg_pops  # noqa: E402
+from gemrate_pop import restore_psa_pops  # noqa: E402
 from datetime import datetime, timedelta, timezone
 
 KST = timezone(timedelta(hours=9))
@@ -756,7 +763,13 @@ def main() -> int:
             images["en"] = images.get("jp")
 
     asof = datetime.now(KST).isoformat(timespec="seconds")
-    live, stats = build_live_snapshot(catalog, packs_out, asof)
+    previous = load_previous_live(DATA)
+    live, stats = build_live_snapshot(catalog, packs_out, asof, previous)
+    restore_ebay_prices(live, previous)
+    restore_brg_pops(live, previous)
+    restore_psa_pops(live, previous)
+    live["source"] = previous.get("source") or live.get("source") or "seed"
+    live["generatedAt"] = asof
     write_data_bundle(DATA, packs_out, catalog, live)
     print(json.dumps({"packs": len(packs_out), "catalog": len(catalog), **stats}, ensure_ascii=False, indent=2))
     return 0
