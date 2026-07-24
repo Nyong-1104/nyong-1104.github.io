@@ -13,9 +13,11 @@
   }
 
   function popCell(graderData, grade) {
-    if (!graderData) return `<td class="pop-empty">—</td>`;
+    // No grader payload at all → couldn't fetch / not wired.
+    if (graderData == null) return `<td class="pop-empty">—</td>`;
     const v = gradeValue(graderData, grade);
     if (v == null) return `<td class="pop-empty">—</td>`;
+    // Explicit 0 stays "0" (distinct from —).
     return popNumCell(v);
   }
 
@@ -24,7 +26,7 @@
     let any = false;
     PT.GRADERS.forEach((g) => {
       const data = pop?.[g];
-      if (!data) return;
+      if (data == null) return;
       const v = gradeValue(data, grade);
       if (v == null) return;
       sum += Number(v) || 0;
@@ -45,27 +47,27 @@
 
     const scores = graderData.brgScores;
     if (scores && typeof scores === "object" && graderData.source === "break") {
+      // Successful BRG hit: missing score keys mean POP 0, not "unknown".
       const num = (k) => {
+        if (scores[k] == null) return 0;
         const c = Number(scores[k]);
         return Number.isFinite(c) ? c : 0;
       };
-      if (grade === "10") return scores["100"] != null ? num("100") : null;
-      if (grade === "9") {
-        if (scores["90"] == null && scores["85"] == null) return null;
-        return num("90") + num("85");
-      }
-      if (grade === "8") return scores["80"] != null ? num("80") : null;
+      if (grade === "10") return num("100");
+      if (grade === "9") return num("90") + num("85");
+      if (grade === "8") return num("80");
       if (grade === "le7") {
         let sum = 0;
-        let any = false;
         Object.keys(scores).forEach((k) => {
           if (k === "-1" || k === "100" || k === "90" || k === "85" || k === "80") return;
           const c = Number(scores[k]);
           if (!Number.isFinite(c)) return;
           sum += c;
-          any = true;
         });
-        return any ? sum : graderData.le7 ?? 0;
+        if (graderData.le7 != null && Number.isFinite(Number(graderData.le7))) {
+          return Number(graderData.le7);
+        }
+        return sum;
       }
     }
 
@@ -73,7 +75,12 @@
       // Legacy BRG dumps mapped 90 → 9.5; fold into 9 for display.
       const v9 = graderData["9"];
       const v95 = graderData["9.5"];
-      if (v9 == null && v95 == null) return null;
+      if (v9 == null && v95 == null) {
+        // Fetched grader with explicit nulls elsewhere still means unknown for this col
+        // only when the whole grader isn't a live source — live sources use 0 below.
+        if (graderData.source === "break" || graderData.source === "gemrate") return 0;
+        return null;
+      }
       return (Number(v9) || 0) + (Number(v95) || 0);
     }
 
@@ -85,14 +92,24 @@
           .reduce((a, b) => a + Number(b), 0);
         return Math.max(0, Number(graderData.total) - high);
       }
+      if (graderData.source === "break" || graderData.source === "gemrate") return 0;
       return null;
     }
 
-    return graderData[grade] ?? null;
+    const raw = graderData[grade];
+    if (raw == null) {
+      // Live fetch succeeded but this grade wasn't reported → treat as 0.
+      if (graderData.source === "break" || graderData.source === "gemrate") return 0;
+      return null;
+    }
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
   }
 
   function graderHasData(graderData) {
     if (!graderData || typeof graderData !== "object") return false;
+    // Any live overlay counts, even if every grade is 0.
+    if (graderData.source === "break" || graderData.source === "gemrate") return true;
     return PT.GRADE_COLS.some((col) => gradeValue(graderData, col) != null);
   }
 
@@ -109,13 +126,14 @@
       return;
     }
 
-    const activeGraders = PT.GRADERS.filter((g) => graderHasData(pop[g]));
-    if (!activeGraders.length) {
-      tbody.innerHTML = `<tr><td colspan="${PT.GRADE_COLS.length + 1}" class="pop-empty pop-empty--message">${PT.t("popEmptyBrg")}</td></tr>`;
-      return;
-    }
+    // Always show live graders (BRG/PSA) so missing fetch = "—", real zero = "0".
+    const liveGraders = ["BRG", "PSA"];
+    const extraGraders = PT.GRADERS.filter(
+      (g) => liveGraders.indexOf(g) === -1 && graderHasData(pop[g])
+    );
+    const displayGraders = liveGraders.concat(extraGraders);
 
-    const rows = activeGraders.map((g) => {
+    const rows = displayGraders.map((g) => {
       const data = pop[g] ?? null;
       return `<tr>
         <td>${g}</td>
@@ -123,7 +141,7 @@
       </tr>`;
     });
 
-    if (activeGraders.length > 1) {
+    if (displayGraders.some((g) => graderHasData(pop[g]))) {
       const totals = PT.GRADE_COLS.map((col) => popNumCell(sumPopColumn(pop, col)));
       rows.push(
         `<tr class="pop-total-row"><td>${PT.t("popTotalRow")}</td>${totals.join("")}</tr>`

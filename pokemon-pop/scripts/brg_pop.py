@@ -194,11 +194,17 @@ def brg_pop_object(brg_card: dict[str, Any], asof_iso: str) -> dict[str, Any]:
         elif score not in {"", "-1"}:
             le7 += count
     out["le7"] = le7
+    # Successful fetch: missing grade columns are real zeros, not "unknown".
+    for col in ("10", "9", "8"):
+        if out[col] is None:
+            out[col] = 0
+    for score in ("100", "90", "80"):
+        out["brgScores"].setdefault(score, 0)
     try:
         out["total"] = int(brg_card.get("total"))
     except (TypeError, ValueError):
-        scored = [v for k, v in out["brgScores"].items() if k not in {"-1"} and v]
-        out["total"] = sum(scored) if scored else None
+        scored = [v for k, v in out["brgScores"].items() if k not in {"-1"}]
+        out["total"] = sum(scored) if scored else 0
     return out
 
 
