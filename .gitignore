@@ -1,4 +1,5 @@
 pokemon-pop/data/_tmp/
+pokemon-pop/data/_tmp_*
 .env
 **/.env
 !.env.example

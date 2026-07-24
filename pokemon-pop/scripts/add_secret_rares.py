@@ -2,7 +2,7 @@
 """Merge official-site secret rares (incl. MUR) into catalog/packs/live.
 
 PTCG-database only has base numbers for M1L/M1S (001-063). Secret rares
-(064+) live on pokemon-card.com — import from data/_tmp_mur_scan.json
+(064+) live on pokemon-card.com — import from data/_tmp/mur_scan.json
 (and optional extras).
 """
 from __future__ import annotations
@@ -184,8 +184,9 @@ def to_card(row: dict, pack_id: str, id_prefix: str) -> dict | None:
 
 def load_scans() -> list[dict]:
     rows: list[dict] = []
-    for name in ("_tmp_mur_scan.json", "_tmp_mur_extra.json"):
-        path = DATA / name
+    tmp = DATA / "_tmp"
+    for name in ("mur_scan.json", "mur_extra.json"):
+        path = tmp / name
         if path.is_file():
             rows.extend(json.loads(path.read_text(encoding="utf-8")))
     # de-dupe by jp_id

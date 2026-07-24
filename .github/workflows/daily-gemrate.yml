@@ -1,0 +1,49 @@
+name: Daily GemRate PSA
+
+on:
+  schedule:
+    # 00:00 KST = 15:00 UTC (previous calendar day in UTC)
+    - cron: "0 15 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  gemrate-psa:
+    runs-on: ubuntu-latest
+    # One set page / minute; scale with GEMRATE_SETS × langs (e.g. 6 pages ≈ 6+ min).
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Playwright
+        run: |
+          pip install -r pokemon-pop/scripts/requirements-gemrate.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Fetch GemRate dumps + apply PSA
+        # Space requests ~1/min from KST midnight so the burst is not obvious.
+        run: python pokemon-pop/scripts/fetch_gemrate.py --sleep 60
+
+      - name: Commit and push if changed
+        run: |
+          git add \
+            pokemon-pop/data/gemrate \
+            pokemon-pop/data/live/pop-price.json \
+            pokemon-pop/data/live/last-run.json \
+            pokemon-pop/data/data.js
+          if git diff --staged --quiet; then
+            echo "No GemRate changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(pokepop): daily GemRate PSA $(date -u +%Y-%m-%d)"
+          git push
