@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-24T13:52:15+09:00",
-  "source": "eBay+seed+BRG",
+  "generatedAt": "2026-07-24T14:03:36+09:00",
+  "source": "eBay+seed+BRG+PSA",
   "cards": {
     "sv2a-003": {
       "jp": {
@@ -137491,7 +137491,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 21063,
+            "9": 3264,
+            "8": 301,
+            "le7": 237,
+            "total": 24865,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "33a0c0dbef780c49f9748b22899dc5b8c5ac69a4",
+            "parallel": "YU Nagaba X Pokemon Card Game Campaign",
+            "setName": "Pokemon Japanese SV-P Promo"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137499,7 +137510,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:07+09:00"
       }
     },
     "nagaba-063": {
@@ -137530,7 +137541,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 19701,
+            "9": 3522,
+            "8": 206,
+            "le7": 209,
+            "total": 23638,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "bf034d6064fbe3aa652bda1bca38b850857b793c",
+            "parallel": "YU Nagaba X Pokemon Card Game Campaign",
+            "setName": "Pokemon Japanese SV-P Promo"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137538,7 +137560,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:07+09:00"
       }
     },
     "nagaba-064": {
@@ -137569,7 +137591,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 20704,
+            "9": 2465,
+            "8": 202,
+            "le7": 184,
+            "total": 23555,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "80486390a98f1fc1015547e593361a82e16f6ff2",
+            "parallel": "YU Nagaba X Pokemon Card Game Campaign",
+            "setName": "Pokemon Japanese SV-P Promo"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137577,7 +137610,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:07+09:00"
       }
     },
     "nagaba-065": {
@@ -137608,7 +137641,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 22899,
+            "9": 2145,
+            "8": 208,
+            "le7": 205,
+            "total": 25457,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "ff0c56c0ce16c445b5345f73641840ceec598064",
+            "parallel": "YU Nagaba X Pokemon Card Game Campaign",
+            "setName": "Pokemon Japanese SV-P Promo"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137616,7 +137660,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:07+09:00"
       }
     },
     "nagaba-066": {
@@ -137647,7 +137691,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 20857,
+            "9": 2466,
+            "8": 254,
+            "le7": 214,
+            "total": 23791,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "c8e40d96d39120bc4d7d5018959fb35e7a6ad25b",
+            "parallel": "YU Nagaba X Pokemon Card Game Campaign",
+            "setName": "Pokemon Japanese SV-P Promo"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137655,7 +137710,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:07+09:00"
       }
     },
     "nagaba-067": {
@@ -137686,7 +137741,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 28580,
+            "9": 2437,
+            "8": 259,
+            "le7": 318,
+            "total": 31594,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "f0dbad51ccafa6286ca88f426354edf8d8bac101",
+            "parallel": "YU Nagaba X Pokemon Card Game Campaign",
+            "setName": "Pokemon Japanese SV-P Promo"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137694,7 +137760,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:07+09:00"
       }
     },
     "nagaba-068": {
@@ -137731,7 +137797,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 21898,
+            "9": 2213,
+            "8": 232,
+            "le7": 242,
+            "total": 24585,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "6e3f6523823a032e19ea86689144c04e664ff83c",
+            "parallel": "YU Nagaba X Pokemon Card Game Campaign",
+            "setName": "Pokemon Japanese SV-P Promo"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137739,7 +137816,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:07+09:00"
       }
     },
     "nagaba-069": {
@@ -137770,7 +137847,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 21088,
+            "9": 3890,
+            "8": 250,
+            "le7": 222,
+            "total": 25450,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "9d816751328d487088be572ff39a2a17c7a4a2c3",
+            "parallel": "YU Nagaba X Pokemon Card Game Campaign",
+            "setName": "Pokemon Japanese SV-P Promo"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137778,7 +137866,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:07+09:00"
       }
     },
     "nagaba-070": {
@@ -137809,7 +137897,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 22011,
+            "9": 2744,
+            "8": 281,
+            "le7": 266,
+            "total": 25302,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "b6b7f3acf96ca6fec6538dbd10103bdfda2f0cf4",
+            "parallel": "YU Nagaba X Pokemon Card Game Campaign",
+            "setName": "Pokemon Japanese SV-P Promo"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137817,7 +137916,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:07+09:00"
       }
     },
     "s8a-p-001": {
@@ -137848,7 +137947,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 216,
+            "9": 117,
+            "8": 6,
+            "le7": 7,
+            "total": 346,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "790937dfd914f70b13e840fd4172025efe809d3d",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137856,7 +137966,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -137885,7 +137995,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 33152,
+            "9": 2300,
+            "8": 415,
+            "le7": 574,
+            "total": 36441,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "e1f028de9f9514637e4d7b4bf42fa07dcecf06c1",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137893,7 +138014,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-002": {
@@ -137918,7 +138039,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 84,
+            "9": 19,
+            "8": 0,
+            "le7": 1,
+            "total": 104,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "5aefd3678833188b80651047b7a18f7d53811c7a",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137926,7 +138058,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -137961,7 +138093,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 19964,
+            "9": 1609,
+            "8": 223,
+            "le7": 232,
+            "total": 22028,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "c1aa047b9e18f79e05c5c5e7dca3e3ff60508a2b",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -137969,7 +138112,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-003": {
@@ -138000,7 +138143,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 92,
+            "9": 24,
+            "8": 3,
+            "le7": 2,
+            "total": 121,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "e8a0c47b06a1d69497cc3f6c57ccc9540852fa28",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138008,7 +138162,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138037,7 +138191,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 19365,
+            "9": 2375,
+            "8": 400,
+            "le7": 262,
+            "total": 22402,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "3dfa225ea323d15a625634d08e25e38666cf68cf",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138045,7 +138210,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-004": {
@@ -138057,7 +138222,18 @@
           "grades": {}
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 5,
+            "9": 0,
+            "8": 0,
+            "le7": 0,
+            "total": 5,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "09600fa68fef4a2464d8db542e7c4ca31d8864fe",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138065,7 +138241,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138100,7 +138276,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 2590,
+            "9": 133,
+            "8": 18,
+            "le7": 16,
+            "total": 2757,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "01c54f2b15bb309472dc7e2517c974aeec8e2b1f",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138108,7 +138295,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-005": {
@@ -138139,7 +138326,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 11,
+            "9": 1,
+            "8": 0,
+            "le7": 0,
+            "total": 12,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "fedb5276f265c3bc2a6aa3f2eb63c0aad26802b8",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138147,7 +138345,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138182,7 +138380,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 10214,
+            "9": 606,
+            "8": 114,
+            "le7": 117,
+            "total": 11051,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "e0e34d491dc154e8b06eeb90d8c918ab459312a3",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138190,7 +138399,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-006": {
@@ -138202,7 +138411,18 @@
           "grades": {}
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 4,
+            "9": 0,
+            "8": 0,
+            "le7": 0,
+            "total": 4,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "a2cad3f86322a2f76682979315d8b0c0d1bd2199",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138210,7 +138430,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138245,7 +138465,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 7354,
+            "9": 591,
+            "8": 83,
+            "le7": 99,
+            "total": 8127,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "e04698b1987651d9ba3ac579a273242aa627c11d",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138253,7 +138484,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-007": {
@@ -138278,7 +138509,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 74,
+            "9": 13,
+            "8": 2,
+            "le7": 0,
+            "total": 89,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "35f7a6ef7e8673f5004554706fc4b6b2650db84a",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138286,7 +138528,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:52:15+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138309,7 +138551,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 26235,
+            "9": 3713,
+            "8": 401,
+            "le7": 430,
+            "total": 30779,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "2ec7a84e5e708ac1941d9c8fada48f1539b3a08f",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138317,7 +138570,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-008": {
@@ -138329,7 +138582,18 @@
           "grades": {}
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 11,
+            "9": 2,
+            "8": 0,
+            "le7": 1,
+            "total": 14,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "1ede76e0b08b78296f2a27276946919823d68273",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138337,7 +138601,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138372,7 +138636,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 6002,
+            "9": 377,
+            "8": 57,
+            "le7": 53,
+            "total": 6489,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "797d3cc9dd71d70138de887464e3a6152495b500",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138380,7 +138655,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-009": {
@@ -138405,7 +138680,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 8,
+            "9": 0,
+            "8": 0,
+            "le7": 0,
+            "total": 8,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "74fd9650b24379602a7b4288ae8a337386d9b517",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138413,7 +138699,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138436,7 +138722,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 4044,
+            "9": 350,
+            "8": 51,
+            "le7": 55,
+            "total": 4500,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "c092a72a109c8f30d3591b99a60c7ab45a233db8",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138444,7 +138741,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-010": {
@@ -138469,7 +138766,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 32,
+            "9": 9,
+            "8": 0,
+            "le7": 0,
+            "total": 41,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "92561ed3f5cac03c65e18e456268557a416d83ca",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138477,7 +138785,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138512,7 +138820,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 22067,
+            "9": 1358,
+            "8": 238,
+            "le7": 239,
+            "total": 23902,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "2eaf6f22b4f00726b7633f85f9292dde3097cfa8",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138520,7 +138839,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-011": {
@@ -138532,7 +138851,18 @@
           "grades": {}
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 5,
+            "9": 3,
+            "8": 0,
+            "le7": 0,
+            "total": 8,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "1243f66bc527e14209f4ba83046fd02767c22fd8",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138540,7 +138870,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138575,7 +138905,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 5692,
+            "9": 365,
+            "8": 82,
+            "le7": 67,
+            "total": 6206,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "c533deb4652682a06c62d0a773469b748a753ce7",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138583,7 +138924,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-012": {
@@ -138614,7 +138955,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 87,
+            "9": 26,
+            "8": 5,
+            "le7": 1,
+            "total": 119,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "e5dd195871ccb99df176ea006e40a3534112a0a5",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138622,7 +138974,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138657,7 +139009,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 27600,
+            "9": 2615,
+            "8": 319,
+            "le7": 366,
+            "total": 30900,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "764c899f722efb27a74af1bd73cc90d2cd829c73",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138665,7 +139028,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-013": {
@@ -138677,7 +139040,18 @@
           "grades": {}
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 4,
+            "9": 1,
+            "8": 0,
+            "le7": 0,
+            "total": 5,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "6cfa1e48bff1b7b4b874691404ac0d450f268b19",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138685,7 +139059,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138714,7 +139088,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 2728,
+            "9": 171,
+            "8": 41,
+            "le7": 21,
+            "total": 2961,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "7bfdf6049845a5e13819d3a825268090ce30c4cb",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138722,7 +139107,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-014": {
@@ -138753,7 +139138,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 12,
+            "9": 1,
+            "8": 0,
+            "le7": 0,
+            "total": 13,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "7e8d5a0345e5a331928248e50fcfd0f16ed2f31a",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138761,7 +139157,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138796,7 +139192,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 11230,
+            "9": 1578,
+            "8": 164,
+            "le7": 149,
+            "total": 13121,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "ce99317fe448757a205236af87c56b572d265971",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138804,7 +139211,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-015": {
@@ -138829,7 +139236,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 8,
+            "9": 3,
+            "8": 1,
+            "le7": 1,
+            "total": 13,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "f11d4c9aa8f5b0565aa19e0ba97b9bb874ea8a74",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138837,7 +139255,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138872,7 +139290,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 5213,
+            "9": 382,
+            "8": 50,
+            "le7": 49,
+            "total": 5694,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "a46da86c4bd0b4da87a52a2fa65a71ca4d471b01",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138880,7 +139309,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-016": {
@@ -138892,7 +139321,18 @@
           "grades": {}
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 4,
+            "9": 0,
+            "8": 0,
+            "le7": 0,
+            "total": 4,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "66afce2493510c55d8329e61c2737bb65b76a005",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138900,7 +139340,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138923,7 +139363,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 2370,
+            "9": 181,
+            "8": 13,
+            "le7": 16,
+            "total": 2580,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "58198b6ab9face0f81ed56081a1756e8a14f5987",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138931,7 +139382,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-017": {
@@ -138956,7 +139407,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 4,
+            "9": 1,
+            "8": 1,
+            "le7": 0,
+            "total": 6,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "c5429daa55572fd43a343f71b65ba59d90f9ea57",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -138964,7 +139426,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:52:15+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -138999,7 +139461,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 3034,
+            "9": 165,
+            "8": 32,
+            "le7": 22,
+            "total": 3253,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "6a785eaac71139c929933a55dd94c725969ef588",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139007,7 +139480,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-018": {
@@ -139032,7 +139505,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 16,
+            "9": 1,
+            "8": 1,
+            "le7": 0,
+            "total": 18,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "1c0c42abc35e7577be507fdaf6b2ed4a9eac3b31",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139040,7 +139524,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -139075,7 +139559,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 5273,
+            "9": 336,
+            "8": 40,
+            "le7": 54,
+            "total": 5703,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "fd06df60cb2d11c3672760aa8ada74c09e1806ee",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139083,7 +139578,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-019": {
@@ -139095,7 +139590,18 @@
           "grades": {}
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 5,
+            "9": 2,
+            "8": 0,
+            "le7": 0,
+            "total": 7,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "0b16bd23db27e75d3f9cb5977af699dc78f5688c",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139103,7 +139609,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -139132,7 +139638,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 2888,
+            "9": 147,
+            "8": 22,
+            "le7": 19,
+            "total": 3076,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "7b0f3637c1da4ed525449f4f4c9753d47babeb2f",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139140,7 +139657,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-020": {
@@ -139165,7 +139682,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 24,
+            "9": 8,
+            "8": 0,
+            "le7": 0,
+            "total": 32,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "82b59eee448ca4aa198ec842ee37be1274f8a054",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139173,7 +139701,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -139208,7 +139736,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 15768,
+            "9": 1195,
+            "8": 182,
+            "le7": 194,
+            "total": 17339,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "340b561e19d69e0d87c8a7a5a1d3e5ff1b1bced1",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139216,7 +139755,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-021": {
@@ -139241,7 +139780,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 31,
+            "9": 5,
+            "8": 0,
+            "le7": 0,
+            "total": 36,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "32fa6895952818a0b37ab65785c72f53fd95106b",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139249,7 +139799,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -139278,7 +139828,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 15990,
+            "9": 1257,
+            "8": 184,
+            "le7": 217,
+            "total": 17648,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "50d54c66b39bdb0320fd4c46229cb411326b9674",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139286,7 +139847,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-022": {
@@ -139311,7 +139872,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 14,
+            "9": 3,
+            "8": 0,
+            "le7": 0,
+            "total": 17,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "a7c0feb6d7955bd95e5c8d9a9ba36986a2daf628",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139319,7 +139891,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -139354,7 +139926,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 10253,
+            "9": 695,
+            "8": 109,
+            "le7": 96,
+            "total": 11153,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "102a8e663564034ebda2a735fb02fc734a94e3f3",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139362,7 +139945,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-023": {
@@ -139374,7 +139957,18 @@
           "grades": {}
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 5,
+            "9": 1,
+            "8": 0,
+            "le7": 0,
+            "total": 6,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "818a85e97e4372be795b95bad54bdd6518b39a9a",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139382,7 +139976,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -139417,7 +140011,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 4159,
+            "9": 234,
+            "8": 41,
+            "le7": 32,
+            "total": 4466,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "54931ba150171df690344f7d05a368b936d0b5b6",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139425,7 +140030,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-024": {
@@ -139462,7 +140067,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 19,
+            "9": 2,
+            "8": 1,
+            "le7": 0,
+            "total": 22,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "427ac4321b671747cc6b34fd2ef581b38d74b89b",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139470,7 +140086,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -139499,7 +140115,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 14346,
+            "9": 897,
+            "8": 188,
+            "le7": 213,
+            "total": 15644,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "7038546106077a6dc156ee34294b717dedea50e5",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139507,7 +140134,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "s8a-p-025": {
@@ -139519,7 +140146,18 @@
           "grades": {}
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 6,
+            "9": 0,
+            "8": 0,
+            "le7": 1,
+            "total": 7,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "a4fe5da7f94bbf6b78fdf797564b07edb9faae3a",
+            "parallel": "Base",
+            "setName": "Pokemon Korean Promo Card Pack 25th Anniversary"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139527,7 +140165,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       },
       "jp": {
         "price": {
@@ -139562,7 +140200,18 @@
           "method": "mean-active"
         },
         "pop": {
-          "PSA": null,
+          "PSA": {
+            "10": 2834,
+            "9": 347,
+            "8": 25,
+            "le7": 26,
+            "total": 3232,
+            "source": "gemrate",
+            "asOf": "2026-07-24",
+            "gemrateId": "c9a7db2d8dc93e9f592544e6ba06733091bcff3e",
+            "parallel": "Base",
+            "setName": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition"
+          },
           "BGS": null,
           "CGC": null,
           "BRG": null,
@@ -139570,7 +140219,7 @@
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-24T13:50:39+09:00"
+        "updatedAt": "2026-07-24T14:03:36+09:00"
       }
     },
     "victini-bwr-272": {

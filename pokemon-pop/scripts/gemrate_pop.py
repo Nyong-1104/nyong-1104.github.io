@@ -204,6 +204,37 @@ GEMRATE_SETS: dict[str, dict[str, dict[str, Any]]] = {
             ),
         },
     },
+    "yu-nagaba-eevee-promo": {
+        "jp": {
+            "year": 2023,
+            "set_name": "Pokemon Japanese SV-P Promo",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2023"
+                "&set_name=Pokemon+Japanese+SV-P+Promo"
+            ),
+        },
+    },
+    "s8a-p-25th-anniversary": {
+        "jp": {
+            "year": 2021,
+            "set_name": "Pokemon Japanese Promo Card Pack 25th Anniversary Edition",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2021"
+                "&set_name=Pokemon+Japanese+Promo+Card+Pack+25th+Anniversary+Edition"
+            ),
+        },
+        "kr": {
+            "year": 2021,
+            "set_name": "Pokemon Korean Promo Card Pack 25th Anniversary",
+            "url": (
+                "https://www.gemrate.com/item-details-advanced"
+                "?grader=PSA&category=tcg-cards&year=2021"
+                "&set_name=Pokemon+Korean+Promo+Card+Pack+25th+Anniversary"
+            ),
+        },
+    },
 }
 
 # Preferred GemRate parallel names for each catalog rarity (order = preference).
@@ -219,6 +250,7 @@ PARALLEL_BY_RARITY: dict[str, list[str]] = {
     "R": ["Reverse Holo", "Reverse Holofoil", "Reverse", "Reverse-Holo", "Master Ball Reverse Holo"],
     "U": ["Reverse Holo", "Reverse Holofoil", "Reverse", "Reverse-Holo", "Master Ball Reverse Holo"],
     "C": ["Reverse Holo", "Reverse Holofoil", "Reverse", "Reverse-Holo", "Master Ball Reverse Holo"],
+    "PROMO": ["Promo", "Holofoil", "Holo", "Base", "Regular", "Promotional"],
 }
 
 # When lang=en, prefer English PSA labels first (SR≠JP Super Rare).
@@ -233,6 +265,7 @@ PARALLEL_BY_RARITY_EN: dict[str, list[str]] = {
     "R": ["Reverse Holo", "Reverse Holofoil", "Reverse", "Reverse-Holo", "Master Ball Reverse Holo"],
     "U": ["Reverse Holo", "Reverse Holofoil", "Reverse", "Reverse-Holo", "Master Ball Reverse Holo"],
     "C": ["Reverse Holo", "Reverse Holofoil", "Reverse", "Reverse-Holo", "Master Ball Reverse Holo"],
+    "PROMO": ["Promo", "Holofoil", "Holo", "Base", "Regular", "Promotional"],
 }
 
 # EN Mew 151 gold cards use different collector numbers than JP/KR.

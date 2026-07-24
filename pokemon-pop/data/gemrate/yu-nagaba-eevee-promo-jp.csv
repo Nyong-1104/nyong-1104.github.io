@@ -1,0 +1,120 @@
+card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,details
+002,Spidops,Promo Card Pack,55,4,0,55,62,b002d136d624f4c6d5c47d5bf8b908b17b68f061,Spidops Promo Card Pack 002
+003,Arcanine,Promo Card Pack,287,14,2,287,305,65744253188a2d31f67b5124a6963fa65ef83333,Arcanine Promo Card Pack 003
+004,Dondozo,Promo Card Pack,59,3,0,59,64,f0cdc44d837a2ba3b1087b4ae0b504c494982064,Dondozo Promo Card Pack 004
+005,Miraidon,Promo Card Pack,193,12,1,193,208,a8487b649c17ef3956eee292834f249288c4be5a,Miraidon Promo Card Pack 005
+006,Espathra,Promo Card Pack,53,5,0,53,60,7f471b2296cbf98c8b8cb96b486b2d28538ca0a5,Espathra Promo Card Pack 006
+007,Koraidon,Promo Card Pack,166,15,3,166,185,d2c7aed03e47bcf70a7cf7886f3fc5908f43676d,Koraidon Promo Card Pack 007
+008,Oinkologne,Promo Card Pack,60,3,0,60,66,f398d9a182f2e4a18e5af12f1ee61e200c0c0634,Oinkologne Promo Card Pack 008
+009,Cyclizar EX,Promo Card Pack,122,19,2,122,145,d042472baa57d8b144d19e226ae708ffc4b4d6a6,Cyclizar EX Promo Card Pack 009
+010,Poke Ball,Energy Card Set,2,1,0,2,3,fb852467dc4967d2a0185e102c189cece715bb31,Poke Ball Energy Card Set 010
+011,Switch,Energy Card Set,1,1,0,1,2,c3259b39ca2737395e8ae2ac53d6c6efc0913cc2,Switch Energy Card Set 011
+012,Nemona,Energy Card Set,2,0,0,2,2,13a41dd80fb6beae3c0429f2002ee2dedfd1785c,Nemona Energy Card Set 012
+013,Rotom,EX Starter Set Pikachu EX & Pawmot,11,2,1,11,14,9f9d46d2713a42b54be9052ebdd3c1a668471d55,Rotom EX Starter Set Pikachu EX & Pawmot 013
+014,Crushing Hammer,Event Organizer Trainer's Pack,2,0,0,2,2,5de53d6a8c7e0616088e4db84bdc89e6d7490354,Crushing Hammer Event Organizer Trainer's Pack 014
+015,Nest Ball,Event Organizer Trainer's Pack,4,2,0,4,7,b840cec0094437cd7d95cd1082fd92826d5ac82d,Nest Ball Event Organizer Trainer's Pack 015
+016,Rare Candy,Event Organizer Trainer's Pack,4,0,1,4,6,45ae492cbe96b7bf971104ee0a8a4c08e1b654ab,Rare Candy Event Organizer Trainer's Pack 016
+017,Switch,Event Organizer Trainer's Pack,4,2,0,4,6,2977f293d7500736908338f7aac8fa53923307eb,Switch Event Organizer Trainer's Pack 017
+018,Exp. Share,Event Organizer Trainer's Pack,1,0,0,1,1,dca84a8fc0ff343b4c1d511a5390ed76767def89,Exp. Share Event Organizer Trainer's Pack 018
+019,Vitality Band,Event Organizer Trainer's Pack,1,0,0,1,1,2f00dc1ff731177f8054d972bd52eaff33266478,Vitality Band Event Organizer Trainer's Pack 019
+020,Jacq,Event Organizer Trainer's Pack,3,1,1,3,6,161478606eb9c5cdd0d0c1de52cc859b5c7c895d,Jacq Event Organizer Trainer's Pack 020
+021,Professor's Research,Event Organizer Trainer's Pack,3,2,1,3,7,c533f43ec06e68a2794321dcd742ca55ea2c164b,Professor's Research Event Organizer Trainer's Pack 021
+022,Professor's Research,Event Organizer Trainer's Pack,4,2,1,4,7,00a4659385dc634d7e0ba36837bc2bfb2e96d7b7,Professor's Research Event Organizer Trainer's Pack 022
+023,Smoliv,Pokemon Card Gym Promo Card Pack 1,2,2,1,2,5,d34dd552e8138a8a1fa808fc33ad5d77ddadbfce,Smoliv Pokemon Card Gym Promo Card Pack 1 023
+024,Growlithe,Pokemon Card Gym Promo Card Pack 1,42,3,4,42,53,14d002a267f127025cad6970b614123eb6a9c2f6,Growlithe Pokemon Card Gym Promo Card Pack 1 024
+025,Flaaffy,Pokemon Card Gym Promo Card Pack 1,8,3,0,8,11,7c9395810d84d698d42a97e9b96ded7004ab5270,Flaaffy Pokemon Card Gym Promo Card Pack 1 025
+026,Houndstone,Pokemon Card Gym Promo Card Pack 1,4,0,0,4,4,9e46c6fed7825d9171f1201b747a6b43f7b9d64a,Houndstone Pokemon Card Gym Promo Card Pack 1 026
+027,Klawf EX,Pokemon Card Gym Promo Card Pack 1,5,2,0,5,8,e37e64e0128c4047971ffccb82e42db003eda31a,Klawf EX Pokemon Card Gym Promo Card Pack 1 027
+028,Varoom,Pokemon Card Gym Promo Card Pack 1,1,0,1,1,2,cf095aa3e0bc4456e242ddb8b216ff52736b6ea6,Varoom Pokemon Card Gym Promo Card Pack 1 028
+029,Brassius,Pokemon Card Gym Promo Card Pack 1,1,0,0,1,1,0d517ecfe5408efb62f12cc33b2f0ab73345c4ce,Brassius Pokemon Card Gym Promo Card Pack 1 029
+030,Arven,Pokemon Card Gym New Release Battle Winner Prize,15,1,0,15,16,439d8e1d50046a4893767bf4daa69c8499898c02,Arven Pokemon Card Gym New Release Battle Winner Prize 030
+031,Eevee,Straightaway Battle Participation,441,84,10,441,538,716a695b851c39b6f67b8e3696123a5e64eb65a0,Eevee Straightaway Battle Participation 031
+032,Eevee,Casual Battle,429,45,9,429,491,116cb6d27a3bc0446edf851389aa2b7de2fee830,Eevee Casual Battle 032
+033,Eevee,Pokemon Card Game Classroom Participation,1155,144,26,1155,1352,5b00736f161c54c69953f437a52eaf306f404fd7,Eevee Pokemon Card Game Classroom Participation 033
+034,Hawlucha,First Entry Campaign,1,2,0,1,3,6ebd49d0f18270e18be0ac65469cdb03f5689743,Hawlucha First Entry Campaign 034
+035,Pawmi,Corocoro Ichiban!-April 2023,82,11,1,82,94,917b11b67d9ae7c80ade155d1767c74bc1b93795,Pawmi Corocoro Ichiban!-April 2023 035
+036,Charcadet,Champions League 2023 Participation,65,2,1,65,69,487d2f3c54a8e5d4cf7c31fdbce78bae83b3ed0d,Charcadet Champions League 2023 Participation 036
+037,Basic Grass Energy,Champions League 2023 Participation,1,0,0,1,1,90bbde039f26a9ab918f0cba00268d89d722e611,Basic Grass Energy Champions League 2023 Participation 037
+038,Basic Fire Energy,Champions League 2023 Participation,1,1,0,1,2,de34267d8d967a76e12d636766dfe268f2d260a7,Basic Fire Energy Champions League 2023 Participation 038
+039,Basic Water Energy,Champions League 2023 Participation,1,0,0,1,1,d722b961fb4ffff68875e6015aa694afd9cf73ba,Basic Water Energy Champions League 2023 Participation 039
+040,Basic Lightning Energy,Champions League 2023 Participation,1,0,0,1,1,a55ce6e93df632b676cbd761cb3ba44d152e0424,Basic Lightning Energy Champions League 2023 Participation 040
+041,Basic Psychic Energy,Champions League 2023 Participation,1,0,0,1,1,08ebb6ea883f9ab0d20102db685efd819ca8d2e2,Basic Psychic Energy Champions League 2023 Participation 041
+042,Basic Fighting Energy,Champions League 2023 Participation,2,0,0,2,2,a9fd7fad70f60f36f7387e8f4f69aeefef87eb08,Basic Fighting Energy Champions League 2023 Participation 042
+043,Basic Darkness Energy,Champions League 2023 Participation,2,0,0,2,2,249af5731997918df9ad7551419313a7ca8b7695,Basic Darkness Energy Champions League 2023 Participation 043
+044,Basic Metal Energy,Champions League 2023 Participation,1,0,0,1,1,7a9cebadd21abd835722d254f0409c0385b293f7,Basic Metal Energy Champions League 2023 Participation 044
+045,Rare Candy,Triplet Beat Sealed Battle Participation,9,0,0,9,9,f42e3a673cb18c65cf931ca2e6d5bc4e2dba89b0,Rare Candy Triplet Beat Sealed Battle Participation 045
+046,Nemona,Triplet Beat Sealed Battle Participation,9,2,0,9,11,c007c4df4ee74db7cfd66d7f4fa49b699b4bf00e,Nemona Triplet Beat Sealed Battle Participation 046
+047,Nemona,Triplet Beat Sealed Battle Participation,10,2,0,10,12,ed768f965a5cb3827aac91827686482fe7aee035,Nemona Triplet Beat Sealed Battle Participation 047
+048,Miraidon,Sealed Battle Promo Card Pack,4610,188,82,4610,4999,4105ed1a1c6baac79d4e7f0e4635e2e0b3f6709d,Miraidon Sealed Battle Promo Card Pack 048
+049,Koraidon,Sealed Battle Promo Card Pack,2961,244,43,2961,3313,bcde4aee4480e865d3a36bf12a35379b1530aa51,Koraidon Sealed Battle Promo Card Pack 049
+050,Pineco,Gym Promo Pack 2,1,1,1,1,3,0d838ab897b235425604f34d55029f9a1499156b,Pineco Gym Promo Pack 2 050
+051,Arctibax,Gym Promo Pack 2,2,1,0,2,3,6cc3d2b511006e604089df4655ea538a73fae96a,Arctibax Gym Promo Pack 2 051
+052,Bellibolt,Gym Promo Pack 2,1,0,2,1,3,25ad8ebf058cf34cd804b2b8570186af2afb952c,Bellibolt Gym Promo Pack 2 052
+053,Sinistea,Gym Promo Pack 2,2,2,0,2,4,2df40fd0918f1ade40cbcb157e596ac8f0de4e92,Sinistea Gym Promo Pack 2 053
+054,Barboach,Gym Promo Pack 2,3,0,0,3,3,ef8bede6544706df007d53734683722a149417a4,Barboach Gym Promo Pack 2 054
+055,Mabosstiff EX,Gym Promo Pack 2,6,2,0,6,9,7e31d017f00bcb6824336db82b4d3f9f33ec043d,Mabosstiff EX Gym Promo Pack 2 055
+056,Atticus,Gym Promo Pack 2,2,1,0,2,3,3c4c7e49a999759fdf995cfe739dd4e24131845d,Atticus Gym Promo Pack 2 056
+057,Penny,Pokemon Card Gym New Release Battle Winner Prize,31,24,0,31,55,6648784f207a2dea748de5b7fb2b1ede587ae9bb,Penny Pokemon Card Gym New Release Battle Winner Prize 057
+058,Cetitan,Corocoro Ichiban!-June 2023,22,1,1,22,24,3065e15f0dd4a6a1767da1c77245982d4126f437,Cetitan Corocoro Ichiban!-June 2023 058
+059,Bulbasaur,Pokemon 151 Card File Sets,298,687,12,298,1011,8c7893e86e58a3d6b230603dc93be0221c2d0adf,Bulbasaur Pokemon 151 Card File Sets 059
+060,Charmander,Pokemon 151 Card File Sets,430,759,18,430,1218,e8ba65b34e2e0d0174eb12a643b6847e6cfda741,Charmander Pokemon 151 Card File Sets 060
+061,Squirtle,Pokemon 151 Card File Sets,238,767,30,238,1069,50f565b184340f3ea169b39fde76475456132817,Squirtle Pokemon 151 Card File Sets 061
+062,Eevee,YU Nagaba X Pokemon Card Game Campaign,21063,3264,301,21063,24865,33a0c0dbef780c49f9748b22899dc5b8c5ac69a4,Eevee YU Nagaba X Pokemon Card Game Campaign 062
+063,Vaporeon,YU Nagaba X Pokemon Card Game Campaign,19701,3522,206,19701,23638,bf034d6064fbe3aa652bda1bca38b850857b793c,Vaporeon YU Nagaba X Pokemon Card Game Campaign 063
+064,Jolteon,YU Nagaba X Pokemon Card Game Campaign,20704,2465,202,20704,23555,80486390a98f1fc1015547e593361a82e16f6ff2,Jolteon YU Nagaba X Pokemon Card Game Campaign 064
+065,Flareon,YU Nagaba X Pokemon Card Game Campaign,22899,2145,208,22899,25457,ff0c56c0ce16c445b5345f73641840ceec598064,Flareon YU Nagaba X Pokemon Card Game Campaign 065
+066,Espeon,YU Nagaba X Pokemon Card Game Campaign,20857,2466,254,20857,23791,c8e40d96d39120bc4d7d5018959fb35e7a6ad25b,Espeon YU Nagaba X Pokemon Card Game Campaign 066
+067,Umbreon,YU Nagaba X Pokemon Card Game Campaign,28580,2437,259,28580,31594,f0dbad51ccafa6286ca88f426354edf8d8bac101,Umbreon YU Nagaba X Pokemon Card Game Campaign 067
+068,Leafeon,YU Nagaba X Pokemon Card Game Campaign,21898,2213,232,21898,24585,6e3f6523823a032e19ea86689144c04e664ff83c,Leafeon YU Nagaba X Pokemon Card Game Campaign 068
+069,Glaceon,YU Nagaba X Pokemon Card Game Campaign,21088,3890,250,21088,25450,9d816751328d487088be572ff39a2a17c7a4a2c3,Glaceon YU Nagaba X Pokemon Card Game Campaign 069
+070,Sylveon,YU Nagaba X Pokemon Card Game Campaign,22011,2744,281,22011,25302,b6b7f3acf96ca6fec6538dbd10103bdfda2f0cf4,Sylveon YU Nagaba X Pokemon Card Game Campaign 070
+071,Rowlet,Tanto X Pokemon Card Game Campaign,18,10,3,18,32,1342d5ebb61f53eb89e1daaa538fae9c112fc5f2,Rowlet Tanto X Pokemon Card Game Campaign 071
+072,Charcadet,Tanto X Pokemon Card Game Campaign,14,2,0,14,16,ac1a5c57bb329a34e7770fdcd384f6c66d22ccca,Charcadet Tanto X Pokemon Card Game Campaign 072
+073,Froakie,Tanto X Pokemon Card Game Campaign,24,4,0,24,29,65d9df43f5169b34194f89dd08663cc0e73c6c10,Froakie Tanto X Pokemon Card Game Campaign 073
+074,Pikachu,Tanto X Pokemon Card Game Campaign,322,125,21,322,500,09bab7bd278f718ac80740b48a677a917b45f8c3,Pikachu Tanto X Pokemon Card Game Campaign 074
+075,Clefairy,Tanto X Pokemon Card Game Campaign,37,5,1,37,48,4eff9daad400cfc5eb9dd745b1523e8f8b520a89,Clefairy Tanto X Pokemon Card Game Campaign 075
+076,Riolu,Tanto X Pokemon Card Game Campaign,48,5,1,48,55,027d30a397815b1e2180fba66c090a32489fb46a,Riolu Tanto X Pokemon Card Game Campaign 076
+077,Houndour,Tanto X Pokemon Card Game Campaign,29,4,0,29,33,37e29b00c1888061e3b89e243f01d89ab158beca,Houndour Tanto X Pokemon Card Game Campaign 077
+078,Meltan,Tanto X Pokemon Card Game Campaign,9,5,1,9,16,6f392900d0f7823e1fe5a60fb131baac14b5ed00,Meltan Tanto X Pokemon Card Game Campaign 078
+079,Basic Grass Energy,Tanto X Pokemon Card Game Campaign,3,1,1,3,6,c99bfe445e7207e73aa2d1d2828408cdd55b19f8,Basic Grass Energy Tanto X Pokemon Card Game Campaign 079
+080,Basic Fire Energy,Tanto X Pokemon Card Game Campaign,3,2,0,3,5,58f34000003719ae83687be6cb4751892efb3a12,Basic Fire Energy Tanto X Pokemon Card Game Campaign 080
+081,Basic Water Energy,Tanto X Pokemon Card Game Campaign,4,1,0,4,5,acfd43fc3c21256d28b0f7c5ac2dc5bf79d1816d,Basic Water Energy Tanto X Pokemon Card Game Campaign 081
+082,Basic Lightning Energy,Tanto X Pokemon Card Game Campaign,30,10,6,30,48,c887a2cadf83d8263fe6d3b61ecb173e56102bf5,Basic Lightning Energy Tanto X Pokemon Card Game Campaign 082
+083,Basic Psychic Energy,Tanto X Pokemon Card Game Campaign,3,0,0,3,3,399a31d16b0896bde99d09d266560a6df5d921d7,Basic Psychic Energy Tanto X Pokemon Card Game Campaign 083
+084,Basic Fighting Energy,Tanto X Pokemon Card Game Campaign,7,1,2,7,10,60b8104529243d0eda28590ca200c9fd6edb6bfe,Basic Fighting Energy Tanto X Pokemon Card Game Campaign 084
+085,Basic Darkness Energy,Tanto X Pokemon Card Game Campaign,2,1,2,2,5,1314aeced73c7d6ce00868be2ffce67310cc5924,Basic Darkness Energy Tanto X Pokemon Card Game Campaign 085
+086,Basic Metal Energy,Tanto X Pokemon Card Game Campaign,1,3,1,1,5,fe1ed3096896b01b6e0b4d7001b271cbbd800962,Basic Metal Energy Tanto X Pokemon Card Game Campaign 086
+087,Shroodle,Corocoro Comic-August 2023,42,11,2,42,56,59c58b57cae3a46eeda46dab9b7a28e6e9896d4d,Shroodle Corocoro Comic-August 2023 087
+088,Grafaiai EX,Corocoro Comic,67,14,1,67,89,d11a486b4e225d9992bf35f5f0bcdc883930b430,Grafaiai EX Corocoro Comic 088
+089,Scovillain EX,Gym Promo Pack 3,6,1,0,6,7,ed3a3d2c619b55080fd533a4572bbb0d8c9f3a21,Scovillain EX Gym Promo Pack 3 089
+090,Carvanha,Gym Promo Pack 3,3,0,0,3,3,ae29e19c637e670b4b1a62e156672247a67d54e8,Carvanha Gym Promo Pack 3 090
+091,Toxel,Gym Promo Pack 3,8,0,0,8,9,557e969f0b532c5a72ce01a607f102eee7184a15,Toxel Gym Promo Pack 3 091
+092,Cleffa,Gym Promo Pack 3,23,4,1,23,28,40ae7edf5773a642355b2616860ed2b633e91176,Cleffa Gym Promo Pack 3 092
+093,Pupitar,Gym Promo Pack 3,13,2,0,13,15,bd9d15f7d5965636128be2a3cf5fbc9c97a33846,Pupitar Gym Promo Pack 3 093
+094,Revavroom,Gym Promo Pack 3,3,0,0,3,3,1f7faf49a78b9e1fc8c51cbd61bdb80a9ed07f92,Revavroom Gym Promo Pack 3 094
+095,Moonlit Hill,Gym Promo Pack 3,8,1,0,8,10,0987f37ee3212d081dd6e4ac07204d9f5ab3ef01,Moonlit Hill Gym Promo Pack 3 095
+096,Grusha,Pokemon Card Gym New Release Battle Winner Prize,16,14,0,16,30,aff896fa71970bbe39153efb42bef8f1743ca8ff,Grusha Pokemon Card Gym New Release Battle Winner Prize 096
+097,Cyclizar,Corocoro Ichiban!-September 2023,6,20,7,6,39,ab475c1612aee3690edf851de7ce7da0d5245445,Cyclizar Corocoro Ichiban!-September 2023 097
+098,Detective Pikachu,Detective Pikachu Returns Pre-Order,47766,3608,1561,47766,55079,8df7beda33da7b569dd5ba56d546b9f6d37945f3,Detective Pikachu Detective Pikachu Returns Pre-Order 098
+099,Gimmighoul,Champions League 2024 Participation,71,8,1,71,80,f22b26c1d3f80fa9e0877c070bb8acd2a8b71ed4,Gimmighoul Champions League 2024 Participation 099
+100,Basic Grass Energy,Champions League 2024 Participation,3,0,0,3,3,c3069a66889bb5f046a3a5d8731477f49ae20ad4,Basic Grass Energy Champions League 2024 Participation 100
+101,Basic Fire Energy,Champions League 2024 Participation,2,1,0,2,3,8f978e97f52e8a25fd8ca281cd41a0db231d7caf,Basic Fire Energy Champions League 2024 Participation 101
+103,Basic Lightning Energy,Champions League 2024 Participation,1,1,0,1,2,a66ad0a9c860c8e20ea5e3e4a83ef98213f3acb6,Basic Lightning Energy Champions League 2024 Participation 103
+105,Basic Fighting Energy,Champions League 2024 Participation,1,1,0,1,2,2e4a0316e8cc4ef6a4b40e1755d316677b2a402d,Basic Fighting Energy Champions League 2024 Participation 105
+106,Basic Darkness Energy,Champions League 2024 Participation,1,1,0,1,2,711ecaa1ab2834a80cdd3cab04dada80b3f5c991,Basic Darkness Energy Champions League 2024 Participation 106
+108,Zapdos EX,Champions League 2024-Winner Prize,414,19,4,414,442,01dc0fe0a6e09803e8fce7a4ab9d9b6eced7e5c4,Zapdos EX Champions League 2024-Winner Prize 108
+109,Defiance Band,Champions League 2024-Top 64,16,11,2,16,29,e8fa33cdb47230b8be70883a7b07af9b0424eb91,Defiance Band Champions League 2024-Top 64 109
+110,Celebratory Fanfare,'22-'23 Season Championship Point Reward,678,1319,331,678,2409,d02abe4ad34e467ccbb92157faa753cfc5e45196,Celebratory Fanfare '22-'23 Season Championship Point Reward 110
+111,Pansear,Gym Promo Pack 4,3,1,0,3,4,54e60399b8a1becdb8a51528cba2049f0d427471,Pansear Gym Promo Pack 4 111
+112,Horsea,Gym Promo Pack 4,5,2,0,5,8,0e15e9b4b6aeb61327a69bb530e93473197d8df5,Horsea Gym Promo Pack 4 112
+113,Yamask,Gym Promo Pack 4,1,0,0,1,2,6fd720f4fb6c5375d9d061fd4cb063db46dd9a66,Yamask Gym Promo Pack 4 113
+114,Tinkaton,Gym Promo Pack 4,13,0,0,13,14,47e8667169ac99ecf12050c10db75895ed15632e,Tinkaton Gym Promo Pack 4 114
+115,Garganacl EX,Gym Promo Pack 4,3,2,0,3,5,495799a60b46e7666eaea462fd2c024d8025d065,Garganacl EX Gym Promo Pack 4 115
+116,PORYGON2,Gym Promo Pack 4,14,0,0,14,16,d0ad950a346d92645849ff4e393230270094b1a3,PORYGON2 Gym Promo Pack 4 116
+117,Raifort,Gym Promo Pack 4,3,0,0,3,3,56e4b8ec9e907d8fcb787c6dc30649cd7a582aff,Raifort Gym Promo Pack 4 117
+118,Poppy,Pokemon Card Gym New Release Battle Winner Prize,2,1,1,2,4,4af3df70a494ce9fa372c4cca8449b94682cfc95,Poppy Pokemon Card Gym New Release Battle Winner Prize 118
+119,Latias,Corocoro Ichiban!-January 2024,221,33,0,221,257,a1c89304e97874986c53be69c73d00ed64dda089,Latias Corocoro Ichiban!-January 2024 119
+120,Pikachu,Gym Event Campaign,37388,8034,1184,37388,47634,f157f0449446aed6b5e2a777cbcf98d28213f76f,Pikachu Gym Event Campaign 120
+SV-P,Paradise Resort,World Championships 2023,330,375,29,330,752,a5d26ad88b3e16471f652614e4651efad31514e6,Paradise Resort World Championships 2023 SV-P
+SV-P,Victory Symbol,Champions League 2024-Kyoto-3rd Place,0,1,0,0,1,9d1441a4b59878eaa675976784e54573c7527eb3,Victory Symbol Champions League 2024-Kyoto-3rd Place SV-P
+SV-P,Victory Symbol,Champions League 2023-Aichi-3rd Place,1,0,0,1,1,8f69637abb374258752aadde8f398477dd8cae05,Victory Symbol Champions League 2023-Aichi-3rd Place SV-P

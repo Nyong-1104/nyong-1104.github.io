@@ -337,7 +337,7 @@
     }
   },
   "yu-nagaba-eevee-promo": {
-    "jp": null,
+    "jp": "https://www.gemrate.com/item-details-advanced?grader=PSA&category=tcg-cards&year=2023&set_name=Pokemon+Japanese+SV-P+Promo",
     "_meta": {
       "code": "NAGABA-P",
       "year": 2023,
@@ -345,8 +345,8 @@
     }
   },
   "s8a-p-25th-anniversary": {
-    "kr": null,
-    "jp": null,
+    "jp": "https://www.gemrate.com/item-details-advanced?grader=PSA&category=tcg-cards&year=2021&set_name=Pokemon+Japanese+Promo+Card+Pack+25th+Anniversary+Edition",
+    "kr": "https://www.gemrate.com/item-details-advanced?grader=PSA&category=tcg-cards&year=2021&set_name=Pokemon+Korean+Promo+Card+Pack+25th+Anniversary",
     "_meta": {
       "code": "s8a-P",
       "year": 2021,
