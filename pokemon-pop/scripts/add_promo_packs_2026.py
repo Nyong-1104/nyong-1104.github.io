@@ -139,7 +139,9 @@ def build_nagaba() -> tuple[dict, list[dict]]:
         "blurbJa": "長場雄コラボ — イーブイたち全9種からランダム1枚。",
         "packImage": "./assets/pack-yu-nagaba.png",
         "coverCardId": "nagaba-062",
-        "brgSets": {},
+        "brgSets": {
+            "jp": {"setName": "POKEMON S&V JAPANESE PROMO", "year": 2023},
+        },
         "cardIds": [c["id"] for c in cards],
     }
     return pack, cards
@@ -209,7 +211,10 @@ def build_s8a_p() -> tuple[dict, list[dict]]:
         "blurbJa": "25周年プロモ — 歴代カード全25種からランダム1枚。",
         "packImage": "./assets/pack-s8a-p-25th.png",
         "coverCardId": "s8a-p-001",
-        "brgSets": {},
+        "brgSets": {
+            "jp": {"setName": "POKEMON SWSH JAPANESE S8AP", "year": 2021},
+            "kr": {"setName": "POKEMON SWSH KOREAN S8AP", "year": 2021},
+        },
         "cardIds": [c["id"] for c in cards],
     }
     return pack, cards
