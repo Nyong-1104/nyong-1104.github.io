@@ -110486,5 +110486,1181 @@
     "editions": [
       "en"
     ]
+  },
+  {
+    "id": "nagaba-062",
+    "packId": "yu-nagaba-eevee-promo",
+    "nameKo": "이브이",
+    "nameEn": "Eevee",
+    "nameJa": "イーブイ",
+    "number": "062/SV-P",
+    "rarity": "PROMO",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043691_P_IBUI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043691_P_IBUI.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 43691,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "nagaba-063",
+    "packId": "yu-nagaba-eevee-promo",
+    "nameKo": "샤미드",
+    "nameEn": "Vaporeon",
+    "nameJa": "シャワーズ",
+    "number": "063/SV-P",
+    "rarity": "PROMO",
+    "type": "water",
+    "typeKo": "물",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043692_P_SHIXYAWAZU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043692_P_SHIXYAWAZU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 43692,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "nagaba-064",
+    "packId": "yu-nagaba-eevee-promo",
+    "nameKo": "쥬피썬더",
+    "nameEn": "Jolteon",
+    "nameJa": "サンダース",
+    "number": "064/SV-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043693_P_SANDASU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043693_P_SANDASU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 43693,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "nagaba-065",
+    "packId": "yu-nagaba-eevee-promo",
+    "nameKo": "부스터",
+    "nameEn": "Flareon",
+    "nameJa": "ブースター",
+    "number": "065/SV-P",
+    "rarity": "PROMO",
+    "type": "fire",
+    "typeKo": "불",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043694_P_BUSUTA.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043694_P_BUSUTA.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 43694,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "nagaba-066",
+    "packId": "yu-nagaba-eevee-promo",
+    "nameKo": "에브이",
+    "nameEn": "Espeon",
+    "nameJa": "エーフィ",
+    "number": "066/SV-P",
+    "rarity": "PROMO",
+    "type": "psychic",
+    "typeKo": "에스퍼",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043695_P_EFUI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043695_P_EFUI.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 43695,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "nagaba-067",
+    "packId": "yu-nagaba-eevee-promo",
+    "nameKo": "블래키",
+    "nameEn": "Umbreon",
+    "nameJa": "ブラッキー",
+    "number": "067/SV-P",
+    "rarity": "PROMO",
+    "type": "darkness",
+    "typeKo": "악",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043696_P_BURAKKI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043696_P_BURAKKI.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 43696,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "nagaba-068",
+    "packId": "yu-nagaba-eevee-promo",
+    "nameKo": "리피아",
+    "nameEn": "Leafeon",
+    "nameJa": "リーフィア",
+    "number": "068/SV-P",
+    "rarity": "PROMO",
+    "type": "grass",
+    "typeKo": "풀",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043697_P_RIFUIA.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043697_P_RIFUIA.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 43697,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "nagaba-069",
+    "packId": "yu-nagaba-eevee-promo",
+    "nameKo": "글레이시아",
+    "nameEn": "Glaceon",
+    "nameJa": "グレイシア",
+    "number": "069/SV-P",
+    "rarity": "PROMO",
+    "type": "water",
+    "typeKo": "물",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043698_P_GUREISHIA.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043698_P_GUREISHIA.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 43698,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "nagaba-070",
+    "packId": "yu-nagaba-eevee-promo",
+    "nameKo": "님피아",
+    "nameEn": "Sylveon",
+    "nameJa": "ニンフィア",
+    "number": "070/SV-P",
+    "rarity": "PROMO",
+    "type": "psychic",
+    "typeKo": "에스퍼",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043699_P_NINFUIA.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043699_P_NINFUIA.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 43699,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-001",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "리자몽",
+    "nameEn": "Charizard",
+    "nameJa": "リザードン",
+    "number": "001/025",
+    "rarity": "PROMO",
+    "type": "fire",
+    "typeKo": "불",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-1.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-1.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-1.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-002",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "이상해꽃",
+    "nameEn": "Venusaur",
+    "nameJa": "フシギバナ",
+    "number": "002/025",
+    "rarity": "PROMO",
+    "type": "grass",
+    "typeKo": "풀",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-2.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-2.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-2.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-003",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "거북왕",
+    "nameEn": "Blastoise",
+    "nameJa": "カメックス",
+    "number": "003/025",
+    "rarity": "PROMO",
+    "type": "water",
+    "typeKo": "물",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-3.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-3.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-3.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-004",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "가짜 오박사",
+    "nameEn": "Imposter Professor Oak",
+    "nameJa": "にせオーキドはかせ",
+    "number": "004/025",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-4.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-4.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-4.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-005",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "나쁜 갸라도스",
+    "nameEn": "Dark Gyarados",
+    "nameJa": "わるいギャラドス",
+    "number": "005/025",
+    "rarity": "PROMO",
+    "type": "water",
+    "typeKo": "물",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-5.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-5.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-5.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-006",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "로켓단 등장!",
+    "nameEn": "Here Comes Team Rocket!",
+    "nameJa": "ロケット団参上！",
+    "number": "006/025",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-6.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-6.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-6.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-007",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "___의 피카츄",
+    "nameEn": "___'s Pikachu",
+    "nameJa": "＿のピカチュウ",
+    "number": "007/025",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-7.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-7.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-7.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-008",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "R단의 썬더",
+    "nameEn": "Rocket's Zapdos",
+    "nameJa": "R団のサンダー",
+    "number": "008/025",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-8.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-8.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-8.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-009",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "삐",
+    "nameEn": "Cleffa",
+    "nameJa": "ピィ",
+    "number": "009/025",
+    "rarity": "PROMO",
+    "type": "psychic",
+    "typeKo": "에스퍼",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-9.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-9.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-9.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-010",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "빛나는 잉어킹",
+    "nameEn": "Shining Magikarp",
+    "nameJa": "ひかるコイキング",
+    "number": "010/025",
+    "rarity": "PROMO",
+    "type": "water",
+    "typeKo": "물",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-10.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-10.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-10.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-011",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "마그마단의 그란돈",
+    "nameEn": "Team Magma's Groudon",
+    "nameJa": "マグマ団のグラードン",
+    "number": "011/025",
+    "rarity": "PROMO",
+    "type": "fighting",
+    "typeKo": "격투",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-11.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-11.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-11.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-012",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "블래키☆",
+    "nameEn": "Umbreon ☆",
+    "nameJa": "ブラッキー☆",
+    "number": "012/025",
+    "rarity": "PROMO",
+    "type": "darkness",
+    "typeKo": "악",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-12.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-12.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-12.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-013",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "로켓단의 간부",
+    "nameEn": "Rocket's Admin.",
+    "nameJa": "ロケット団の幹部",
+    "number": "013/025",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-13.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-13.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-13.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-014",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "뮤ex",
+    "nameEn": "Mew ex",
+    "nameJa": "ミュウex",
+    "number": "014/025",
+    "rarity": "PROMO",
+    "type": "psychic",
+    "typeKo": "에스퍼",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-14.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-14.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-14.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-015",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "가디안ex δ",
+    "nameEn": "Gardevoir ex δ",
+    "nameJa": "サーナイトex δ",
+    "number": "015/025",
+    "rarity": "PROMO",
+    "type": "fire",
+    "typeKo": "불",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-15.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-15.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-15.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-016",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "점토도리",
+    "nameEn": "Claydol",
+    "nameJa": "ネンドール",
+    "number": "016/025",
+    "rarity": "PROMO",
+    "type": "fighting",
+    "typeKo": "격투",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-16.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-16.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-16.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-017",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "렌트라GL LV.X",
+    "nameEn": "Luxray GL LV.X",
+    "nameJa": "レントラーGL LV.X",
+    "number": "017/025",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-17.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-17.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-17.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-018",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "한카리아스C LV.X",
+    "nameEn": "Garchomp C LV.X",
+    "nameJa": "ガブリアスC LV.X",
+    "number": "018/025",
+    "rarity": "PROMO",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-18.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-18.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-18.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-019",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "코리갑",
+    "nameEn": "Donphan",
+    "nameJa": "ドンファン",
+    "number": "019/025",
+    "rarity": "PROMO",
+    "type": "fighting",
+    "typeKo": "격투",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-19.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-19.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-19.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-020",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "레시라무",
+    "nameEn": "Reshiram",
+    "nameJa": "レシラム",
+    "number": "020/025",
+    "rarity": "PROMO",
+    "type": "fire",
+    "typeKo": "불",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-20.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-20.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-20.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-021",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "제크로무",
+    "nameEn": "Zekrom",
+    "nameJa": "ゼクロム",
+    "number": "021/025",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-21.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-21.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-21.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-022",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "뮤츠EX",
+    "nameEn": "Mewtwo EX",
+    "nameJa": "ミュウツーEX",
+    "number": "022/025",
+    "rarity": "PROMO",
+    "type": "psychic",
+    "typeKo": "에스퍼",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-22.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-22.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-22.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-023",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "제르네아스EX",
+    "nameEn": "Xerneas EX",
+    "nameJa": "ゼルネアスEX",
+    "number": "023/025",
+    "rarity": "PROMO",
+    "type": "fairy",
+    "typeKo": "페어리",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-23.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-23.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-23.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-024",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "M레쿠쟈EX",
+    "nameEn": "M Rayquaza EX",
+    "nameJa": "MレックウザEX",
+    "number": "024/025",
+    "rarity": "PROMO",
+    "type": "colorless",
+    "typeKo": "무색",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-24.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-24.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-24.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-p-025",
+    "packId": "s8a-p-25th-anniversary",
+    "nameKo": "카푸느지느GX",
+    "nameEn": "Tapu Lele GX",
+    "nameJa": "カプ・テテフGX",
+    "number": "025/025",
+    "rarity": "PROMO",
+    "type": "psychic",
+    "typeKo": "에스퍼",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-25.png",
+    "images": {
+      "jp": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-25.png",
+      "kr": "https://www.pokemon-card.com/ex/25th/assets/images/s8aP/card-25.png",
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "victini-bwr-272",
+    "packId": "victini-bwr-promo",
+    "nameKo": "에너지 전송",
+    "nameEn": "Energy Transfer",
+    "nameJa": "エネルギー転送",
+    "number": "272/SV-P",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047709_T_ENERUGITENSOU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047709_T_ENERUGITENSOU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 47709,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "victini-bwr-273",
+    "packId": "victini-bwr-promo",
+    "nameKo": "상처약",
+    "nameEn": "Potion",
+    "nameJa": "きずぐすり",
+    "number": "273/SV-P",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047710_T_KIZUGUSURI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047710_T_KIZUGUSURI.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 47710,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "victini-bwr-274",
+    "packId": "victini-bwr-promo",
+    "nameKo": "크래시 해머",
+    "nameEn": "Crushing Hammer",
+    "nameJa": "クラッシュハンマー",
+    "number": "274/SV-P",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047711_T_KURASSHIXYUHANMA.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047711_T_KURASSHIXYUHANMA.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 47711,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "victini-bwr-275",
+    "packId": "victini-bwr-promo",
+    "nameKo": "하이퍼볼",
+    "nameEn": "Ultra Ball",
+    "nameJa": "ハイパーボール",
+    "number": "275/SV-P",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047712_T_HAIPABORU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047712_T_HAIPABORU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 47712,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "victini-bwr-276",
+    "packId": "victini-bwr-promo",
+    "nameKo": "포켓몬 교체",
+    "nameEn": "Switch",
+    "nameJa": "ポケモンいれかえ",
+    "number": "276/SV-P",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047713_T_POKEMONIREKAE.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047713_T_POKEMONIREKAE.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 47713,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "victini-bwr-277",
+    "packId": "victini-bwr-promo",
+    "nameKo": "포켓몬 캐처",
+    "nameEn": "Pokémon Catcher",
+    "nameJa": "ポケモンキャッチャー",
+    "number": "277/SV-P",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047714_T_POKEMONKIXYATCHIXYA.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047714_T_POKEMONKIXYATCHIXYA.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 47714,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "victini-bwr-278",
+    "packId": "victini-bwr-promo",
+    "nameKo": "보스의 지령",
+    "nameEn": "Boss's Orders",
+    "nameJa": "ボスの指令",
+    "number": "278/SV-P",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047715_T_BOSUNOSHIREI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047715_T_BOSUNOSHIREI.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 47715,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "victini-bwr-279",
+    "packId": "victini-bwr-promo",
+    "nameKo": "체렌",
+    "nameEn": "Cheren",
+    "nameJa": "チェレン",
+    "number": "279/SV-P",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047716_T_CHIEREN.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/047716_T_CHIEREN.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 47716,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 35,
+      "basePop": 40
+    },
+    "tier": "B"
   }
 ]

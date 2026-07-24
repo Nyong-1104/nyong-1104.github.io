@@ -335,5 +335,30 @@
       "year": 2026,
       "nameEn": "MG Festa Pokémon GO Seoul Stamp Rally"
     }
+  },
+  "yu-nagaba-eevee-promo": {
+    "jp": null,
+    "_meta": {
+      "code": "NAGABA-P",
+      "year": 2023,
+      "nameEn": "YU NAGABA × Pokémon Card Game Promo Pack"
+    }
+  },
+  "s8a-p-25th-anniversary": {
+    "kr": null,
+    "jp": null,
+    "_meta": {
+      "code": "s8a-P",
+      "year": 2021,
+      "nameEn": "Promo Card Pack 25th ANNIVERSARY edition"
+    }
+  },
+  "victini-bwr-promo": {
+    "jp": null,
+    "_meta": {
+      "code": "VICTINI-P",
+      "year": 2025,
+      "nameEn": "Victini ex Battle Promo Card Pack"
+    }
   }
 }

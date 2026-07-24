@@ -4700,5 +4700,114 @@
     "cardIds": [
       "bw2-070"
     ]
+  },
+  {
+    "id": "yu-nagaba-eevee-promo",
+    "nameKo": "YU NAGABA × 포켓몬카드게임 프로모카드팩",
+    "nameEn": "YU NAGABA × Pokémon Card Game Promo Pack",
+    "nameJa": "YU NAGABA × ポケモンカードゲーム プロモカードパック",
+    "nameShort": "YU NAGABA",
+    "code": "NAGABA-P",
+    "releaseYear": 2023,
+    "listGroup": "promo",
+    "listComplete": true,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "나가바 유 콜라보 — 이브이 일족 전 9종 중 랜덤 1장.",
+    "blurbEn": "Yu Nagaba collab — 1 of 9 Eevee-line promos.",
+    "blurbJa": "長場雄コラボ — イーブイたち全9種からランダム1枚。",
+    "packImage": "./assets/pack-yu-nagaba.png",
+    "coverCardId": "nagaba-062",
+    "brgSets": {},
+    "cardIds": [
+      "nagaba-062",
+      "nagaba-063",
+      "nagaba-064",
+      "nagaba-065",
+      "nagaba-066",
+      "nagaba-067",
+      "nagaba-068",
+      "nagaba-069",
+      "nagaba-070"
+    ]
+  },
+  {
+    "id": "s8a-p-25th-anniversary",
+    "nameKo": "프로모 카드팩 25th ANNIVERSARY edition",
+    "nameEn": "Promo Card Pack 25th ANNIVERSARY edition",
+    "nameJa": "プロモカードパック 25th ANNIVERSARY edition",
+    "nameShort": "s8a-P 25th",
+    "code": "s8a-P",
+    "releaseYear": 2021,
+    "listGroup": "promo",
+    "listComplete": true,
+    "languages": [
+      "kr",
+      "jp"
+    ],
+    "blurb": "25주년 기념 프로모 — 클래식 카드 전 25종 중 랜덤 1장.",
+    "blurbEn": "25th Anniversary promos — 1 of 25 classic reprints.",
+    "blurbJa": "25周年プロモ — 歴代カード全25種からランダム1枚。",
+    "packImage": "./assets/pack-s8a-p-25th.png",
+    "coverCardId": "s8a-p-001",
+    "brgSets": {},
+    "cardIds": [
+      "s8a-p-001",
+      "s8a-p-002",
+      "s8a-p-003",
+      "s8a-p-004",
+      "s8a-p-005",
+      "s8a-p-006",
+      "s8a-p-007",
+      "s8a-p-008",
+      "s8a-p-009",
+      "s8a-p-010",
+      "s8a-p-011",
+      "s8a-p-012",
+      "s8a-p-013",
+      "s8a-p-014",
+      "s8a-p-015",
+      "s8a-p-016",
+      "s8a-p-017",
+      "s8a-p-018",
+      "s8a-p-019",
+      "s8a-p-020",
+      "s8a-p-021",
+      "s8a-p-022",
+      "s8a-p-023",
+      "s8a-p-024",
+      "s8a-p-025"
+    ]
+  },
+  {
+    "id": "victini-bwr-promo",
+    "nameKo": "비크티니ex 쟁탈전 프로모카드팩",
+    "nameEn": "Victini ex Battle Promo Card Pack",
+    "nameJa": "ビクティニex 争奪戦 プロモカードパック",
+    "nameShort": "Victini BWR",
+    "code": "VICTINI-P",
+    "releaseYear": 2025,
+    "listGroup": "promo",
+    "listComplete": true,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "비크티니 BWR 쟁탈전 — 트레이너 전 8종 중 랜덤 1장.",
+    "blurbEn": "Victini BWR battle — 1 of 8 trainer promos.",
+    "blurbJa": "ビクティニBWR争奪戦 — トレーナーズ全8種からランダム1枚。",
+    "packImage": "./assets/pack-victini-bwr-promo.png",
+    "coverCardId": "victini-bwr-279",
+    "brgSets": {},
+    "cardIds": [
+      "victini-bwr-272",
+      "victini-bwr-273",
+      "victini-bwr-274",
+      "victini-bwr-275",
+      "victini-bwr-276",
+      "victini-bwr-277",
+      "victini-bwr-278",
+      "victini-bwr-279"
+    ]
   }
 ]
