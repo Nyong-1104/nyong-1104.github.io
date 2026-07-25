@@ -128827,5 +128827,61 @@
       "basePop": 50
     },
     "tier": "B"
+  },
+  {
+    "id": "sm-p-146",
+    "packId": "rokon-crystal-season-box",
+    "nameKo": "로콘",
+    "nameEn": "Vulpix",
+    "nameJa": "ロコン",
+    "number": "146/SM-P",
+    "rarity": "PROMO",
+    "type": "fire",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/034353_P_ROKON.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/034353_P_ROKON.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 34353,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 250,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "sm-p-147",
+    "packId": "rokon-crystal-season-box",
+    "nameKo": "알로라 로콘",
+    "nameEn": "Alolan Vulpix",
+    "nameJa": "アローラ ロコン",
+    "number": "147/SM-P",
+    "rarity": "PROMO",
+    "type": "water",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/034354_P_ARORAROKON.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/034354_P_ARORAROKON.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 34354,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 250,
+      "basePop": 30
+    },
+    "tier": "B"
   }
 ]

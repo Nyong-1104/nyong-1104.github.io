@@ -5765,5 +5765,35 @@
       "xy-p-208",
       "xy-p-206"
     ]
+  },
+  {
+    "id": "rokon-crystal-season-box",
+    "nameKo": "스페셜 BOX 로콘의 크리스탈 시즌",
+    "nameEn": "Special BOX Rokon's Crystal Season",
+    "nameJa": "スペシャルBOX Rokon's Crystal Season (ロコンのクリスタルシーズン)",
+    "nameShort": "Crystal Season",
+    "code": "PC-CRYSTAL",
+    "releaseYear": 2017,
+    "listGroup": "box",
+    "listComplete": true,
+    "expectedCards": 2,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "포켓몬센터 한정 스페셜 BOX · 로콘·알로라 로콘 홀로 프로모 2종.",
+    "blurbEn": "Pokémon Center limited Special BOX · Vulpix & Alolan Vulpix holo promos.",
+    "blurbJa": "ポケモンセンター限定スペシャルBOXのプロモ「ロコン」「アローラ ロコン」。",
+    "packImage": "./assets/box-rokon-crystal-season.png",
+    "coverCardId": "sm-p-146",
+    "brgSets": {
+      "jp": {
+        "setName": "POKEMON S&M JAPANESE PROMO",
+        "year": 2017
+      }
+    },
+    "cardIds": [
+      "sm-p-146",
+      "sm-p-147"
+    ]
   }
 ]
