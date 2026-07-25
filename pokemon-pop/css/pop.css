@@ -1517,6 +1517,22 @@ body.nav-drawer-open {
   opacity: 1;
 }
 
+/* Pikachu hold-to-evolve: bright white charge pulses */
+.cursor-follower.is-charging {
+  animation: cursor-follower-charge 0.55s ease-in-out infinite;
+}
+
+@keyframes cursor-follower-charge {
+  0%,
+  100% {
+    filter: brightness(1) contrast(1);
+  }
+  45%,
+  55% {
+    filter: brightness(2.6) contrast(1.35) saturate(0.35);
+  }
+}
+
 .cursor-burst {
   position: fixed;
   top: 0;
