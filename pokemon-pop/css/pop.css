@@ -417,6 +417,53 @@ body.nav-drawer-open {
   color: var(--ember);
 }
 
+
+.marquee {
+  overflow: hidden;
+  background: #000;
+  border-bottom: 1px solid var(--line);
+  line-height: 0;
+}
+
+.marquee__track {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  width: max-content;
+  animation: pokepop-marquee 31.24s linear 0s infinite normal none running;
+  will-change: transform;
+}
+
+.marquee__group {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.marquee__group img {
+  display: block;
+  height: clamp(36px, 5.5vw, 56px);
+  width: auto;
+  max-width: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+@keyframes pokepop-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track {
+    animation: none;
+  }
+}
 .page {
   width: min(1100px, 100%);
   margin: 0 auto;

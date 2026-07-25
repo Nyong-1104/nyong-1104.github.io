@@ -392,5 +392,4 @@
   if (credit) credit.textContent = PT.t("credit");
 
   renderPackGrid();
-  PT.mountSiteUpdated(document.getElementById("site-updated"));
 })();
