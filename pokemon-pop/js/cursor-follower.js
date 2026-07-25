@@ -34,7 +34,7 @@
   var SPEED_MAX = 220;
   var SIZE_MIN = 14;
   var SIZE_MAX = 22;
-  var RAICHU_BURST_SCALE = 1.5;
+  var RAICHU_BURST_SCALE = 1.95;
   var SHORT_CLICK_MS = 400;
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
