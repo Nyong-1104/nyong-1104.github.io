@@ -76,19 +76,19 @@
   var BREATH_HOLD_MS = 1000;
   var BREATH_SPAWN_MIN = 40;
   var BREATH_SPAWN_MAX = 80;
-  /* Start small near mouth; JS scale grows them as they travel. */
-  var BREATH_SIZE_MIN = 7;
-  var BREATH_SIZE_MAX = 12;
-  var BREATH_SCALE_START = 0.45;
+  /* Leave mouth a bit larger; JS scale still grows them as they travel. */
+  var BREATH_SIZE_MIN = 10;
+  var BREATH_SIZE_MAX = 16;
+  var BREATH_SCALE_START = 0.8;
   var BREATH_SCALE_END = 2.4;
   /* Distance ≈ speed × life/1000; 2× speed × 1.5× life ≈ 3× travel. */
   var BREATH_SPEED_MIN = 280;
   var BREATH_SPEED_MAX = 600;
   var BREATH_LIFE_MIN = 480;
   var BREATH_LIFE_MAX = 780;
-  /* Mega X faces left — breath cone centered on π (leftward). */
+  /* Mega X faces left — narrow cone for a focused breath stream. */
   var BREATH_ANGLE = Math.PI;
-  var BREATH_CONE = 0.85;
+  var BREATH_CONE = 0.32;
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (!window.matchMedia("(pointer: fine)").matches) return;
