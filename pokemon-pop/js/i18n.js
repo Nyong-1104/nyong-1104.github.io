@@ -10,7 +10,9 @@ window.PopTracker = window.PopTracker || {};
     ko: {
       siteTagline: "포켓몬카드팩을 골라 그레이딩 POP과 eBay 시세를 한번에 확인할 수 있어요.",
       open: "OPEN →",
+      packOpen: "Pack Open Simulator",
       backPacks: "← 팩 목록",
+      backToSet: "← 세트 목록",
       sort: "정렬",
       type: "속성",
       language: "언어",
@@ -77,7 +79,9 @@ window.PopTracker = window.PopTracker || {};
     en: {
       siteTagline: "Browse packs and check grading POP counts with eBay PSA asking prices.",
       open: "OPEN →",
+      packOpen: "Pack Open Simulator",
       backPacks: "← Packs",
+      backToSet: "← Back to set",
       sort: "Sort",
       type: "Type",
       language: "Language",
@@ -144,7 +148,9 @@ window.PopTracker = window.PopTracker || {};
     ja: {
       siteTagline: "パックを選んでグレーディングPOPとeBay相場をまとめて確認できます。",
       open: "OPEN →",
+      packOpen: "Pack Open Simulator",
       backPacks: "← パック一覧",
+      backToSet: "← セットに戻る",
       sort: "並び替え",
       type: "タイプ",
       language: "言語",

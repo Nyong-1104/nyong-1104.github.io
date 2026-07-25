@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pack Open Simulator · PokePop</title>
+  <meta name="description" content="프로모 카드팩 25th를 그어 열어보는 Pack Open Simulator">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="./css/pop.css">
+  <link rel="stylesheet" href="./css/holo.css">
+  <link rel="stylesheet" href="./css/open.css">
+</head>
+<body class="open-page">
+  <nav class="site-nav">
+    <a class="nav-brand" href="./index.html">
+      <img class="nav-brand__logo" src="./assets/pokepop-logo.png" alt="PokePop">
+      <span class="nav-brand__text">PokePop</span>
+    </a>
+    <div class="nav-actions">
+      <a class="nav-back" id="open-back" href="./set.html?pack=s8a-p-25th-anniversary">← 세트 목록</a>
+    </div>
+  </nav>
+
+  <main class="page open-main">
+    <header class="open-head">
+      <p class="open-head__eyebrow">Pack Open Simulator</p>
+    </header>
+
+    <section class="open-stage" id="open-stage" aria-label="Pack Open Simulator">
+      <div class="open-info" id="open-info">
+        <p class="open-info__hint" id="open-hint">팩을 그어 개봉해주세요</p>
+        <div class="open-result" id="open-result" aria-hidden="true">
+          <p class="open-result__name open-result__shine" id="result-name"></p>
+          <p class="open-result__meta open-result__shine open-result__shine--soft" id="result-meta"></p>
+          <p class="open-result__price open-result__shine open-result__shine--gold" id="result-price"></p>
+        </div>
+      </div>
+
+      <div class="pack" id="pack" data-state="sealed">
+        <div class="pack__ambient-glow" aria-hidden="true"></div>
+        <div class="pack__ambient-sparks" aria-hidden="true"></div>
+        <div class="pack__inner" id="pack-inner">
+          <svg class="pack__defs" width="0" height="0" aria-hidden="true" focusable="false">
+            <defs>
+              <clipPath id="pack-tear-clip" clipPathUnits="objectBoundingBox">
+                <polygon id="tear-poly-top" points="0,0 1,0 1,0.21 0,0.21"></polygon>
+              </clipPath>
+              <clipPath id="pack-body-clip" clipPathUnits="objectBoundingBox">
+                <polygon id="tear-poly-body" points="0,0.21 1,0.21 1,1 0,1"></polygon>
+              </clipPath>
+            </defs>
+          </svg>
+
+          <div class="pack__card-rise" id="card-rise" hidden>
+            <button type="button" class="reveal-card" id="reveal-card" aria-label="카드 좌우로 뒤집어 보기">
+              <span class="reveal-card__inner" id="reveal-inner">
+                <span class="reveal-card__face reveal-card__face--back">
+                  <img src="./assets/card-back.png" alt="" draggable="false">
+                </span>
+                <span class="reveal-card__face reveal-card__face--front" id="reveal-front"></span>
+              </span>
+            </button>
+            <button type="button" class="open-btn" id="btn-reset" hidden>다시 열기</button>
+          </div>
+
+          <div class="pack__body" aria-hidden="true"></div>
+          <div class="pack__top" id="pack-top" aria-hidden="true"></div>
+          <div class="pack__tear-sheen" aria-hidden="true"></div>
+          <div class="pack__tear-glints" aria-hidden="true"></div>
+
+          <canvas class="pack__tear-stroke" id="tear-stroke" aria-hidden="true"></canvas>
+        </div>
+        <div class="pack__tear-zone" id="tear-zone" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="팩 상단 찢기"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./data/data.js"></script>
+  <script src="./js/shared.js"></script>
+  <script src="./js/i18n.js"></script>
+  <script src="./js/holo.js"></script>
+  <script src="./js/open.js"></script>
+</body>
+</html>

@@ -99,6 +99,21 @@
   document.getElementById("set-title").textContent = PT.packName(pack);
   document.getElementById("set-blurb").textContent = PT.packBlurb(pack);
 
+  const setActions = document.getElementById("set-actions");
+  if (setActions) {
+    setActions.innerHTML = "";
+    if (pack.id === "s8a-p-25th-anniversary") {
+      const openLink = document.createElement("a");
+      openLink.className = "set-pack-open";
+      openLink.href = "./open.html";
+      openLink.textContent = PT.t("packOpen");
+      setActions.appendChild(openLink);
+      setActions.hidden = false;
+    } else {
+      setActions.hidden = true;
+    }
+  }
+
   const back = document.querySelector(".nav-back");
   if (back) back.textContent = PT.t("backPacks");
 
