@@ -741,17 +741,52 @@ body.nav-drawer-open {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 1.15rem 0.9rem;
+  overflow: visible;
 }
 
 .card-link {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
-  transition: transform 0.25s ease;
+  transition: z-index 0s linear 0.28s;
 }
 
-.card-link:hover {
-  transform: translateY(-4px);
+.card-link:hover,
+.card-link:focus-visible {
+  z-index: 40;
+  transition: z-index 0s;
+}
+
+.card-link .holo-card {
+  pointer-events: none;
+  transform-origin: center center;
+  transition:
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.28s ease-out;
+  will-change: transform;
+}
+
+/* Official card-search pops to ~190% width; keep ours a bit smaller (~1.5x). */
+@media (hover: hover) and (pointer: fine) {
+  .card-link:hover .holo-card,
+  .card-link:focus-visible .holo-card {
+    transform: translate3d(0, 0, 0.1px) scale(1.5);
+    box-shadow: 0 36px 32px -10px rgba(0, 0, 0, 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-link .holo-card {
+    transition: none;
+  }
+
+  .card-link:hover .holo-card,
+  .card-link:focus-visible .holo-card {
+    transform: none;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+  }
 }
 
 .card-meta {
@@ -1245,10 +1280,6 @@ body.nav-drawer-open {
 
 .price-panel__seed a:hover {
   color: #ffd2b0;
-}
-
-.card-link .holo-card {
-  pointer-events: none;
 }
 
 .section-title {
