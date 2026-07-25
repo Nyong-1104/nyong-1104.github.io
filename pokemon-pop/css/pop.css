@@ -1590,9 +1590,10 @@ body.nav-drawer-open {
   user-select: none;
 }
 
-/* Mega X continuous breath stream — no white flash */
+/* Mega X continuous breath stream — no white flash; grow+fade via JS */
 .cursor-burst.cursor-burst--breath {
   z-index: 30;
+  transform-origin: center center;
 }
 
 /* Evolved elemental burst flash (leaf / fire / bluefire / lightning): ~0.1s white pulse */

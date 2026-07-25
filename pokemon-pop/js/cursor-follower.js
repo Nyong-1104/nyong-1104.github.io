@@ -76,8 +76,11 @@
   var BREATH_HOLD_MS = 1000;
   var BREATH_SPAWN_MIN = 40;
   var BREATH_SPAWN_MAX = 80;
-  var BREATH_SIZE_MIN = 10;
-  var BREATH_SIZE_MAX = 18;
+  /* Start small near mouth; JS scale grows them as they travel. */
+  var BREATH_SIZE_MIN = 7;
+  var BREATH_SIZE_MAX = 12;
+  var BREATH_SCALE_START = 0.45;
+  var BREATH_SCALE_END = 2.4;
   var BREATH_SPEED_MIN = 140;
   var BREATH_SPEED_MAX = 300;
   var BREATH_LIFE_MIN = 320;
@@ -248,8 +251,11 @@
         var ease = 1 - (1 - t) * (1 - t);
         var dx = vx0 * (ease * (life0 / 1000));
         var dy = vy0 * (ease * (life0 / 1000));
+        /* Grow outward, then fade to transparent. */
         var opacity = 1 - t;
-        var scale = 1 - t * 0.4;
+        var scale =
+          BREATH_SCALE_START +
+          ease * (BREATH_SCALE_END - BREATH_SCALE_START);
         el.style.opacity = String(opacity);
         el.style.transform =
           "translate3d(" +
