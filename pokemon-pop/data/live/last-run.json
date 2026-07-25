@@ -1,33 +1,30 @@
 {
-  "ranAt": "2026-07-25T22:02:54+09:00",
+  "ranAt": "2026-07-25T22:20:05+09:00",
   "stats": {
     "asOf": "2026-07-25",
-    "asOfIso": "2026-07-25T22:02:54+09:00",
+    "asOfIso": "2026-07-25T22:20:05+09:00",
     "cardsTotal": 4635,
     "cardsLive": 1984,
     "skippedTierC": 2651,
     "variantsWritten": 4327,
     "variantsKept": 0,
     "variantsFailed": 0,
-    "expandedPack": "25th-anniversary-golden-box",
-    "cardCount": 16,
-    "cardIds": [
-      "s8a-g-001",
-      "s8a-g-002",
-      "s8a-g-003",
-      "s8a-g-004",
-      "s8a-g-005",
-      "s8a-g-006",
-      "s8a-g-007",
-      "s8a-g-008",
-      "s8a-g-009",
-      "s8a-g-010",
-      "s8a-g-011",
-      "s8a-g-012",
-      "s8a-g-013",
-      "s8a-g-014",
-      "s8a-g-015",
-      "s8a-g-lig"
-    ]
+    "tiers": {
+      "A": 1335,
+      "B": 649,
+      "C": 2651
+    },
+    "ebayPricesRestored": 2408,
+    "brgPopsRestored": 1777,
+    "psaPopsRestored": 1136,
+    "brg": {
+      "brgEnabled": false,
+      "byPack": {}
+    },
+    "ebay": {
+      "ebayEnabled": false,
+      "note": "Set EBAY_CLIENT_ID and EBAY_CLIENT_SECRET to enable eBay prices"
+    },
+    "liveSource": "eBay+seed+BRG"
   }
 }
