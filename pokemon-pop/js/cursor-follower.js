@@ -81,10 +81,11 @@
   var BREATH_SIZE_MAX = 12;
   var BREATH_SCALE_START = 0.45;
   var BREATH_SCALE_END = 2.4;
-  var BREATH_SPEED_MIN = 140;
-  var BREATH_SPEED_MAX = 300;
-  var BREATH_LIFE_MIN = 320;
-  var BREATH_LIFE_MAX = 520;
+  /* Distance ≈ speed × life/1000; 2× speed × 1.5× life ≈ 3× travel. */
+  var BREATH_SPEED_MIN = 280;
+  var BREATH_SPEED_MAX = 600;
+  var BREATH_LIFE_MIN = 480;
+  var BREATH_LIFE_MAX = 780;
   /* Mega X faces left — breath cone centered on π (leftward). */
   var BREATH_ANGLE = Math.PI;
   var BREATH_CONE = 0.85;
