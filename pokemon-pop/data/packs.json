@@ -5675,5 +5675,95 @@
     "cardIds": [
       "sv-p-289"
     ]
+  },
+  {
+    "id": "rayquaza-poncho-pikachu-box",
+    "nameKo": "스페셜 BOX 레쿠자 판초를 입은 피카츄",
+    "nameEn": "Special BOX Pikachu in Rayquaza Poncho",
+    "nameJa": "スペシャルBOX レックウザポンチョを着たピカチュウ",
+    "nameShort": "Rayquaza Poncho",
+    "code": "PC-RAY-PONCHO",
+    "releaseYear": 2016,
+    "listGroup": "box",
+    "listComplete": true,
+    "expectedCards": 2,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "포켓몬센터 한정 XY BREAK 스페셜 BOX · 레쿠자·검은 레쿠자 판초 피카츄 프리미엄 키라 2종.",
+    "blurbEn": "Pokémon Center limited XY BREAK Special BOX · Rayquaza & Shiny Rayquaza Poncho Pikachu premium kira promos.",
+    "blurbJa": "ポケモンセンター限定スペシャルBOXのプレミアムキラ「ポンチョを着たピカチュウ（レックウザ／黒いレックウザ）」。",
+    "packImage": "./assets/box-rayquaza-poncho-pikachu.png",
+    "coverCardId": "xy-p-230",
+    "brgSets": {
+      "jp": {
+        "setName": "POKEMON XY JAPANESE PROMO",
+        "year": 2016
+      }
+    },
+    "cardIds": [
+      "xy-p-230",
+      "xy-p-231"
+    ]
+  },
+  {
+    "id": "magikarp-gyarados-pretend-pikachu-box",
+    "nameKo": "스페셜 BOX 잉어킹고코 & 갸라도스고코 피카츄",
+    "nameEn": "Special BOX Magikarp & Gyarados Pretend Pikachu",
+    "nameJa": "スペシャルBOX コイキングごっこ & ギャラドスごっこ ピカチュウ",
+    "nameShort": "Magikarp BOX",
+    "code": "PC-MAGI-PRETEND",
+    "releaseYear": 2015,
+    "listGroup": "box",
+    "listComplete": true,
+    "expectedCards": 2,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "포켓몬센터 히로시마 오픈 기념 XY 스페셜 BOX · 잉어킹고코·갸라도스고코 피카츄 프로모 2종.",
+    "blurbEn": "Pokémon Center Hiroshima opening XY Special BOX · Magikarp & Gyarados Pretend Pikachu promos.",
+    "blurbJa": "ポケモンセンターヒロシマオープン記念スペシャルBOXのプロモ「コイキングごっこピカチュウ」「ギャラドスごっこピカチュウ」。",
+    "packImage": "./assets/box-magikarp-gyarados-pretend-pikachu.png",
+    "coverCardId": "xy-p-150",
+    "brgSets": {
+      "jp": {
+        "setName": "POKEMON XY JAPANESE PROMO",
+        "year": 2015
+      }
+    },
+    "cardIds": [
+      "xy-p-150",
+      "xy-p-151"
+    ]
+  },
+  {
+    "id": "mega-charizard-y-poncho-pikachu-box",
+    "nameKo": "스페셜 BOX 메가리자돈Y 판초를 입은 피카츄",
+    "nameEn": "Special BOX Pikachu in Mega Charizard Y Poncho",
+    "nameJa": "スペシャルBOX メガリザードンYのポンチョを着たピカチュウ",
+    "nameShort": "Charizard Y Poncho",
+    "code": "PC-ZARDY-PONCHO",
+    "releaseYear": 2016,
+    "listGroup": "box",
+    "listComplete": true,
+    "expectedCards": 2,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "XY BREAK 스페셜 BOX · 메가리자돈Y 판초 피카츄 프리미엄 키라 + 스페셜 키라 피카츄.",
+    "blurbEn": "XY BREAK Special BOX · Mega Charizard Y Poncho Pikachu premium kira + special kira Pikachu.",
+    "blurbJa": "スペシャルBOXのプレミアムキラ「ポンチョを着たピカチュウ（メガリザードンY）」とスペシャルキラ「ピカチュウ」。",
+    "packImage": "./assets/box-mega-charizard-y-poncho-pikachu.png",
+    "coverCardId": "xy-p-208",
+    "brgSets": {
+      "jp": {
+        "setName": "POKEMON XY JAPANESE PROMO",
+        "year": 2016
+      }
+    },
+    "cardIds": [
+      "xy-p-208",
+      "xy-p-206"
+    ]
   }
 ]

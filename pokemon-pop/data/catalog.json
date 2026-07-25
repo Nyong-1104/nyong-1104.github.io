@@ -128659,5 +128659,173 @@
       "basePop": 30
     },
     "tier": "B"
+  },
+  {
+    "id": "xy-p-230",
+    "packId": "rayquaza-poncho-pikachu-box",
+    "nameKo": "레쿠자 판초를 입은 피카츄",
+    "nameEn": "Pikachu in Rayquaza Poncho",
+    "nameJa": "ポンチョを着たピカチュウ（レックウザ）",
+    "number": "230/XY-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/032191_P_PONCHOWOKITAPIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/032191_P_PONCHOWOKITAPIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 32191,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 800,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "xy-p-231",
+    "packId": "rayquaza-poncho-pikachu-box",
+    "nameKo": "검은 레쿠자 판초를 입은 피카츄",
+    "nameEn": "Pikachu in Shiny Rayquaza Poncho",
+    "nameJa": "ポンチョを着たピカチュウ（黒いレックウザ）",
+    "number": "231/XY-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/032192_P_PONCHOWOKITAPIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/032192_P_PONCHOWOKITAPIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 32192,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 800,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "xy-p-150",
+    "packId": "magikarp-gyarados-pretend-pikachu-box",
+    "nameKo": "잉어킹고코 피카츄",
+    "nameEn": "Magikarp Pretend Pikachu",
+    "nameJa": "コイキングごっこピカチュウ",
+    "number": "150/XY-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/031162_P_KOIKINGUGOKKOPIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/031162_P_KOIKINGUGOKKOPIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 31162,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 500,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "xy-p-151",
+    "packId": "magikarp-gyarados-pretend-pikachu-box",
+    "nameKo": "갸라도스고코 피카츄",
+    "nameEn": "Gyarados Pretend Pikachu",
+    "nameJa": "ギャラドスごっこピカチュウ",
+    "number": "151/XY-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/031163_P_GYARADOSUGOKKOPIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/031163_P_GYARADOSUGOKKOPIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 31163,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 500,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "xy-p-208",
+    "packId": "mega-charizard-y-poncho-pikachu-box",
+    "nameKo": "메가리자돈Y 판초를 입은 피카츄",
+    "nameEn": "Pikachu in Mega Charizard Y Poncho",
+    "nameJa": "ポンチョを着たピカチュウ（メガリザードンY）",
+    "number": "208/XY-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/031641_P_PONCHOWOKITAPIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/031641_P_PONCHOWOKITAPIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 31641,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 900,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "xy-p-206",
+    "packId": "mega-charizard-y-poncho-pikachu-box",
+    "nameKo": "피카츄",
+    "nameEn": "Pikachu",
+    "nameJa": "ピカチュウ",
+    "number": "206/XY-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/031642_P_PIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/031642_P_PIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 31642,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 200,
+      "basePop": 50
+    },
+    "tier": "B"
   }
 ]
