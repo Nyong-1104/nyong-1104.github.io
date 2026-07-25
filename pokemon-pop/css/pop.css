@@ -447,7 +447,7 @@ body.nav-drawer-open {
 
 .infinity-slide-item img {
   display: block;
-  height: clamp(48px, 7vw, 72px);
+  height: clamp(76px, 11.06vw, 114px);
   width: auto;
   max-width: none;
   user-select: none;
