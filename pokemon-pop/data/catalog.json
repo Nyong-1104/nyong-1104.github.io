@@ -128547,5 +128547,117 @@
       "basePop": 30
     },
     "tier": "B"
+  },
+  {
+    "id": "sm-p-014",
+    "packId": "team-pretend-pikachu-box",
+    "nameKo": "단원고코 피카츄",
+    "nameEn": "Team Pretend Pikachu",
+    "nameJa": "団員ごっこピカチュウ",
+    "number": "014/SM-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/033289_P_DANINGOKKOPIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/033289_P_DANINGOKKOPIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 33289,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 300,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "sm-p-013",
+    "packId": "team-pretend-pikachu-box",
+    "nameKo": "스컬단고코 피카츄",
+    "nameEn": "Team Skull Pretend Pikachu",
+    "nameJa": "スカル団ごっこピカチュウ",
+    "number": "013/SM-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/033288_P_SUKARUDANGOKKOPIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/033288_P_SUKARUDANGOKKOPIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 33288,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 200,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "sv-p-261",
+    "packId": "pokemon-center-hiroshima-box",
+    "nameKo": "히로시마의 피카츄",
+    "nameEn": "Hiroshima's Pikachu",
+    "nameJa": "ヒロシマのピカチュウ",
+    "number": "261/SV-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/049618_P_HIROSHIMANOPIKACHIXYUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/049618_P_HIROSHIMANOPIKACHIXYUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 49618,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 180,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "sv-p-289",
+    "packId": "pokemon-center-fukuoka-box",
+    "nameKo": "후쿠오카의 피카츄",
+    "nameEn": "Fukuoka's Pikachu",
+    "nameJa": "フクオカのピカチュウ",
+    "number": "289/SV-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/049620_P_FUKUOKANOPIKACHIXYUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/049620_P_FUKUOKANOPIKACHIXYUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 49620,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 180,
+      "basePop": 30
+    },
+    "tier": "B"
   }
 ]

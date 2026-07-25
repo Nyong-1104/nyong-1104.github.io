@@ -5587,5 +5587,93 @@
     "cardIds": [
       "sv-p-260"
     ]
+  },
+  {
+    "id": "team-pretend-pikachu-box",
+    "nameKo": "스페셜 BOX 단원고코 피카츄",
+    "nameEn": "Special BOX Team Pretend Pikachu",
+    "nameJa": "スペシャルBOX 団員ごっこピカチュウ",
+    "nameShort": "Pretend BOX",
+    "code": "PC-PRETEND",
+    "releaseYear": 2016,
+    "listGroup": "box",
+    "listComplete": true,
+    "expectedCards": 2,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "포켓몬센터 한정 스페셜 BOX · 단원고코·스컬단고코 피카츄 프로모 2종.",
+    "blurbEn": "Pokémon Center limited Special BOX · Team Pretend & Team Skull Pretend Pikachu promos.",
+    "blurbJa": "ポケモンセンター限定スペシャルBOXのプロモ「団員ごっこピカチュウ」「スカル団ごっこピカチュウ」。",
+    "packImage": "./assets/box-team-pretend-pikachu.png",
+    "coverCardId": "sm-p-014",
+    "brgSets": {
+      "jp": {
+        "setName": "POKEMON S&M JAPANESE PROMO",
+        "year": 2016
+      }
+    },
+    "cardIds": [
+      "sm-p-014",
+      "sm-p-013"
+    ]
+  },
+  {
+    "id": "pokemon-center-hiroshima-box",
+    "nameKo": "스페셜 BOX 포켓몬센터 히로시마",
+    "nameEn": "Special BOX Pokémon Center Hiroshima",
+    "nameJa": "スペシャルBOX ポケモンセンター ヒロシマ",
+    "nameShort": "Hiroshima BOX",
+    "code": "PC-HIROSHIMA",
+    "releaseYear": 2025,
+    "listGroup": "box",
+    "listComplete": true,
+    "expectedCards": 1,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "포켓몬센터 히로시마 스페셜 BOX · 히로시마의 피카츄 프로모.",
+    "blurbEn": "Pokémon Center Hiroshima Special BOX · Hiroshima's Pikachu promo.",
+    "blurbJa": "スペシャルBOX ポケモンセンターヒロシマのプロモ「ヒロシマのピカチュウ」。",
+    "packImage": "./assets/box-pokemon-center-hiroshima.png",
+    "coverCardId": "sv-p-261",
+    "brgSets": {
+      "jp": {
+        "setName": "POKEMON S&V JAPANESE PROMO",
+        "year": 2025
+      }
+    },
+    "cardIds": [
+      "sv-p-261"
+    ]
+  },
+  {
+    "id": "pokemon-center-fukuoka-box",
+    "nameKo": "스페셜 BOX 포켓몬센터 후쿠오카",
+    "nameEn": "Special BOX Pokémon Center Fukuoka",
+    "nameJa": "スペシャルBOX ポケモンセンター フクオカ",
+    "nameShort": "Fukuoka BOX",
+    "code": "PC-FUKUOKA",
+    "releaseYear": 2025,
+    "listGroup": "box",
+    "listComplete": true,
+    "expectedCards": 1,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "포켓몬센터 후쿠오카 스페셜 BOX · 후쿠오카의 피카츄 프로모.",
+    "blurbEn": "Pokémon Center Fukuoka Special BOX · Fukuoka's Pikachu promo.",
+    "blurbJa": "スペシャルBOX ポケモンセンターフクオカのプロモ「フクオカのピカチュウ」。",
+    "packImage": "./assets/box-pokemon-center-fukuoka.png",
+    "coverCardId": "sv-p-289",
+    "brgSets": {
+      "jp": {
+        "setName": "POKEMON S&V JAPANESE PROMO",
+        "year": 2025
+      }
+    },
+    "cardIds": [
+      "sv-p-289"
+    ]
   }
 ]
