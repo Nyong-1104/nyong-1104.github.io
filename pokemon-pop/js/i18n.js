@@ -67,6 +67,9 @@ window.PopTracker = window.PopTracker || {};
       menuOpen: "메뉴 열기",
       menuClose: "메뉴 닫기",
       menuTitle: "메뉴",
+      menuPackSearchPlaceholder: "확장팩·프로모 검색",
+      menuPackSearchLabel: "확장팩·프로모 검색",
+      menuPackSearchEmpty: "일치하는 팩이 없습니다.",
       menuLang: "언어",
       menuBoosters: "확장팩",
       menuPromos: "프로모",
@@ -131,6 +134,9 @@ window.PopTracker = window.PopTracker || {};
       menuOpen: "Open menu",
       menuClose: "Close menu",
       menuTitle: "Menu",
+      menuPackSearchPlaceholder: "Search sets & promos",
+      menuPackSearchLabel: "Search sets & promos",
+      menuPackSearchEmpty: "No matching packs.",
       menuLang: "Language",
       menuBoosters: "Booster sets",
       menuPromos: "Promos",
@@ -195,6 +201,9 @@ window.PopTracker = window.PopTracker || {};
       menuOpen: "メニューを開く",
       menuClose: "メニューを閉じる",
       menuTitle: "メニュー",
+      menuPackSearchPlaceholder: "拡張パック・プロモ検索",
+      menuPackSearchLabel: "拡張パック・プロモ検索",
+      menuPackSearchEmpty: "一致するパックがありません。",
       menuLang: "言語",
       menuBoosters: "拡張パック",
       menuPromos: "プロモ",
@@ -405,9 +414,28 @@ window.PopTracker = window.PopTracker || {};
       return visiblePacks(group)
         .map(function (pack) {
           const name = PT.packName ? PT.packName(pack) : pack.nameKo || pack.id;
+          const safeName = String(name || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+          const hay = [
+            pack.id,
+            pack.code,
+            pack.nameShort,
+            pack.nameKo,
+            pack.nameEn,
+            pack.nameJa,
+            name,
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/</g, "&lt;");
           return `<a class="nav-drawer__link" href="./set.html?pack=${encodeURIComponent(
             pack.id
-          )}">${name}</a>`;
+          )}" data-pack-search="${hay}">${safeName}</a>`;
         })
         .join("");
     }
@@ -427,14 +455,22 @@ window.PopTracker = window.PopTracker || {};
       })
       .join("");
 
-    const existingSearch = document.getElementById("nav-search");
-    const headMain = existingSearch
-      ? `<div class="nav-drawer__search-slot" id="nav-drawer-search-slot"></div>`
-      : `<h2 class="nav-drawer__title">${PT.t("menuTitle")}</h2>`;
-
     drawer.innerHTML = `
       <div class="nav-drawer__head">
-        ${headMain}
+        <div class="nav-drawer__search-slot">
+          <label class="nav-drawer__pack-search-label" for="nav-drawer-pack-search">${PT.t(
+            "menuPackSearchLabel"
+          )}</label>
+          <input
+            id="nav-drawer-pack-search"
+            class="nav-drawer__pack-search"
+            type="search"
+            autocomplete="off"
+            spellcheck="false"
+            enterkeyhint="search"
+            placeholder="${PT.t("menuPackSearchPlaceholder")}"
+          >
+        </div>
         <button type="button" class="nav-drawer__close" aria-label="${PT.t(
           "menuClose"
         )}">×</button>
@@ -444,13 +480,13 @@ window.PopTracker = window.PopTracker || {};
           <h3 class="nav-drawer__section-title">${PT.t("menuLang")}</h3>
           <div class="nav-drawer__langs">${langBtns}</div>
         </section>
-        <section class="nav-drawer__section">
+        <section class="nav-drawer__section" data-pack-section="booster">
           <h3 class="nav-drawer__section-title">${PT.t("menuBoosters")}</h3>
           <div class="nav-drawer__links">${packLinks("booster") || `<p class="nav-drawer__empty">${PT.t(
             "emptyPackGroup"
           )}</p>`}</div>
         </section>
-        <section class="nav-drawer__section">
+        <section class="nav-drawer__section" data-pack-section="promo">
           <h3 class="nav-drawer__section-title">${PT.t("menuPromos")}</h3>
           <div class="nav-drawer__links">${packLinks("promo") || `<p class="nav-drawer__empty">${PT.t(
             "emptyPackGroup"
@@ -459,9 +495,58 @@ window.PopTracker = window.PopTracker || {};
       </div>
     `;
 
-    if (existingSearch) {
-      const slot = drawer.querySelector("#nav-drawer-search-slot");
-      if (slot) slot.appendChild(existingSearch);
+    const packSearchInput = drawer.querySelector("#nav-drawer-pack-search");
+
+    function normalizePackQuery(value) {
+      let s = String(value || "");
+      if (typeof s.normalize === "function") s = s.normalize("NFC");
+      return s
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .replace(/[()（）[\]【】]/g, "");
+    }
+
+    function filterDrawerPacks(query) {
+      const q = normalizePackQuery(query);
+      let anyVisible = false;
+      drawer.querySelectorAll("[data-pack-section]").forEach(function (section) {
+        const links = section.querySelectorAll(".nav-drawer__link");
+        if (!links.length) {
+          section.hidden = !!q;
+          return;
+        }
+
+        let visible = 0;
+        links.forEach(function (link) {
+          const hay = normalizePackQuery(
+            link.getAttribute("data-pack-search") || link.textContent
+          );
+          const match = !q || hay.indexOf(q) !== -1;
+          link.hidden = !match;
+          if (match) visible += 1;
+        });
+
+        section.hidden = !!q && visible === 0;
+        if (visible > 0) anyVisible = true;
+      });
+
+      let globalEmpty = drawer.querySelector(".nav-drawer__pack-filter-empty");
+      if (!globalEmpty) {
+        globalEmpty = document.createElement("p");
+        globalEmpty.className = "nav-drawer__empty nav-drawer__pack-filter-empty";
+        globalEmpty.textContent = PT.t("menuPackSearchEmpty");
+        drawer.querySelector(".nav-drawer__body").appendChild(globalEmpty);
+      }
+      globalEmpty.hidden = !q || anyVisible;
+    }
+
+    if (packSearchInput) {
+      packSearchInput.addEventListener("input", function () {
+        filterDrawerPacks(packSearchInput.value);
+      });
+      packSearchInput.addEventListener("search", function () {
+        filterDrawerPacks(packSearchInput.value);
+      });
     }
 
     function setOpen(open) {
@@ -470,13 +555,10 @@ window.PopTracker = window.PopTracker || {};
       btn.setAttribute("aria-label", open ? PT.t("menuClose") : PT.t("menuOpen"));
       drawer.classList.toggle("is-open", open);
       backdrop.classList.toggle("is-open", open);
-      if (open && existingSearch) {
-        const input = existingSearch.querySelector(".nav-search__input");
-        if (input) {
-          requestAnimationFrame(function () {
-            input.focus();
-          });
-        }
+      if (open && packSearchInput) {
+        requestAnimationFrame(function () {
+          packSearchInput.focus();
+        });
       }
     }
 
