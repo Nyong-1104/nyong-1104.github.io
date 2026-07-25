@@ -423,6 +423,13 @@ body.nav-drawer-open {
   transition: background 0.15s ease, color 0.15s ease;
 }
 
+/* Author display:block beats UA [hidden]{display:none}; keep filter working. */
+.nav-drawer__link[hidden],
+.nav-drawer__section[hidden],
+.nav-drawer__pack-filter-empty[hidden] {
+  display: none !important;
+}
+
 .nav-drawer__link:hover {
   background: rgba(255, 212, 0, 0.1);
   color: var(--logo-yellow);
