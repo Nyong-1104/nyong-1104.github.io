@@ -829,6 +829,34 @@ body.nav-drawer-open {
   color: #ffd2b0;
 }
 
+.set-actions {
+  margin-top: 0.9rem;
+}
+
+.set-pack-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.55rem 1.15rem;
+  border: 2px solid rgba(244, 239, 230, 0.85);
+  border-radius: 999px;
+  color: var(--ink);
+  text-decoration: none;
+  background: transparent;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.set-pack-open:hover {
+  background: var(--ember);
+  border-color: var(--ember);
+  color: #120e08;
+  transform: translateY(-1px);
+}
+
 .pack-entry__blurb--warn {
   color: #ffb087;
   opacity: 0.95;
@@ -1517,7 +1545,7 @@ body.nav-drawer-open {
   opacity: 1;
 }
 
-/* Evolved follower (Raichu / Master Ball) ~30% larger than base */
+/* Evolved follower (Raichu / Charizard / Master Ball) ~30% larger than base */
 .cursor-follower.is-evolved {
   width: 52px;
   max-height: 62px;
@@ -1556,12 +1584,14 @@ body.nav-drawer-open {
   user-select: none;
 }
 
-/* Raichu lightning: yellow base; crisp ~0.1s full-white flash then back */
-.cursor-burst.cursor-burst--raichu {
-  animation: cursor-burst-raichu-flash 0.1s ease-in-out infinite;
+/* Evolved elemental burst flash (Raichu lightning / Charizard fire): ~0.1s white pulse */
+.cursor-burst.cursor-burst--element,
+.cursor-burst.cursor-burst--raichu,
+.cursor-burst.cursor-burst--charizard {
+  animation: cursor-burst-element-flash 0.1s ease-in-out infinite;
 }
 
-@keyframes cursor-burst-raichu-flash {
+@keyframes cursor-burst-element-flash {
   0%,
   100% {
     filter: brightness(1) contrast(1) saturate(1);

@@ -15,6 +15,9 @@
     {
       src: "./assets/cursor-follower-charmander.png",
       burst: "./assets/cursor-burst-fire.png",
+      evolveSrc: "./assets/cursor-follower-charizard.png",
+      evolveHoldMs: 3000,
+      evolveBurstFlash: true,
     },
     {
       src: "./assets/cursor-follower-squirtle.png",
@@ -98,7 +101,7 @@
     for (var i = 0; i < count; i++) {
       var p = document.createElement("img");
       p.className = flashBurst
-        ? "cursor-burst cursor-burst--raichu"
+        ? "cursor-burst cursor-burst--element"
         : "cursor-burst";
       p.alt = "";
       p.draggable = false;
@@ -149,7 +152,7 @@
     }
   }
 
-  /* --- Hold-to-evolve (Pikachu -> Raichu, Poke Ball -> Master Ball) --- */
+  /* --- Hold-to-evolve (Pikachu/Raichu, Charmander/Charizard, Ball/Master) --- */
   var pressStart = 0;
   var pressX = 0;
   var pressY = 0;
