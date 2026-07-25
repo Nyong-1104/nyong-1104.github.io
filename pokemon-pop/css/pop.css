@@ -1440,3 +1440,37 @@ body.nav-drawer-open {
 .credit a:hover {
   color: var(--ember);
 }
+
+/* Mouse cursor follower — above content, below drawers/modals */
+.cursor-follower {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: auto;
+  max-height: 48px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  pointer-events: none;
+  z-index: 30;
+  opacity: 0;
+  will-change: transform;
+  user-select: none;
+}
+
+.cursor-follower.is-visible {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-follower {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .cursor-follower {
+    display: none;
+  }
+}
