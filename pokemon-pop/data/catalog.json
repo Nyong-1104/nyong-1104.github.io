@@ -128519,5 +128519,33 @@
       "basePop": 30
     },
     "tier": "B"
+  },
+  {
+    "id": "sv-p-260",
+    "packId": "pokemon-center-tohoku-box",
+    "nameKo": "도호쿠의 피카츄",
+    "nameEn": "Tohoku's Pikachu",
+    "nameJa": "トウホクのピカチュウ",
+    "number": "260/SV-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/049617_P_TOUHOKUNOPIKACHIXYUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/049617_P_TOUHOKUNOPIKACHIXYUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 49617,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 180,
+      "basePop": 30
+    },
+    "tier": "B"
   }
 ]

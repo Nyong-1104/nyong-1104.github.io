@@ -5558,5 +5558,34 @@
       "s-p-227",
       "s-p-226"
     ]
+  },
+  {
+    "id": "pokemon-center-tohoku-box",
+    "nameKo": "스페셜 BOX 포켓몬센터 도호쿠",
+    "nameEn": "Special BOX Pokémon Center Tohoku",
+    "nameJa": "スペシャルBOX ポケモンセンター トウホク",
+    "nameShort": "Tohoku BOX",
+    "code": "PC-TOHOKU",
+    "releaseYear": 2025,
+    "listGroup": "box",
+    "listComplete": true,
+    "expectedCards": 1,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "포켓몬센터 도호쿠 스페셜 BOX · 도호쿠의 피카츄 프로모.",
+    "blurbEn": "Pokémon Center Tohoku Special BOX · Tohoku's Pikachu promo.",
+    "blurbJa": "スペシャルBOX ポケモンセンタートウホクのプロモ「トウホクのピカチュウ」。",
+    "packImage": "./assets/box-pokemon-center-tohoku.png",
+    "coverCardId": "sv-p-260",
+    "brgSets": {
+      "jp": {
+        "setName": "POKEMON S&V JAPANESE PROMO",
+        "year": 2025
+      }
+    },
+    "cardIds": [
+      "sv-p-260"
+    ]
   }
 ]
