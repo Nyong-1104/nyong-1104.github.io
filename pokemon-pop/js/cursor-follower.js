@@ -4,20 +4,42 @@
     {
       src: "./assets/cursor-follower-bulbasaur.png",
       burst: "./assets/cursor-burst-leaf.png",
+      evolveHoldMs: 3000,
+      evolveOutcomes: [
+        {
+          src: "./assets/cursor-follower-venusaur.png",
+          burstFlash: true,
+        },
+      ],
     },
     {
       src: "./assets/cursor-follower-pokeball.png",
       burst: "./assets/cursor-burst-ball.png",
-      evolveSrc: "./assets/cursor-follower-masterball.png",
-      evolveBurst: "./assets/cursor-burst-masterball.png",
       evolveHoldMs: 3000,
+      evolveOutcomes: [
+        {
+          src: "./assets/cursor-follower-masterball.png",
+          burst: "./assets/cursor-burst-masterball.png",
+        },
+      ],
     },
     {
       src: "./assets/cursor-follower-charmander.png",
       burst: "./assets/cursor-burst-fire.png",
-      evolveSrc: "./assets/cursor-follower-charizard.png",
       evolveHoldMs: 3000,
-      evolveBurstFlash: true,
+      evolveOutcomes: [
+        {
+          weight: 70,
+          src: "./assets/cursor-follower-charizard.png",
+          burstFlash: true,
+        },
+        {
+          weight: 30,
+          src: "./assets/cursor-follower-mega-charizard-x.png",
+          burst: "./assets/cursor-burst-bluefire.png",
+          burstFlash: true,
+        },
+      ],
     },
     {
       src: "./assets/cursor-follower-squirtle.png",
@@ -26,9 +48,13 @@
     {
       src: "./assets/cursor-follower-pikachu.png",
       burst: "./assets/cursor-burst-lightning.png",
-      evolveSrc: "./assets/cursor-follower-raichu.png",
       evolveHoldMs: 3000,
-      evolveBurstFlash: true,
+      evolveOutcomes: [
+        {
+          src: "./assets/cursor-follower-raichu.png",
+          burstFlash: true,
+        },
+      ],
     },
   ];
   var OFFSET_X = 14;
@@ -47,10 +73,25 @@
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (!window.matchMedia("(pointer: fine)").matches) return;
 
+  function pickEvolveOutcome(outcomes) {
+    if (!outcomes || !outcomes.length) return null;
+    var total = 0;
+    for (var i = 0; i < outcomes.length; i++) {
+      total += outcomes[i].weight != null ? outcomes[i].weight : 1;
+    }
+    var roll = Math.random() * total;
+    for (var j = 0; j < outcomes.length; j++) {
+      roll -= outcomes[j].weight != null ? outcomes[j].weight : 1;
+      if (roll <= 0) return outcomes[j];
+    }
+    return outcomes[outcomes.length - 1];
+  }
+
   var pick = FOLLOWERS[Math.floor(Math.random() * FOLLOWERS.length)];
   var burstSrc = pick.burst;
-  var canEvolve = !!pick.evolveSrc;
+  var canEvolve = !!(pick.evolveOutcomes && pick.evolveOutcomes.length);
   var evolved = false;
+  var evolveBurstFlash = false;
 
   var img = document.createElement("img");
   img.className = "cursor-follower";
@@ -97,7 +138,7 @@
       PARTICLE_MIN +
       Math.floor(Math.random() * (PARTICLE_MAX - PARTICLE_MIN + 1));
     var bigBurst = evolved;
-    var flashBurst = evolved && !!pick.evolveBurstFlash;
+    var flashBurst = evolved && evolveBurstFlash;
     for (var i = 0; i < count; i++) {
       var p = document.createElement("img");
       p.className = flashBurst
@@ -152,7 +193,7 @@
     }
   }
 
-  /* --- Hold-to-evolve (Pikachu/Raichu, Charmander/Charizard, Ball/Master) --- */
+  /* --- Hold-to-evolve (weighted outcomes: e.g. Charmander / Charizard / Mega X) --- */
   var pressStart = 0;
   var pressX = 0;
   var pressY = 0;
@@ -177,11 +218,14 @@
 
   function evolveFollower(cx, cy) {
     if (evolved || !canEvolve) return;
+    var outcome = pickEvolveOutcome(pick.evolveOutcomes);
+    if (!outcome || !outcome.src) return;
     evolved = true;
     stopChargeFlash();
-    img.src = pick.evolveSrc;
+    img.src = outcome.src;
     img.classList.add("is-evolved");
-    if (pick.evolveBurst) burstSrc = pick.evolveBurst;
+    if (outcome.burst) burstSrc = outcome.burst;
+    evolveBurstFlash = !!outcome.burstFlash;
     spawnBurst(cx, cy);
   }
 
@@ -226,7 +270,7 @@
           evolveFollower(cx, cy);
           return;
         }
-        /* Short click: pre-evolve burst (red ball / lightning). */
+        /* Short click: pre-evolve burst (leaf / fire / lightning / ball). */
         if (held < SHORT_CLICK_MS) spawnBurst(cx, cy);
       },
       { passive: true }

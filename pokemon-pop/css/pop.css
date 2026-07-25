@@ -1545,7 +1545,7 @@ body.nav-drawer-open {
   opacity: 1;
 }
 
-/* Evolved follower (Raichu / Charizard / Master Ball) ~30% larger than base */
+/* Evolved follower (Raichu / Venusaur / Charizard / Mega X / Master Ball) ~30% larger */
 .cursor-follower.is-evolved {
   width: 52px;
   max-height: 62px;
@@ -1584,7 +1584,7 @@ body.nav-drawer-open {
   user-select: none;
 }
 
-/* Evolved elemental burst flash (Raichu lightning / Charizard fire): ~0.1s white pulse */
+/* Evolved elemental burst flash (leaf / fire / bluefire / lightning): ~0.1s white pulse */
 .cursor-burst.cursor-burst--element,
 .cursor-burst.cursor-burst--raichu,
 .cursor-burst.cursor-burst--charizard {
