@@ -411,6 +411,18 @@ window.PopTracker = window.PopTracker || {};
     }
 
     function packLinks(group) {
+      const catalog = (PT.getCatalog && PT.getCatalog()) || [];
+      const cardSearchByPack = {};
+      for (let i = 0; i < catalog.length; i++) {
+        const card = catalog[i];
+        if (!card || !card.packId) continue;
+        const bits = [card.nameKo, card.nameEn, card.nameJa, card.number, card.id]
+          .filter(Boolean)
+          .join(" ");
+        cardSearchByPack[card.packId] = (cardSearchByPack[card.packId]
+          ? cardSearchByPack[card.packId] + " "
+          : "") + bits;
+      }
       return visiblePacks(group)
         .map(function (pack) {
           const name = PT.packName ? PT.packName(pack) : pack.nameKo || pack.id;
@@ -426,7 +438,11 @@ window.PopTracker = window.PopTracker || {};
             pack.nameKo,
             pack.nameEn,
             pack.nameJa,
+            pack.blurb,
+            pack.blurbEn,
+            pack.blurbJa,
             name,
+            cardSearchByPack[pack.id] || "",
           ]
             .filter(Boolean)
             .join(" ")
