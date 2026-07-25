@@ -427,9 +427,14 @@ window.PopTracker = window.PopTracker || {};
       })
       .join("");
 
+    const existingSearch = document.getElementById("nav-search");
+    const headMain = existingSearch
+      ? `<div class="nav-drawer__search-slot" id="nav-drawer-search-slot"></div>`
+      : `<h2 class="nav-drawer__title">${PT.t("menuTitle")}</h2>`;
+
     drawer.innerHTML = `
       <div class="nav-drawer__head">
-        <h2 class="nav-drawer__title">${PT.t("menuTitle")}</h2>
+        ${headMain}
         <button type="button" class="nav-drawer__close" aria-label="${PT.t(
           "menuClose"
         )}">×</button>
@@ -454,13 +459,30 @@ window.PopTracker = window.PopTracker || {};
       </div>
     `;
 
+    if (existingSearch) {
+      const slot = drawer.querySelector("#nav-drawer-search-slot");
+      if (slot) slot.appendChild(existingSearch);
+    }
+
     function setOpen(open) {
       document.body.classList.toggle("nav-drawer-open", open);
       btn.setAttribute("aria-expanded", open ? "true" : "false");
       btn.setAttribute("aria-label", open ? PT.t("menuClose") : PT.t("menuOpen"));
       drawer.classList.toggle("is-open", open);
       backdrop.classList.toggle("is-open", open);
+      if (open && existingSearch) {
+        const input = existingSearch.querySelector(".nav-search__input");
+        if (input) {
+          requestAnimationFrame(function () {
+            input.focus();
+          });
+        }
+      }
     }
+
+    PT.closeNavDrawer = function () {
+      setOpen(false);
+    };
 
     btn.onclick = function () {
       setOpen(!drawer.classList.contains("is-open"));

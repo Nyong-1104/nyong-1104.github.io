@@ -209,6 +209,7 @@
       else url.searchParams.delete("q");
       history.replaceState(null, "", url);
       showSearchResults(q);
+      if (q && typeof PT.closeNavDrawer === "function") PT.closeNavDrawer();
     }
 
     input.addEventListener("input", function () {
