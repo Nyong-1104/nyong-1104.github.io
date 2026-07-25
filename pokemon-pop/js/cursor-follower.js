@@ -8,6 +8,9 @@
     {
       src: "./assets/cursor-follower-pokeball.png",
       burst: "./assets/cursor-burst-ball.png",
+      evolveSrc: "./assets/cursor-follower-masterball.png",
+      evolveBurst: "./assets/cursor-burst-masterball.png",
+      evolveHoldMs: 3000,
     },
     {
       src: "./assets/cursor-follower-charmander.png",
@@ -22,6 +25,7 @@
       burst: "./assets/cursor-burst-lightning.png",
       evolveSrc: "./assets/cursor-follower-raichu.png",
       evolveHoldMs: 3000,
+      evolveBurstFlash: true,
     },
   ];
   var OFFSET_X = 14;
@@ -34,7 +38,7 @@
   var SPEED_MAX = 220;
   var SIZE_MIN = 14;
   var SIZE_MAX = 22;
-  var RAICHU_BURST_SCALE = 1.95;
+  var EVOLVED_BURST_SCALE = 1.95;
   var SHORT_CLICK_MS = 400;
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -89,17 +93,18 @@
     var count =
       PARTICLE_MIN +
       Math.floor(Math.random() * (PARTICLE_MAX - PARTICLE_MIN + 1));
-    var raichuBurst = evolved;
+    var bigBurst = evolved;
+    var flashBurst = evolved && !!pick.evolveBurstFlash;
     for (var i = 0; i < count; i++) {
       var p = document.createElement("img");
-      p.className = raichuBurst
+      p.className = flashBurst
         ? "cursor-burst cursor-burst--raichu"
         : "cursor-burst";
       p.alt = "";
       p.draggable = false;
       p.src = burstSrc;
       var size = SIZE_MIN + Math.random() * (SIZE_MAX - SIZE_MIN);
-      if (raichuBurst) size *= RAICHU_BURST_SCALE;
+      if (bigBurst) size *= EVOLVED_BURST_SCALE;
       p.style.width = size + "px";
       p.style.height = "auto";
       p.style.left = cx - size / 2 + "px";
@@ -144,7 +149,7 @@
     }
   }
 
-  /* --- Pikachu → Raichu hold-to-evolve --- */
+  /* --- Hold-to-evolve (Pikachu -> Raichu, Poke Ball -> Master Ball) --- */
   var pressStart = 0;
   var pressX = 0;
   var pressY = 0;
@@ -167,12 +172,13 @@
     }
   }
 
-  function evolveToRaichu(cx, cy) {
+  function evolveFollower(cx, cy) {
     if (evolved || !canEvolve) return;
     evolved = true;
     stopChargeFlash();
     img.src = pick.evolveSrc;
     img.classList.add("is-evolved");
+    if (pick.evolveBurst) burstSrc = pick.evolveBurst;
     spawnBurst(cx, cy);
   }
 
@@ -186,7 +192,7 @@
       "pointerdown",
       function (e) {
         if (e.button !== 0) return;
-        /* After evolve, Raichu clicks still fire lightning bursts. */
+        /* After evolve, clicks still fire evolved bursts. */
         if (evolved) {
           spawnBurst(e.clientX, e.clientY);
           return;
@@ -214,10 +220,10 @@
         stopChargeFlash();
         if (evolved) return;
         if (held >= pick.evolveHoldMs) {
-          evolveToRaichu(cx, cy);
+          evolveFollower(cx, cy);
           return;
         }
-        /* Short click: same burst as non-Pikachu followers. */
+        /* Short click: pre-evolve burst (red ball / lightning). */
         if (held < SHORT_CLICK_MS) spawnBurst(cx, cy);
       },
       { passive: true }

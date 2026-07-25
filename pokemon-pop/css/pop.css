@@ -1517,7 +1517,7 @@ body.nav-drawer-open {
   opacity: 1;
 }
 
-/* Raichu follower ~30% larger than base Pikachu size */
+/* Evolved follower (Raichu / Master Ball) ~30% larger than base */
 .cursor-follower.is-evolved {
   width: 52px;
   max-height: 62px;
