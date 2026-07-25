@@ -129135,5 +129135,61 @@
       "basePop": 30
     },
     "tier": "B"
+  },
+  {
+    "id": "s8a-g-001",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "피카츄V",
+    "nameEn": "Pikachu V",
+    "nameJa": "ピカチュウV",
+    "number": "001/015",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041664_P_PIKACHIXYUUV.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041664_P_PIKACHIXYUUV.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41664,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 500,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-002",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "몬스터볼",
+    "nameEn": "Monster Ball",
+    "nameJa": "モンスターボール",
+    "number": "002/015",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041665_T_MONSUTABORU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041665_T_MONSUTABORU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41665,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 30
+    },
+    "tier": "B"
   }
 ]

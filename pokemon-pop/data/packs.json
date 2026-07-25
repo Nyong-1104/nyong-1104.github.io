@@ -5860,5 +5860,35 @@
       "xy-p-296",
       "xy-p-295"
     ]
+  },
+  {
+    "id": "25th-anniversary-golden-box",
+    "nameKo": "25주년 애니버서리 골든 박스",
+    "nameEn": "25th Anniversary Golden Box",
+    "nameJa": "25th ANNIVERSARY GOLDEN BOX",
+    "nameShort": "Golden BOX",
+    "code": "S8a-G",
+    "releaseYear": 2021,
+    "listGroup": "box",
+    "listComplete": true,
+    "expectedCards": 2,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "25주년 골든 박스 · 금색 피카츄V·몬스터볼 전용 카드 2종.",
+    "blurbEn": "25th Anniversary Golden Box · exclusive gold Pikachu V & Monster Ball.",
+    "blurbJa": "25th ANNIVERSARY GOLDEN BOXの金色「ピカチュウV」「モンスターボール」。",
+    "packImage": "./assets/box-25th-anniversary-golden.png",
+    "coverCardId": "s8a-g-001",
+    "brgSets": {
+      "jp": {
+        "setName": "POKEMON SWSH JAPANESE S8AG",
+        "year": 2021
+      }
+    },
+    "cardIds": [
+      "s8a-g-001",
+      "s8a-g-002"
+    ]
   }
 ]

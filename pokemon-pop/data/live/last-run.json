@@ -1,12 +1,12 @@
 {
-  "ranAt": "2026-07-25T20:46:45+09:00",
+  "ranAt": "2026-07-25T20:58:48+09:00",
   "stats": {
     "asOf": "2026-07-25",
-    "asOfIso": "2026-07-25T20:46:45+09:00",
-    "cardsTotal": 4619,
-    "cardsLive": 1968,
+    "asOfIso": "2026-07-25T20:58:48+09:00",
+    "cardsTotal": 4621,
+    "cardsLive": 1970,
     "skippedTierC": 2651,
-    "variantsWritten": 4311,
+    "variantsWritten": 4313,
     "variantsKept": 0,
     "variantsFailed": 0
   }
