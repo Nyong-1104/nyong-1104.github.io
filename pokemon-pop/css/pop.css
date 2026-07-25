@@ -418,52 +418,56 @@ body.nav-drawer-open {
 }
 
 
-.marquee {
+.slide-full {
+  width: 100%;
+  margin: 0;
+  padding: 0 0 1.5rem;
+}
+
+.infiniteslide_wrap {
   overflow: hidden;
-  background: #000;
-  border-bottom: 1px solid var(--line);
+  background: transparent;
   line-height: 0;
 }
 
-.marquee__track {
+.infinity-slide {
   display: flex;
   flex-flow: row;
   align-items: center;
   width: max-content;
-  animation: pokepop-marquee 31.24s linear 0s infinite normal none running;
+  animation: infiniteslide 31.24s linear 0s infinite normal none running;
   will-change: transform;
 }
 
-.marquee__group {
-  display: flex;
-  flex-flow: row;
-  align-items: center;
-  flex-shrink: 0;
+.infinity-slide-item {
+  flex: 0 0 auto;
+  display: block;
 }
 
-.marquee__group img {
+.infinity-slide-item img {
   display: block;
-  height: clamp(36px, 5.5vw, 56px);
+  height: clamp(52px, 8vw, 102px);
   width: auto;
   max-width: none;
   user-select: none;
   pointer-events: none;
 }
 
-@keyframes pokepop-marquee {
+@keyframes infiniteslide {
   from {
     transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(-25%, 0, 0);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .marquee__track {
+  .infinity-slide {
     animation: none;
   }
 }
+
 .page {
   width: min(1100px, 100%);
   margin: 0 auto;
