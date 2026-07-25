@@ -24,25 +24,46 @@ function initCard(wrapId, frontId, backId, openId) {
   const back    = document.getElementById(backId);
   const openBtn = openId ? document.getElementById(openId) : null;
   let flipped = false;
- 
+  let faceTimer = 0;
+  // Match .card-inner flip duration midpoint (0.65s)
+  const FACE_SWAP_MS = 320;
+
   function clearTilt() {
     wrap.style.transform = '';
   }
- 
+
+  function clearFaceTimer() {
+    if (faceTimer) {
+      clearTimeout(faceTimer);
+      faceTimer = 0;
+    }
+  }
+
+  // iOS: hide front poster layers after flip midpoint so they can't show mirrored
+  function suppressFront(hidden) {
+    wrap.classList.toggle('is-front-suppressed', hidden);
+  }
+
   function reset() {
     if (!flipped) return;
     flipped = false;
     clearTilt();
+    clearFaceTimer();
     wrap.classList.remove('flipped', 'expanded');
+    // Keep front suppressed until unflip passes midpoint
+    faceTimer = window.setTimeout(() => {
+      if (!flipped) suppressFront(false);
+      faceTimer = 0;
+    }, FACE_SWAP_MS);
   }
- 
+
   allCards.push({ wrap, reset, clearTilt });
- 
+
   if (openBtn) {
     openBtn.addEventListener('click', e => e.stopPropagation());
     openBtn.addEventListener('pointerdown', e => e.stopPropagation());
   }
- 
+
   function bindTilt(el, invert, activeWhen) {
     el.addEventListener('pointermove', e => {
       if (!activeWhen()) return;
@@ -62,10 +83,10 @@ function initCard(wrapId, frontId, backId, openId) {
       if (activeWhen()) clearTilt();
     });
   }
- 
+
   bindTilt(front, false, () => !flipped);
   bindTilt(back, true, () => flipped);
- 
+
   front.addEventListener('click', e => {
     e.stopPropagation();
     if (Date.now() < suppressFlipUntil) return;
@@ -73,16 +94,26 @@ function initCard(wrapId, frontId, backId, openId) {
     resetAllCards();
     flipped = true;
     clearTilt();
+    clearFaceTimer();
     wrap.classList.add('flipped', 'expanded');
+    faceTimer = window.setTimeout(() => {
+      if (flipped) suppressFront(true);
+      faceTimer = 0;
+    }, FACE_SWAP_MS);
   });
- 
+
   back.addEventListener('click', e => {
     e.stopPropagation();
     if (Date.now() < suppressFlipUntil) return;
     if (!flipped) return;
     flipped = false;
     clearTilt();
+    clearFaceTimer();
     wrap.classList.remove('flipped', 'expanded');
+    faceTimer = window.setTimeout(() => {
+      if (!flipped) suppressFront(false);
+      faceTimer = 0;
+    }, FACE_SWAP_MS);
   });
 }
  

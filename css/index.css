@@ -143,6 +143,8 @@ body {
   flex-direction: column;
   padding: clamp(14px, 4%, 20px);
   cursor: pointer;
+  /* Explicit face so preserve-3d stacking is stable across engines */
+  transform: rotateY(0deg);
 }
 
 .card-back {
@@ -154,6 +156,24 @@ body {
   padding: clamp(18px, 5%, 26px);
   gap: 10px;
   cursor: pointer;
+}
+
+/*
+ * iOS Safari: descendants with transform/clip-path get their own composited
+ * layer and ignore the parent's backface-visibility — so after rotateY(180)
+ * the poster shape stays visible but mirrored. Drop poster from the render
+ * tree as soon as flip starts (card chrome still animates). Full front-face
+ * suppress past midpoint is applied via .is-front-suppressed from JS.
+ */
+.card-wrap.flipped .app-poster {
+  display: none !important;
+}
+
+.card-wrap.is-front-suppressed .card-front,
+.card-wrap.is-front-suppressed .card-front * {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .card--green .card-front  { background: var(--green); }
@@ -251,24 +271,24 @@ body {
   overflow: visible;
 }
 
+/*
+ * Tilt comes from clip-path only — extra CSS rotate() promotes a separate
+ * compositor layer on iOS and punches through backface-visibility on flip.
+ */
 .poster-tilt-box--cal {
   clip-path: polygon(6% 6%, 98% 0%, 97% 90%, -7% 94%);
-  transform: rotate(-4deg);
 }
 
 .poster-tilt-box--stretch {
   clip-path: polygon(5% 4%, 97% 8%, 99% 91%, -6% 95%);
-  transform: rotate(3deg);
 }
 
 .poster-tilt-box--webd {
   clip-path: polygon(4% 7%, 98% 2%, 96% 93%, -5% 96%);
-  transform: rotate(-3deg);
 }
 
 .poster-tilt-box--pop {
   clip-path: polygon(3% 5%, 99% 3%, 95% 94%, -4% 92%);
-  transform: rotate(4deg);
 }
 
 .poster-tilt-text {
@@ -455,12 +475,6 @@ body {
   .poster-tilt-box--webd,
   .poster-tilt-box--pop {
     clip-path: polygon(4% 3%, 97% 1%, 98% 96%, 2% 98%);
-    transform: rotate(-1.5deg);
-  }
-
-  .poster-tilt-box--stretch,
-  .poster-tilt-box--pop {
-    transform: rotate(1.5deg);
   }
 
   .poster-tilt-text {
