@@ -435,18 +435,19 @@ body.nav-drawer-open {
   flex-flow: row;
   align-items: center;
   width: max-content;
-  animation: infiniteslide 31.24s linear 0s infinite normal none running;
+  animation: infiniteslide 5.5s linear 0s infinite normal none running;
   will-change: transform;
 }
 
 .infinity-slide-item {
   flex: 0 0 auto;
   display: block;
+  margin-right: 0.5rem;
 }
 
 .infinity-slide-item img {
   display: block;
-  height: clamp(52px, 8vw, 102px);
+  height: clamp(48px, 7vw, 72px);
   width: auto;
   max-width: none;
   user-select: none;
@@ -458,7 +459,7 @@ body.nav-drawer-open {
     transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(-25%, 0, 0);
+    transform: translate3d(calc(-100% / 15), 0, 0); /* one item width of 15 */
   }
 }
 
