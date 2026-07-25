@@ -22,7 +22,6 @@ from pokepop_snapshot import build_live_snapshot, write_data_bundle  # noqa: E40
 KST = timezone(timedelta(hours=9))
 PACK_ID = "japan-post-stamp-box"
 
-MOCKUP_ART = ROOT / "mockups" / "assets" / "japan-post-stamp-box.png"
 CURSOR_ART = Path(
     r"C:\Users\admin\.cursor\projects\c-Users-admin-Projects-nyong-1104-github-io\assets"
 ) / "c__Users_admin_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images_Japan_Post_Stamp_Box-10603967-1bb0-40bd-874f-37ef659f85b0.png"
@@ -92,10 +91,11 @@ PACK = {
 
 def copy_box_art() -> Path:
     dest = ASSETS / PACK_IMAGE_NAME
-    src = MOCKUP_ART if MOCKUP_ART.is_file() else CURSOR_ART
-    if not src.is_file():
-        raise FileNotFoundError(f"Box art not found: {MOCKUP_ART} / {CURSOR_ART}")
-    shutil.copy2(src, dest)
+    if dest.is_file():
+        return dest
+    if not CURSOR_ART.is_file():
+        raise FileNotFoundError(f"Box art not found: {dest} / {CURSOR_ART}")
+    shutil.copy2(CURSOR_ART, dest)
     return dest
 
 
