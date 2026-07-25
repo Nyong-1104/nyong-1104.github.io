@@ -1,24 +1,50 @@
-/** Pixel sprite that follows the mouse (fine pointer only). */
+/** Pixel sprite that follows the mouse (fine pointer only) + click burst particles. */
 (function () {
-  var SPRITES = [
-    "./assets/cursor-follower-bulbasaur.png",
-    "./assets/cursor-follower-pokeball.png",
-    "./assets/cursor-follower-charmander.png",
-    "./assets/cursor-follower-squirtle.png",
-    "./assets/cursor-follower-pikachu.png",
+  var FOLLOWERS = [
+    {
+      src: "./assets/cursor-follower-bulbasaur.png",
+      burst: "./assets/cursor-burst-leaf.png",
+    },
+    {
+      src: "./assets/cursor-follower-pokeball.png",
+      burst: "./assets/cursor-burst-ball.png",
+    },
+    {
+      src: "./assets/cursor-follower-charmander.png",
+      burst: "./assets/cursor-burst-fire.png",
+    },
+    {
+      src: "./assets/cursor-follower-squirtle.png",
+      burst: "./assets/cursor-burst-water.png",
+    },
+    {
+      src: "./assets/cursor-follower-pikachu.png",
+      burst: "./assets/cursor-burst-lightning.png",
+    },
   ];
   var OFFSET_X = 14;
   var OFFSET_Y = 14;
+  var PARTICLE_MIN = 6;
+  var PARTICLE_MAX = 12;
+  var LIFE_MIN = 400;
+  var LIFE_MAX = 700;
+  var SPEED_MIN = 80;
+  var SPEED_MAX = 220;
+  var SIZE_MIN = 14;
+  var SIZE_MAX = 22;
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (!window.matchMedia("(pointer: fine)").matches) return;
+
+  var pick = FOLLOWERS[Math.floor(Math.random() * FOLLOWERS.length)];
+  var burstSrc = pick.burst;
 
   var img = document.createElement("img");
   img.className = "cursor-follower";
   img.alt = "";
   img.decoding = "async";
   img.draggable = false;
-  img.src = SPRITES[Math.floor(Math.random() * SPRITES.length)];
+  img.src = pick.src;
   document.body.appendChild(img);
 
   var x = -9999;
@@ -49,6 +75,70 @@
         img.classList.add("is-visible");
       }
       schedule();
+    },
+    { passive: true }
+  );
+
+  function spawnBurst(cx, cy) {
+    var count =
+      PARTICLE_MIN +
+      Math.floor(Math.random() * (PARTICLE_MAX - PARTICLE_MIN + 1));
+    for (var i = 0; i < count; i++) {
+      var p = document.createElement("img");
+      p.className = "cursor-burst";
+      p.alt = "";
+      p.draggable = false;
+      p.src = burstSrc;
+      var size = SIZE_MIN + Math.random() * (SIZE_MAX - SIZE_MIN);
+      p.style.width = size + "px";
+      p.style.height = "auto";
+      p.style.left = cx - size / 2 + "px";
+      p.style.top = cy - size / 2 + "px";
+      document.body.appendChild(p);
+
+      var angle = Math.random() * Math.PI * 2;
+      var speed = SPEED_MIN + Math.random() * (SPEED_MAX - SPEED_MIN);
+      var vx = Math.cos(angle) * speed;
+      var vy = Math.sin(angle) * speed;
+      var life = LIFE_MIN + Math.random() * (LIFE_MAX - LIFE_MIN);
+      var rot = (Math.random() - 0.5) * 540;
+      var start = performance.now();
+
+      (function (el, vx0, vy0, life0, rot0, t0) {
+        function tick(now) {
+          var t = (now - t0) / life0;
+          if (t >= 1) {
+            if (el.parentNode) el.parentNode.removeChild(el);
+            return;
+          }
+          var ease = 1 - (1 - t) * (1 - t);
+          var dx = vx0 * (ease * (life0 / 1000));
+          var dy = vy0 * (ease * (life0 / 1000));
+          var opacity = 1 - t;
+          var scale = 1 - t * 0.35;
+          el.style.opacity = String(opacity);
+          el.style.transform =
+            "translate3d(" +
+            dx +
+            "px," +
+            dy +
+            "px,0) rotate(" +
+            rot0 * t +
+            "deg) scale(" +
+            scale +
+            ")";
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      })(p, vx, vy, life, rot, start);
+    }
+  }
+
+  document.addEventListener(
+    "pointerdown",
+    function (e) {
+      if (e.button !== 0) return;
+      spawnBurst(e.clientX, e.clientY);
     },
     { passive: true }
   );

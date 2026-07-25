@@ -1463,14 +1463,33 @@ body.nav-drawer-open {
   opacity: 1;
 }
 
+.cursor-burst {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  transform: translate3d(0, 0, 0);
+  transform-origin: center center;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  pointer-events: none;
+  z-index: 31;
+  opacity: 1;
+  will-change: transform, opacity;
+  user-select: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .cursor-follower {
+  .cursor-follower,
+  .cursor-burst {
     display: none;
   }
 }
 
 @media (pointer: coarse) {
-  .cursor-follower {
+  .cursor-follower,
+  .cursor-burst {
     display: none;
   }
 }
