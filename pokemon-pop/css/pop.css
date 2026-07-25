@@ -1556,9 +1556,9 @@ body.nav-drawer-open {
   user-select: none;
 }
 
-/* Raichu lightning: keep yellow art; pulse white glow like Pikachu charge */
+/* Raichu lightning: keep yellow art; snappy white twinkle (not slow pulse) */
 .cursor-burst.cursor-burst--raichu {
-  animation: cursor-burst-raichu-flash 0.55s ease-in-out infinite;
+  animation: cursor-burst-raichu-flash 0.18s ease-in-out infinite;
 }
 
 @keyframes cursor-burst-raichu-flash {
@@ -1566,11 +1566,11 @@ body.nav-drawer-open {
   100% {
     filter: brightness(1) contrast(1);
   }
-  45%,
-  55% {
+  40%,
+  50% {
     filter: brightness(2.6) contrast(1.35) saturate(0.35)
-      drop-shadow(0 0 5px rgba(255, 255, 255, 0.95))
-      drop-shadow(0 0 10px rgba(255, 255, 255, 0.55));
+      drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.85))
+      drop-shadow(0 0 3px rgba(255, 255, 255, 0.4));
   }
 }
 
