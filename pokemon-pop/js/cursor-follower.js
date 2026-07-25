@@ -41,6 +41,7 @@
           burst: "./assets/cursor-burst-bluefire.png",
           burstFlash: true,
           evolvedXl: true,
+          breathFire: true,
         },
       ],
     },
@@ -72,6 +73,18 @@
   var SIZE_MAX = 22;
   var EVOLVED_BURST_SCALE = 1.95;
   var SHORT_CLICK_MS = 400;
+  var BREATH_HOLD_MS = 1000;
+  var BREATH_SPAWN_MIN = 40;
+  var BREATH_SPAWN_MAX = 80;
+  var BREATH_SIZE_MIN = 10;
+  var BREATH_SIZE_MAX = 18;
+  var BREATH_SPEED_MIN = 140;
+  var BREATH_SPEED_MAX = 300;
+  var BREATH_LIFE_MIN = 320;
+  var BREATH_LIFE_MAX = 520;
+  /* Mega X faces left — breath cone centered on π (leftward). */
+  var BREATH_ANGLE = Math.PI;
+  var BREATH_CONE = 0.85;
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (!window.matchMedia("(pointer: fine)").matches) return;
@@ -95,6 +108,10 @@
   var canEvolve = !!(pick.evolveOutcomes && pick.evolveOutcomes.length);
   var evolved = false;
   var evolveBurstFlash = false;
+  var canBreath = false;
+  var breathing = false;
+  var breathTimer = 0;
+  var breathInterval = 0;
 
   var img = document.createElement("img");
   img.className = "cursor-follower";
@@ -196,6 +213,88 @@
     }
   }
 
+  /* --- Mega Charizard X hold-breath (blue fire stream after 1s hold) --- */
+  function spawnBreathParticle() {
+    /* Mouth sits near the left-center of the left-facing Mega X sprite. */
+    var cx = x + 10;
+    var cy = y + (img.offsetHeight || 40) * 0.42;
+    var p = document.createElement("img");
+    p.className = "cursor-burst cursor-burst--breath";
+    p.alt = "";
+    p.draggable = false;
+    p.src = burstSrc;
+    var size = BREATH_SIZE_MIN + Math.random() * (BREATH_SIZE_MAX - BREATH_SIZE_MIN);
+    p.style.width = size + "px";
+    p.style.height = "auto";
+    p.style.left = cx - size / 2 + "px";
+    p.style.top = cy - size / 2 + "px";
+    document.body.appendChild(p);
+
+    var angle = BREATH_ANGLE + (Math.random() - 0.5) * BREATH_CONE;
+    var speed = BREATH_SPEED_MIN + Math.random() * (BREATH_SPEED_MAX - BREATH_SPEED_MIN);
+    var vx = Math.cos(angle) * speed;
+    var vy = Math.sin(angle) * speed;
+    var life = BREATH_LIFE_MIN + Math.random() * (BREATH_LIFE_MAX - BREATH_LIFE_MIN);
+    var rot = (Math.random() - 0.5) * 360;
+    var start = performance.now();
+
+    (function (el, vx0, vy0, life0, rot0, t0) {
+      function tick(now) {
+        var t = (now - t0) / life0;
+        if (t >= 1) {
+          if (el.parentNode) el.parentNode.removeChild(el);
+          return;
+        }
+        var ease = 1 - (1 - t) * (1 - t);
+        var dx = vx0 * (ease * (life0 / 1000));
+        var dy = vy0 * (ease * (life0 / 1000));
+        var opacity = 1 - t;
+        var scale = 1 - t * 0.4;
+        el.style.opacity = String(opacity);
+        el.style.transform =
+          "translate3d(" +
+          dx +
+          "px," +
+          dy +
+          "px,0) rotate(" +
+          rot0 * t +
+          "deg) scale(" +
+          scale +
+          ")";
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    })(p, vx, vy, life, rot, start);
+  }
+
+  function startBreath() {
+    if (breathing || !canBreath) return;
+    breathing = true;
+    function scheduleNext() {
+      if (!breathing) return;
+      spawnBreathParticle();
+      /* Occasionally double-spawn for denser stream. */
+      if (Math.random() < 0.45) spawnBreathParticle();
+      var delay =
+        BREATH_SPAWN_MIN +
+        Math.random() * (BREATH_SPAWN_MAX - BREATH_SPAWN_MIN);
+      breathInterval = setTimeout(scheduleNext, delay);
+    }
+    scheduleNext();
+  }
+
+  function stopBreath() {
+    if (breathTimer) {
+      clearTimeout(breathTimer);
+      breathTimer = 0;
+    }
+    if (breathInterval) {
+      clearTimeout(breathInterval);
+      breathInterval = 0;
+    }
+    breathing = false;
+  }
+
   /* --- Hold-to-evolve (weighted outcomes: e.g. Charmander / Charizard / Mega X) --- */
   var pressStart = 0;
   var pressX = 0;
@@ -230,12 +329,14 @@
     if (outcome.evolvedXl) img.classList.add("is-evolved-xl");
     if (outcome.burst) burstSrc = outcome.burst;
     evolveBurstFlash = !!outcome.burstFlash;
+    canBreath = !!outcome.breathFire;
     spawnBurst(cx, cy);
   }
 
   function cancelPress() {
     pressStart = 0;
     stopChargeFlash();
+    stopBreath();
   }
 
   if (canEvolve) {
@@ -243,7 +344,16 @@
       "pointerdown",
       function (e) {
         if (e.button !== 0) return;
-        /* After evolve, clicks still fire evolved bursts. */
+        /* Mega X: hold 1s → continuous blue-fire breath (no evolve charge). */
+        if (evolved && canBreath) {
+          pressStart = performance.now();
+          breathTimer = setTimeout(function () {
+            breathTimer = 0;
+            if (pressStart) startBreath();
+          }, BREATH_HOLD_MS);
+          return;
+        }
+        /* Other evolved forms: click burst only. */
         if (evolved) {
           spawnBurst(e.clientX, e.clientY);
           return;
@@ -268,6 +378,15 @@
         var cx = e.clientX;
         var cy = e.clientY;
         pressStart = 0;
+
+        /* Mega X: stop breath on release; short click still pops blue fire. */
+        if (evolved && canBreath) {
+          var wasBreathing = breathing;
+          stopBreath();
+          if (!wasBreathing && held < SHORT_CLICK_MS) spawnBurst(cx, cy);
+          return;
+        }
+
         stopChargeFlash();
         if (evolved) return;
         if (held >= pick.evolveHoldMs) {

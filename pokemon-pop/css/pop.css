@@ -1590,6 +1590,11 @@ body.nav-drawer-open {
   user-select: none;
 }
 
+/* Mega X continuous breath stream — no white flash */
+.cursor-burst.cursor-burst--breath {
+  z-index: 30;
+}
+
 /* Evolved elemental burst flash (leaf / fire / bluefire / lightning): ~0.1s white pulse */
 .cursor-burst.cursor-burst--element,
 .cursor-burst.cursor-burst--raichu,
