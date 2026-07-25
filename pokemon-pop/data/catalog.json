@@ -129139,13 +129139,13 @@
   {
     "id": "s8a-g-001",
     "packId": "25th-anniversary-golden-box",
-    "nameKo": "피카츄V",
+    "nameKo": "피카츄 V",
     "nameEn": "Pikachu V",
     "nameJa": "ピカチュウV",
     "number": "001/015",
     "rarity": "PROMO",
     "type": "lightning",
-    "typeKo": null,
+    "typeKo": "번개",
     "holoStyle": "holo",
     "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041664_P_PIKACHIXYUUV.jpg",
     "images": {
@@ -129173,7 +129173,7 @@
     "number": "002/015",
     "rarity": "PROMO",
     "type": "trainer",
-    "typeKo": null,
+    "typeKo": "트레이너",
     "holoStyle": "holo",
     "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041665_T_MONSUTABORU.jpg",
     "images": {
@@ -129189,6 +129189,398 @@
     "seed": {
       "basePrice": 120,
       "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-003",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "피카츄",
+    "nameEn": "Pikachu",
+    "nameJa": "ピカチュウ",
+    "number": "003/015",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041666_P_PIKACHIXYUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041666_P_PIKACHIXYUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41666,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 9,
+      "basePop": 85
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-004",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "라이츄",
+    "nameEn": "Raichu",
+    "nameJa": "ライチュウ",
+    "number": "004/015",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041667_P_RAICHIXYUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041667_P_RAICHIXYUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41667,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 6,
+      "basePop": 128
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-005",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "피카츄 V",
+    "nameEn": "Pikachu V",
+    "nameJa": "ピカチュウV",
+    "number": "005/015",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041668_P_PIKACHIXYUUV.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041668_P_PIKACHIXYUUV.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41668,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 25,
+      "basePop": 50
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-006",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "피카츄 VMAX",
+    "nameEn": "Pikachu VMAX",
+    "nameJa": "ピカチュウVMAX",
+    "number": "006/015",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041669_P_PIKACHIXYUUVMAX.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041669_P_PIKACHIXYUUVMAX.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41669,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 40,
+      "basePop": 50
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-007",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "상처약",
+    "nameEn": "Potion",
+    "nameJa": "きずぐすり",
+    "number": "007/015",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041670_T_KIZUGUSURI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041670_T_KIZUGUSURI.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41670,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 6,
+      "basePop": 128
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-008",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "슈퍼볼",
+    "nameEn": "Great Ball",
+    "nameJa": "スーパーボール",
+    "number": "008/015",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041671_T_SUPABORU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041671_T_SUPABORU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41671,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 6,
+      "basePop": 128
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-009",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "포켓몬 교체",
+    "nameEn": "Switch",
+    "nameJa": "ポケモンいれかえ",
+    "number": "009/015",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041672_T_POKEMONIREKAE.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041672_T_POKEMONIREKAE.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41672,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 6,
+      "basePop": 128
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-010",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "포켓몬 캐처",
+    "nameEn": "Pokémon Catcher",
+    "nameJa": "ポケモンキャッチャー",
+    "number": "010/015",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041673_T_POKEMONKIXYATCHIXYA.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041673_T_POKEMONKIXYATCHIXYA.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41673,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 6,
+      "basePop": 128
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-011",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "몬스터볼",
+    "nameEn": "Monster Ball",
+    "nameJa": "モンスターボール",
+    "number": "011/015",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041674_T_MONSUTABORU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041674_T_MONSUTABORU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41674,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 6,
+      "basePop": 128
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-012",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "박사의 연구（마그놀리아 박사）",
+    "nameEn": "Professor's Research (Professor Magnolia)",
+    "nameJa": "博士の研究（マグノリア博士）",
+    "number": "012/015",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041675_T_HAKASENOKENKIXYUUMAGUNORIAHAKASE.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041675_T_HAKASENOKENKIXYUUMAGUNORIAHAKASE.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41675,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 6,
+      "basePop": 128
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-013",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "비트",
+    "nameEn": "Bede",
+    "nameJa": "ビート",
+    "number": "013/015",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041676_T_BITO.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041676_T_BITO.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41676,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 6,
+      "basePop": 128
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-014",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "포켓몬 흉내",
+    "nameEn": "Poké Kid",
+    "nameJa": "ポケモンごっこ",
+    "number": "014/015",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041677_T_POKEMONGOKKO.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041677_T_POKEMONGOKKO.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41677,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 6,
+      "basePop": 128
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-015",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "호프",
+    "nameEn": "Hop",
+    "nameJa": "ホップ",
+    "number": "015/015",
+    "rarity": "PROMO",
+    "type": "trainer",
+    "typeKo": "트레이너",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041678_T_HOPPU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041678_T_HOPPU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41678,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 6,
+      "basePop": 128
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s8a-g-lig",
+    "packId": "25th-anniversary-golden-box",
+    "nameKo": "기본 번개 에너지",
+    "nameEn": "Basic Lightning Energy",
+    "nameJa": "基本雷エネルギー",
+    "number": "LIG",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041679_E_KIHONKAMINARIENERUGI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S8a-G/041679_E_KIHONKAMINARIENERUGI.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 41679,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 8,
+      "basePop": 80
     },
     "tier": "B"
   }

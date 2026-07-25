@@ -5871,13 +5871,13 @@
     "releaseYear": 2021,
     "listGroup": "box",
     "listComplete": true,
-    "expectedCards": 2,
+    "expectedCards": 16,
     "languages": [
       "jp"
     ],
-    "blurb": "25주년 골든 박스 · 금색 피카츄V·몬스터볼 전용 카드 2종.",
-    "blurbEn": "25th Anniversary Golden Box · exclusive gold Pikachu V & Monster Ball.",
-    "blurbJa": "25th ANNIVERSARY GOLDEN BOXの金色「ピカチュウV」「モンスターボール」。",
+    "blurb": "25주년 골든 박스 · 금색 피카츄V·몬스터볼 + 고정 홀로 피카츄 덱(S8a-G) 전 카드.",
+    "blurbEn": "25th Anniversary Golden Box · gold Pikachu V & Monster Ball plus the fixed holo Pikachu deck (S8a-G).",
+    "blurbJa": "25th ANNIVERSARY GOLDEN BOXの金色「ピカチュウV」「モンスターボール」と特製ピカチュウデッキ全カード。",
     "packImage": "./assets/box-25th-anniversary-golden.png",
     "coverCardId": "s8a-g-001",
     "brgSets": {
@@ -5888,7 +5888,21 @@
     },
     "cardIds": [
       "s8a-g-001",
-      "s8a-g-002"
+      "s8a-g-002",
+      "s8a-g-003",
+      "s8a-g-004",
+      "s8a-g-005",
+      "s8a-g-006",
+      "s8a-g-007",
+      "s8a-g-008",
+      "s8a-g-009",
+      "s8a-g-010",
+      "s8a-g-011",
+      "s8a-g-012",
+      "s8a-g-013",
+      "s8a-g-014",
+      "s8a-g-015",
+      "s8a-g-lig"
     ]
   }
 ]
