@@ -110488,6 +110488,35 @@
     ]
   },
   {
+    "id": "nagaba-208",
+    "packId": "yu-nagaba-eevee-promo",
+    "nameKo": "피카츄",
+    "nameEn": "Pikachu",
+    "nameJa": "ピカチュウ",
+    "number": "208/S-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": "번개",
+    "holoStyle": "holo",
+    "image": "./assets/yu-nagaba-pikachu-208.png",
+    "images": {
+      "jp": "./assets/yu-nagaba-pikachu-208.png",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": null,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 180,
+      "basePop": 40
+    },
+    "tier": "B",
+    "notes": "YU NAGABA × Pokémon Card Game promo (2021-07-22). Illus. YU NAGABA."
+  },
+  {
     "id": "nagaba-062",
     "packId": "yu-nagaba-eevee-promo",
     "nameKo": "이브이",

@@ -32,6 +32,7 @@ PACK_IMAGE_SOURCES = {
 }
 
 NAGABA_IMG = {
+    "208": "./assets/yu-nagaba-pikachu-208.png",
     "062": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043691_P_IBUI.jpg",
     "063": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043692_P_SHIXYAWAZU.jpg",
     "064": "https://www.pokemon-card.com/assets/images/card_images/large/SV-P/043693_P_SANDASU.jpg",
@@ -96,18 +97,19 @@ def card(
 def build_nagaba() -> tuple[dict, list[dict]]:
     pack_id = "yu-nagaba-eevee-promo"
     rows = [
-        ("062", "이브이", "Eevee", "イーブイ", "colorless", 43691),
-        ("063", "샤미드", "Vaporeon", "シャワーズ", "water", 43692),
-        ("064", "쥬피썬더", "Jolteon", "サンダース", "lightning", 43693),
-        ("065", "부스터", "Flareon", "ブースター", "fire", 43694),
-        ("066", "에브이", "Espeon", "エーフィ", "psychic", 43695),
-        ("067", "블래키", "Umbreon", "ブラッキー", "darkness", 43696),
-        ("068", "리피아", "Leafeon", "リーフィア", "grass", 43697),
-        ("069", "글레이시아", "Glaceon", "グレイシア", "water", 43698),
-        ("070", "님피아", "Sylveon", "ニンフィア", "psychic", 43699),
+        ("208", "피카츄", "Pikachu", "ピカチュウ", "lightning", None, "208/S-P", 180, 40),
+        ("062", "이브이", "Eevee", "イーブイ", "colorless", 43691, "062/SV-P", 120, 30),
+        ("063", "샤미드", "Vaporeon", "シャワーズ", "water", 43692, "063/SV-P", 120, 30),
+        ("064", "쥬피썬더", "Jolteon", "サンダース", "lightning", 43693, "064/SV-P", 120, 30),
+        ("065", "부스터", "Flareon", "ブースター", "fire", 43694, "065/SV-P", 120, 30),
+        ("066", "에브이", "Espeon", "エーフィ", "psychic", 43695, "066/SV-P", 120, 30),
+        ("067", "블래키", "Umbreon", "ブラッキー", "darkness", 43696, "067/SV-P", 120, 30),
+        ("068", "리피아", "Leafeon", "リーフィア", "grass", 43697, "068/SV-P", 120, 30),
+        ("069", "글레이시아", "Glaceon", "グレイシア", "water", 43698, "069/SV-P", 120, 30),
+        ("070", "님피아", "Sylveon", "ニンフィア", "psychic", 43699, "070/SV-P", 120, 30),
     ]
     cards = []
-    for num, ko, en, ja, typ, oid in rows:
+    for num, ko, en, ja, typ, oid, number, seed_price, seed_pop in rows:
         img = NAGABA_IMG[num]
         cards.append(
             card(
@@ -116,12 +118,12 @@ def build_nagaba() -> tuple[dict, list[dict]]:
                 name_ko=ko,
                 name_en=en,
                 name_ja=ja,
-                number=f"{num}/SV-P",
+                number=number,
                 typ=typ,
                 image=img,
                 catalog_jp=oid,
-                seed_price=120,
-                seed_pop=30,
+                seed_price=seed_price,
+                seed_pop=seed_pop,
             )
         )
     pack = {
@@ -134,12 +136,13 @@ def build_nagaba() -> tuple[dict, list[dict]]:
         "releaseYear": 2023,
         "listGroup": "promo",
         "listComplete": True,
+        "expectedCards": 10,
         "languages": ["jp"],
-        "blurb": "나가바 유 콜라보 — 이브이 일족 전 9종 중 랜덤 1장.",
-        "blurbEn": "Yu Nagaba collab — 1 of 9 Eevee-line promos.",
-        "blurbJa": "長場雄コラボ — イーブイたち全9種からランダム1枚。",
+        "blurb": "나가바 유 콜라보 — 피카츄 + 이브이 일족 전 10종.",
+        "blurbEn": "Yu Nagaba collab — Pikachu + all 9 Eevee-line promos (10 total).",
+        "blurbJa": "長場雄コラボ — ピカチュウ＋イーブイたち全10種。",
         "packImage": "./assets/pack-yu-nagaba.png",
-        "coverCardId": "nagaba-062",
+        "coverCardId": "nagaba-208",
         "brgSets": {
             "jp": {"setName": "POKEMON S&V JAPANESE PROMO", "year": 2023},
         },

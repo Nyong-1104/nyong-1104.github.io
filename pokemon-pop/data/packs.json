@@ -4714,11 +4714,11 @@
     "languages": [
       "jp"
     ],
-    "blurb": "나가바 유 콜라보 — 이브이 일족 전 9종 중 랜덤 1장.",
-    "blurbEn": "Yu Nagaba collab — 1 of 9 Eevee-line promos.",
-    "blurbJa": "長場雄コラボ — イーブイたち全9種からランダム1枚。",
+    "blurb": "나가바 유 콜라보 — 피카츄 + 이브이 일족 전 10종.",
+    "blurbEn": "Yu Nagaba collab — Pikachu + all 9 Eevee-line promos (10 total).",
+    "blurbJa": "長場雄コラボ — ピカチュウ＋イーブイたち全10種。",
     "packImage": "./assets/pack-yu-nagaba.png",
-    "coverCardId": "nagaba-062",
+    "coverCardId": "nagaba-208",
     "brgSets": {
       "jp": {
         "setName": "POKEMON S&V JAPANESE PROMO",
@@ -4726,6 +4726,7 @@
       }
     },
     "cardIds": [
+      "nagaba-208",
       "nagaba-062",
       "nagaba-063",
       "nagaba-064",
@@ -4735,7 +4736,8 @@
       "nagaba-068",
       "nagaba-069",
       "nagaba-070"
-    ]
+    ],
+    "expectedCards": 10
   },
   {
     "id": "s8a-p-25th-anniversary",
