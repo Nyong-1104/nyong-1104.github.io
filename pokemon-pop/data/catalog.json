@@ -128883,5 +128883,257 @@
       "basePop": 30
     },
     "tier": "B"
+  },
+  {
+    "id": "sm-p-286",
+    "packId": "munch-scream-promo",
+    "nameKo": "고라파덕",
+    "nameEn": "Psyduck",
+    "nameJa": "コダック",
+    "number": "286/SM-P",
+    "rarity": "PROMO",
+    "type": "water",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/035892_P_KODAKKU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/035892_P_KODAKKU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 35892,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "sm-p-287",
+    "packId": "munch-scream-promo",
+    "nameKo": "이브이",
+    "nameEn": "Eevee",
+    "nameJa": "イーブイ",
+    "number": "287/SM-P",
+    "rarity": "PROMO",
+    "type": "colorless",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/035893_P_IBUI.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/035893_P_IBUI.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 35893,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 150,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "sm-p-288",
+    "packId": "munch-scream-promo",
+    "nameKo": "피카츄",
+    "nameEn": "Pikachu",
+    "nameJa": "ピカチュウ",
+    "number": "288/SM-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/035894_P_PIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/035894_P_PIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 35894,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 400,
+      "basePop": 35
+    },
+    "tier": "B"
+  },
+  {
+    "id": "sm-p-289",
+    "packId": "munch-scream-promo",
+    "nameKo": "따라큐",
+    "nameEn": "Mimikyu",
+    "nameJa": "ミミッキュ",
+    "number": "289/SM-P",
+    "rarity": "PROMO",
+    "type": "psychic",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/035895_P_MIMIKKYU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/035895_P_MIMIKKYU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 35895,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 180,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "sm-p-290",
+    "packId": "munch-scream-promo",
+    "nameKo": "나몰빼미",
+    "nameEn": "Rowlet",
+    "nameJa": "モクロー",
+    "number": "290/SM-P",
+    "rarity": "PROMO",
+    "type": "grass",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/035896_P_MOKURO.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/SMP/035896_P_MOKURO.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 35896,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 120,
+      "basePop": 40
+    },
+    "tier": "B"
+  },
+  {
+    "id": "xy-p-294",
+    "packId": "mario-luigi-pikachu-box",
+    "nameKo": "마리오 피카츄 (프리미엄 키라)",
+    "nameEn": "Mario Pikachu (Premium Kira)",
+    "nameJa": "マリオピカチュウ（プレミアムキラ）",
+    "number": "294/XY-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/032349_P_MARIOPIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/032349_P_MARIOPIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 32349,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 2500,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "xy-p-293",
+    "packId": "mario-luigi-pikachu-box",
+    "nameKo": "마리오 피카츄",
+    "nameEn": "Mario Pikachu",
+    "nameJa": "マリオピカチュウ",
+    "number": "293/XY-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/032348_P_MARIOPIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/032348_P_MARIOPIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 32348,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 1200,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "xy-p-296",
+    "packId": "mario-luigi-pikachu-box",
+    "nameKo": "루이지 피카츄 (프리미엄 키라)",
+    "nameEn": "Luigi Pikachu (Premium Kira)",
+    "nameJa": "ルイージピカチュウ（プレミアムキラ）",
+    "number": "296/XY-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/032351_P_RUIJIPIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/032351_P_RUIJIPIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 32351,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 2500,
+      "basePop": 25
+    },
+    "tier": "B"
+  },
+  {
+    "id": "xy-p-295",
+    "packId": "mario-luigi-pikachu-box",
+    "nameKo": "루이지 피카츄",
+    "nameEn": "Luigi Pikachu",
+    "nameJa": "ルイージピカチュウ",
+    "number": "295/XY-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/032350_P_RUIJIPIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/XYP/032350_P_RUIJIPIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 32350,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 1200,
+      "basePop": 30
+    },
+    "tier": "B"
   }
 ]

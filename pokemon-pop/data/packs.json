@@ -5795,5 +5795,70 @@
       "sm-p-146",
       "sm-p-147"
     ]
+  },
+  {
+    "id": "munch-scream-promo",
+    "nameKo": "뭉크의 절규 프로모카드팩",
+    "nameEn": "Munch The Scream Promo Pack",
+    "nameJa": "ムンクの叫び プロモカードパック",
+    "nameShort": "뭉크",
+    "code": "MUNCH-P",
+    "releaseYear": 2018,
+    "listGroup": "promo",
+    "listComplete": true,
+    "expectedCards": 5,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "ムンク展 × 포켓몬카드 · 절규 모티브 프로모 전 5종 (고라파덕·이브이·피카츄·따라큐·나몰빼미).",
+    "blurbEn": "Munch exhibition × Pokémon Card · all 5 The Scream promos (Psyduck, Eevee, Pikachu, Mimikyu, Rowlet).",
+    "blurbJa": "ムンク展×ポケモンカードゲーム — 「叫び」モチーフプロモ全5種。",
+    "packImage": "./assets/pack-munch-scream.png",
+    "coverCardId": "sm-p-288",
+    "brgSets": {
+      "jp": {
+        "setName": "POKEMON S&M JAPANESE PROMO",
+        "year": 2018
+      }
+    },
+    "cardIds": [
+      "sm-p-286",
+      "sm-p-287",
+      "sm-p-288",
+      "sm-p-289",
+      "sm-p-290"
+    ]
+  },
+  {
+    "id": "mario-luigi-pikachu-box",
+    "nameKo": "스페셜 BOX 마리오 & 루이지 피카츄",
+    "nameEn": "Mario & Luigi Pikachu Special BOX",
+    "nameJa": "スペシャルBOX マリオ＆ルイージピカチュウ",
+    "nameShort": "Mario & Luigi",
+    "code": "PC-MARIO-LUIGI",
+    "releaseYear": 2016,
+    "listGroup": "box",
+    "listComplete": true,
+    "expectedCards": 4,
+    "languages": [
+      "jp"
+    ],
+    "blurb": "마리오·루이지 피카츄 스페셜 BOX 합본 · 프리미엄/오리지널 키라 프로모 전 4종.",
+    "blurbEn": "Combined Mario & Luigi Pikachu Special BOX · all 4 premium/original kira promos.",
+    "blurbJa": "マリオ／ルイージピカチュウスペシャルBOXのプレミアムキラ・オリジナルキラ全4種。",
+    "packImage": "./assets/box-mario-luigi-pikachu.png",
+    "coverCardId": "xy-p-294",
+    "brgSets": {
+      "jp": {
+        "setName": "POKEMON XY JAPANESE PROMO",
+        "year": 2016
+      }
+    },
+    "cardIds": [
+      "xy-p-294",
+      "xy-p-293",
+      "xy-p-296",
+      "xy-p-295"
+    ]
   }
 ]
