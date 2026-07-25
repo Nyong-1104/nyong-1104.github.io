@@ -1556,19 +1556,21 @@ body.nav-drawer-open {
   user-select: none;
 }
 
-/* Raichu lightning: white flashing particles (size scaled in JS) */
+/* Raichu lightning: keep yellow art; pulse white glow like Pikachu charge */
 .cursor-burst.cursor-burst--raichu {
-  animation: cursor-burst-raichu-flash 0.18s steps(2, end) infinite;
-  filter: brightness(2.4) contrast(1.4) saturate(0) invert(1);
+  animation: cursor-burst-raichu-flash 0.55s ease-in-out infinite;
 }
 
 @keyframes cursor-burst-raichu-flash {
   0%,
   100% {
-    filter: brightness(2.8) contrast(1.5) saturate(0) invert(1);
+    filter: brightness(1) contrast(1);
   }
-  50% {
-    filter: brightness(1.4) contrast(1.2) saturate(0) invert(0.85);
+  45%,
+  55% {
+    filter: brightness(2.6) contrast(1.35) saturate(0.35)
+      drop-shadow(0 0 5px rgba(255, 255, 255, 0.95))
+      drop-shadow(0 0 10px rgba(255, 255, 255, 0.55));
   }
 }
 
