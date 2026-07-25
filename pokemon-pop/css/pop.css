@@ -118,6 +118,13 @@ img {
   transition: border-color 0.2s, background 0.2s;
 }
 
+/* iOS Safari zooms focused inputs under 16px; keep mobile search at 16px. */
+@media (max-width: 820px) {
+  .nav-search__input {
+    font-size: 16px;
+  }
+}
+
 .nav-search__input::placeholder {
   color: var(--ink-muted);
 }
