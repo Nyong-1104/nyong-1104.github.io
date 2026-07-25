@@ -74,8 +74,9 @@
   var EVOLVED_BURST_SCALE = 1.95;
   var SHORT_CLICK_MS = 400;
   var BREATH_HOLD_MS = 1000;
-  var BREATH_SPAWN_MIN = 40;
-  var BREATH_SPAWN_MAX = 80;
+  /* 3× denser blue-fire stream (was 40–80ms). */
+  var BREATH_SPAWN_MIN = 13;
+  var BREATH_SPAWN_MAX = 27;
   /* Leave mouth a bit larger; JS scale still grows them as they travel. */
   var BREATH_SIZE_MIN = 10;
   var BREATH_SIZE_MAX = 16;
