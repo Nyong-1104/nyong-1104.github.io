@@ -9,7 +9,6 @@
   ];
   var OFFSET_X = 14;
   var OFFSET_Y = 14;
-  var LERP = 0.22;
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (!window.matchMedia("(pointer: fine)").matches) return;
@@ -22,43 +21,32 @@
   img.src = SPRITES[Math.floor(Math.random() * SPRITES.length)];
   document.body.appendChild(img);
 
-  var targetX = -9999;
-  var targetY = -9999;
-  var curX = targetX;
-  var curY = targetY;
+  var x = -9999;
+  var y = -9999;
   var visible = false;
   var raf = 0;
+  var dirty = false;
 
-  function tick() {
+  function apply() {
     raf = 0;
-    curX += (targetX - curX) * LERP;
-    curY += (targetY - curY) * LERP;
-    img.style.transform =
-      "translate3d(" + Math.round(curX) + "px," + Math.round(curY) + "px,0)";
-    if (
-      Math.abs(targetX - curX) > 0.4 ||
-      Math.abs(targetY - curY) > 0.4
-    ) {
-      raf = requestAnimationFrame(tick);
-    }
+    if (!dirty) return;
+    dirty = false;
+    img.style.transform = "translate3d(" + x + "px," + y + "px,0)";
   }
 
   function schedule() {
-    if (!raf) raf = requestAnimationFrame(tick);
+    if (!raf) raf = requestAnimationFrame(apply);
   }
 
   window.addEventListener(
     "mousemove",
     function (e) {
-      targetX = e.clientX + OFFSET_X;
-      targetY = e.clientY + OFFSET_Y;
+      x = e.clientX + OFFSET_X;
+      y = e.clientY + OFFSET_Y;
+      dirty = true;
       if (!visible) {
         visible = true;
-        curX = targetX;
-        curY = targetY;
         img.classList.add("is-visible");
-        img.style.transform =
-          "translate3d(" + curX + "px," + curY + "px,0)";
       }
       schedule();
     },
