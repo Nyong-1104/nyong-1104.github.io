@@ -1551,6 +1551,12 @@ body.nav-drawer-open {
   max-height: 62px;
 }
 
+/* Venusaur / Charizard / Mega Charizard X: 40% larger than .is-evolved (~1.82× base) */
+.cursor-follower.is-evolved-xl {
+  width: 73px;
+  max-height: 87px;
+}
+
 /* Pikachu hold-to-evolve: bright white charge pulses (starts at ready hold) */
 .cursor-follower.is-charging {
   animation: cursor-follower-charge 0.55s ease-in-out infinite;

@@ -9,6 +9,7 @@
         {
           src: "./assets/cursor-follower-venusaur.png",
           burstFlash: true,
+          evolvedXl: true,
         },
       ],
     },
@@ -32,12 +33,14 @@
           weight: 70,
           src: "./assets/cursor-follower-charizard.png",
           burstFlash: true,
+          evolvedXl: true,
         },
         {
           weight: 30,
           src: "./assets/cursor-follower-mega-charizard-x.png",
           burst: "./assets/cursor-burst-bluefire.png",
           burstFlash: true,
+          evolvedXl: true,
         },
       ],
     },
@@ -224,6 +227,7 @@
     stopChargeFlash();
     img.src = outcome.src;
     img.classList.add("is-evolved");
+    if (outcome.evolvedXl) img.classList.add("is-evolved-xl");
     if (outcome.burst) burstSrc = outcome.burst;
     evolveBurstFlash = !!outcome.burstFlash;
     spawnBurst(cx, cy);
