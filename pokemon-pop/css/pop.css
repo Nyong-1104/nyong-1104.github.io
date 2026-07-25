@@ -1517,7 +1517,13 @@ body.nav-drawer-open {
   opacity: 1;
 }
 
-/* Pikachu hold-to-evolve: bright white charge pulses */
+/* Raichu follower ~30% larger than base Pikachu size */
+.cursor-follower.is-evolved {
+  width: 52px;
+  max-height: 62px;
+}
+
+/* Pikachu hold-to-evolve: bright white charge pulses (starts at ready hold) */
 .cursor-follower.is-charging {
   animation: cursor-follower-charge 0.55s ease-in-out infinite;
 }
@@ -1548,6 +1554,22 @@ body.nav-drawer-open {
   opacity: 1;
   will-change: transform, opacity;
   user-select: none;
+}
+
+/* Raichu lightning: white flashing particles (size scaled in JS) */
+.cursor-burst.cursor-burst--raichu {
+  animation: cursor-burst-raichu-flash 0.18s steps(2, end) infinite;
+  filter: brightness(2.4) contrast(1.4) saturate(0) invert(1);
+}
+
+@keyframes cursor-burst-raichu-flash {
+  0%,
+  100% {
+    filter: brightness(2.8) contrast(1.5) saturate(0) invert(1);
+  }
+  50% {
+    filter: brightness(1.4) contrast(1.2) saturate(0) invert(0.85);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

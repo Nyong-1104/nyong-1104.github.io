@@ -21,7 +21,7 @@
       src: "./assets/cursor-follower-pikachu.png",
       burst: "./assets/cursor-burst-lightning.png",
       evolveSrc: "./assets/cursor-follower-raichu.png",
-      evolveHoldMs: 5000,
+      evolveHoldMs: 3000,
     },
   ];
   var OFFSET_X = 14;
@@ -34,6 +34,7 @@
   var SPEED_MAX = 220;
   var SIZE_MIN = 14;
   var SIZE_MAX = 22;
+  var RAICHU_BURST_SCALE = 1.5;
   var SHORT_CLICK_MS = 400;
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -88,13 +89,17 @@
     var count =
       PARTICLE_MIN +
       Math.floor(Math.random() * (PARTICLE_MAX - PARTICLE_MIN + 1));
+    var raichuBurst = evolved;
     for (var i = 0; i < count; i++) {
       var p = document.createElement("img");
-      p.className = "cursor-burst";
+      p.className = raichuBurst
+        ? "cursor-burst cursor-burst--raichu"
+        : "cursor-burst";
       p.alt = "";
       p.draggable = false;
       p.src = burstSrc;
       var size = SIZE_MIN + Math.random() * (SIZE_MAX - SIZE_MIN);
+      if (raichuBurst) size *= RAICHU_BURST_SCALE;
       p.style.width = size + "px";
       p.style.height = "auto";
       p.style.left = cx - size / 2 + "px";
@@ -180,15 +185,20 @@
     document.addEventListener(
       "pointerdown",
       function (e) {
-        if (e.button !== 0 || evolved) return;
+        if (e.button !== 0) return;
+        /* After evolve, Raichu clicks still fire lightning bursts. */
+        if (evolved) {
+          spawnBurst(e.clientX, e.clientY);
+          return;
+        }
         pressStart = performance.now();
         pressX = e.clientX;
         pressY = e.clientY;
-        /* Delay flash so short clicks stay clean; pulse once hold is underway. */
+        /* White glow only after full hold — signals ready to evolve. */
         chargeTimer = setTimeout(function () {
           chargeTimer = 0;
           if (pressStart && !evolved) startChargeFlash();
-        }, 280);
+        }, pick.evolveHoldMs);
       },
       { passive: true }
     );
