@@ -32,6 +32,35 @@ LANG_QUERY = {
     "en": "English",
 }
 
+# Collector numbers in titles: 080/073, 040/M-P, #040, No.040
+_SLASH_NUM_RE = re.compile(r"\b#?\s*0*(\d{1,4})\s*/\s*([A-Za-z0-9-]{1,12})\b", re.I)
+_HASH_NUM_RE = re.compile(r"#\s*0*(\d{1,4})\b")
+_NO_NUM_RE = re.compile(r"\bNo\.?\s*0*(\d{1,4})\b", re.I)
+# Strip PSA grade tokens before looking for bare numbers
+_PSA_TOKEN_RE = re.compile(r"\bPSA\s*(?:10|9|8)\b", re.I)
+# Common TCG set codes that appear in eBay titles (not exhaustive; conflict filter)
+_SET_CODE_RE = re.compile(
+    r"\b("
+    r"SV\d{1,2}[A-Z]{0,2}|S\d{1,2}[A-Z]{0,2}|SM\d{1,2}[A-Z+]{0,2}|"
+    r"SWSH\d{0,2}|XY\d{0,2}|BW\d{0,2}|CP\d{1,2}|"
+    r"M\d{1,2}[A-Z]{0,2}"
+    r")\b",
+    re.I,
+)
+# Named sets that often appear instead of codes
+_NAMED_SET_RE = re.compile(
+    r"\b("
+    r"TRIPLET\s*BEAT|151|CROWN\s*ZENITH|PALDEA\s*EVOLVED|"
+    r"OBSIDIAN\s*FLAMES|PARADOX\s*RIFT|TEMPORAL\s*FORCES|"
+    r"TWILIGHT\s*MASQUERADE|SHROUDED\s*FABLE|STELLAR\s*CROWN|"
+    r"SURGING\s*SPARKS|PRISMATIC\s*EVOLUTIONS|JOURNEY\s*TOGETHER|"
+    r"DESTINED\s*RIVALS|BLACK\s*BOLT|WHITE\s*FLARE"
+    r")\b",
+    re.I,
+)
+# Numbers that collide with PSA grades — require stronger patterns
+_GRADE_COLLISION_NUMS = frozenset({"8", "9", "10"})
+
 
 def has_credentials() -> bool:
     return bool(os.environ.get("EBAY_CLIENT_ID") and os.environ.get("EBAY_CLIENT_SECRET"))
@@ -73,14 +102,200 @@ def card_number_query(number: str | None) -> str:
     return head
 
 
+def card_number_suffix(number: str | None) -> str:
+    """Trailing set/promo code from 040/M-P or 080/073."""
+    if not number or "/" not in str(number):
+        return ""
+    return str(number).split("/", 1)[1].strip()
+
+
+def normalize_num(value: str | None) -> str:
+    """Normalize collector number to unpadded digits (040 → 40)."""
+    if not value:
+        return ""
+    head = str(value).split("/")[0].strip()
+    digits = re.sub(r"\D", "", head)
+    if not digits:
+        return head.upper()
+    return str(int(digits))
+
+
+def normalize_set_token(value: str | None) -> str:
+    if not value:
+        return ""
+    return re.sub(r"[^A-Z0-9]+", "", str(value).upper())
+
+
+def is_promo_card(card: dict, pack: dict | None) -> bool:
+    if (card.get("rarity") or "").upper() == "PROMO":
+        return True
+    if pack and (pack.get("listGroup") or "").lower() == "promo":
+        return True
+    code = normalize_set_token((pack or {}).get("code"))
+    return bool(code.endswith("PROMO") or code.endswith("P") and len(code) <= 8)
+
+
+def pack_identity_tokens(pack: dict | None, card: dict | None = None) -> set[str]:
+    """Tokens that positively identify the pack/set in a listing title."""
+    tokens: set[str] = set()
+    if not pack:
+        return tokens
+    for key in ("code", "nameShort", "nameEn"):
+        raw = (pack.get(key) or "").strip()
+        if not raw:
+            continue
+        tokens.add(normalize_set_token(raw))
+        for part in re.split(r"[\s/×x+\-–—]+", raw):
+            norm = normalize_set_token(part)
+            if len(norm) >= 2:
+                tokens.add(norm)
+    suffix = card_number_suffix((card or {}).get("number") if card else None)
+    if suffix:
+        tokens.add(normalize_set_token(suffix))
+    # Korean MG promo cards print as M-P
+    code = normalize_set_token(pack.get("code"))
+    if code in {"MGPROMO", "MP"} or "FESTA" in normalize_set_token(
+        pack.get("nameShort") or ""
+    ):
+        tokens.update({"MP", "MGFESTA", "MEGAFESTA", "SEOUL", "STAMP"})
+    tokens.discard("")
+    return tokens
+
+
+def extract_title_card_numbers(title: str) -> list[tuple[str, str | None]]:
+    """Return (normalized_num, suffix_or_None) from explicit card-number forms."""
+    found: list[tuple[str, str | None]] = []
+    for m in _SLASH_NUM_RE.finditer(title or ""):
+        found.append((str(int(m.group(1))), m.group(2).upper()))
+    for m in _HASH_NUM_RE.finditer(title or ""):
+        found.append((str(int(m.group(1))), None))
+    for m in _NO_NUM_RE.finditer(title or ""):
+        found.append((str(int(m.group(1))), None))
+    return found
+
+
+def title_has_wanted_number(title: str, want_num: str, want_suffix: str = "") -> bool:
+    """True if title clearly references the catalog collector number."""
+    if not want_num:
+        return True
+    explicit = extract_title_card_numbers(title)
+    slash_forms = [(n, s) for n, s in explicit if s]
+    if slash_forms:
+        for num, suffix in slash_forms:
+            if num != want_num:
+                continue
+            if want_suffix:
+                if normalize_set_token(suffix) == normalize_set_token(want_suffix):
+                    return True
+                continue
+            # Catalog has no suffix (e.g. promo "040") — any 040/XXX is a number hit;
+            # foreign set codes are rejected separately.
+            return True
+        return False
+
+    for num, _suffix in explicit:
+        if num == want_num:
+            return True
+
+    # Bare number (padded or not), avoiding PSA grade collisions
+    if want_num in _GRADE_COLLISION_NUMS:
+        return False
+    stripped = _PSA_TOKEN_RE.sub(" ", title or "")
+    padded = want_num.zfill(3)
+    patterns = [
+        rf"\b0*{re.escape(want_num)}\b",
+        rf"\b{re.escape(padded)}\b",
+    ]
+    return any(re.search(p, stripped, re.I) for p in patterns)
+
+
+def title_has_conflicting_number(title: str, want_num: str) -> bool:
+    """Reject when title shows a different explicit collector number."""
+    if not want_num:
+        return False
+    for num, _suffix in extract_title_card_numbers(title):
+        if num != want_num:
+            return True
+    return False
+
+
+def title_set_codes(title: str) -> set[str]:
+    codes = {normalize_set_token(m.group(1)) for m in _SET_CODE_RE.finditer(title or "")}
+    for m in _NAMED_SET_RE.finditer(title or ""):
+        codes.add(normalize_set_token(m.group(1)))
+    return {c for c in codes if c}
+
+
+def title_has_pack_signal(title: str, pack_tokens: set[str]) -> bool:
+    if not pack_tokens:
+        return False
+    title_norm = normalize_set_token(title)
+    title_codes = title_set_codes(title)
+    upper = (title or "").upper()
+    for tok in pack_tokens:
+        if len(tok) < 2:
+            continue
+        if tok in title_codes or tok in title_norm:
+            return True
+    for phrase in ("MG FESTA", "MEGA FESTA", "SEOUL STAMP", "M-P", "M/P"):
+        if phrase in upper and normalize_set_token(phrase) in pack_tokens:
+            return True
+    return False
+
+
+def title_has_foreign_set(title: str, pack_tokens: set[str]) -> bool:
+    """True if title names a set/code that is clearly not our pack."""
+    foreign = title_set_codes(title)
+    if not foreign:
+        return False
+    for code in foreign:
+        if code in pack_tokens:
+            continue
+        return True
+    return False
+
+
+def listing_matches_card(
+    title: str, card: dict, pack: dict | None = None
+) -> bool:
+    """Return True when an eBay title plausibly refers to this catalog card."""
+    want_num = normalize_num(card.get("number"))
+    want_suffix = card_number_suffix(card.get("number"))
+    pack_tokens = pack_identity_tokens(pack, card)
+    promo = is_promo_card(card, pack)
+
+    if want_num and title_has_conflicting_number(title, want_num):
+        return False
+    if want_num and not title_has_wanted_number(title, want_num, want_suffix):
+        return False
+    if title_has_foreign_set(title, pack_tokens):
+        return False
+
+    # Promos: name + PSA + language is too loose — require a set/promo signal
+    if promo:
+        explicit = extract_title_card_numbers(title)
+        suffix_hit = bool(want_suffix) and any(
+            n == want_num
+            and s
+            and normalize_set_token(s) == normalize_set_token(want_suffix)
+            for n, s in explicit
+        )
+        if suffix_hit:
+            return True
+        if not title_has_pack_signal(title, pack_tokens):
+            return False
+    return True
+
+
 def build_search_query(card: dict, pack: dict | None, lang: str) -> str:
     name = (card.get("nameEn") or card.get("nameJa") or card.get("nameKo") or "").strip()
     num = card_number_query(card.get("number"))
+    suffix = card_number_suffix(card.get("number"))
     set_hint = ""
     if pack:
         set_hint = (pack.get("nameShort") or pack.get("code") or "").strip()
     lang_hint = LANG_QUERY.get(lang, "")
-    parts = [p for p in [name, num, set_hint, "Pokemon", "PSA", lang_hint] if p]
+    parts = [p for p in [name, num, suffix, set_hint, "Pokemon", "PSA", lang_hint] if p]
     return " ".join(parts)
 
 
@@ -140,10 +355,16 @@ def _item_price_usd(item: dict[str, Any]) -> float | None:
         return None
 
 
-def grades_from_listings(items: list[dict[str, Any]]) -> dict[str, list[float]]:
+def grades_from_listings(
+    items: list[dict[str, Any]],
+    card: dict | None = None,
+    pack: dict | None = None,
+) -> dict[str, list[float]]:
     buckets: dict[str, list[float]] = {"10": [], "9": [], "8": []}
     for item in items:
         title = item.get("title") or ""
+        if card is not None and not listing_matches_card(title, card, pack):
+            continue
         amount = _item_price_usd(item)
         if amount is None or amount <= 0:
             continue
@@ -205,7 +426,7 @@ def fetch_card_lang_price(
 ) -> dict[str, Any] | None:
     q = build_search_query(card, pack, lang)
     items = search_item_summaries(token, q, limit=limit)
-    return price_from_buckets(grades_from_listings(items), asof_iso)
+    return price_from_buckets(grades_from_listings(items, card, pack), asof_iso)
 
 
 def restore_ebay_prices(live: dict, previous: dict | None) -> int:

@@ -49,7 +49,7 @@ CARD = {
     "nameKo": "잉어킹",
     "nameEn": "Magikarp",
     "nameJa": "コイキング",
-    "number": "040",
+    "number": "040/M-P",
     "rarity": "PROMO",
     "type": "water",
     "typeKo": None,

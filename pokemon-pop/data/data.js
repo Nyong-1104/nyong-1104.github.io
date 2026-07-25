@@ -114143,7 +114143,7 @@ window.POP_CATALOG = [
     "nameKo": "잉어킹",
     "nameEn": "Magikarp",
     "nameJa": "コイキング",
-    "number": "040",
+    "number": "040/M-P",
     "rarity": "PROMO",
     "type": "water",
     "typeKo": null,
@@ -277978,23 +277978,10 @@ window.POP_LIVE = {
     "mg-festa-040": {
       "kr": {
         "price": {
-          "source": "eBay",
+          "source": "seed",
           "currency": "USD",
-          "asOf": "2026-07-23",
-          "grades": {
-            "10": 399
-          },
-          "range": {
-            "10": {
-              "min": 399,
-              "max": 400
-            }
-          },
-          "sampleSize": {
-            "10": 2
-          },
-          "listingCount": 2,
-          "method": "mean-active"
+          "asOf": "2026-07-25",
+          "grades": {}
         },
         "pop": {
           "PSA": null,
@@ -278020,7 +278007,7 @@ window.POP_LIVE = {
           "ACE": null,
           "AGS": null
         },
-        "updatedAt": "2026-07-25T13:48:47+09:00"
+        "updatedAt": "2026-07-25T16:07:54+09:00"
       }
     },
     "bw2-070": {
