@@ -1,0 +1,65 @@
+name: PokePop eBay promo/box fetch
+
+# Push branch `ebay-promo-fetch` (or dispatch) to refresh eBay PSA
+# asking prices for recently added promo/box packs only.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - ebay-promo-fetch
+
+concurrency:
+  group: ebay-promo-fetch
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-promo-ebay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Merge pack-scoped fetch support from trigger branch
+        if: github.event_name == 'push'
+        run: |
+          git fetch origin "${{ github.ref_name }}"
+          git checkout "origin/${{ github.ref_name }}" -- pokemon-pop/scripts/fetch_live.py || true
+
+      - name: Fetch eBay prices for promo/box packs
+        env:
+          EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
+          EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
+          EBAY_FETCH_LIMIT: "40"
+        run: |
+          PACKS="25th-anniversary-golden-box,munch-scream-promo,mario-luigi-pikachu-box,pokemon-center-tohoku-box,pokemon-center-hiroshima-box,pokemon-center-fukuoka-box,team-pretend-pikachu-box,rayquaza-poncho-pikachu-box,mega-charizard-y-poncho-pikachu-box,magikarp-gyarados-pretend-pikachu-box,rokon-crystal-season-box,japan-post-stamp-box"
+          python pokemon-pop/scripts/fetch_live.py \
+            --skip-brg \
+            --pack "$PACKS" \
+            --langs jp \
+            --ebay-limit 40 \
+            --max-age-days 0
+
+      - name: Commit and push to main
+        run: |
+          git add pokemon-pop/data/live/pop-price.json pokemon-pop/data/live/last-run.json pokemon-pop/data/data.js
+          if git diff --staged --quiet; then
+            echo "No live data changes to commit."
+            exit 0
+          fi
+          git config user.name "Nyong-1104"
+          git config user.email "cmy3544@gmail.com"
+          git commit -m "chore(pokepop): eBay PSA prices for new promo/box cards"
+          git pull --rebase origin main
+          git push origin HEAD:main

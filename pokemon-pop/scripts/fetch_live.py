@@ -64,7 +64,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=int(os.environ.get("EBAY_FETCH_LIMIT", "200")),
         help="Max card×lang eBay searches this run (default 200)",
     )
-    p.add_argument("--pack", default=None, help="Only refresh one pack id")
+    p.add_argument(
+        "--pack",
+        default=None,
+        help="Only refresh one pack id (comma-separated for multiple)",
+    )
     p.add_argument(
         "--langs",
         default=None,
@@ -132,35 +136,57 @@ def main(argv: list[str] | None = None) -> int:
     stats["psaPopsRestored"] = restore_psa_pops(live, previous)
 
     langs = [x.strip() for x in args.langs.split(",")] if args.langs else None
+    pack_ids = (
+        [x.strip() for x in args.pack.split(",") if x.strip()]
+        if args.pack
+        else [None]
+    )
 
-    brg_stats: dict = {"brgEnabled": False}
+    brg_stats: dict = {"brgEnabled": False, "byPack": {}}
     if not args.seed_only and not args.skip_brg:
-        brg_stats = fetch_brg_for_packs(
-            catalog,
-            packs,
-            live,
-            asof_iso,
-            pack_id=args.pack,
-            langs=langs,
-            sleep_s=0.2,
-            dry_run=args.dry_run,
-        )
+        for pack_id in pack_ids:
+            one = fetch_brg_for_packs(
+                catalog,
+                packs,
+                live,
+                asof_iso,
+                pack_id=pack_id,
+                langs=langs,
+                sleep_s=0.2,
+                dry_run=args.dry_run,
+            )
+            brg_stats["brgEnabled"] = brg_stats["brgEnabled"] or bool(
+                one.get("brgEnabled")
+            )
+            key = pack_id or "all"
+            brg_stats["byPack"][key] = one
+            for k, v in one.items():
+                if isinstance(v, int) and k != "brgEnabled":
+                    brg_stats[k] = brg_stats.get(k, 0) + v
 
-    ebay_stats: dict = {"ebayEnabled": False}
+    ebay_stats: dict = {"ebayEnabled": False, "byPack": {}}
     if not args.seed_only and not args.skip_ebay and has_credentials():
-        ebay_stats = fetch_ebay_batch(
-            catalog,
-            packs,
-            live,
-            asof_iso,
-            limit=args.ebay_limit,
-            pack_id=args.pack,
-            langs=langs,
-            max_age_days=args.max_age_days,
-            force=args.force,
-            sleep_s=args.sleep,
-            dry_run=args.dry_run,
-        )
+        for pack_id in pack_ids:
+            one = fetch_ebay_batch(
+                catalog,
+                packs,
+                live,
+                asof_iso,
+                limit=args.ebay_limit,
+                pack_id=pack_id,
+                langs=langs,
+                max_age_days=args.max_age_days,
+                force=args.force,
+                sleep_s=args.sleep,
+                dry_run=args.dry_run,
+            )
+            ebay_stats["ebayEnabled"] = True
+            key = pack_id or "all"
+            ebay_stats["byPack"][key] = one
+            for k in ("jobsPlanned", "jobsOk", "jobsEmpty", "jobsFailed"):
+                ebay_stats[k] = ebay_stats.get(k, 0) + int(one.get(k) or 0)
+            if one.get("errors"):
+                ebay_stats.setdefault("errors", []).extend(one["errors"])
     elif not args.seed_only and not args.skip_ebay:
         ebay_stats = {
             "ebayEnabled": False,
