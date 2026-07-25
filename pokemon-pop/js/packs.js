@@ -15,6 +15,10 @@
     return packCardCount(pack) < INCOMPLETE_CARD_CAP;
   }
 
+  function isBox(pack) {
+    return String((pack && pack.listGroup) || "").toLowerCase() === "box";
+  }
+
   function packGroup(pack) {
     const g = String((pack && pack.listGroup) || "booster").toLowerCase();
     return g === "promo" ? "promo" : "booster";
@@ -22,6 +26,9 @@
 
   function sortPacks(list) {
     return list.slice().sort(function (a, b) {
+      const aBox = isBox(a) ? 1 : 0;
+      const bBox = isBox(b) ? 1 : 0;
+      if (aBox !== bBox) return aBox - bBox;
       const aStub = packIncomplete(a) ? 1 : 0;
       const bStub = packIncomplete(b) ? 1 : 0;
       if (aStub !== bStub) return aStub - bStub;
@@ -307,16 +314,8 @@
       const displayName = PT.packName(pack);
       const longName = displayName.length > 28;
       const a = document.createElement("a");
-      a.className = "pack-entry";
+      a.className = isBox(pack) ? "pack-entry pack-entry--box" : "pack-entry";
       a.href = `./set.html?pack=${encodeURIComponent(pack.id)}`;
-
-      const holo = PT.createHoloCardEl({
-        image: pack.packImage,
-        name: displayName,
-        holoStyle: "pack",
-        compact: false,
-      });
-      holo.classList.add("holo-card--pack");
 
       const meta = document.createElement("div");
       meta.className = "pack-entry__meta";
@@ -329,6 +328,32 @@
         ${emptyNote}
         <span class="pack-entry__cta">${PT.t("open")}</span>
       `;
+
+      if (isBox(pack)) {
+        const wrap = document.createElement("div");
+        wrap.className = "pack-entry__art-wrap";
+        const badge = document.createElement("span");
+        badge.className = "pack-entry__badge";
+        badge.textContent = "BOX";
+        const img = document.createElement("img");
+        img.className = "pack-entry__art";
+        img.src = pack.packImage || "";
+        img.alt = displayName;
+        wrap.appendChild(badge);
+        wrap.appendChild(img);
+        a.appendChild(wrap);
+        a.appendChild(meta);
+        grid.appendChild(a);
+        return;
+      }
+
+      const holo = PT.createHoloCardEl({
+        image: pack.packImage,
+        name: displayName,
+        holoStyle: "pack",
+        compact: false,
+      });
+      holo.classList.add("holo-card--pack");
 
       a.appendChild(holo);
       a.appendChild(meta);

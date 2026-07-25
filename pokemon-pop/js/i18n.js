@@ -373,6 +373,10 @@ window.PopTracker = window.PopTracker || {};
     }
     drawer.setAttribute("aria-label", PT.t("menuTitle"));
 
+    function isBox(pack) {
+      return String((pack && pack.listGroup) || "").toLowerCase() === "box";
+    }
+
     function packGroup(pack) {
       const g = String((pack && pack.listGroup) || "booster").toLowerCase();
       return g === "promo" ? "promo" : "booster";
@@ -386,6 +390,9 @@ window.PopTracker = window.PopTracker || {};
         })
         .slice()
         .sort(function (a, b) {
+          const aBox = isBox(a) ? 1 : 0;
+          const bBox = isBox(b) ? 1 : 0;
+          if (aBox !== bBox) return aBox - bBox;
           const ya = Number(a.releaseYear) || 0;
           const yb = Number(b.releaseYear) || 0;
           if (yb !== ya) return yb - ya;

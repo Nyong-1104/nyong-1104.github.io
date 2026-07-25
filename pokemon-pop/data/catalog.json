@@ -128463,5 +128463,61 @@
       "basePop": 600
     },
     "tier": "A"
+  },
+  {
+    "id": "s-p-227",
+    "packId": "japan-post-stamp-box",
+    "nameKo": "미카에리비진",
+    "nameEn": "Beauty Looking Back",
+    "nameJa": "見返り美人",
+    "number": "227/S-P",
+    "rarity": "PROMO",
+    "type": "lightning",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S-P/039954_P_PIKACHUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S-P/039954_P_PIKACHUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 39954,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 200,
+      "basePop": 30
+    },
+    "tier": "B"
+  },
+  {
+    "id": "s-p-226",
+    "packId": "japan-post-stamp-box",
+    "nameKo": "츠키니간",
+    "nameEn": "Moon and Geese",
+    "nameJa": "月に雁",
+    "number": "226/S-P",
+    "rarity": "PROMO",
+    "type": "water",
+    "typeKo": null,
+    "holoStyle": "holo",
+    "image": "https://www.pokemon-card.com/assets/images/card_images/large/S-P/039953_P_UTSUU.jpg",
+    "images": {
+      "jp": "https://www.pokemon-card.com/assets/images/card_images/large/S-P/039953_P_UTSUU.jpg",
+      "kr": null,
+      "en": null
+    },
+    "catalogKeys": {
+      "jp": 39953,
+      "kr": null,
+      "en": null
+    },
+    "seed": {
+      "basePrice": 80,
+      "basePop": 30
+    },
+    "tier": "B"
   }
 ]

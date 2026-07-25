@@ -663,6 +663,42 @@ body.nav-drawer-open {
   color: #120e08;
 }
 
+/* BOX tile — mockup footprint (no pack 3D / holo tilt) */
+.pack-entry--box .pack-entry__art-wrap {
+  position: relative;
+  width: min(100%, 300px);
+  max-width: 300px;
+  aspect-ratio: 0.515;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #1a1510;
+  border: 1px solid rgba(244, 239, 230, 0.12);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.45);
+}
+
+.pack-entry--box .pack-entry__art {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  padding: 0.35rem;
+}
+
+.pack-entry--box .pack-entry__badge {
+  position: absolute;
+  top: 0.45rem;
+  left: 0.45rem;
+  z-index: 1;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.28rem 0.5rem;
+  border-radius: 5px;
+  background: var(--logo-yellow, #ffd400);
+  color: #1a1408;
+  line-height: 1;
+}
+
 .toolbar {
   display: flex;
   flex-wrap: wrap;
