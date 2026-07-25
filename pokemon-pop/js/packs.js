@@ -21,7 +21,8 @@
 
   function packGroup(pack) {
     const g = String((pack && pack.listGroup) || "booster").toLowerCase();
-    return g === "promo" ? "promo" : "booster";
+    // Boxes stay listGroup "box" for CSS/UX, but list under the promo tab.
+    return g === "promo" || g === "box" ? "promo" : "booster";
   }
 
   function sortPacks(list) {
