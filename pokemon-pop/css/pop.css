@@ -1574,10 +1574,16 @@ body.nav-drawer-open {
   max-height: 62px;
 }
 
-/* Venusaur / Charizard / Mega Charizard X / Blastoise: 40% larger than .is-evolved (~1.82× base) */
+/* Venusaur / Charizard / Blastoise: 40% larger than .is-evolved (~1.82× base) */
 .cursor-follower.is-evolved-xl {
   width: 73px;
   max-height: 87px;
+}
+
+/* Mega Charizard X only: 30% larger than .is-evolved-xl */
+.cursor-follower.is-evolved-xxl {
+  width: 95px;
+  max-height: 113px;
 }
 
 /* Pikachu hold-to-evolve: bright white charge pulses (starts at ready hold) */

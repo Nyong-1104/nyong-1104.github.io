@@ -40,7 +40,7 @@
           src: "./assets/cursor-follower-mega-charizard-x.png",
           burst: "./assets/cursor-burst-bluefire.png",
           burstFlash: true,
-          evolvedXl: true,
+          evolvedXxl: true,
           breathFire: true,
         },
       ],
@@ -342,7 +342,8 @@
     stopChargeFlash();
     img.src = outcome.src;
     img.classList.add("is-evolved");
-    if (outcome.evolvedXl) img.classList.add("is-evolved-xl");
+    if (outcome.evolvedXxl) img.classList.add("is-evolved-xxl");
+    else if (outcome.evolvedXl) img.classList.add("is-evolved-xl");
     if (outcome.burst) burstSrc = outcome.burst;
     evolveBurstFlash = !!outcome.burstFlash;
     canBreath = !!outcome.breathFire;
