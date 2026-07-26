@@ -98,6 +98,11 @@
   /* Mega X faces left — narrow cone for a focused breath stream. */
   var BREATH_ANGLE = Math.PI;
   var BREATH_CONE = 0.32;
+  /* Breath particles can ignite HTML they pass through. */
+  var BURN_MS = 3000;
+  var BREATH_HIT_CHECK_MS = 55;
+  /* Only some particles run hit tests (dense spawn). */
+  var BREATH_HIT_SAMPLE = 0.45;
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (!window.matchMedia("(pointer: fine)").matches) return;
@@ -231,6 +236,160 @@
     }
   }
 
+  /* --- Mega X breath: ignite HTML under blue-fire particles --- */
+  var burningMap = new Map();
+
+  function shouldSkipIgnite(el) {
+    if (!el || el.nodeType !== 1) return true;
+    if (el === document.documentElement || el === document.body) return true;
+    var tag = el.tagName;
+    if (
+      tag === "SCRIPT" ||
+      tag === "STYLE" ||
+      tag === "LINK" ||
+      tag === "META" ||
+      tag === "HEAD" ||
+      tag === "HTML" ||
+      tag === "BR" ||
+      tag === "HR"
+    ) {
+      return true;
+    }
+    if (el.classList.contains("cursor-follower")) return true;
+    if (el.classList.contains("cursor-burst")) return true;
+    if (el.classList.contains("breath-burn-flame")) return true;
+    if (el.classList.contains("nav-drawer-backdrop")) return true;
+    /* Skip near-full-viewport shells so the whole page does not melt. */
+    var w = el.clientWidth;
+    var h = el.clientHeight;
+    if (
+      w >= window.innerWidth * 0.9 &&
+      h >= window.innerHeight * 0.85
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  function resolveIgniteTarget(el) {
+    var cur = el;
+    while (cur && cur !== document.body && cur !== document.documentElement) {
+      if (cur.ownerSVGElement) {
+        cur = cur.ownerSVGElement;
+      }
+      if (!shouldSkipIgnite(cur)) {
+        /* Replaced elements cannot host ::after flames — burn the parent when sensible. */
+        if (
+          (cur.tagName === "IMG" || cur.tagName === "VIDEO" || cur.tagName === "CANVAS") &&
+          cur.parentElement &&
+          !shouldSkipIgnite(cur.parentElement)
+        ) {
+          return cur.parentElement;
+        }
+        return cur;
+      }
+      cur = cur.parentElement;
+    }
+    return null;
+  }
+
+  function clearBurn(el) {
+    var state = burningMap.get(el);
+    if (!state) return;
+    if (state.timer) clearTimeout(state.timer);
+    el.classList.remove("is-breath-burning");
+    el.classList.remove("is-breath-burning--posed");
+    if (state.flames) {
+      for (var i = 0; i < state.flames.length; i++) {
+        var f = state.flames[i];
+        if (f.parentNode) f.parentNode.removeChild(f);
+      }
+    }
+    burningMap.delete(el);
+  }
+
+  function clearAllBurns() {
+    var els = [];
+    burningMap.forEach(function (_state, el) {
+      els.push(el);
+    });
+    for (var i = 0; i < els.length; i++) clearBurn(els[i]);
+  }
+
+  function igniteElement(el) {
+    if (!el) return;
+    var existing = burningMap.get(el);
+    if (existing) {
+      clearTimeout(existing.timer);
+      existing.timer = setTimeout(function () {
+        clearBurn(el);
+      }, BURN_MS);
+      return;
+    }
+
+    var posed = false;
+    var cs = window.getComputedStyle(el);
+    if (cs.position === "static") {
+      el.classList.add("is-breath-burning--posed");
+      posed = true;
+    }
+    el.classList.add("is-breath-burning");
+
+    var flames = [];
+    var tag = el.tagName;
+    var canHostFlames =
+      tag !== "INPUT" &&
+      tag !== "TEXTAREA" &&
+      tag !== "SELECT" &&
+      tag !== "IMG" &&
+      tag !== "VIDEO" &&
+      tag !== "CANVAS" &&
+      tag !== "IFRAME" &&
+      tag !== "SVG";
+    if (canHostFlames) {
+      var spots = [
+        { left: "8%", bottom: "-6%", w: 22 },
+        { left: "42%", bottom: "-10%", w: 30 },
+        { left: "72%", bottom: "-4%", w: 20 },
+      ];
+      for (var i = 0; i < spots.length; i++) {
+        var flame = document.createElement("img");
+        flame.className = "breath-burn-flame";
+        flame.alt = "";
+        flame.draggable = false;
+        flame.src = burstSrc;
+        flame.style.width = spots[i].w + "px";
+        flame.style.left = spots[i].left;
+        flame.style.bottom = spots[i].bottom;
+        el.appendChild(flame);
+        flames.push(flame);
+      }
+    }
+
+    var timer = setTimeout(function () {
+      clearBurn(el);
+    }, BURN_MS);
+    burningMap.set(el, { timer: timer, posed: posed, flames: flames });
+  }
+
+  function tryIgniteAt(px, py) {
+    if (px < 0 || py < 0 || px >= window.innerWidth || py >= window.innerHeight) {
+      return;
+    }
+    var hit = document.elementFromPoint(px, py);
+    var target = resolveIgniteTarget(hit);
+    if (target) igniteElement(target);
+  }
+
+  document.addEventListener(
+    "visibilitychange",
+    function () {
+      if (document.hidden) clearAllBurns();
+    },
+    { passive: true }
+  );
+  window.addEventListener("pagehide", clearAllBurns, { passive: true });
+
   /* --- Mega Charizard X hold-breath (blue fire stream after 1s hold) --- */
   function spawnBreathParticle() {
     /* Mouth sits near the left-center of the left-facing Mega X sprite. */
@@ -255,8 +414,10 @@
     var life = BREATH_LIFE_MIN + Math.random() * (BREATH_LIFE_MAX - BREATH_LIFE_MIN);
     var rot = (Math.random() - 0.5) * 360;
     var start = performance.now();
+    var doHit = Math.random() < BREATH_HIT_SAMPLE;
+    var lastHitAt = 0;
 
-    (function (el, vx0, vy0, life0, rot0, t0) {
+    (function (el, vx0, vy0, life0, rot0, t0, originX, originY, hitEnabled) {
       function tick(now) {
         var t = (now - t0) / life0;
         if (t >= 1) {
@@ -282,10 +443,17 @@
           "deg) scale(" +
           scale +
           ")";
+        if (
+          hitEnabled &&
+          now - lastHitAt >= BREATH_HIT_CHECK_MS
+        ) {
+          lastHitAt = now;
+          tryIgniteAt(originX + dx, originY + dy);
+        }
         requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
-    })(p, vx, vy, life, rot, start);
+    })(p, vx, vy, life, rot, start, cx, cy, doHit);
   }
 
   function isTypingFocus(el) {

@@ -1625,6 +1625,73 @@ body.nav-drawer-open {
   transform-origin: center center;
 }
 
+/* Mega X breath: HTML elements catch blue fire briefly */
+.is-breath-burning--posed {
+  position: relative;
+}
+
+.is-breath-burning {
+  animation: breath-burn-flicker 0.14s ease-in-out infinite;
+  will-change: filter;
+}
+
+.is-breath-burning::after {
+  content: "";
+  position: absolute;
+  inset: -8% -6% -14%;
+  pointer-events: none;
+  z-index: 50;
+  background-image:
+    url("../assets/cursor-burst-bluefire.png"),
+    url("../assets/cursor-burst-bluefire.png"),
+    url("../assets/cursor-burst-bluefire.png");
+  background-repeat: no-repeat;
+  background-size: 26px auto, 34px auto, 22px auto;
+  background-position: 12% 100%, 50% 98%, 82% 100%;
+  mix-blend-mode: screen;
+  opacity: 0.92;
+  animation: breath-burn-flames 0.18s ease-in-out infinite alternate;
+}
+
+@keyframes breath-burn-flicker {
+  0%,
+  100% {
+    filter: brightness(1.06) saturate(1.25)
+      drop-shadow(0 0 3px rgba(70, 170, 255, 0.75))
+      drop-shadow(0 0 10px rgba(40, 110, 255, 0.55));
+  }
+  50% {
+    filter: brightness(1.28) saturate(1.5)
+      drop-shadow(0 0 7px rgba(130, 210, 255, 0.95))
+      drop-shadow(0 0 16px rgba(50, 140, 255, 0.8));
+  }
+}
+
+@keyframes breath-burn-flames {
+  0% {
+    transform: translateY(0) scaleY(1);
+    opacity: 0.82;
+  }
+  100% {
+    transform: translateY(-6%) scaleY(1.12);
+    opacity: 1;
+  }
+}
+
+.breath-burn-flame {
+  position: absolute;
+  margin: 0;
+  height: auto;
+  pointer-events: none;
+  z-index: 51;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  mix-blend-mode: screen;
+  opacity: 0.9;
+  animation: breath-burn-flames 0.16s ease-in-out infinite alternate;
+  user-select: none;
+}
+
 /* Evolved elemental burst flash (leaf / fire / bluefire / lightning / water): ~0.1s white pulse */
 .cursor-burst.cursor-burst--element,
 .cursor-burst.cursor-burst--raichu,
@@ -1646,8 +1713,14 @@ body.nav-drawer-open {
 
 @media (prefers-reduced-motion: reduce) {
   .cursor-follower,
-  .cursor-burst {
+  .cursor-burst,
+  .breath-burn-flame {
     display: none;
+  }
+
+  .is-breath-burning,
+  .is-breath-burning::after {
+    animation: none;
   }
 }
 
