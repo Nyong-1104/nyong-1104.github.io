@@ -549,8 +549,18 @@
     flipDrag = null;
     if (document.activeElement === revealBtn) revealBtn.blur();
 
-    if (flipBusy || !wasHorizontal) {
+    if (flipBusy) {
       revealInner.style.transform = "";
+      return;
+    }
+
+    // First reveal only: tap/click flips to front (later flips stay drag-only)
+    if (!wasHorizontal) {
+      if (!faceRevealed && cardFacing === "back") {
+        finishFlipOnce(flipBaseAngle(), "front", 0);
+      } else {
+        revealInner.style.transform = "";
+      }
       return;
     }
 
