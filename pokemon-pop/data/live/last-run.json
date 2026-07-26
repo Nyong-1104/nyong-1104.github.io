@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-07-27T02:11:07+09:00",
+  "ranAt": "2026-07-27T02:38:35+09:00",
   "stats": {
     "asOf": "2026-07-27",
-    "asOfIso": "2026-07-27T02:11:07+09:00",
+    "asOfIso": "2026-07-27T02:38:35+09:00",
     "cardsTotal": 4635,
     "cardsLive": 1984,
     "skippedTierC": 2651,
@@ -685,8 +685,21 @@
       "cardsUnmatched": 2337
     },
     "ebay": {
-      "ebayEnabled": false,
-      "note": "Set EBAY_CLIENT_ID and EBAY_CLIENT_SECRET to enable eBay prices"
+      "ebayEnabled": true,
+      "byPack": {
+        "all": {
+          "ebayEnabled": true,
+          "jobsPlanned": 50,
+          "jobsOk": 5,
+          "jobsEmpty": 45,
+          "jobsFailed": 0,
+          "dryRun": false
+        }
+      },
+      "jobsPlanned": 50,
+      "jobsOk": 5,
+      "jobsEmpty": 45,
+      "jobsFailed": 0
     },
     "liveSource": "eBay+seed+BRG"
   }
