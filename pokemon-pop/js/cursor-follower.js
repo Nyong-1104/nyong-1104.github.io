@@ -48,6 +48,14 @@
     {
       src: "./assets/cursor-follower-squirtle.png",
       burst: "./assets/cursor-burst-water.png",
+      evolveHoldMs: 3000,
+      evolveOutcomes: [
+        {
+          src: "./assets/cursor-follower-blastoise.png",
+          burstFlash: true,
+          evolvedXl: true,
+        },
+      ],
     },
     {
       src: "./assets/cursor-follower-pikachu.png",

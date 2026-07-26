@@ -1568,13 +1568,13 @@ body.nav-drawer-open {
   opacity: 1;
 }
 
-/* Evolved follower (Raichu / Venusaur / Charizard / Mega X / Master Ball) ~30% larger */
+/* Evolved follower (Raichu / Venusaur / Charizard / Mega X / Blastoise / Master Ball) ~30% larger */
 .cursor-follower.is-evolved {
   width: 52px;
   max-height: 62px;
 }
 
-/* Venusaur / Charizard / Mega Charizard X: 40% larger than .is-evolved (~1.82× base) */
+/* Venusaur / Charizard / Mega Charizard X / Blastoise: 40% larger than .is-evolved (~1.82× base) */
 .cursor-follower.is-evolved-xl {
   width: 73px;
   max-height: 87px;
@@ -1619,7 +1619,7 @@ body.nav-drawer-open {
   transform-origin: center center;
 }
 
-/* Evolved elemental burst flash (leaf / fire / bluefire / lightning): ~0.1s white pulse */
+/* Evolved elemental burst flash (leaf / fire / bluefire / lightning / water): ~0.1s white pulse */
 .cursor-burst.cursor-burst--element,
 .cursor-burst.cursor-burst--raichu,
 .cursor-burst.cursor-burst--charizard {
