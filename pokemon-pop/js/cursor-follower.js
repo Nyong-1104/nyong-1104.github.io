@@ -239,6 +239,46 @@
   /* --- Mega X breath: ignite HTML under blue-fire particles --- */
   var burningMap = new Map();
 
+  function isIgniteChrome(el) {
+    if (!el || !el.classList) return false;
+    return (
+      el.classList.contains("cursor-follower") ||
+      el.classList.contains("cursor-burst") ||
+      el.classList.contains("breath-burn-flame") ||
+      el.classList.contains("breath-burn-overlay") ||
+      el.classList.contains("nav-drawer-backdrop")
+    );
+  }
+
+  function isLayoutShell(el) {
+    if (!el || el.nodeType !== 1) return false;
+    var tag = el.tagName;
+    if (
+      tag === "MAIN" ||
+      tag === "HEADER" ||
+      tag === "NAV" ||
+      tag === "FOOTER" ||
+      tag === "SECTION" ||
+      tag === "ARTICLE" ||
+      tag === "ASIDE"
+    ) {
+      return true;
+    }
+    if (!el.classList) return false;
+    return (
+      el.classList.contains("site-nav") ||
+      el.classList.contains("site-header") ||
+      el.classList.contains("page") ||
+      el.classList.contains("hero-block") ||
+      el.classList.contains("pack-grid") ||
+      el.classList.contains("card-grid") ||
+      el.classList.contains("packs-section") ||
+      el.classList.contains("search-panel") ||
+      el.classList.contains("nav-search") ||
+      el.classList.contains("nav-actions")
+    );
+  }
+
   function shouldSkipIgnite(el) {
     if (!el || el.nodeType !== 1) return true;
     if (el === document.documentElement || el === document.body) return true;
@@ -255,10 +295,8 @@
     ) {
       return true;
     }
-    if (el.classList.contains("cursor-follower")) return true;
-    if (el.classList.contains("cursor-burst")) return true;
-    if (el.classList.contains("breath-burn-flame")) return true;
-    if (el.classList.contains("nav-drawer-backdrop")) return true;
+    if (isIgniteChrome(el)) return true;
+    if (isLayoutShell(el)) return true;
     /* Skip near-full-viewport shells so the whole page does not melt. */
     var w = el.clientWidth;
     var h = el.clientHeight;
@@ -271,26 +309,27 @@
     return false;
   }
 
+  /* Prefer the deepest hit unit. Never promote to a parent wrapper. */
   function resolveIgniteTarget(el) {
     var cur = el;
-    while (cur && cur !== document.body && cur !== document.documentElement) {
-      if (cur.ownerSVGElement) {
-        cur = cur.ownerSVGElement;
-      }
-      if (!shouldSkipIgnite(cur)) {
-        /* Replaced elements cannot host ::after flames — burn the parent when sensible. */
-        if (
-          (cur.tagName === "IMG" || cur.tagName === "VIDEO" || cur.tagName === "CANVAS") &&
-          cur.parentElement &&
-          !shouldSkipIgnite(cur.parentElement)
-        ) {
-          return cur.parentElement;
-        }
-        return cur;
-      }
+    while (cur && isIgniteChrome(cur)) {
       cur = cur.parentElement;
     }
-    return null;
+    if (!cur) return null;
+    if (cur.ownerSVGElement) cur = cur.ownerSVGElement;
+    if (shouldSkipIgnite(cur)) return null;
+    return cur;
+  }
+
+  function syncBurnOverlay(overlay, el) {
+    var r = el.getBoundingClientRect();
+    if (r.width < 1 || r.height < 1) return;
+    var padX = Math.max(4, r.width * 0.06);
+    var padY = Math.max(6, r.height * 0.1);
+    overlay.style.left = r.left - padX + "px";
+    overlay.style.top = r.top - padY + "px";
+    overlay.style.width = r.width + padX * 2 + "px";
+    overlay.style.height = r.height + padY * 2 + "px";
   }
 
   function clearBurn(el) {
@@ -298,12 +337,12 @@
     if (!state) return;
     if (state.timer) clearTimeout(state.timer);
     el.classList.remove("is-breath-burning");
-    el.classList.remove("is-breath-burning--posed");
-    if (state.flames) {
-      for (var i = 0; i < state.flames.length; i++) {
-        var f = state.flames[i];
-        if (f.parentNode) f.parentNode.removeChild(f);
-      }
+    if (state.onMove) {
+      window.removeEventListener("scroll", state.onMove, true);
+      window.removeEventListener("resize", state.onMove);
+    }
+    if (state.overlay && state.overlay.parentNode) {
+      state.overlay.parentNode.removeChild(state.overlay);
     }
     burningMap.delete(el);
   }
@@ -324,52 +363,51 @@
       existing.timer = setTimeout(function () {
         clearBurn(el);
       }, BURN_MS);
+      if (existing.overlay) syncBurnOverlay(existing.overlay, el);
       return;
     }
 
-    var posed = false;
-    var cs = window.getComputedStyle(el);
-    if (cs.position === "static") {
-      el.classList.add("is-breath-burning--posed");
-      posed = true;
-    }
+    /* Filter flicker on the exact hit (works on img/svg/a). */
     el.classList.add("is-breath-burning");
 
-    var flames = [];
-    var tag = el.tagName;
-    var canHostFlames =
-      tag !== "INPUT" &&
-      tag !== "TEXTAREA" &&
-      tag !== "SELECT" &&
-      tag !== "IMG" &&
-      tag !== "VIDEO" &&
-      tag !== "CANVAS" &&
-      tag !== "IFRAME" &&
-      tag !== "SVG";
-    if (canHostFlames) {
-      var spots = [
-        { left: "8%", bottom: "-6%", w: 22 },
-        { left: "42%", bottom: "-10%", w: 30 },
-        { left: "72%", bottom: "-4%", w: 20 },
-      ];
-      for (var i = 0; i < spots.length; i++) {
-        var flame = document.createElement("img");
-        flame.className = "breath-burn-flame";
-        flame.alt = "";
-        flame.draggable = false;
-        flame.src = burstSrc;
-        flame.style.width = spots[i].w + "px";
-        flame.style.left = spots[i].left;
-        flame.style.bottom = spots[i].bottom;
-        el.appendChild(flame);
-        flames.push(flame);
-      }
+    /* Fixed overlay pinned to the hit box — never expands to ancestors. */
+    var overlay = document.createElement("div");
+    overlay.className = "breath-burn-overlay";
+    overlay.setAttribute("aria-hidden", "true");
+    syncBurnOverlay(overlay, el);
+
+    var spots = [
+      { left: "8%", bottom: "2%", w: 22 },
+      { left: "42%", bottom: "-4%", w: 30 },
+      { left: "72%", bottom: "4%", w: 20 },
+    ];
+    for (var i = 0; i < spots.length; i++) {
+      var flame = document.createElement("img");
+      flame.className = "breath-burn-flame";
+      flame.alt = "";
+      flame.draggable = false;
+      flame.src = burstSrc;
+      flame.style.width = spots[i].w + "px";
+      flame.style.left = spots[i].left;
+      flame.style.bottom = spots[i].bottom;
+      overlay.appendChild(flame);
     }
+    document.body.appendChild(overlay);
+
+    var onMove = function () {
+      if (!el.isConnected) {
+        clearBurn(el);
+        return;
+      }
+      syncBurnOverlay(overlay, el);
+    };
+    window.addEventListener("scroll", onMove, true);
+    window.addEventListener("resize", onMove);
 
     var timer = setTimeout(function () {
       clearBurn(el);
     }, BURN_MS);
-    burningMap.set(el, { timer: timer, posed: posed, flames: flames });
+    burningMap.set(el, { timer: timer, overlay: overlay, onMove: onMove });
   }
 
   function tryIgniteAt(px, py) {

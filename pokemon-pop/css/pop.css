@@ -1625,22 +1625,19 @@ body.nav-drawer-open {
   transform-origin: center center;
 }
 
-/* Mega X breath: HTML elements catch blue fire briefly */
-.is-breath-burning--posed {
-  position: relative;
-}
-
+/* Mega X breath: exact hit unit flickers; flames live on a fixed overlay */
 .is-breath-burning {
   animation: breath-burn-flicker 0.14s ease-in-out infinite;
   will-change: filter;
 }
 
-.is-breath-burning::after {
-  content: "";
-  position: absolute;
-  inset: -8% -6% -14%;
+.breath-burn-overlay {
+  position: fixed;
   pointer-events: none;
   z-index: 50;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   background-image:
     url("../assets/cursor-burst-bluefire.png"),
     url("../assets/cursor-burst-bluefire.png"),
@@ -1714,12 +1711,12 @@ body.nav-drawer-open {
 @media (prefers-reduced-motion: reduce) {
   .cursor-follower,
   .cursor-burst,
-  .breath-burn-flame {
+  .breath-burn-flame,
+  .breath-burn-overlay {
     display: none;
   }
 
-  .is-breath-burning,
-  .is-breath-burning::after {
+  .is-breath-burning {
     animation: none;
   }
 }
