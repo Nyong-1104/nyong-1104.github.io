@@ -123,8 +123,13 @@
   var evolveBurstFlash = false;
   var canBreath = false;
   var breathing = false;
-  var breathTimer = 0;
   var breathInterval = 0;
+  /* Breath stays on while mouse OR A has been held past BREATH_HOLD_MS. */
+  var mouseBreathReady = false;
+  var aKeyBreathReady = false;
+  var mouseBreathTimer = 0;
+  var aKeyBreathTimer = 0;
+  var aKeyHeld = false;
 
   var img = document.createElement("img");
   img.className = "cursor-follower";
@@ -283,6 +288,14 @@
     })(p, vx, vy, life, rot, start);
   }
 
+  function isTypingFocus(el) {
+    if (!el || el === document.body || el === document.documentElement) return false;
+    var tag = el.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
+    if (el.isContentEditable) return true;
+    return false;
+  }
+
   function startBreath() {
     if (breathing || !canBreath) return;
     breathing = true;
@@ -299,16 +312,44 @@
     scheduleNext();
   }
 
-  function stopBreath() {
-    if (breathTimer) {
-      clearTimeout(breathTimer);
-      breathTimer = 0;
-    }
+  function stopBreathStream() {
     if (breathInterval) {
       clearTimeout(breathInterval);
       breathInterval = 0;
     }
     breathing = false;
+  }
+
+  function syncBreath() {
+    if (mouseBreathReady || aKeyBreathReady) startBreath();
+    else stopBreathStream();
+  }
+
+  function clearMouseBreathHold() {
+    mouseBreathReady = false;
+    if (mouseBreathTimer) {
+      clearTimeout(mouseBreathTimer);
+      mouseBreathTimer = 0;
+    }
+  }
+
+  function clearAKeyBreathHold() {
+    aKeyHeld = false;
+    aKeyBreathReady = false;
+    if (aKeyBreathTimer) {
+      clearTimeout(aKeyBreathTimer);
+      aKeyBreathTimer = 0;
+    }
+  }
+
+  function stopBreath() {
+    clearMouseBreathHold();
+    clearAKeyBreathHold();
+    stopBreathStream();
+  }
+
+  function isBreathAKey(e) {
+    return e.code === "KeyA" || e.key === "a" || e.key === "A";
   }
 
   /* --- Hold-to-evolve (weighted outcomes: e.g. Charmander / Charizard / Mega X) --- */
@@ -353,7 +394,8 @@
   function cancelPress() {
     pressStart = 0;
     stopChargeFlash();
-    stopBreath();
+    clearMouseBreathHold();
+    syncBreath();
   }
 
   if (canEvolve) {
@@ -364,9 +406,14 @@
         /* Mega X: hold 1s → continuous blue-fire breath (no evolve charge). */
         if (evolved && canBreath) {
           pressStart = performance.now();
-          breathTimer = setTimeout(function () {
-            breathTimer = 0;
-            if (pressStart) startBreath();
+          clearMouseBreathHold();
+          syncBreath();
+          mouseBreathTimer = setTimeout(function () {
+            mouseBreathTimer = 0;
+            if (pressStart) {
+              mouseBreathReady = true;
+              syncBreath();
+            }
           }, BREATH_HOLD_MS);
           return;
         }
@@ -396,11 +443,14 @@
         var cy = e.clientY;
         pressStart = 0;
 
-        /* Mega X: stop breath on release; short click still pops blue fire. */
+        /* Mega X: release mouse; breath continues if A is still past 1s. */
         if (evolved && canBreath) {
-          var wasBreathing = breathing;
-          stopBreath();
-          if (!wasBreathing && held < SHORT_CLICK_MS) spawnBurst(cx, cy);
+          var wasMouseBreath = mouseBreathReady;
+          clearMouseBreathHold();
+          syncBreath();
+          if (!wasMouseBreath && !aKeyBreathReady && held < SHORT_CLICK_MS) {
+            spawnBurst(cx, cy);
+          }
           return;
         }
 
@@ -428,9 +478,33 @@
       "blur",
       function () {
         cancelPress();
+        clearAKeyBreathHold();
+        syncBreath();
       },
       { passive: true }
     );
+
+    /* Mega X: hold A ≥1s → same breath; ignored while typing in form fields. */
+    document.addEventListener("keydown", function (e) {
+      if (!evolved || !canBreath || !isBreathAKey(e) || e.repeat) return;
+      if (isTypingFocus(e.target) || isTypingFocus(document.activeElement)) return;
+      if (aKeyHeld) return;
+      aKeyHeld = true;
+      aKeyBreathReady = false;
+      aKeyBreathTimer = setTimeout(function () {
+        aKeyBreathTimer = 0;
+        if (aKeyHeld) {
+          aKeyBreathReady = true;
+          syncBreath();
+        }
+      }, BREATH_HOLD_MS);
+    });
+
+    document.addEventListener("keyup", function (e) {
+      if (!isBreathAKey(e)) return;
+      clearAKeyBreathHold();
+      syncBreath();
+    });
   } else {
     document.addEventListener(
       "pointerdown",
