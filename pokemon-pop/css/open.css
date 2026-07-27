@@ -126,52 +126,58 @@
   overflow: visible;
 }
 
-/* Soft horizontal bloom behind the tear band */
-.pack__ambient-glow {
+/* Wide light field around the tear — larger than the tear band, no rect clip / no CSS blur */
+.pack__light-field {
   position: absolute;
   left: 50%;
-  width: 240%;
-  top: calc(var(--tear-y-min) * 100%);
-  height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100%);
-  transform: translate(-50%, -20%) scale(1);
-  min-height: 2.5rem;
-  z-index: 0;
+  top: calc((var(--tear-y-min) + var(--tear-y-max)) * 50%);
+  /* Larger than the tear strip — light blooms past the draw range */
+  width: 230%;
+  height: 42%;
+  min-height: 6.5rem;
+  transform: translate(-50%, -50%);
+  z-index: 4;
   pointer-events: none;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  outline: none;
+  box-shadow: none;
+}
+
+/* Soft bloom — fades to transparent so bounds stay invisible (no blur / no clip) */
+.pack__ambient-glow {
+  position: absolute;
+  inset: -45% -28%;
+  z-index: 0;
   background:
     radial-gradient(
-      ellipse 50% 90% at 50% 50%,
-      rgba(255, 252, 230, 0.7) 0%,
-      rgba(255, 220, 140, 0.38) 32%,
-      rgba(255, 170, 80, 0.16) 58%,
-      rgba(255, 120, 60, 0.06) 72%,
-      transparent 84%
+      ellipse 52% 46% at 50% 50%,
+      rgba(255, 252, 235, 0.88) 0%,
+      rgba(255, 235, 170, 0.55) 22%,
+      rgba(255, 200, 110, 0.28) 44%,
+      rgba(255, 160, 80, 0.1) 64%,
+      transparent 80%
     ),
     radial-gradient(
-      ellipse 90% 60% at 30% 50%,
-      rgba(255, 200, 120, 0.18) 0%,
-      transparent 70%
+      ellipse 78% 62% at 28% 48%,
+      rgba(255, 215, 130, 0.32) 0%,
+      transparent 72%
     ),
     radial-gradient(
-      ellipse 90% 60% at 70% 50%,
-      rgba(255, 180, 100, 0.16) 0%,
-      transparent 70%
+      ellipse 78% 62% at 72% 52%,
+      rgba(255, 200, 120, 0.26) 0%,
+      transparent 72%
     );
-  /* Static filter only — never animate filter (iOS draws a box when filter updates). */
-  filter: blur(14px);
-  opacity: 0.95;
+  opacity: 1;
   animation: tear-glow-breathe 3.2s ease-in-out infinite;
-  transition: opacity 0.45s ease, transform 0.25s ease;
+  transition: opacity 0.35s ease, transform 0.25s ease;
 }
 
 .pack__ambient-sparks {
   position: absolute;
-  left: 50%;
-  width: 200%;
-  top: calc(var(--tear-y-min) * 100% - 4%);
-  height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100% + 10%);
-  transform: translateX(-50%) scale(0.6);
-  z-index: 0;
-  pointer-events: none;
+  inset: -10% -5%;
+  z-index: 1;
   background-image:
     radial-gradient(circle, rgba(255, 255, 240, 0.95) 0 1.2px, transparent 2px),
     radial-gradient(circle, rgba(255, 220, 140, 0.9) 0 1px, transparent 2px),
@@ -182,17 +188,14 @@
   background-size: 180px 60px, 140px 50px, 200px 70px, 160px 55px, 220px 65px, 120px 45px;
   background-position: 10% 40%, 30% 70%, 55% 30%, 70% 65%, 85% 45%, 45% 55%;
   opacity: 0;
-  filter: drop-shadow(0 0 4px rgba(255, 220, 140, 0.65));
+  transform: scale(0.7);
+  transform-origin: center;
 }
 
 .pack__tear-glints {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(var(--tear-y-min) * 100%);
-  height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100%);
-  z-index: 5;
-  pointer-events: none;
+  inset: 10% 8%;
+  z-index: 3;
   background-image:
     radial-gradient(circle, #fff 0 1px, transparent 2px),
     radial-gradient(circle, rgba(255, 230, 160, 1) 0 1.2px, transparent 2.4px),
@@ -203,7 +206,6 @@
   background-size: 90px 40px, 110px 36px, 70px 42px, 130px 38px, 100px 44px, 150px 40px;
   background-position: 12% 40%, 38% 60%, 62% 35%, 82% 55%, 25% 50%, 70% 40%;
   opacity: 0;
-  mix-blend-mode: screen;
   transform: scale(0.55);
   transform-origin: center;
 }
@@ -212,44 +214,22 @@
   0%,
   100% {
     opacity: 0.85;
-    transform: translate(-50%, -20%) scale(1);
+    transform: scale(1);
   }
   50% {
     opacity: 1;
-    transform: translate(-50%, -20%) scale(1.08);
+    transform: scale(1.08);
   }
 }
 
-/* Drawing: build with opacity/scale only — no filter updates while held */
 .pack[data-state="drawing"] .pack__ambient-glow {
   animation: none;
-  filter: none;
-  opacity: calc(0.75 + var(--tear) * 0.25);
-  transform: translate(-50%, -20%) scale(calc(1.08 + var(--tear) * 0.4));
-  background:
-    radial-gradient(
-      ellipse 55% 100% at 50% 50%,
-      rgba(255, 252, 230, calc(0.45 + var(--tear) * 0.4)) 0%,
-      rgba(255, 220, 140, calc(0.22 + var(--tear) * 0.28)) 30%,
-      rgba(255, 170, 80, calc(0.1 + var(--tear) * 0.14)) 55%,
-      transparent 82%
-    ),
-    radial-gradient(
-      ellipse 95% 70% at 28% 50%,
-      rgba(255, 200, 120, calc(0.1 + var(--tear) * 0.16)) 0%,
-      transparent 72%
-    ),
-    radial-gradient(
-      ellipse 95% 70% at 72% 50%,
-      rgba(255, 180, 100, calc(0.08 + var(--tear) * 0.14)) 0%,
-      transparent 72%
-    );
+  opacity: calc(0.9 + var(--tear) * 0.1);
+  transform: scale(calc(1.06 + var(--tear) * 0.32));
 }
 
-/* Opening: bright burst while seal splits */
 .pack[data-state="splitting"] .pack__ambient-glow {
   animation: tear-glow-burst 1.25s ease-out forwards;
-  filter: none;
 }
 
 .pack[data-state="splitting"] .pack__ambient-sparks {
@@ -261,71 +241,28 @@
 }
 
 @keyframes tear-glow-burst {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -20%) scale(1.15);
-  }
-  22% {
-    opacity: 1;
-    transform: translate(-50%, -20%) scale(1.55);
-  }
-  70% {
-    opacity: 0.75;
-    transform: translate(-50%, -20%) scale(1.65);
-  }
-  100% {
-    opacity: 0.45;
-    transform: translate(-50%, -20%) scale(1.75);
-  }
+  0% { opacity: 1; transform: scale(1.1); }
+  22% { opacity: 1; transform: scale(1.35); }
+  70% { opacity: 0.78; transform: scale(1.45); }
+  100% { opacity: 0.5; transform: scale(1.55); }
 }
 
 @keyframes tear-sparks-burst {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) scale(0.35);
-    filter: drop-shadow(0 0 2px rgba(255, 220, 140, 0.4));
-  }
-  12% {
-    opacity: 1;
-    transform: translateX(-50%) scale(0.8);
-    filter: drop-shadow(0 0 10px rgba(255, 240, 180, 1));
-  }
-  45% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1.35);
-  }
-  100% {
-    opacity: 0.55;
-    transform: translateX(-50%) scale(1.75);
-    filter: drop-shadow(0 0 12px rgba(255, 220, 140, 0.55));
-  }
+  0% { opacity: 0; transform: scale(0.4); }
+  12% { opacity: 1; transform: scale(0.85); }
+  45% { opacity: 1; transform: scale(1.25); }
+  100% { opacity: 0.5; transform: scale(1.55); }
 }
 
 @keyframes tear-glints-burst {
-  0% {
-    opacity: 0;
-    transform: scale(0.4);
-    filter: drop-shadow(0 0 2px rgba(255, 240, 180, 0.5));
-  }
-  14% {
-    opacity: 1;
-    transform: scale(0.85);
-    filter: drop-shadow(0 0 8px rgba(255, 250, 220, 1));
-  }
-  50% {
-    opacity: 0.95;
-    transform: scale(1.45);
-  }
-  100% {
-    opacity: 0.5;
-    transform: scale(1.8);
-  }
+  0% { opacity: 0; transform: scale(0.4); }
+  15% { opacity: 1; transform: scale(0.9); }
+  55% { opacity: 0.9; transform: scale(1.35); }
+  100% { opacity: 0.45; transform: scale(1.7); }
 }
 
-/* Top flies away — light lingers, then slowly dies */
 .pack[data-state="torn"] .pack__ambient-glow {
   animation: tear-glow-linger 1.55s ease-out forwards;
-  filter: none;
 }
 
 .pack[data-state="torn"] .pack__ambient-sparks {
@@ -337,38 +274,18 @@
 }
 
 @keyframes tear-glow-linger {
-  0% {
-    opacity: 0.55;
-    transform: translate(-50%, -20%) scale(1.7);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -20%) scale(2.15);
-  }
+  0% { opacity: 0.55; transform: scale(1.5); }
+  100% { opacity: 0; transform: scale(1.9); }
 }
 
 @keyframes tear-sparks-linger {
-  0% {
-    opacity: 0.6;
-    transform: translateX(-50%) scale(1.7);
-    filter: drop-shadow(0 0 10px rgba(255, 230, 150, 0.7));
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) scale(2.4);
-    filter: drop-shadow(0 0 18px rgba(255, 220, 140, 0));
-  }
+  0% { opacity: 0.55; transform: scale(1.5); }
+  100% { opacity: 0; transform: scale(2.1); }
 }
 
 @keyframes tear-glints-linger {
-  0% {
-    opacity: 0.55;
-    transform: scale(1.75);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(2.45);
-  }
+  0% { opacity: 0.5; transform: scale(1.6); }
+  100% { opacity: 0; transform: scale(2.2); }
 }
 
 .pack[data-state="revealed"] .pack__ambient-glow,
@@ -376,96 +293,72 @@
 .pack[data-state="revealed"] .pack__ambient-sparks,
 .pack[data-state="flipped"] .pack__ambient-sparks,
 .pack[data-state="revealed"] .pack__tear-glints,
-.pack[data-state="flipped"] .pack__tear-glints {
+.pack[data-state="flipped"] .pack__tear-glints,
+.pack[data-state="revealed"] .pack__tear-sheen,
+.pack[data-state="flipped"] .pack__tear-sheen,
+.pack[data-state="revealed"] .pack__light-field,
+.pack[data-state="flipped"] .pack__light-field {
   opacity: 0;
   animation: none;
+  pointer-events: none;
 }
 
-/* Soft sheen across the tearable band — clipped to pack only */
+/* Soft moving beam inside the wide field — soft ellipse, no hard clip */
 .pack__tear-sheen {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(var(--tear-y-min) * 100%);
-  height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100%);
-  z-index: 5;
-  pointer-events: none;
-  overflow: hidden;
-  opacity: 0.8;
-  animation: tear-sheen-sweep 2.6s ease-in-out infinite;
-  -webkit-mask-image: linear-gradient(
-    180deg,
-    transparent 0%,
-    #000 22%,
-    #000 78%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    180deg,
-    transparent 0%,
-    #000 22%,
-    #000 78%,
-    transparent 100%
-  );
+  inset: 0;
+  z-index: 2;
+  overflow: visible;
+  opacity: 0.9;
+  animation: tear-sheen-pulse 2.6s ease-in-out infinite;
 }
 
-/* No animated filter / mix-blend — those cage the glow in a box on iOS when held. */
 .pack__tear-sheen::before {
   content: "";
   position: absolute;
-  top: -40%;
-  bottom: -40%;
+  top: 0;
+  bottom: 0;
   left: 0;
   width: 48%;
   background:
     radial-gradient(
-      ellipse 48% 70% at 50% 50%,
-      rgba(255, 255, 250, 0.5) 0%,
-      rgba(255, 236, 180, 0.28) 34%,
-      rgba(255, 210, 120, 0.1) 60%,
-      transparent 80%
+      ellipse 58% 78% at 50% 50%,
+      rgba(255, 255, 252, 0.9) 0%,
+      rgba(255, 242, 195, 0.55) 24%,
+      rgba(255, 220, 140, 0.22) 50%,
+      transparent 76%
     ),
     linear-gradient(
       90deg,
       transparent 0%,
-      rgba(255, 255, 245, 0.1) 28%,
-      rgba(255, 240, 200, 0.36) 50%,
-      rgba(255, 255, 245, 0.1) 72%,
+      rgba(255, 255, 245, 0.16) 28%,
+      rgba(255, 236, 180, 0.42) 50%,
+      rgba(255, 255, 245, 0.16) 72%,
       transparent 100%
     );
-  opacity: 0.95;
-  transform: translateX(-70%);
-  animation: tear-sheen-sweep-bg 2.6s ease-in-out infinite;
+  transform: translateX(-40%);
+  opacity: 1;
+  animation: tear-sheen-move 2.6s ease-in-out infinite;
 }
 
-@keyframes tear-sheen-sweep {
-  0% { opacity: 0.55; }
+@keyframes tear-sheen-pulse {
+  0%, 100% { opacity: 0.7; }
   50% { opacity: 1; }
-  100% { opacity: 0.55; }
 }
 
-@keyframes tear-sheen-sweep-bg {
-  0% {
-    transform: translateX(-70%);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translateX(90%);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(250%);
-    opacity: 0.5;
-  }
+@keyframes tear-sheen-move {
+  0% { transform: translateX(-55%); opacity: 0.45; }
+  50% { transform: translateX(95%); opacity: 1; }
+  100% { transform: translateX(245%); opacity: 0.45; }
 }
 
 .pack[data-state="drawing"] .pack__tear-sheen {
-  opacity: calc(0.7 + var(--tear) * 0.3);
-  animation: tear-sheen-sweep calc(1.5s - var(--tear) * 0.6s) linear infinite;
+  opacity: calc(0.75 + var(--tear) * 0.25);
+  animation: tear-sheen-pulse calc(1.55s - var(--tear) * 0.55s) linear infinite;
 }
 
 .pack[data-state="drawing"] .pack__tear-sheen::before {
-  animation: tear-sheen-sweep-bg calc(1.5s - var(--tear) * 0.6s) linear infinite;
+  animation: tear-sheen-move calc(1.55s - var(--tear) * 0.55s) linear infinite;
 }
 
 .pack[data-state="splitting"] .pack__tear-sheen {
@@ -473,27 +366,18 @@
 }
 
 .pack[data-state="splitting"] .pack__tear-sheen::before {
-  animation: tear-sheen-burst-bg 1.15s ease-out forwards;
+  animation: tear-sheen-burst-move 1.15s ease-out forwards;
 }
 
 @keyframes tear-sheen-burst {
   0%, 35% { opacity: 1; }
-  100% { opacity: 0.65; }
+  100% { opacity: 0.55; }
 }
 
-@keyframes tear-sheen-burst-bg {
-  0% {
-    transform: translateX(40%);
-    opacity: 0.85;
-  }
-  35% {
-    transform: translateX(75%);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(120%);
-    opacity: 0.7;
-  }
+@keyframes tear-sheen-burst-move {
+  0% { transform: translateX(40%); opacity: 0.9; }
+  40% { transform: translateX(80%); opacity: 1; }
+  100% { transform: translateX(130%); opacity: 0.55; }
 }
 
 .pack[data-state="torn"] .pack__tear-sheen {
@@ -501,7 +385,7 @@
 }
 
 .pack[data-state="torn"] .pack__tear-sheen::before {
-  animation: tear-sheen-linger-bg 1.35s ease-out forwards;
+  animation: tear-sheen-linger-move 1.35s ease-out forwards;
 }
 
 @keyframes tear-sheen-linger {
@@ -509,32 +393,15 @@
   100% { opacity: 0; }
 }
 
-@keyframes tear-sheen-linger-bg {
-  0% {
-    transform: translateX(80%);
-    opacity: 0.8;
-  }
-  100% {
-    transform: translateX(130%);
-    opacity: 0;
-  }
-}
-
-.pack[data-state="revealed"] .pack__tear-sheen,
-.pack[data-state="flipped"] .pack__tear-sheen {
-  opacity: 0;
-  animation: none;
-}
-
-.pack[data-state="revealed"] .pack__tear-sheen::before,
-.pack[data-state="flipped"] .pack__tear-sheen::before {
-  animation: none;
-  opacity: 0;
+@keyframes tear-sheen-linger-move {
+  0% { transform: translateX(85%); opacity: 0.75; }
+  100% { transform: translateX(140%); opacity: 0; }
 }
 
 .pack__inner {
   position: relative;
   z-index: 1;
+  overflow: visible;
   width: 100%;
   /* pack-s8a-p-25th.png is 410×805 */
   aspect-ratio: 410 / 805;

@@ -37,8 +37,6 @@
       </div>
 
       <div class="pack" id="pack" data-state="sealed">
-        <div class="pack__ambient-glow" aria-hidden="true"></div>
-        <div class="pack__ambient-sparks" aria-hidden="true"></div>
         <div class="pack__inner" id="pack-inner">
           <svg class="pack__defs" width="0" height="0" aria-hidden="true" focusable="false">
             <defs>
@@ -65,10 +63,15 @@
 
           <div class="pack__body" aria-hidden="true"></div>
           <div class="pack__top" id="pack-top" aria-hidden="true"></div>
-          <div class="pack__tear-sheen" aria-hidden="true"></div>
-          <div class="pack__tear-glints" aria-hidden="true"></div>
 
           <canvas class="pack__tear-stroke" id="tear-stroke" aria-hidden="true"></canvas>
+        </div>
+        <!-- Light blooms in a wide field (not clipped to the tear band). -->
+        <div class="pack__light-field" aria-hidden="true">
+          <div class="pack__ambient-glow"></div>
+          <div class="pack__tear-sheen"></div>
+          <div class="pack__ambient-sparks"></div>
+          <div class="pack__tear-glints"></div>
         </div>
         <div class="pack__tear-zone" id="tear-zone" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="팩 상단 찢기"></div>
       </div>
