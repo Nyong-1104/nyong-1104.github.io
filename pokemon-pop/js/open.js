@@ -47,6 +47,8 @@
   let tear = 0;
   let dragging = false;
   let torn = false;
+  let glowAliveRaf = 0;
+  let glowAlivePhase = 0;
   /** @type {'back'|'front'} */
   let cardFacing = "back";
   let faceRevealed = false;
@@ -78,8 +80,35 @@
     tearZone.setAttribute("aria-valuenow", String(Math.round(tear * 100)));
   }
 
+  function stopGlowAlive() {
+    if (glowAliveRaf) {
+      cancelAnimationFrame(glowAliveRaf);
+      glowAliveRaf = 0;
+    }
+    packEl.style.setProperty("--glow-alive", "0");
+  }
+
+  function pumpGlowAlive() {
+    if (packEl.dataset.state !== "drawing") {
+      glowAliveRaf = 0;
+      packEl.style.setProperty("--glow-alive", "0");
+      return;
+    }
+    glowAlivePhase += 0.07;
+    packEl.style.setProperty("--glow-alive", String(Math.sin(glowAlivePhase) * 0.018));
+    glowAliveRaf = requestAnimationFrame(pumpGlowAlive);
+  }
+
+  function startGlowAlive() {
+    if (glowAliveRaf) return;
+    glowAlivePhase = 0;
+    glowAliveRaf = requestAnimationFrame(pumpGlowAlive);
+  }
+
   function setState(state) {
     packEl.dataset.state = state;
+    if (state === "drawing") startGlowAlive();
+    else stopGlowAlive();
   }
 
   function resetClip() {
