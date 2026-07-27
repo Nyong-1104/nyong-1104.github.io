@@ -126,21 +126,15 @@
   overflow: visible;
 }
 
-/* Soft bloom on the pack face — clipped to pack width so sides don't stick out.
-   Inner glow host can still be wider (iOS filter padding) because the clip hides overflow. */
-.pack__glow-clip {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  overflow: hidden;
-  pointer-events: none;
-}
-
+/* Soft horizontal bloom behind the tear band.
+   Outer node scales/fades; ::before holds a CONSTANT blur.
+   Scaling a filtered node up is OK on iOS — scaling it back down cages into a box. */
 .pack__ambient-glow {
   --glow-blur: 18px;
   position: absolute;
   left: 50%;
-  width: 240%;
+  /* Match pack width — wider hosts were leaking the bloom past the pack sides */
+  width: 100%;
   top: calc(var(--tear-y-min) * 100% - 10%);
   height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100% + 20%);
   transform: translate(-50%, -20%) scale(1);
@@ -249,10 +243,10 @@
 }
 
 .pack[data-state="drawing"] .pack__ambient-glow::before {
-  inset: -55% -40%;
+  /* Vertical padding only — horizontal grow was sticking out past the pack */
+  inset: -55% 0;
   filter: blur(var(--glow-blur)) brightness(2.1);
-  /* Core stays ~original size; padding is transparent margin for blur falloff */
-  background-size: 48% 48%, 42% 42%, 42% 42%;
+  background-size: 100% 48%, 85% 42%, 85% 42%;
   background-repeat: no-repeat;
   background-position: 50% 50%, 32% 50%, 68% 50%;
 }
