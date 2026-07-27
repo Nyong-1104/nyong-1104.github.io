@@ -151,26 +151,28 @@
   content: "";
   position: absolute;
   inset: 0;
+  /* Warm gold baked into the gradient so Chrome doesn't wash to white via brightness().
+     iOS Safari already keeps hue under brightness; PC needs saturate to match. */
   background:
     radial-gradient(
       ellipse 50% 90% at 50% 50%,
-      rgba(255, 252, 230, 0.7) 0%,
-      rgba(255, 220, 140, 0.38) 32%,
-      rgba(255, 170, 80, 0.16) 58%,
-      rgba(255, 120, 60, 0.06) 72%,
+      rgba(255, 244, 200, 0.78) 0%,
+      rgba(255, 210, 120, 0.48) 30%,
+      rgba(255, 168, 72, 0.22) 56%,
+      rgba(255, 130, 50, 0.08) 72%,
       transparent 84%
     ),
     radial-gradient(
       ellipse 90% 60% at 30% 50%,
-      rgba(255, 200, 120, 0.18) 0%,
+      rgba(255, 190, 95, 0.26) 0%,
       transparent 70%
     ),
     radial-gradient(
       ellipse 90% 60% at 70% 50%,
-      rgba(255, 180, 100, 0.16) 0%,
+      rgba(255, 175, 80, 0.22) 0%,
       transparent 70%
     );
-  filter: blur(var(--glow-blur)) brightness(1.35);
+  filter: blur(var(--glow-blur)) brightness(1.12) saturate(1.35);
   opacity: 1;
   pointer-events: none;
 }
@@ -243,7 +245,8 @@
 
 .pack[data-state="drawing"] .pack__ambient-glow::before {
   inset: -55% -40%;
-  filter: blur(var(--glow-blur)) brightness(2.1);
+  /* Lower brightness + higher saturate ≈ iOS warm gold on Chromium */
+  filter: blur(var(--glow-blur)) brightness(1.35) saturate(1.55);
   /* Core stays ~original size; padding is transparent margin for blur falloff */
   background-size: 48% 48%, 42% 42%, 42% 42%;
   background-repeat: no-repeat;
@@ -385,7 +388,7 @@
 
 .pack[data-state="splitting"] .pack__ambient-glow::before,
 .pack[data-state="torn"] .pack__ambient-glow::before {
-  filter: blur(var(--glow-blur)) brightness(2.4);
+  filter: blur(var(--glow-blur)) brightness(1.45) saturate(1.6);
 }
 
 /* Soft sheen across the tearable band — clipped to pack only */
@@ -433,7 +436,7 @@
   background-size: 220% 100%, 100% 100%;
   background-position: 0% 0%, 0 0;
   mix-blend-mode: screen;
-  filter: blur(7px) brightness(1);
+  filter: blur(7px) brightness(1.05) saturate(1.3);
   -webkit-mask-image: linear-gradient(
     180deg,
     transparent 0%,
@@ -507,9 +510,9 @@
 }
 
 @keyframes tear-sheen-burst-bg {
-  0% { filter: blur(6px) brightness(2); }
-  35% { filter: blur(8px) brightness(3); }
-  100% { filter: blur(10px) brightness(2.2); }
+  0% { filter: blur(6px) brightness(1.35) saturate(1.5); }
+  35% { filter: blur(8px) brightness(1.55) saturate(1.6); }
+  100% { filter: blur(10px) brightness(1.4) saturate(1.45); }
 }
 
 .pack[data-state="torn"] .pack__tear-sheen {
@@ -526,8 +529,8 @@
 }
 
 @keyframes tear-sheen-linger-bg {
-  0% { filter: blur(8px) brightness(2); }
-  100% { filter: blur(14px) brightness(1.2); }
+  0% { filter: blur(8px) brightness(1.4) saturate(1.5); }
+  100% { filter: blur(14px) brightness(1.1) saturate(1.25); }
 }
 
 .pack[data-state="revealed"] .pack__tear-sheen,
