@@ -126,15 +126,18 @@
   overflow: visible;
 }
 
-/* Soft horizontal bloom behind the tear band */
+/* Soft horizontal bloom behind the tear band.
+   Host is taller than the tear strip so iOS filter clip stays outside the visible bloom.
+   Blur radius stays constant — growth uses scale/brightness (avoids iOS sudden cage). */
 .pack__ambient-glow {
+  --glow-blur: 18px;
   position: absolute;
   left: 50%;
   width: 240%;
-  top: calc(var(--tear-y-min) * 100%);
-  height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100%);
+  top: calc(var(--tear-y-min) * 100% - 10%);
+  height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100% + 20%);
   transform: translate(-50%, -20%) scale(1);
-  min-height: 2.5rem;
+  min-height: 4.5rem;
   z-index: 0;
   pointer-events: none;
   background:
@@ -156,10 +159,10 @@
       rgba(255, 180, 100, 0.16) 0%,
       transparent 70%
     );
-  filter: blur(14px) brightness(1);
+  filter: blur(var(--glow-blur)) brightness(1);
   opacity: 0.95;
   animation: tear-glow-breathe 3.2s ease-in-out infinite;
-  transition: opacity 0.45s ease, filter 0.25s ease, transform 0.25s ease;
+  transition: opacity 0.45s ease, transform 0.25s ease;
 }
 
 .pack__ambient-sparks {
@@ -211,22 +214,22 @@
   0%,
   100% {
     opacity: 0.9;
-    filter: blur(14px) brightness(1);
+    filter: blur(var(--glow-blur)) brightness(1);
+    transform: translate(-50%, -20%) scale(1);
   }
   50% {
     opacity: 1;
-    filter: blur(24px) brightness(2.35);
+    filter: blur(var(--glow-blur)) brightness(2.35);
+    transform: translate(-50%, -20%) scale(1.08);
   }
 }
 
-/* Drawing: light builds with tear progress (no sparkles yet) */
+/* Drawing: bloom grows via scale/brightness; blur radius stays fixed for iOS */
 .pack[data-state="drawing"] .pack__ambient-glow {
   animation: none;
   opacity: 1;
-  filter:
-    blur(calc(14px + var(--tear) * 20px))
-    brightness(calc(1.5 + var(--tear) * 1.8));
-  transform: translate(-50%, -20%) scale(calc(1.05 + var(--tear) * 0.35));
+  filter: blur(var(--glow-blur)) brightness(calc(1.5 + var(--tear) * 1.8));
+  transform: translate(-50%, -20%) scale(calc(1.1 + var(--tear) * 0.7));
 }
 
 /* Opening: bright burst while seal splits */
@@ -444,15 +447,15 @@
 @keyframes tear-sheen-sweep-bg {
   0% {
     background-position: -40% 0%, 0 0;
-    filter: blur(8px) brightness(1);
+    filter: blur(7px) brightness(1);
   }
   50% {
     background-position: 60% 0%, 0 0;
-    filter: blur(6px) brightness(1.45);
+    filter: blur(7px) brightness(1.45);
   }
   100% {
     background-position: 140% 0%, 0 0;
-    filter: blur(8px) brightness(1);
+    filter: blur(7px) brightness(1);
   }
 }
 
@@ -462,7 +465,7 @@
 }
 
 .pack[data-state="drawing"] .pack__tear-sheen::before {
-  filter: blur(calc(5px + var(--tear) * 2px)) brightness(calc(1.35 + var(--tear) * 1.3));
+  filter: blur(7px) brightness(calc(1.35 + var(--tear) * 1.3));
   animation: tear-sheen-sweep-bg calc(1.4s - var(--tear) * 0.7s) linear infinite;
 }
 
