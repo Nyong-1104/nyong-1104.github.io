@@ -1793,6 +1793,35 @@ body.nav-drawer-open {
     drop-shadow(0 0 18px rgba(30, 130, 230, 0.55));
 }
 
+/* Blastoise water hit: soaked HTML shakes like it got blasted */
+.is-water-soaked {
+  will-change: transform;
+  animation: water-blast-shake 0.12s linear infinite;
+  filter: brightness(1.05) saturate(1.15)
+    drop-shadow(0 0 4px rgba(60, 160, 240, 0.45));
+}
+
+@keyframes water-blast-shake {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate(-3px, 2px) rotate(-1.2deg);
+  }
+  40% {
+    transform: translate(4px, -2px) rotate(1.4deg);
+  }
+  60% {
+    transform: translate(-2px, -3px) rotate(-0.8deg);
+  }
+  80% {
+    transform: translate(3px, 1px) rotate(1deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
 /* Evolved elemental burst flash (leaf / fire / bluefire / lightning / water): ~0.1s white pulse */
 .cursor-burst.cursor-burst--element,
 .cursor-burst.cursor-burst--raichu,
@@ -1822,6 +1851,11 @@ body.nav-drawer-open {
 
   .is-breath-burning {
     animation: none;
+  }
+
+  .is-water-soaked {
+    animation: none;
+    filter: none;
   }
 }
 

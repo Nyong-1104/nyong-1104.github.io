@@ -284,6 +284,9 @@
   var VINE_LEAF_COUNT = 7;
   var VINE_LEAF_SIZE_MIN = 14;
   var VINE_LEAF_SIZE_MAX = 26;
+  /* --- Blastoise water: soak/shake HTML on hit --- */
+  var soakingMap = new Map();
+  var WATER_SHAKE_MS = 900;
 
   function isIgniteChrome(el) {
     if (!el || !el.classList) return false;
@@ -714,6 +717,43 @@
     if (target) vineElement(target);
   }
 
+  function clearSoak(el) {
+    var state = soakingMap.get(el);
+    if (!state) return;
+    if (state.timer) clearTimeout(state.timer);
+    el.classList.remove("is-water-soaked");
+    soakingMap.delete(el);
+  }
+
+  function clearAllSoaks() {
+    var els = [];
+    soakingMap.forEach(function (_state, el) {
+      els.push(el);
+    });
+    for (var i = 0; i < els.length; i++) clearSoak(els[i]);
+  }
+
+  function shakeElement(el) {
+    if (!el) return;
+    var existing = soakingMap.get(el);
+    if (existing) {
+      clearTimeout(existing.timer);
+      /* Retrigger CSS animation. */
+      el.classList.remove("is-water-soaked");
+      void el.offsetWidth;
+      el.classList.add("is-water-soaked");
+      existing.timer = setTimeout(function () {
+        clearSoak(el);
+      }, WATER_SHAKE_MS);
+      return;
+    }
+    el.classList.add("is-water-soaked");
+    var timer = setTimeout(function () {
+      clearSoak(el);
+    }, WATER_SHAKE_MS);
+    soakingMap.set(el, { timer: timer });
+  }
+
   document.addEventListener(
     "visibilitychange",
     function () {
@@ -721,6 +761,7 @@
         clearAllBurns();
         clearAllZaps();
         clearAllVines();
+        clearAllSoaks();
       }
     },
     { passive: true }
@@ -731,6 +772,7 @@
       clearAllBurns();
       clearAllZaps();
       clearAllVines();
+      clearAllSoaks();
     },
     { passive: true }
   );
@@ -1185,6 +1227,7 @@
         var target = tryWaterHitAt(curX, curY);
         if (target) {
           spawnWaterScatter(curX, curY);
+          shakeElement(target);
           removeBlob();
           return;
         }
