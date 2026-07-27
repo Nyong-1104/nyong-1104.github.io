@@ -126,17 +126,7 @@
   overflow: visible;
 }
 
-/* Clip glow to pack silhouette so 240%-wide bloom cannot stick out the sides.
-   Glow sits above pack art (inside .pack__inner) so light shows on the face, not only as side bleed. */
-.pack__glow-clip {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-/* Soft horizontal bloom on the tear band.
+/* Soft horizontal bloom behind the tear band.
    Outer node scales/fades; ::before holds a CONSTANT blur.
    Scaling a filtered node up is OK on iOS — scaling it back down cages into a box. */
 .pack__ambient-glow {
