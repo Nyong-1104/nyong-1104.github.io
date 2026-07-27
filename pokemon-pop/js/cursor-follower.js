@@ -8,10 +8,11 @@
       evolveOutcomes: [
         {
           src: "./assets/cursor-follower-venusaur.png",
+          burst: "./assets/cursor-burst-leaf.png",
           burstFlash: true,
           evolvedXl: true,
-          breathFire: true,
-          breathRangeScale: 0.66,
+          /* Hold A / click: spinning leaf circle every 0.5s. */
+          leafSpin: true,
         },
       ],
     },
@@ -72,7 +73,10 @@
       evolveOutcomes: [
         {
           src: "./assets/cursor-follower-raichu.png",
+          burst: "./assets/cursor-burst-lightning.png",
           burstFlash: true,
+          /* Hold A / click: Raichu lightning bursts every 0.5s (12 fixed rays). */
+          holdBurst: true,
         },
       ],
     },
@@ -90,6 +94,8 @@
   var EVOLVED_BURST_SCALE = 1.95;
   var SHORT_CLICK_MS = 400;
   var BREATH_HOLD_MS = 1000;
+  /* Raichu: fixed-direction lightning bursts while skill is held. */
+  var HOLD_BURST_MS = 500;
   /* 3× denser blue-fire stream (was 40–80ms). */
   var BREATH_SPAWN_MIN = 13;
   var BREATH_SPAWN_MAX = 27;
@@ -135,15 +141,33 @@
   var evolved = false;
   var evolveBurstFlash = false;
   var canBreath = false;
+  var canHoldBurst = false;
+  var canLeafSpin = false;
   var breathRangeScale = 1;
   var breathing = false;
   var breathInterval = 0;
-  /* Breath stays on while mouse OR A has been held past BREATH_HOLD_MS. */
+  var holdBursting = false;
+  var holdBurstInterval = 0;
+  var leafSpinning = false;
+  var leafSpinInterval = 0;
+  /* Skill stays on while mouse OR A has been held past BREATH_HOLD_MS. */
   var mouseBreathReady = false;
   var aKeyBreathReady = false;
   var mouseBreathTimer = 0;
   var aKeyBreathTimer = 0;
   var aKeyHeld = false;
+
+  function hasHoldSkill() {
+    return canBreath || canHoldBurst || canLeafSpin;
+  }
+
+  function followerCenter() {
+    var r = img.getBoundingClientRect();
+    return {
+      cx: r.left + r.width / 2,
+      cy: r.top + r.height / 2,
+    };
+  }
 
   var img = document.createElement("img");
   img.className = "cursor-follower";
@@ -247,6 +271,9 @@
 
   /* --- Charizard breath: ignite HTML under fire particles --- */
   var burningMap = new Map();
+  /* --- Raichu lightning: zap HTML under lightning particles --- */
+  var zappingMap = new Map();
+  var ZAP_MS = 750;
 
   function isIgniteChrome(el) {
     if (!el || !el.classList) return false;
@@ -255,6 +282,8 @@
       el.classList.contains("cursor-burst") ||
       el.classList.contains("breath-burn-flame") ||
       el.classList.contains("breath-burn-overlay") ||
+      el.classList.contains("lightning-zap-flash") ||
+      el.classList.contains("lightning-zap-overlay") ||
       el.classList.contains("nav-drawer-backdrop")
     );
   }
@@ -440,14 +469,111 @@
     if (target) igniteElement(target);
   }
 
+  function clearZap(el) {
+    var state = zappingMap.get(el);
+    if (!state) return;
+    if (state.timer) clearTimeout(state.timer);
+    if (state.onMove) {
+      window.removeEventListener("scroll", state.onMove, true);
+      window.removeEventListener("resize", state.onMove);
+    }
+    if (state.overlay && state.overlay.parentNode) {
+      state.overlay.parentNode.removeChild(state.overlay);
+    }
+    zappingMap.delete(el);
+  }
+
+  function clearAllZaps() {
+    var els = [];
+    zappingMap.forEach(function (_state, el) {
+      els.push(el);
+    });
+    for (var i = 0; i < els.length; i++) clearZap(els[i]);
+  }
+
+  function zapElement(el) {
+    if (!el) return;
+    var existing = zappingMap.get(el);
+    if (existing) {
+      clearTimeout(existing.timer);
+      existing.timer = setTimeout(function () {
+        clearZap(el);
+      }, ZAP_MS);
+      if (existing.overlay) syncBurnOverlay(existing.overlay, el);
+      return;
+    }
+
+    var overlay = document.createElement("div");
+    overlay.className = "lightning-zap-overlay";
+    overlay.setAttribute("aria-hidden", "true");
+    syncBurnOverlay(overlay, el);
+
+    var r = el.getBoundingClientRect();
+    var base = Math.max(18, Math.min(90, r.width * 0.42));
+    var boltCount = 2 + Math.floor(Math.random() * 2); // 2~3
+
+    for (var i = 0; i < boltCount; i++) {
+      var bolt = document.createElement("img");
+      bolt.className = "lightning-zap-flash";
+      bolt.alt = "";
+      bolt.draggable = false;
+      bolt.src = burstSrc;
+
+      bolt.style.width = base + Math.random() * base * 0.55 + "px";
+      bolt.style.left = 45 + Math.random() * 12 + "%";
+      bolt.style.top = 20 + Math.random() * 60 + "%";
+      bolt.style.transform =
+        "translate(-50%, -50%) rotate(" +
+        (Math.random() * 50 - 25) +
+        "deg)";
+
+      overlay.appendChild(bolt);
+    }
+    document.body.appendChild(overlay);
+
+    var onMove = function () {
+      if (!el.isConnected) {
+        clearZap(el);
+        return;
+      }
+      syncBurnOverlay(overlay, el);
+    };
+    window.addEventListener("scroll", onMove, true);
+    window.addEventListener("resize", onMove);
+
+    var timer = setTimeout(function () {
+      clearZap(el);
+    }, ZAP_MS);
+    zappingMap.set(el, { timer: timer, overlay: overlay, onMove: onMove });
+  }
+
+  function tryZapAt(px, py) {
+    if (px < 0 || py < 0 || px >= window.innerWidth || py >= window.innerHeight) {
+      return;
+    }
+    var hit = document.elementFromPoint(px, py);
+    var target = resolveIgniteTarget(hit);
+    if (target) zapElement(target);
+  }
+
   document.addEventListener(
     "visibilitychange",
     function () {
-      if (document.hidden) clearAllBurns();
+      if (document.hidden) {
+        clearAllBurns();
+        clearAllZaps();
+      }
     },
     { passive: true }
   );
-  window.addEventListener("pagehide", clearAllBurns, { passive: true });
+  window.addEventListener(
+    "pagehide",
+    function () {
+      clearAllBurns();
+      clearAllZaps();
+    },
+    { passive: true }
+  );
 
   /* --- Charizard breath stream (hold 1s with mouse or A) --- */
   function spawnBreathParticle() {
@@ -525,6 +651,73 @@
     return false;
   }
 
+  /* Raichu lightning: spawn particles in fixed directions (no cone).
+     Angle step is controlled by caller. Range scales by `rangeScale`
+     to match Charizard breath distance tuning. */
+  function spawnLightningRay(originX, originY, angle, rangeScale) {
+    var p = document.createElement("img");
+    p.className = "cursor-burst cursor-burst--breath";
+    p.alt = "";
+    p.draggable = false;
+    p.src = burstSrc;
+
+    var size = BREATH_SIZE_MIN + Math.random() * (BREATH_SIZE_MAX - BREATH_SIZE_MIN);
+    p.style.width = size + "px";
+    p.style.height = "auto";
+    p.style.left = originX - size / 2 + "px";
+    p.style.top = originY - size / 2 + "px";
+    document.body.appendChild(p);
+
+    var speedMin = BREATH_SPEED_MIN * rangeScale;
+    var speedMax = BREATH_SPEED_MAX * rangeScale;
+    var speed = speedMin + Math.random() * (speedMax - speedMin);
+    var vx = Math.cos(angle) * speed;
+    var vy = Math.sin(angle) * speed;
+    var life = BREATH_LIFE_MIN + Math.random() * (BREATH_LIFE_MAX - BREATH_LIFE_MIN);
+    var rot = (Math.random() - 0.5) * 360;
+    var start = performance.now();
+
+    var doHit = Math.random() < BREATH_HIT_SAMPLE;
+    var lastHitAt = 0;
+
+    (function (el, vx0, vy0, life0, rot0, t0, originX0, originY0, hitEnabled) {
+      function tick(now) {
+        var t = (now - t0) / life0;
+        if (t >= 1) {
+          if (el.parentNode) el.parentNode.removeChild(el);
+          return;
+        }
+        var ease = 1 - (1 - t) * (1 - t);
+        var dx = vx0 * (ease * (life0 / 1000));
+        var dy = vy0 * (ease * (life0 / 1000));
+        var opacity = 1 - t;
+        var scale =
+          BREATH_SCALE_START +
+          ease * (BREATH_SCALE_END - BREATH_SCALE_START);
+        el.style.opacity = String(opacity);
+        el.style.transform =
+          "translate3d(" +
+          dx +
+          "px," +
+          dy +
+          "px,0) rotate(" +
+          rot0 * t +
+          "deg) scale(" +
+          scale +
+          ")";
+        if (
+          hitEnabled &&
+          now - lastHitAt >= BREATH_HIT_CHECK_MS
+        ) {
+          lastHitAt = now;
+          tryZapAt(originX0 + dx, originY0 + dy);
+        }
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    })(p, vx, vy, life, rot, start, originX, originY, doHit);
+  }
+
   function startBreath() {
     if (breathing || !canBreath) return;
     breathing = true;
@@ -549,9 +742,127 @@
     breathing = false;
   }
 
+  /* Raichu: fixed-direction lightning every HOLD_BURST_MS. */
+  function startHoldBurst() {
+    if (holdBursting || !canHoldBurst) return;
+    holdBursting = true;
+    function scheduleNext() {
+      if (!holdBursting) return;
+      var c = followerCenter();
+      /* 12 directions, 30deg spacing. */
+      var step = (Math.PI * 2) / 12;
+      /* Distance: 66% of Charizard breath range. */
+      var rangeScale = 0.66;
+      for (var i = 0; i < 12; i++) {
+        spawnLightningRay(c.cx, c.cy, i * step, rangeScale);
+      }
+      holdBurstInterval = setTimeout(scheduleNext, HOLD_BURST_MS);
+    }
+    scheduleNext();
+  }
+
+  function stopHoldBurst() {
+    if (holdBurstInterval) {
+      clearTimeout(holdBurstInterval);
+      holdBurstInterval = 0;
+    }
+    holdBursting = false;
+  }
+
+  /* ---- Venusaur: spinning leaf circle ---------------------------------- */
+  var LEAF_COUNT = 10;
+  var LEAF_SPIN_SPEED = 180;  /* px/s outward travel */
+  var LEAF_LIFE = 900;        /* ms each leaf lives */
+  var LEAF_SIZE = 22;
+  /* Each burst, leaves start at LEAF_RADIUS px from center. */
+  var LEAF_RADIUS = 28;
+
+  function spawnLeafSpinBurst() {
+    var c = followerCenter();
+    var cx = c.cx;
+    var cy = c.cy;
+    var now = performance.now();
+    /* Offset the starting angle each burst so the circle looks like it's spinning. */
+    var angleOffset = (now * 0.003) % (Math.PI * 2);
+    for (var i = 0; i < LEAF_COUNT; i++) {
+      var baseAngle = angleOffset + (Math.PI * 2 / LEAF_COUNT) * i;
+      (function (angle) {
+        var p = document.createElement("img");
+        p.className = "cursor-burst cursor-burst--leaf";
+        p.alt = "";
+        p.draggable = false;
+        p.src = burstSrc;
+        /* Start on the circle perimeter. */
+        var startX = cx + Math.cos(angle) * LEAF_RADIUS;
+        var startY = cy + Math.sin(angle) * LEAF_RADIUS;
+        p.style.cssText = [
+          "position:fixed",
+          "pointer-events:none",
+          "user-select:none",
+          "z-index:55",
+          "width:" + LEAF_SIZE + "px",
+          "height:" + LEAF_SIZE + "px",
+          "left:" + startX + "px",
+          "top:" + startY + "px",
+          "transform-origin:50% 50%",
+          "will-change:transform,opacity",
+          "image-rendering:pixelated",
+        ].join(";");
+        document.body.appendChild(p);
+
+        /* Spin as the leaf flies outward: 360deg over its lifetime. */
+        var vx = Math.cos(angle) * LEAF_SPIN_SPEED;
+        var vy = Math.sin(angle) * LEAF_SPIN_SPEED;
+        var born = performance.now();
+
+        function tick(now2) {
+          var t = (now2 - born) / LEAF_LIFE;
+          if (t >= 1) { if (p.parentNode) p.parentNode.removeChild(p); return; }
+          var dx = vx * (now2 - born) / 1000;
+          var dy = vy * (now2 - born) / 1000;
+          var spin = t * 360;
+          var opacity = t < 0.7 ? 1 : 1 - (t - 0.7) / 0.3;
+          p.style.left = (startX + dx) + "px";
+          p.style.top  = (startY + dy) + "px";
+          p.style.transform = "rotate(" + spin + "deg)";
+          p.style.opacity = opacity;
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      })(baseAngle);
+    }
+  }
+
+  function startLeafSpin() {
+    if (leafSpinning || !canLeafSpin) return;
+    leafSpinning = true;
+    function scheduleNext() {
+      if (!leafSpinning) return;
+      spawnLeafSpinBurst();
+      leafSpinInterval = setTimeout(scheduleNext, HOLD_BURST_MS);
+    }
+    scheduleNext();
+  }
+
+  function stopLeafSpin() {
+    if (leafSpinInterval) {
+      clearTimeout(leafSpinInterval);
+      leafSpinInterval = 0;
+    }
+    leafSpinning = false;
+  }
+  /* ---------------------------------------------------------------------- */
+
   function syncBreath() {
-    if (mouseBreathReady || aKeyBreathReady) startBreath();
-    else stopBreathStream();
+    if (mouseBreathReady || aKeyBreathReady) {
+      if (canBreath) startBreath();
+      if (canHoldBurst) startHoldBurst();
+      if (canLeafSpin) startLeafSpin();
+    } else {
+      stopBreathStream();
+      stopHoldBurst();
+      stopLeafSpin();
+    }
   }
 
   function clearMouseBreathHold() {
@@ -575,6 +886,8 @@
     clearMouseBreathHold();
     clearAKeyBreathHold();
     stopBreathStream();
+    stopHoldBurst();
+    stopLeafSpin();
   }
 
   function isBreathAKey(e) {
@@ -617,6 +930,8 @@
     if (outcome.burst) burstSrc = outcome.burst;
     evolveBurstFlash = !!outcome.burstFlash;
     canBreath = !!outcome.breathFire;
+    canHoldBurst = !!outcome.holdBurst;
+    canLeafSpin = !!outcome.leafSpin;
     breathRangeScale = outcome.breathRangeScale != null ? outcome.breathRangeScale : 1;
     spawnBurst(cx, cy);
   }
@@ -633,8 +948,8 @@
       "pointerdown",
       function (e) {
         if (e.button !== 0) return;
-        /* Charizard forms: hold 1s -> continuous breath (no evolve charge). */
-        if (evolved && canBreath) {
+        /* Evolved skill forms: hold 1s -> breath stream or radial burst. */
+        if (evolved && hasHoldSkill()) {
           pressStart = performance.now();
           clearMouseBreathHold();
           syncBreath();
@@ -673,8 +988,8 @@
         var cy = e.clientY;
         pressStart = 0;
 
-        /* Charizard forms: release mouse; breath continues if A is still past 1s. */
-        if (evolved && canBreath) {
+        /* Skill forms: release mouse; skill continues if A is still past 1s. */
+        if (evolved && hasHoldSkill()) {
           var wasMouseBreath = mouseBreathReady;
           clearMouseBreathHold();
           syncBreath();
@@ -714,9 +1029,9 @@
       { passive: true }
     );
 
-    /* Charizard forms: hold A >=1s -> same breath; ignored while typing. */
+    /* Skill forms: hold A >=1s -> breath / radial burst; ignored while typing. */
     document.addEventListener("keydown", function (e) {
-      if (!evolved || !canBreath || !isBreathAKey(e) || e.repeat) return;
+      if (!evolved || !hasHoldSkill() || !isBreathAKey(e) || e.repeat) return;
       if (isTypingFocus(e.target) || isTypingFocus(document.activeElement)) return;
       if (aKeyHeld) return;
       aKeyHeld = true;
