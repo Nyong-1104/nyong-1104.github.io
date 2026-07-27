@@ -24,6 +24,9 @@
         {
           src: "./assets/cursor-follower-masterball.png",
           burst: "./assets/cursor-burst-masterball.png",
+          burstFlash: true,
+          /* Hold A / click: fire Master Ball left; catch HTML on hit. */
+          masterCatch: true,
         },
       ],
     },
@@ -145,6 +148,7 @@
   var canHoldBurst = false;
   var canLeafSpin = false;
   var canWaterBlob = false;
+  var canMasterCatch = false;
   var breathRangeScale = 1;
   var breathing = false;
   var breathInterval = 0;
@@ -154,6 +158,8 @@
   var leafSpinInterval = 0;
   var waterBlobbing = false;
   var waterBlobInterval = 0;
+  var masterCatching = false;
+  var masterCatchInterval = 0;
   /* Skill stays on while mouse OR A has been held past BREATH_HOLD_MS. */
   var mouseBreathReady = false;
   var aKeyBreathReady = false;
@@ -162,7 +168,13 @@
   var aKeyHeld = false;
 
   function hasHoldSkill() {
-    return canBreath || canHoldBurst || canLeafSpin || canWaterBlob;
+    return (
+      canBreath ||
+      canHoldBurst ||
+      canLeafSpin ||
+      canWaterBlob ||
+      canMasterCatch
+    );
   }
 
   function followerCenter() {
@@ -303,6 +315,9 @@
       el.classList.contains("venusaur-vine-leaf") ||
       el.classList.contains("venusaur-vine-stem") ||
       el.classList.contains("cursor-burst--water-blob") ||
+      el.classList.contains("cursor-burst--masterball") ||
+      el.classList.contains("masterball-white-burst") ||
+      el.classList.contains("is-masterball-caught") ||
       el.classList.contains("nav-drawer-backdrop")
     );
   }
@@ -1312,17 +1327,352 @@
   }
   /* ---------------------------------------------------------------------- */
 
+  /* ---- Master Ball: catch HTML on hit, miss flies away ---------------- */
+  var MASTERBALL_MS = 750;
+  var MASTERBALL_SIZE = 44;
+  var MASTERBALL_SPEED = 460;
+  var MASTERBALL_ANGLE = Math.PI; /* left */
+  var MASTERBALL_ARM_MS = 140;
+  var MASTERBALL_HIT_MS = 40;
+  var MASTERBALL_BOUNCE_PX = 28;
+  var floorBalls = [];
+  var floorRaf = 0;
+
+  function tryMasterHitAt(px, py) {
+    if (px < 0 || py < 0 || px >= window.innerWidth || py >= window.innerHeight) {
+      return null;
+    }
+    var hit = document.elementFromPoint(px, py);
+    var target = resolveIgniteTarget(hit);
+    if (!target) return null;
+    if (target.classList.contains("is-masterball-caught")) return null;
+    if (target.classList.contains("is-masterball-catching")) return null;
+    return target;
+  }
+
+  function spawnMasterWhiteBurst(cx, cy) {
+    var flash = document.createElement("div");
+    flash.className = "masterball-white-burst";
+    flash.setAttribute("aria-hidden", "true");
+    flash.style.left = cx + "px";
+    flash.style.top = cy + "px";
+    document.body.appendChild(flash);
+    setTimeout(function () {
+      if (flash.parentNode) flash.parentNode.removeChild(flash);
+    }, 450);
+  }
+
+  function ensureFloorBallLoop() {
+    if (floorRaf) return;
+    var last = performance.now();
+    function tick(now) {
+      if (!floorBalls.length) {
+        floorRaf = 0;
+        return;
+      }
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      var floorY = window.innerHeight - MASTERBALL_SIZE - 8;
+      var maxX = Math.max(0, window.innerWidth - MASTERBALL_SIZE);
+      for (var i = 0; i < floorBalls.length; i++) {
+        var b = floorBalls[i];
+        if (b.falling) {
+          b.vy += 1600 * dt;
+          b.y += b.vy * dt;
+          b.x += b.vx * dt;
+          if (b.y >= floorY) {
+            b.y = floorY;
+            b.falling = false;
+            b.vy = 0;
+            b.vx *= 0.55;
+          }
+        } else {
+          b.vx *= Math.pow(0.25, dt); /* friction */
+          if (Math.abs(b.vx) < 4) b.vx = (Math.random() - 0.5) * 18;
+          b.x += b.vx * dt;
+          b.y = floorY;
+          if (b.x < 0) {
+            b.x = 0;
+            b.vx = Math.abs(b.vx) * 0.7 + 20;
+          } else if (b.x > maxX) {
+            b.x = maxX;
+            b.vx = -Math.abs(b.vx) * 0.7 - 20;
+          }
+        }
+        b.rot += b.vx * dt * 2.2;
+        b.el.style.left = b.x + "px";
+        b.el.style.top = b.y + "px";
+        b.el.style.transform = "rotate(" + b.rot + "deg)";
+      }
+      floorRaf = requestAnimationFrame(tick);
+    }
+    floorRaf = requestAnimationFrame(tick);
+  }
+
+  function dropMasterBallToFloor(ball, x, y) {
+    ball.classList.remove("is-masterball-whitened", "is-masterball-vibrating");
+    ball.classList.add("is-masterball-floor");
+    floorBalls.push({
+      el: ball,
+      x: x,
+      y: y,
+      vx: (Math.random() - 0.5) * 160,
+      vy: 40,
+      rot: 0,
+      falling: true,
+    });
+    ensureFloorBallLoop();
+  }
+
+  function hideCaughtElement(el) {
+    el.classList.remove("is-masterball-whitened", "is-masterball-catching");
+    el.classList.add("is-masterball-caught");
+    el.setAttribute("aria-hidden", "true");
+    el.style.position = "";
+    el.style.left = "";
+    el.style.top = "";
+    el.style.width = "";
+    el.style.height = "";
+    el.style.margin = "";
+    el.style.transform = "";
+    el.style.zIndex = "";
+    el.style.transition = "";
+    el.style.filter = "";
+    el.style.opacity = "";
+  }
+
+  function runMasterCatch(ball, hitX, hitY, target) {
+    target.classList.add("is-masterball-catching");
+    var size = MASTERBALL_SIZE;
+    var bounceX = hitX + MASTERBALL_BOUNCE_PX;
+    var stopX = hitX + MASTERBALL_BOUNCE_PX * 0.45;
+    var stopY = hitY;
+    var born = performance.now();
+    var phase = "bounce";
+    var suckStart = 0;
+    var vibStart = 0;
+    var targetRect = target.getBoundingClientRect();
+    var targetOrigin = {
+      left: targetRect.left,
+      top: targetRect.top,
+      width: targetRect.width,
+      height: targetRect.height,
+    };
+
+    function placeBall(x, y, extraTransform) {
+      ball.style.left = x - size / 2 + "px";
+      ball.style.top = y - size / 2 + "px";
+      ball.style.transform = extraTransform || "";
+    }
+
+    placeBall(hitX, hitY);
+
+    function tick(now) {
+      var t = now - born;
+
+      if (phase === "bounce") {
+        /* Ease back a little to the right, then settle. */
+        var u = Math.min(1, t / 220);
+        var ease = 1 - (1 - u) * (1 - u);
+        var bx = hitX + (bounceX - hitX) * ease;
+        var by = hitY;
+        if (u >= 1) {
+          /* Settle slightly left of peak bounce. */
+          var u2 = Math.min(1, (t - 220) / 160);
+          var e2 = u2 * u2;
+          bx = bounceX + (stopX - bounceX) * e2;
+          if (u2 >= 1) {
+            phase = "whiten";
+            born = now;
+            placeBall(stopX, stopY);
+            ball.classList.add("is-masterball-whitened");
+            target.classList.add("is-masterball-whitened");
+            requestAnimationFrame(tick);
+            return;
+          }
+        }
+        placeBall(bx, by);
+        requestAnimationFrame(tick);
+        return;
+      }
+
+      if (phase === "whiten") {
+        if (now - born >= 180) {
+          phase = "suck";
+          suckStart = now;
+          /* Lift target out of flow so it can fly into the ball. */
+          var r = target.getBoundingClientRect();
+          targetOrigin = {
+            left: r.left,
+            top: r.top,
+            width: r.width,
+            height: r.height,
+          };
+          target.style.position = "fixed";
+          target.style.left = r.left + "px";
+          target.style.top = r.top + "px";
+          target.style.width = r.width + "px";
+          target.style.height = r.height + "px";
+          target.style.margin = "0";
+          target.style.zIndex = "58";
+          target.style.transformOrigin = "50% 50%";
+          target.style.transition = "none";
+          placeBall(stopX, stopY);
+        }
+        requestAnimationFrame(tick);
+        return;
+      }
+
+      if (phase === "suck") {
+        var st = Math.min(1, (now - suckStart) / 480);
+        var se = st * st;
+        var tx =
+          targetOrigin.left +
+          (stopX - targetOrigin.width / 2 - targetOrigin.left) * se;
+        var ty =
+          targetOrigin.top +
+          (stopY - targetOrigin.height / 2 - targetOrigin.top) * se;
+        var scale = 1 - se * 0.92;
+        var opacity = 1 - se * 0.85;
+        target.style.left = tx + "px";
+        target.style.top = ty + "px";
+        target.style.transform = "scale(" + scale + ")";
+        target.style.opacity = String(opacity);
+        placeBall(stopX, stopY);
+        if (st >= 1) {
+          hideCaughtElement(target);
+          phase = "vibrate";
+          vibStart = now;
+          vibCount = 0;
+          ball.classList.add("is-masterball-vibrating");
+        }
+        requestAnimationFrame(tick);
+        return;
+      }
+
+      if (phase === "vibrate") {
+        var vt = now - vibStart;
+        /* ~3 short shakes over ~520ms (CSS animation). */
+        if (vt >= 520) {
+          ball.classList.remove(
+            "is-masterball-vibrating",
+            "is-masterball-whitened"
+          );
+          spawnMasterWhiteBurst(stopX, stopY);
+          placeBall(stopX, stopY);
+          dropMasterBallToFloor(ball, stopX - size / 2, stopY - size / 2);
+          return;
+        }
+        requestAnimationFrame(tick);
+        return;
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function spawnMasterBall() {
+    var c = followerCenter();
+    var originX = c.cx - (img.offsetWidth || 40) * 0.15;
+    var originY = c.cy;
+    var angle = MASTERBALL_ANGLE + (Math.random() - 0.5) * 0.08;
+    var speed = MASTERBALL_SPEED * (0.94 + Math.random() * 0.12);
+    var vx = Math.cos(angle) * speed;
+    var vy = Math.sin(angle) * speed;
+
+    var ball = document.createElement("img");
+    ball.className = "cursor-burst cursor-burst--masterball";
+    ball.alt = "";
+    ball.draggable = false;
+    ball.src = burstSrc;
+    ball.style.width = MASTERBALL_SIZE + "px";
+    ball.style.height = "auto";
+    ball.style.left = originX - MASTERBALL_SIZE / 2 + "px";
+    ball.style.top = originY - MASTERBALL_SIZE / 2 + "px";
+    document.body.appendChild(ball);
+
+    var born = performance.now();
+    var lastHitAt = 0;
+    var alive = true;
+
+    function removeBall() {
+      alive = false;
+      if (ball.parentNode) ball.parentNode.removeChild(ball);
+    }
+
+    function tick(now) {
+      if (!alive) return;
+      var elapsedMs = now - born;
+      var elapsed = elapsedMs / 1000;
+      var curX = originX + vx * elapsed;
+      var curY = originY + vy * elapsed;
+      var spin = elapsed * 360;
+
+      if (
+        curX < -80 ||
+        curY < -80 ||
+        curX > window.innerWidth + 80 ||
+        curY > window.innerHeight + 80
+      ) {
+        /* Miss: fly out and vanish. */
+        removeBall();
+        return;
+      }
+
+      ball.style.left = curX - MASTERBALL_SIZE / 2 + "px";
+      ball.style.top = curY - MASTERBALL_SIZE / 2 + "px";
+      ball.style.transform = "rotate(" + spin + "deg)";
+
+      if (
+        elapsedMs >= MASTERBALL_ARM_MS &&
+        now - lastHitAt >= MASTERBALL_HIT_MS
+      ) {
+        lastHitAt = now;
+        var target = tryMasterHitAt(curX, curY);
+        if (target) {
+          alive = false;
+          ball.style.transform = "";
+          runMasterCatch(ball, curX, curY, target);
+          return;
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function startMasterCatch() {
+    if (masterCatching || !canMasterCatch) return;
+    masterCatching = true;
+    function scheduleNext() {
+      if (!masterCatching) return;
+      spawnMasterBall();
+      masterCatchInterval = setTimeout(scheduleNext, MASTERBALL_MS);
+    }
+    scheduleNext();
+  }
+
+  function stopMasterCatch() {
+    if (masterCatchInterval) {
+      clearTimeout(masterCatchInterval);
+      masterCatchInterval = 0;
+    }
+    masterCatching = false;
+  }
+  /* ---------------------------------------------------------------------- */
+
   function syncBreath() {
     if (mouseBreathReady || aKeyBreathReady) {
       if (canBreath) startBreath();
       if (canHoldBurst) startHoldBurst();
       if (canLeafSpin) startLeafSpin();
       if (canWaterBlob) startWaterBlob();
+      if (canMasterCatch) startMasterCatch();
     } else {
       stopBreathStream();
       stopHoldBurst();
       stopLeafSpin();
       stopWaterBlob();
+      stopMasterCatch();
     }
   }
 
@@ -1350,6 +1700,7 @@
     stopHoldBurst();
     stopLeafSpin();
     stopWaterBlob();
+    stopMasterCatch();
   }
 
   function isBreathAKey(e) {
@@ -1395,6 +1746,7 @@
     canHoldBurst = !!outcome.holdBurst;
     canLeafSpin = !!outcome.leafSpin;
     canWaterBlob = !!outcome.waterBlob;
+    canMasterCatch = !!outcome.masterCatch;
     breathRangeScale = outcome.breathRangeScale != null ? outcome.breathRangeScale : 1;
     spawnBurst(cx, cy);
   }
