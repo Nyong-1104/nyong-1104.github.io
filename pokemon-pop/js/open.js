@@ -29,6 +29,9 @@
   const tearPolyTop = document.getElementById("tear-poly-top");
   const tearPolyBody = document.getElementById("tear-poly-body");
   const tearStroke = document.getElementById("tear-stroke");
+  const openFxSeam = document.getElementById("open-fx-seam-path");
+  const openFxBloom = document.getElementById("open-fx-bloom-path");
+  const openFxAbovePoly = document.getElementById("open-fx-above-poly");
   const hintEl = document.getElementById("open-hint");
   const openInfo = document.getElementById("open-info");
   const cardRise = document.getElementById("card-rise");
@@ -115,6 +118,7 @@
     const y = TEAR.ratio.toFixed(4);
     tearPolyTop.setAttribute("points", `0,0 1,0 1,${y} 0,${y}`);
     tearPolyBody.setAttribute("points", `0,${y} 1,${y} 1,1 0,1`);
+    syncOpenFx(null);
   }
 
   function packPointFromEvent(e) {
@@ -217,11 +221,13 @@
   function updateClip() {
     if (points.length < 2) {
       resetClip();
+      syncOpenFx(null);
       return;
     }
     const edge = edgePath();
     if (!edge.length) {
       resetClip();
+      syncOpenFx(null);
       return;
     }
     const left = edge[0];
@@ -240,6 +246,31 @@
     }
     bodyParts.push(`1,${right.y.toFixed(4)}`, "1,1", "0,1");
     tearPolyBody.setAttribute("points", bodyParts.join(" "));
+
+    syncOpenFx(edge, topParts.join(" "));
+  }
+
+  /** PC open FX: seam + upward bloom clipped to the torn top shape. */
+  function syncOpenFx(edge, abovePoints) {
+    if (!openFxSeam || !openFxBloom || !openFxAbovePoly) return;
+    if (!edge || edge.length < 2) {
+      const y = TEAR.ratio.toFixed(4);
+      const d = `M 0 ${y} L 1 ${y}`;
+      openFxSeam.setAttribute("d", d);
+      openFxBloom.setAttribute("d", d);
+      openFxAbovePoly.setAttribute("points", `0,0 1,0 1,${y} 0,${y}`);
+      return;
+    }
+    const d =
+      "M " +
+      edge
+        .map(function (p) {
+          return p.x.toFixed(4) + " " + p.y.toFixed(4);
+        })
+        .join(" L ");
+    openFxSeam.setAttribute("d", d);
+    openFxBloom.setAttribute("d", d);
+    if (abovePoints) openFxAbovePoly.setAttribute("points", abovePoints);
   }
 
   function sizeCanvas() {
