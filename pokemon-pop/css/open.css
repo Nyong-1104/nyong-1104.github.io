@@ -232,41 +232,34 @@
   }
 }
 
-/* Drawing: keep same blur look, but give ::before transparent padding so
-   iOS filter-cage edges stay outside the visible bloom (esp. when finger stops). */
+/* Drawing: no CSS filter / no hard mask.
+   Soft bloom via layered box-shadow + scale (avoids iOS filter cage and pack overflow). */
 .pack[data-state="drawing"] .pack__ambient-glow {
   animation: none;
-  opacity: calc(0.72 + var(--tear) * 0.28);
+  opacity: calc(0.78 + var(--tear) * 0.22);
   filter: none;
-  transform: translate(-50%, -20%) scale(calc(1.1 + var(--tear) * 0.7 + var(--glow-alive, 0)));
-  /* Glow host is wider than the pack for iOS padding; mask keeps bloom on-pack. */
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    transparent 22%,
-    #000 30%,
-    #000 70%,
-    transparent 78%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    transparent 22%,
-    #000 30%,
-    #000 70%,
-    transparent 78%,
-    transparent 100%
-  );
+  -webkit-mask-image: none;
+  mask-image: none;
+  transform: translate(-50%, -20%) scale(calc(1.08 + var(--tear) * 0.55 + var(--glow-alive, 0)));
 }
 
 .pack[data-state="drawing"] .pack__ambient-glow::before {
-  inset: -55% -40%;
-  filter: blur(var(--glow-blur)) brightness(2.1);
-  /* Core stays ~original size; padding is transparent margin for blur falloff */
-  background-size: 48% 48%, 42% 42%, 42% 42%;
-  background-repeat: no-repeat;
-  background-position: 50% 50%, 32% 50%, 68% 50%;
+  inset: 8% 18%;
+  border-radius: 50%;
+  filter: none;
+  background:
+    radial-gradient(
+      ellipse 55% 70% at 50% 50%,
+      rgba(255, 252, 235, 0.85) 0%,
+      rgba(255, 225, 150, 0.45) 40%,
+      rgba(255, 180, 90, 0.12) 68%,
+      transparent 82%
+    );
+  box-shadow:
+    0 0 18px 8px rgba(255, 236, 180, 0.55),
+    0 0 36px 16px rgba(255, 210, 130, 0.35),
+    0 0 58px 28px rgba(255, 175, 90, 0.18),
+    0 0 80px 40px rgba(255, 150, 70, 0.08);
 }
 
 /* Opening: bright burst while seal splits */
@@ -502,7 +495,8 @@
 }
 
 .pack[data-state="drawing"] .pack__tear-sheen::before {
-  filter: blur(7px) brightness(1.7);
+  /* Gradients already soft-edge; skip filter so hold-still can't cage a rect */
+  filter: none;
   animation: tear-sheen-move-only calc(1.4s - var(--tear) * 0.7s) linear infinite;
 }
 
