@@ -1801,7 +1801,9 @@ body.nav-drawer-open {
 }
 
 .cursor-burst.cursor-burst--masterball.is-masterball-floor {
-  z-index: 45;
+  z-index: 62;
+  pointer-events: auto;
+  cursor: pointer;
   filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.35));
 }
 
