@@ -1794,11 +1794,19 @@ body.nav-drawer-open {
 }
 
 /* Blastoise water hit: soaked HTML shakes like it got blasted */
+.is-water-pushed {
+  will-change: transform, translate;
+}
+
 .is-water-soaked {
-  will-change: transform;
+  will-change: transform, translate;
   animation: water-blast-shake 0.12s linear infinite;
   filter: brightness(1.05) saturate(1.15)
     drop-shadow(0 0 4px rgba(60, 160, 240, 0.45));
+}
+
+.is-water-returning {
+  filter: none;
 }
 
 @keyframes water-blast-shake {
@@ -1856,6 +1864,12 @@ body.nav-drawer-open {
   .is-water-soaked {
     animation: none;
     filter: none;
+  }
+
+  .is-water-pushed,
+  .is-water-returning {
+    translate: none;
+    transition: none;
   }
 }
 

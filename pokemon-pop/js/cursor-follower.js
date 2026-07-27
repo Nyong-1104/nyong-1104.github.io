@@ -287,6 +287,8 @@
   /* --- Blastoise water: soak/shake HTML on hit --- */
   var soakingMap = new Map();
   var WATER_SHAKE_MS = 900;
+  var WATER_RETURN_DELAY_MS = 1000;
+  var WATER_RETURN_MS = 550;
 
   function isIgniteChrome(el) {
     if (!el || !el.classList) return false;
@@ -721,7 +723,14 @@
     var state = soakingMap.get(el);
     if (!state) return;
     if (state.timer) clearTimeout(state.timer);
-    el.classList.remove("is-water-soaked");
+    if (state.returnTimer) clearTimeout(state.returnTimer);
+    el.classList.remove(
+      "is-water-soaked",
+      "is-water-pushed",
+      "is-water-returning"
+    );
+    el.style.translate = "";
+    el.style.transition = "";
     soakingMap.delete(el);
   }
 
@@ -733,25 +742,63 @@
     for (var i = 0; i < els.length; i++) clearSoak(els[i]);
   }
 
+  function scheduleWaterReturn(el) {
+    var state = soakingMap.get(el);
+    if (!state) return;
+    if (state.returnTimer) clearTimeout(state.returnTimer);
+    state.returnTimer = setTimeout(function () {
+      var cur = soakingMap.get(el);
+      if (!cur || !el.isConnected) {
+        clearSoak(el);
+        return;
+      }
+      el.classList.remove("is-water-soaked");
+      el.classList.add("is-water-returning");
+      /* Smooth slide back to original position. */
+      el.style.transition = "translate " + WATER_RETURN_MS / 1000 + "s ease-out";
+      el.style.translate = "0px 0";
+      cur.pushPx = 0;
+      cur.returnTimer = setTimeout(function () {
+        clearSoak(el);
+      }, WATER_RETURN_MS + 40);
+    }, WATER_RETURN_DELAY_MS);
+  }
+
   function shakeElement(el) {
     if (!el) return;
     var existing = soakingMap.get(el);
+    var pushPx = existing ? existing.pushPx + 1 : 1;
+
     if (existing) {
-      clearTimeout(existing.timer);
-      /* Retrigger CSS animation. */
-      el.classList.remove("is-water-soaked");
-      void el.offsetWidth;
-      el.classList.add("is-water-soaked");
-      existing.timer = setTimeout(function () {
-        clearSoak(el);
-      }, WATER_SHAKE_MS);
-      return;
+      if (existing.timer) clearTimeout(existing.timer);
+      if (existing.returnTimer) clearTimeout(existing.returnTimer);
+      el.classList.remove("is-water-returning");
+      el.style.transition = "none";
     }
+
+    /* Accumulate 1px left knock per hit (independent of shake transform). */
+    el.style.translate = -pushPx + "px 0";
+    el.classList.add("is-water-pushed");
+    el.classList.remove("is-water-soaked");
+    void el.offsetWidth;
     el.classList.add("is-water-soaked");
+
     var timer = setTimeout(function () {
-      clearSoak(el);
+      var cur = soakingMap.get(el);
+      if (!cur) return;
+      el.classList.remove("is-water-soaked");
+      /* Hold pushed pose, then return after 1s. */
+      el.style.translate = -cur.pushPx + "px 0";
+      scheduleWaterReturn(el);
     }, WATER_SHAKE_MS);
-    soakingMap.set(el, { timer: timer });
+
+    if (existing) {
+      existing.timer = timer;
+      existing.returnTimer = 0;
+      existing.pushPx = pushPx;
+    } else {
+      soakingMap.set(el, { timer: timer, returnTimer: 0, pushPx: pushPx });
+    }
   }
 
   document.addEventListener(
