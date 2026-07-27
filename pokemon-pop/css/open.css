@@ -921,140 +921,259 @@
   border-color: rgba(244, 239, 230, 0.28);
 }
 
-/* PC only: no idle/drawing ambient glow — quality burst only when the pack opens. */
+/* PC only: idle glow off — open uses "White Flash Slash" (concept 2). */
 @media (hover: hover) and (pointer: fine) {
   .pack__ambient-glow {
     opacity: 0;
     animation: none;
-    width: 160%;
-    min-height: 3.2rem;
+    width: 220%;
+    height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100%);
+    min-height: 0.85rem;
+    top: calc(var(--tear-y-min) * 100%);
+    transform: translate(-50%, 0) scaleX(0.2);
   }
 
   .pack[data-state="drawing"] .pack__ambient-glow {
     opacity: 0;
     animation: none;
-    transform: translate(-50%, -20%) scale(1);
+    transform: translate(-50%, 0) scaleX(0.2);
   }
 
+  /* Thin white core slash */
   .pack__ambient-glow::before {
-    inset: -30% -20%;
+    inset: 28% -8%;
+    border-radius: 999px;
+    background:
+      linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.15) 12%,
+        rgba(255, 255, 255, 0.95) 42%,
+        #fff 50%,
+        rgba(255, 255, 255, 0.95) 58%,
+        rgba(255, 255, 255, 0.15) 88%,
+        transparent 100%
+      );
+    filter: blur(1.5px) brightness(1.35);
+    box-shadow:
+      0 0 6px 1px rgba(255, 255, 255, 0.95),
+      0 0 18px 4px rgba(255, 255, 255, 0.55),
+      0 0 40px 12px rgba(220, 235, 255, 0.28);
+  }
+
+  /* Soft bloom halo around the slash */
+  .pack__ambient-glow::after {
+    content: "";
+    position: absolute;
+    inset: -120% -5%;
+    pointer-events: none;
     background:
       radial-gradient(
-        ellipse 70% 55% at 50% 50%,
-        rgba(255, 248, 230, 0.95) 0%,
-        rgba(255, 220, 150, 0.55) 28%,
-        rgba(255, 180, 90, 0.28) 52%,
-        rgba(255, 140, 50, 0.1) 70%,
-        transparent 86%
-      ),
-      radial-gradient(
-        ellipse 110% 80% at 50% 50%,
-        rgba(255, 255, 255, 0.35) 0%,
-        transparent 60%
-      ),
-      radial-gradient(
-        ellipse 95% 70% at 28% 50%,
-        rgba(255, 200, 110, 0.28) 0%,
-        transparent 72%
-      ),
-      radial-gradient(
-        ellipse 95% 70% at 72% 50%,
-        rgba(255, 185, 95, 0.24) 0%,
+        ellipse 55% 40% at 50% 50%,
+        rgba(255, 255, 255, 0.55) 0%,
+        rgba(255, 255, 255, 0.18) 45%,
         transparent 72%
       );
-    filter: blur(16px) brightness(1.15) saturate(1.15);
-    box-shadow:
-      0 0 28px 10px rgba(255, 230, 170, 0.35),
-      0 0 60px 24px rgba(255, 190, 100, 0.18);
+    filter: blur(14px);
+    opacity: 0.9;
   }
 
   .pack[data-state="drawing"] .pack__ambient-glow::before {
-    inset: -30% -20%;
+    inset: 28% -8%;
     background-size: auto;
-    filter: blur(16px) brightness(1.15) saturate(1.15);
+    filter: blur(1.5px) brightness(1.35);
   }
 
   .pack[data-state="splitting"] .pack__ambient-glow {
-    animation: tear-glow-burst-pc 1.35s cubic-bezier(0.16, 0.84, 0.28, 1) forwards;
+    animation: slash-core-pc 0.95s cubic-bezier(0.12, 0.8, 0.2, 1) forwards;
   }
 
   .pack[data-state="torn"] .pack__ambient-glow {
-    animation: tear-glow-linger-pc 1.7s ease-out forwards;
+    animation: slash-fade-pc 1.15s ease-out forwards;
   }
 
   .pack[data-state="splitting"] .pack__ambient-glow::before,
   .pack[data-state="torn"] .pack__ambient-glow::before {
-    filter: blur(18px) brightness(1.22) saturate(1.2);
+    filter: blur(1.5px) brightness(1.5);
+  }
+
+  /* Needle shards / sparks — cold white */
+  .pack__ambient-sparks {
+    width: 180%;
+    top: calc(var(--tear-y-min) * 100% - 6%);
+    height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100% + 14%);
+    background-image:
+      linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.95) 49%, transparent 58%),
+      linear-gradient(70deg, transparent 42%, rgba(255, 255, 255, 0.85) 50%, transparent 58%),
+      linear-gradient(20deg, transparent 45%, rgba(255, 255, 255, 0.75) 50%, transparent 55%),
+      linear-gradient(160deg, transparent 46%, rgba(255, 255, 255, 0.7) 50%, transparent 54%),
+      radial-gradient(circle, #fff 0 1px, transparent 2px),
+      radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 1.2px, transparent 2.2px);
+    background-size:
+      70px 18px,
+      55px 14px,
+      90px 12px,
+      60px 16px,
+      140px 50px,
+      110px 40px;
+    background-position:
+      18% 42%,
+      78% 55%,
+      48% 30%,
+      62% 68%,
+      30% 50%,
+      70% 40%;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
   }
 
   .pack[data-state="splitting"] .pack__ambient-sparks {
-    animation: tear-sparks-burst-pc 1.45s ease-out forwards;
+    animation: slash-shards-pc 1.05s ease-out forwards;
   }
 
   .pack[data-state="torn"] .pack__ambient-sparks {
-    animation: tear-sparks-linger-pc 1.7s ease-out forwards;
+    animation: slash-shards-fade-pc 1.15s ease-out forwards;
   }
 
-  @keyframes tear-glow-burst-pc {
+  .pack[data-state="splitting"] .pack__tear-glints {
+    animation: slash-glints-pc 1.05s ease-out forwards;
+    mix-blend-mode: screen;
+    background-image:
+      radial-gradient(circle, #fff 0 1.2px, transparent 2.2px),
+      radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 1px, transparent 2px),
+      radial-gradient(circle, #fff 0 1.4px, transparent 2.5px),
+      radial-gradient(circle, rgba(230, 240, 255, 1) 0 1px, transparent 2px);
+  }
+
+  /* On-pack slash flash through sheen */
+  .pack[data-state="splitting"] .pack__tear-sheen {
+    overflow: hidden;
+    opacity: 1;
+    animation: slash-sheen-pc 0.85s ease-out forwards;
+  }
+
+  .pack[data-state="splitting"] .pack__tear-sheen::before {
+    inset: -10% -40%;
+    background:
+      linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.05) 35%,
+        rgba(255, 255, 255, 0.55) 47%,
+        #fff 50%,
+        rgba(255, 255, 255, 0.55) 53%,
+        rgba(255, 255, 255, 0.05) 65%,
+        transparent 100%
+      );
+    background-size: 100% 100%;
+    mix-blend-mode: screen;
+    filter: blur(2px) brightness(1.4);
+    animation: slash-sheen-move-pc 0.55s cubic-bezier(0.1, 0.75, 0.2, 1) forwards;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .pack[data-state="torn"] .pack__tear-sheen {
+    opacity: 0;
+    animation: none;
+  }
+
+  @keyframes slash-core-pc {
     0% {
       opacity: 0;
-      transform: translate(-50%, -20%) scale(0.85);
+      transform: translate(-50%, 0) scaleX(0.15) scaleY(0.6);
     }
-    14% {
+    18% {
       opacity: 1;
-      transform: translate(-50%, -20%) scale(1.25);
+      transform: translate(-50%, 0) scaleX(1.05) scaleY(1.15);
     }
-    40% {
+    45% {
       opacity: 1;
-      transform: translate(-50%, -20%) scale(1.55);
+      transform: translate(-50%, 0) scaleX(1.15) scaleY(1);
     }
     100% {
-      opacity: 0.55;
-      transform: translate(-50%, -20%) scale(1.72);
+      opacity: 0.35;
+      transform: translate(-50%, 0) scaleX(1.2) scaleY(0.85);
     }
   }
 
-  @keyframes tear-glow-linger-pc {
+  @keyframes slash-fade-pc {
     0% {
-      opacity: 0.55;
-      transform: translate(-50%, -20%) scale(1.72);
+      opacity: 0.35;
+      transform: translate(-50%, 0) scaleX(1.2) scaleY(0.85);
     }
     100% {
       opacity: 0;
-      transform: translate(-50%, -20%) scale(2.05);
+      transform: translate(-50%, 0) scaleX(1.35) scaleY(0.5);
     }
   }
 
-  @keyframes tear-sparks-burst-pc {
+  @keyframes slash-shards-pc {
     0% {
       opacity: 0;
-      transform: translateX(-50%) scale(0.4);
-      filter: drop-shadow(0 0 4px rgba(255, 230, 160, 0.5));
+      transform: translateX(-50%) scale(0.5);
     }
-    15% {
+    12% {
       opacity: 1;
       transform: translateX(-50%) scale(0.95);
-      filter: drop-shadow(0 0 14px rgba(255, 240, 190, 1));
     }
     55% {
-      opacity: 0.95;
-      transform: translateX(-50%) scale(1.45);
+      opacity: 0.9;
+      transform: translateX(-50%) scale(1.35);
     }
     100% {
-      opacity: 0.5;
-      transform: translateX(-50%) scale(1.85);
-      filter: drop-shadow(0 0 16px rgba(255, 220, 140, 0.55));
+      opacity: 0.35;
+      transform: translateX(-50%) scale(1.7);
     }
   }
 
-  @keyframes tear-sparks-linger-pc {
+  @keyframes slash-shards-fade-pc {
     0% {
-      opacity: 0.5;
-      transform: translateX(-50%) scale(1.85);
+      opacity: 0.35;
+      transform: translateX(-50%) scale(1.7);
     }
     100% {
       opacity: 0;
-      transform: translateX(-50%) scale(2.35);
+      transform: translateX(-50%) scale(2.1);
+    }
+  }
+
+  @keyframes slash-glints-pc {
+    0% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    16% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.6);
+    }
+  }
+
+  @keyframes slash-sheen-pc {
+    0%,
+    35% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes slash-sheen-move-pc {
+    0% {
+      transform: translateX(-70%) scaleX(0.35);
+      opacity: 0.4;
+    }
+    40% {
+      transform: translateX(0%) scaleX(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(55%) scaleX(0.7);
+      opacity: 0.2;
     }
   }
 }
