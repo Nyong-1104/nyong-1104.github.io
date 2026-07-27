@@ -36,6 +36,7 @@
           src: "./assets/cursor-follower-charizard.png",
           burstFlash: true,
           evolvedXl: true,
+          burst: "./assets/cursor-burst-fire.png",
           breathFire: true,
           breathRangeScale: 0.66,
         },
