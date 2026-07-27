@@ -37,7 +37,6 @@
       </div>
 
       <div class="pack" id="pack" data-state="sealed">
-        <div class="pack__ambient-glow" aria-hidden="true"></div>
         <div class="pack__ambient-sparks" aria-hidden="true"></div>
         <div class="pack__inner" id="pack-inner">
           <svg class="pack__defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -65,6 +64,10 @@
 
           <div class="pack__body" aria-hidden="true"></div>
           <div class="pack__top" id="pack-top" aria-hidden="true"></div>
+          <!-- Clip keeps soft glow on the pack face; host can stay wide for iOS filter padding. -->
+          <div class="pack__glow-clip" aria-hidden="true">
+            <div class="pack__ambient-glow"></div>
+          </div>
           <div class="pack__tear-sheen" aria-hidden="true"></div>
           <div class="pack__tear-glints" aria-hidden="true"></div>
 

@@ -126,9 +126,16 @@
   overflow: visible;
 }
 
-/* Soft horizontal bloom behind the tear band.
-   Outer node scales/fades; ::before holds a CONSTANT blur.
-   Scaling a filtered node up is OK on iOS — scaling it back down cages into a box. */
+/* Soft bloom on the pack face — clipped to pack width so sides don't stick out.
+   Inner glow host can still be wider (iOS filter padding) because the clip hides overflow. */
+.pack__glow-clip {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .pack__ambient-glow {
   --glow-blur: 18px;
   position: absolute;
