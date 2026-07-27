@@ -239,6 +239,25 @@
   opacity: calc(0.72 + var(--tear) * 0.28);
   filter: none;
   transform: translate(-50%, -20%) scale(calc(1.1 + var(--tear) * 0.7 + var(--glow-alive, 0)));
+  /* Glow host is wider than the pack for iOS padding; mask keeps bloom on-pack. */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 22%,
+    #000 30%,
+    #000 70%,
+    transparent 78%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 22%,
+    #000 30%,
+    #000 70%,
+    transparent 78%,
+    transparent 100%
+  );
 }
 
 .pack[data-state="drawing"] .pack__ambient-glow::before {
@@ -479,7 +498,7 @@
 .pack[data-state="drawing"] .pack__tear-sheen {
   opacity: calc(0.75 + var(--tear) * 0.25);
   animation: tear-sheen-sweep calc(1.4s - var(--tear) * 0.7s) linear infinite;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .pack[data-state="drawing"] .pack__tear-sheen::before {
