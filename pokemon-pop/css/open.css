@@ -921,65 +921,38 @@
   border-color: rgba(244, 239, 230, 0.28);
 }
 
-/* PC only: flat tear-band slit (not a wide oval / black-hole halo). Mobile unchanged. */
+/* PC only: clean white glow. Mobile keeps the default warm glow above. */
 @media (hover: hover) and (pointer: fine) {
-  .pack__ambient-glow {
-    width: 108%;
-    height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100% + 6%);
-    min-height: 1.6rem;
-    top: calc(var(--tear-y-min) * 100% - 2%);
-    transform: translate(-50%, -10%) scale(1);
-    animation: tear-glow-breathe-slit 3.2s ease-in-out infinite;
-  }
-
   .pack__ambient-glow::before {
-    inset: -40% -4%;
     background:
       radial-gradient(
-        ellipse 92% 70% at 50% 50%,
-        rgba(255, 255, 255, 0.72) 0%,
-        rgba(255, 255, 255, 0.32) 38%,
-        rgba(255, 255, 255, 0.1) 62%,
-        transparent 78%
+        ellipse 50% 90% at 50% 50%,
+        rgba(255, 255, 255, 0.88) 0%,
+        rgba(255, 255, 255, 0.45) 30%,
+        rgba(255, 255, 255, 0.18) 54%,
+        rgba(255, 255, 255, 0.06) 70%,
+        transparent 84%
       ),
-      linear-gradient(
-        180deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.14) 35%,
-        rgba(255, 255, 255, 0.28) 50%,
-        rgba(255, 255, 255, 0.14) 65%,
-        transparent 100%
+      radial-gradient(
+        ellipse 90% 60% at 30% 50%,
+        rgba(255, 255, 255, 0.28) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 90% 60% at 70% 50%,
+        rgba(255, 255, 255, 0.24) 0%,
+        transparent 70%
       );
-    filter: blur(10px) brightness(1.12);
-  }
-
-  @keyframes tear-glow-breathe-slit {
-    0%,
-    100% {
-      opacity: 0.82;
-      transform: translate(-50%, -10%) scaleX(1) scaleY(1);
-    }
-    50% {
-      opacity: 1;
-      transform: translate(-50%, -10%) scaleX(1.04) scaleY(1.12);
-    }
-  }
-
-  .pack[data-state="drawing"] .pack__ambient-glow {
-    transform: translate(-50%, -10%) scaleX(calc(1.02 + var(--tear) * 0.08)) scaleY(calc(1.08 + var(--tear) * 0.35 + var(--glow-alive, 0)));
+    filter: blur(var(--glow-blur)) brightness(1.15);
   }
 
   .pack[data-state="drawing"] .pack__ambient-glow::before {
-    inset: -55% -6%;
-    filter: blur(10px) brightness(1.2);
-    background-size: auto;
-    background-repeat: no-repeat;
-    background-position: center;
+    filter: blur(var(--glow-blur)) brightness(1.25);
   }
 
   .pack[data-state="splitting"] .pack__ambient-glow::before,
   .pack[data-state="torn"] .pack__ambient-glow::before {
-    filter: blur(12px) brightness(1.28);
+    filter: blur(var(--glow-blur)) brightness(1.35);
   }
 
   .pack__tear-sheen::before {
