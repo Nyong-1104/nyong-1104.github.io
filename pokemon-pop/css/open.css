@@ -921,220 +921,191 @@
   border-color: rgba(244, 239, 230, 0.28);
 }
 
-/* PC only: idle glow off — open uses a tight White Flash Slash (less bloom bleed). */
+/* Dedicated open slash — hidden everywhere; PC media enables it on split. */
+.pack__open-slash {
+  display: none;
+  position: absolute;
+  left: -18%;
+  right: -18%;
+  top: calc((var(--tear-y-min) + var(--tear-y-max)) * 50%);
+  height: 0;
+  z-index: 6;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.pack__open-slash__glow,
+.pack__open-slash__core,
+.pack__open-slash__shards {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+}
+
+/* PC only: concept 2 White Flash Slash via dedicated layers (not sheen/glow hacks). */
 @media (hover: hover) and (pointer: fine) {
-  .pack__ambient-glow {
-    opacity: 0;
-    animation: none;
-    width: 120%;
-    height: 0.35rem;
-    min-height: 0;
-    top: calc((var(--tear-y-min) + var(--tear-y-max)) * 50%);
-    transform: translate(-50%, -50%) scaleX(0.25);
-  }
-
-  .pack[data-state="drawing"] .pack__ambient-glow {
-    opacity: 0;
-    animation: none;
-    transform: translate(-50%, -50%) scaleX(0.25);
-  }
-
-  .pack__ambient-glow::before {
-    inset: 0;
-    border-radius: 999px;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.35) 18%,
-      #fff 50%,
-      rgba(255, 255, 255, 0.35) 82%,
-      transparent 100%
-    );
-    filter: none;
-    box-shadow:
-      0 0 4px 0 rgba(255, 255, 255, 0.85),
-      0 0 12px 2px rgba(255, 255, 255, 0.35);
-  }
-
-  .pack__ambient-glow::after {
-    content: none;
-  }
-
-  .pack[data-state="drawing"] .pack__ambient-glow::before {
-    inset: 0;
-    background-size: auto;
-    filter: none;
-  }
-
-  .pack[data-state="splitting"] .pack__ambient-glow {
-    animation: slash-core-pc 0.7s cubic-bezier(0.15, 0.8, 0.2, 1) forwards;
-  }
-
-  .pack[data-state="torn"] .pack__ambient-glow {
-    animation: slash-fade-pc 0.9s ease-out forwards;
-  }
-
-  .pack[data-state="splitting"] .pack__ambient-glow::before,
-  .pack[data-state="torn"] .pack__ambient-glow::before {
-    filter: none;
-  }
-
-  /* Small white sparks only — no fat linear smears */
-  .pack__ambient-sparks {
-    width: 130%;
-    top: calc(var(--tear-y-min) * 100% - 2%);
-    height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100% + 6%);
-    background-image:
-      radial-gradient(circle, #fff 0 1px, transparent 2px),
-      radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 1.2px, transparent 2.2px),
-      radial-gradient(circle, #fff 0 0.8px, transparent 1.8px),
-      radial-gradient(circle, rgba(255, 255, 255, 0.85) 0 1px, transparent 2px);
-    background-size: 90px 28px, 120px 24px, 70px 30px, 100px 26px;
-    background-position: 22% 40%, 70% 55%, 48% 35%, 82% 48%;
-    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
-  }
-
-  .pack[data-state="splitting"] .pack__ambient-sparks {
-    animation: slash-shards-pc 0.75s ease-out forwards;
-  }
-
+  /* Kill idle/open ambient glow & sparks on PC — slash layer owns the open FX */
+  .pack__ambient-glow,
+  .pack[data-state="drawing"] .pack__ambient-glow,
+  .pack[data-state="splitting"] .pack__ambient-glow,
+  .pack[data-state="torn"] .pack__ambient-glow,
+  .pack__ambient-sparks,
+  .pack[data-state="splitting"] .pack__ambient-sparks,
   .pack[data-state="torn"] .pack__ambient-sparks {
-    animation: slash-shards-fade-pc 0.85s ease-out forwards;
+    opacity: 0 !important;
+    animation: none !important;
   }
 
-  .pack[data-state="splitting"] .pack__tear-glints {
-    animation: slash-glints-pc 0.75s ease-out forwards;
-    mix-blend-mode: screen;
-    background-image:
-      radial-gradient(circle, #fff 0 1px, transparent 2px),
-      radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 1.1px, transparent 2.1px),
-      radial-gradient(circle, #fff 0 0.9px, transparent 1.9px);
+  .pack[data-state="splitting"] .pack__tear-sheen,
+  .pack[data-state="torn"] .pack__tear-sheen,
+  .pack[data-state="splitting"] .pack__tear-glints,
+  .pack[data-state="torn"] .pack__tear-glints {
+    opacity: 0 !important;
+    animation: none !important;
   }
 
-  /* Main slash lives on the pack face (clipped) — sharp, not smeared */
-  .pack[data-state="splitting"] .pack__tear-sheen {
-    overflow: hidden;
-    opacity: 1;
-    animation: slash-sheen-pc 0.65s ease-out forwards;
+  .pack__open-slash {
+    display: block;
+    opacity: 0;
   }
 
-  .pack[data-state="splitting"] .pack__tear-sheen::before {
-    inset: 32% -20%;
+  .pack[data-state="splitting"] .pack__open-slash,
+  .pack[data-state="torn"] .pack__open-slash {
+    animation: open-slash-host-pc 0.85s ease-out forwards;
+  }
+
+  /* Soft round flare at the cut (not a tall rectangle) */
+  .pack__open-slash__glow {
+    width: 70%;
+    height: 3.2rem;
+    transform: translate(-50%, -50%) scaleX(0.2);
+    background: radial-gradient(
+      ellipse 70% 45% at 50% 50%,
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0.22) 40%,
+      transparent 70%
+    );
+    filter: blur(8px);
+    opacity: 0;
+  }
+
+  .pack[data-state="splitting"] .pack__open-slash__glow {
+    animation: open-slash-glow-pc 0.7s ease-out forwards;
+  }
+
+  /* Needle-thin white core line */
+  .pack__open-slash__core {
+    width: 100%;
+    height: 2px;
     border-radius: 999px;
+    transform: translate(-50%, -50%) scaleX(0.08);
     background: linear-gradient(
       90deg,
       transparent 0%,
-      rgba(255, 255, 255, 0.2) 28%,
-      rgba(255, 255, 255, 0.85) 46%,
+      rgba(255, 255, 255, 0.35) 10%,
       #fff 50%,
-      rgba(255, 255, 255, 0.85) 54%,
-      rgba(255, 255, 255, 0.2) 72%,
+      rgba(255, 255, 255, 0.35) 90%,
       transparent 100%
     );
-    background-size: 100% 100%;
-    mix-blend-mode: screen;
-    filter: none;
     box-shadow:
-      0 0 5px 0 rgba(255, 255, 255, 0.7),
-      0 0 14px 2px rgba(255, 255, 255, 0.28);
-    animation: slash-sheen-move-pc 0.45s cubic-bezier(0.12, 0.75, 0.2, 1) forwards;
-    -webkit-mask-image: none;
-    mask-image: none;
+      0 0 4px 0 #fff,
+      0 0 10px 1px rgba(255, 255, 255, 0.55);
+    opacity: 0;
   }
 
-  .pack[data-state="torn"] .pack__tear-sheen {
+  .pack[data-state="splitting"] .pack__open-slash__core {
+    animation: open-slash-core-pc 0.55s cubic-bezier(0.12, 0.8, 0.18, 1) forwards;
+  }
+
+  /* Tiny diamond shards around the cut */
+  .pack__open-slash__shards {
+    width: 100%;
+    height: 2.4rem;
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0;
+    background-image:
+      linear-gradient(45deg, transparent 46%, #fff 49.5%, transparent 53%),
+      linear-gradient(-35deg, transparent 47%, #fff 50%, transparent 53%),
+      linear-gradient(12deg, transparent 48%, rgba(255, 255, 255, 0.9) 50%, transparent 52%),
+      linear-gradient(100deg, transparent 48%, rgba(255, 255, 255, 0.85) 50%, transparent 52%),
+      radial-gradient(circle, #fff 0 1px, transparent 1.8px),
+      radial-gradient(circle, #fff 0 1px, transparent 1.8px);
+    background-size: 18px 18px, 14px 14px, 22px 10px, 16px 12px, 8px 8px, 8px 8px;
+    background-repeat: no-repeat;
+    background-position:
+      28% 35%,
+      72% 60%,
+      48% 28%,
+      58% 70%,
+      40% 55%,
+      65% 40%;
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.9));
+  }
+
+  .pack[data-state="splitting"] .pack__open-slash__shards {
+    animation: open-slash-shards-pc 0.75s ease-out forwards;
+  }
+
+  .pack[data-state="torn"] .pack__open-slash__glow,
+  .pack[data-state="torn"] .pack__open-slash__core,
+  .pack[data-state="torn"] .pack__open-slash__shards {
     opacity: 0;
     animation: none;
   }
 
-  .pack[data-state="torn"] .pack__tear-sheen::before {
-    animation: none;
-    opacity: 0;
-  }
-
-  @keyframes slash-core-pc {
-    0% {
-      opacity: 0;
-      transform: translate(-50%, -50%) scaleX(0.2);
-    }
-    20% {
+  @keyframes open-slash-host-pc {
+    0%,
+    70% {
       opacity: 1;
-      transform: translate(-50%, -50%) scaleX(1);
-    }
-    100% {
-      opacity: 0;
-      transform: translate(-50%, -50%) scaleX(1.08);
-    }
-  }
-
-  @keyframes slash-fade-pc {
-    0% {
-      opacity: 0;
     }
     100% {
       opacity: 0;
     }
   }
 
-  @keyframes slash-shards-pc {
+  @keyframes open-slash-glow-pc {
     0% {
       opacity: 0;
-      transform: translateX(-50%) scale(0.7);
+      transform: translate(-50%, -50%) scaleX(0.15) scaleY(0.6);
+    }
+    25% {
+      opacity: 0.95;
+      transform: translate(-50%, -50%) scaleX(1) scaleY(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scaleX(1.15) scaleY(0.8);
+    }
+  }
+
+  @keyframes open-slash-core-pc {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scaleX(0.08);
+    }
+    22% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scaleX(1.02);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scaleX(1.12);
+    }
+  }
+
+  @keyframes open-slash-shards-pc {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.55);
     }
     18% {
-      opacity: 0.95;
-      transform: translateX(-50%) scale(1);
-    }
-    100% {
-      opacity: 0;
-      transform: translateX(-50%) scale(1.25);
-    }
-  }
-
-  @keyframes slash-shards-fade-pc {
-    0%,
-    100% {
-      opacity: 0;
-    }
-  }
-
-  @keyframes slash-glints-pc {
-    0% {
-      opacity: 0;
-      transform: scale(0.7);
-    }
-    20% {
       opacity: 1;
-      transform: scale(1);
+      transform: translate(-50%, -50%) scale(1);
     }
     100% {
       opacity: 0;
-      transform: scale(1.25);
-    }
-  }
-
-  @keyframes slash-sheen-pc {
-    0%,
-    40% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
-
-  @keyframes slash-sheen-move-pc {
-    0% {
-      transform: translateX(-80%) scaleX(0.4);
-      opacity: 0.5;
-    }
-    45% {
-      transform: translateX(0) scaleX(1);
-      opacity: 1;
-    }
-    100% {
-      transform: translateX(70%) scaleX(0.55);
-      opacity: 0;
+      transform: translate(-50%, -50%) scale(1.35);
     }
   }
 }
