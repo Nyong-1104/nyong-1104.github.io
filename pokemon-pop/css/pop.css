@@ -1779,6 +1779,37 @@ body.nav-drawer-open {
   }
 }
 
+/* Blastoise water blob: clustered round mass projectile */
+.cursor-burst.cursor-burst--water-blob {
+  z-index: 52;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  transform-origin: center center;
+  mix-blend-mode: screen;
+}
+
+.water-blob-piece {
+  position: absolute;
+  margin: 0;
+  height: auto;
+  pointer-events: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  mix-blend-mode: screen;
+  opacity: 0.92;
+  user-select: none;
+  left: -50%;
+  top: -50%;
+}
+
+.water-blob-piece--core {
+  left: -17px;
+  top: -17px;
+  filter: brightness(1.1);
+  opacity: 1;
+}
+
 /* Evolved elemental burst flash (leaf / fire / bluefire / lightning / water): ~0.1s white pulse */
 .cursor-burst.cursor-burst--element,
 .cursor-burst.cursor-burst--raichu,
