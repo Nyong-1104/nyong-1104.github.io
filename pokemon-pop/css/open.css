@@ -232,16 +232,22 @@
   }
 }
 
-/* Drawing: outer scales with tear (can grow AND shrink); blur stays on ::before only */
+/* Drawing: keep same blur look, but give ::before transparent padding so
+   iOS filter-cage edges stay outside the visible bloom (esp. when finger stops). */
 .pack[data-state="drawing"] .pack__ambient-glow {
   animation: none;
   opacity: calc(0.72 + var(--tear) * 0.28);
   filter: none;
-  transform: translate(-50%, -20%) scale(calc(1.1 + var(--tear) * 0.7));
+  transform: translate(-50%, -20%) scale(calc(1.1 + var(--tear) * 0.7 + var(--glow-alive, 0)));
 }
 
 .pack[data-state="drawing"] .pack__ambient-glow::before {
+  inset: -55% -40%;
   filter: blur(var(--glow-blur)) brightness(2.1);
+  /* Core stays ~original size; padding is transparent margin for blur falloff */
+  background-size: 48% 48%, 42% 42%, 42% 42%;
+  background-repeat: no-repeat;
+  background-position: 50% 50%, 32% 50%, 68% 50%;
 }
 
 /* Opening: bright burst while seal splits */
