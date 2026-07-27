@@ -341,11 +341,19 @@
     overlay.style.height = r.height + padY * 2 + "px";
   }
 
+  function breathBurnTone() {
+    return burstSrc && burstSrc.indexOf("bluefire") !== -1 ? "blue" : "fire";
+  }
+
   function clearBurn(el) {
     var state = burningMap.get(el);
     if (!state) return;
     if (state.timer) clearTimeout(state.timer);
-    el.classList.remove("is-breath-burning");
+    el.classList.remove(
+      "is-breath-burning",
+      "is-breath-burning--fire",
+      "is-breath-burning--blue"
+    );
     if (state.onMove) {
       window.removeEventListener("scroll", state.onMove, true);
       window.removeEventListener("resize", state.onMove);
@@ -373,11 +381,15 @@
         clearBurn(el);
       }, BURN_MS);
       if (existing.overlay) syncBurnOverlay(existing.overlay, el);
+      var tone = breathBurnTone();
+      el.classList.remove("is-breath-burning--fire", "is-breath-burning--blue");
+      el.classList.add("is-breath-burning", "is-breath-burning--" + tone);
       return;
     }
 
     /* Filter flicker on the exact hit (works on img/svg/a). */
-    el.classList.add("is-breath-burning");
+    var tone = breathBurnTone();
+    el.classList.add("is-breath-burning", "is-breath-burning--" + tone);
 
     /* Fixed overlay pinned to the hit box — never expands to ancestors. */
     var overlay = document.createElement("div");
