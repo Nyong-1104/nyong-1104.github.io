@@ -244,7 +244,7 @@
     }
   }
 
-  /* --- Mega X breath: ignite HTML under blue-fire particles --- */
+  /* --- Charizard breath: ignite HTML under fire particles --- */
   var burningMap = new Map();
 
   function isIgniteChrome(el) {
@@ -436,9 +436,9 @@
   );
   window.addEventListener("pagehide", clearAllBurns, { passive: true });
 
-  /* --- Mega Charizard X hold-breath (blue fire stream after 1s hold) --- */
+  /* --- Charizard breath stream (hold 1s with mouse or A) --- */
   function spawnBreathParticle() {
-    /* Mouth sits near the left-center of the left-facing Mega X sprite. */
+    /* Mouth sits near the left-center of the left-facing Charizard sprites. */
     var cx = x + 10;
     var cy = y + (img.offsetHeight || 40) * 0.42;
     var p = document.createElement("img");
@@ -620,7 +620,7 @@
       "pointerdown",
       function (e) {
         if (e.button !== 0) return;
-        /* Mega X: hold 1s → continuous blue-fire breath (no evolve charge). */
+        /* Charizard forms: hold 1s -> continuous breath (no evolve charge). */
         if (evolved && canBreath) {
           pressStart = performance.now();
           clearMouseBreathHold();
@@ -660,7 +660,7 @@
         var cy = e.clientY;
         pressStart = 0;
 
-        /* Mega X: release mouse; breath continues if A is still past 1s. */
+        /* Charizard forms: release mouse; breath continues if A is still past 1s. */
         if (evolved && canBreath) {
           var wasMouseBreath = mouseBreathReady;
           clearMouseBreathHold();
@@ -701,7 +701,7 @@
       { passive: true }
     );
 
-    /* Mega X: hold A ≥1s → same breath; ignored while typing in form fields. */
+    /* Charizard forms: hold A >=1s -> same breath; ignored while typing. */
     document.addEventListener("keydown", function (e) {
       if (!evolved || !canBreath || !isBreathAKey(e) || e.repeat) return;
       if (isTypingFocus(e.target) || isTypingFocus(document.activeElement)) return;
