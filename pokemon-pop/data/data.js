@@ -5543,9 +5543,9 @@ window.POP_PACKS = [
     "languages": [
       "jp"
     ],
-    "blurb": "Japan Post Stamp Box · 미카에리비진·츠키니간 프로모 2종.",
-    "blurbEn": "Japan Post Stamp Box · Beauty Looking Back & Moon and Geese promos.",
-    "blurbJa": "ポケモン切手BOX〜見返り美人・月に雁セット〜のプロモ2種。",
+    "blurb": "Japan Post Stamp Box · 피카츄(미카에리비진)·츠키니간 프로모 2종.",
+    "blurbEn": "Japan Post Stamp Box · Pikachu (Beauty Looking Back) & Moon and Geese promos.",
+    "blurbJa": "ポケモン切手BOX〜ピカチュウ（見返り美人）・月に雁セット〜のプロモ2種。",
     "packImage": "./assets/pack-japan-post-stamp-box.png",
     "coverCardId": "s-p-227",
     "brgSets": {
@@ -134375,9 +134375,9 @@ window.POP_CATALOG = [
   {
     "id": "s-p-227",
     "packId": "japan-post-stamp-box",
-    "nameKo": "미카에리비진",
-    "nameEn": "Beauty Looking Back",
-    "nameJa": "見返り美人",
+    "nameKo": "피카츄",
+    "nameEn": "Pikachu",
+    "nameJa": "ピカチュウ",
     "number": "227/S-P",
     "rarity": "PROMO",
     "type": "lightning",
