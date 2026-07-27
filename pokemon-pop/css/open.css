@@ -127,8 +127,8 @@
 }
 
 /* Soft horizontal bloom behind the tear band.
-   Host is taller than the tear strip so iOS filter clip stays outside the visible bloom.
-   Blur radius stays constant — growth uses scale/brightness (avoids iOS sudden cage). */
+   Outer node scales/fades; ::before holds a CONSTANT blur.
+   Scaling a filtered node up is OK on iOS — scaling it back down cages into a box. */
 .pack__ambient-glow {
   --glow-blur: 18px;
   position: absolute;
@@ -140,6 +140,17 @@
   min-height: 4.5rem;
   z-index: 0;
   pointer-events: none;
+  background: transparent;
+  filter: none;
+  opacity: 0.95;
+  animation: tear-glow-breathe 3.2s ease-in-out infinite;
+  transition: opacity 0.35s ease;
+}
+
+.pack__ambient-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background:
     radial-gradient(
       ellipse 50% 90% at 50% 50%,
@@ -159,10 +170,9 @@
       rgba(255, 180, 100, 0.16) 0%,
       transparent 70%
     );
-  filter: blur(var(--glow-blur)) brightness(1);
-  opacity: 0.95;
-  animation: tear-glow-breathe 3.2s ease-in-out infinite;
-  transition: opacity 0.45s ease, transform 0.25s ease;
+  filter: blur(var(--glow-blur)) brightness(1.35);
+  opacity: 1;
+  pointer-events: none;
 }
 
 .pack__ambient-sparks {
@@ -213,23 +223,25 @@
 @keyframes tear-glow-breathe {
   0%,
   100% {
-    opacity: 0.9;
-    filter: blur(var(--glow-blur)) brightness(1);
+    opacity: 0.88;
     transform: translate(-50%, -20%) scale(1);
   }
   50% {
     opacity: 1;
-    filter: blur(var(--glow-blur)) brightness(2.35);
     transform: translate(-50%, -20%) scale(1.08);
   }
 }
 
-/* Drawing: bloom grows via scale/brightness; blur radius stays fixed for iOS */
+/* Drawing: outer scales with tear (can grow AND shrink); blur stays on ::before only */
 .pack[data-state="drawing"] .pack__ambient-glow {
   animation: none;
-  opacity: 1;
-  filter: blur(var(--glow-blur)) brightness(calc(1.5 + var(--tear) * 1.8));
+  opacity: calc(0.72 + var(--tear) * 0.28);
+  filter: none;
   transform: translate(-50%, -20%) scale(calc(1.1 + var(--tear) * 0.7));
+}
+
+.pack[data-state="drawing"] .pack__ambient-glow::before {
+  filter: blur(var(--glow-blur)) brightness(2.1);
 }
 
 /* Opening: bright burst while seal splits */
@@ -248,22 +260,18 @@
 @keyframes tear-glow-burst {
   0% {
     opacity: 1;
-    filter: blur(16px) brightness(2);
     transform: translate(-50%, -20%) scale(1.15);
   }
   22% {
     opacity: 1;
-    filter: blur(34px) brightness(3.2);
     transform: translate(-50%, -20%) scale(1.55);
   }
   70% {
     opacity: 0.75;
-    filter: blur(30px) brightness(2.2);
     transform: translate(-50%, -20%) scale(1.65);
   }
   100% {
     opacity: 0.45;
-    filter: blur(36px) brightness(1.6);
     transform: translate(-50%, -20%) scale(1.75);
   }
 }
@@ -327,12 +335,10 @@
 @keyframes tear-glow-linger {
   0% {
     opacity: 0.55;
-    filter: blur(32px) brightness(2);
     transform: translate(-50%, -20%) scale(1.7);
   }
   100% {
     opacity: 0;
-    filter: blur(48px) brightness(1);
     transform: translate(-50%, -20%) scale(2.15);
   }
 }
@@ -369,6 +375,11 @@
 .pack[data-state="flipped"] .pack__tear-glints {
   opacity: 0;
   animation: none;
+}
+
+.pack[data-state="splitting"] .pack__ambient-glow::before,
+.pack[data-state="torn"] .pack__ambient-glow::before {
+  filter: blur(var(--glow-blur)) brightness(2.4);
 }
 
 /* Soft sheen across the tearable band — clipped to pack only */

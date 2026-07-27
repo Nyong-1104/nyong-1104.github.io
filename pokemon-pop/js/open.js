@@ -138,6 +138,14 @@
     return strokeBounds().coverage;
   }
 
+  /* Glow follows finger: can grow and shrink when reversing (bbox coverage cannot). */
+  function liveTearProgress() {
+    if (!points.length) return 0;
+    const first = points[0];
+    const last = points[points.length - 1];
+    return clamp(last.x - first.x, 0, 1);
+  }
+
   function edgePath() {
     if (points.length < 2) return [];
 
@@ -261,7 +269,7 @@
   }
 
   function refreshStrokeOnly() {
-    setTear(coverage());
+    setTear(liveTearProgress());
     drawStroke();
   }
 
