@@ -921,7 +921,7 @@
   border-color: rgba(244, 239, 230, 0.28);
 }
 
-/* PC only: clean white glow. Mobile keeps the default warm glow above. */
+/* PC only: white ambient bloom. Tear sheen keeps the shared warm sweep (visible on white packs). */
 @media (hover: hover) and (pointer: fine) {
   .pack__ambient-glow::before {
     background:
@@ -953,37 +953,6 @@
   .pack[data-state="splitting"] .pack__ambient-glow::before,
   .pack[data-state="torn"] .pack__ambient-glow::before {
     filter: blur(var(--glow-blur)) brightness(1.35);
-  }
-
-  .pack__tear-sheen::before {
-    background:
-      linear-gradient(
-        100deg,
-        transparent 0%,
-        transparent 28%,
-        rgba(255, 255, 255, 0.1) 38%,
-        rgba(255, 255, 255, 0.28) 44%,
-        rgba(255, 255, 255, 0.48) 48%,
-        rgba(255, 255, 255, 0.55) 50%,
-        rgba(255, 255, 255, 0.42) 52%,
-        rgba(255, 255, 255, 0.24) 56%,
-        rgba(255, 255, 255, 0.08) 62%,
-        transparent 72%,
-        transparent 100%
-      ),
-      linear-gradient(
-        180deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.08) 25%,
-        rgba(255, 255, 255, 0.18) 50%,
-        rgba(255, 255, 255, 0.08) 75%,
-        transparent 100%
-      );
-    filter: blur(7px) brightness(1.1);
-  }
-
-  .pack[data-state="drawing"] .pack__tear-sheen::before {
-    filter: blur(7px) brightness(1.2);
   }
 }
 
