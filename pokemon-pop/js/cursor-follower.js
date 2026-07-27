@@ -24,7 +24,6 @@
         {
           src: "./assets/cursor-follower-masterball.png",
           burst: "./assets/cursor-burst-masterball.png",
-          burstFlash: true,
           /* Hold A / click: fire Master Ball left; catch HTML on hit. */
           masterCatch: true,
         },
@@ -1328,15 +1327,32 @@
   /* ---------------------------------------------------------------------- */
 
   /* ---- Master Ball: catch HTML on hit, miss flies away ---------------- */
-  var MASTERBALL_MS = 750;
+  var MASTERBALL_MS = 200;
   var MASTERBALL_SIZE = 44;
   var MASTERBALL_SPEED = 460;
   var MASTERBALL_ANGLE = Math.PI; /* left */
   var MASTERBALL_ARM_MS = 140;
   var MASTERBALL_HIT_MS = 40;
   var MASTERBALL_BOUNCE_PX = 28;
+  var MASTERBALL_RADIUS = MASTERBALL_SIZE / 2;
   var floorBalls = [];
   var floorRaf = 0;
+  /* One ball at a time until miss vanishes or catch lands on floor. */
+  var masterBallBusy = false;
+
+  function releaseMasterBallBusy() {
+    masterBallBusy = false;
+    if (masterCatching) {
+      if (masterCatchInterval) {
+        clearTimeout(masterCatchInterval);
+        masterCatchInterval = 0;
+      }
+      masterCatchInterval = setTimeout(function () {
+        if (!masterCatching || masterBallBusy) return;
+        spawnMasterBall();
+      }, MASTERBALL_MS);
+    }
+  }
 
   function tryMasterHitAt(px, py) {
     if (px < 0 || py < 0 || px >= window.innerWidth || py >= window.innerHeight) {
@@ -1374,35 +1390,119 @@
       last = now;
       var floorY = window.innerHeight - MASTERBALL_SIZE - 8;
       var maxX = Math.max(0, window.innerWidth - MASTERBALL_SIZE);
-      for (var i = 0; i < floorBalls.length; i++) {
+      var minDist = MASTERBALL_SIZE * 0.98;
+      var i;
+      var j;
+      var pass;
+
+      for (i = 0; i < floorBalls.length; i++) {
         var b = floorBalls[i];
-        if (b.falling) {
-          b.vy += 1600 * dt;
-          b.y += b.vy * dt;
-          b.x += b.vx * dt;
-          if (b.y >= floorY) {
-            b.y = floorY;
-            b.falling = false;
-            b.vy = 0;
-            b.vx *= 0.55;
-          }
-        } else {
-          b.vx *= Math.pow(0.25, dt); /* friction */
-          if (Math.abs(b.vx) < 4) b.vx = (Math.random() - 0.5) * 18;
-          b.x += b.vx * dt;
+        b.vy += 1800 * dt;
+        b.vx *= Math.pow(0.4, dt);
+        b.x += b.vx * dt;
+        b.y += b.vy * dt;
+
+        if (b.x < 0) {
+          b.x = 0;
+          b.vx = Math.abs(b.vx) * 0.5;
+        } else if (b.x > maxX) {
+          b.x = maxX;
+          b.vx = -Math.abs(b.vx) * 0.5;
+        }
+
+        if (b.y >= floorY) {
           b.y = floorY;
-          if (b.x < 0) {
-            b.x = 0;
-            b.vx = Math.abs(b.vx) * 0.7 + 20;
-          } else if (b.x > maxX) {
-            b.x = maxX;
-            b.vx = -Math.abs(b.vx) * 0.7 - 20;
+          if (b.vy > 0) b.vy = 0;
+          if (b.pendingRelease) {
+            b.pendingRelease = false;
+            releaseMasterBallBusy();
           }
         }
-        b.rot += b.vx * dt * 2.2;
-        b.el.style.left = b.x + "px";
-        b.el.style.top = b.y + "px";
-        b.el.style.transform = "rotate(" + b.rot + "deg)";
+      }
+
+      /* Several passes so packed balls settle into stacks without overlap. */
+      for (pass = 0; pass < 4; pass++) {
+        for (i = 0; i < floorBalls.length; i++) {
+          for (j = i + 1; j < floorBalls.length; j++) {
+            var a = floorBalls[i];
+            var o = floorBalls[j];
+            var ax = a.x + MASTERBALL_RADIUS;
+            var ay = a.y + MASTERBALL_RADIUS;
+            var ox = o.x + MASTERBALL_RADIUS;
+            var oy = o.y + MASTERBALL_RADIUS;
+            var dx = ox - ax;
+            var dy = oy - ay;
+            var dist = Math.sqrt(dx * dx + dy * dy) || 0.0001;
+            if (dist >= minDist) continue;
+            var overlap = minDist - dist;
+            var nx = dx / dist;
+            var ny = dy / dist;
+            a.x -= nx * overlap * 0.5;
+            a.y -= ny * overlap * 0.5;
+            o.x += nx * overlap * 0.5;
+            o.y += ny * overlap * 0.5;
+
+            var rvx = o.vx - a.vx;
+            var rvy = o.vy - a.vy;
+            var velAlong = rvx * nx + rvy * ny;
+            if (velAlong < 0) {
+              var impulse = velAlong * 0.5;
+              a.vx += impulse * nx;
+              a.vy += impulse * ny;
+              o.vx -= impulse * nx;
+              o.vy -= impulse * ny;
+            }
+
+            if (a.x < 0) a.x = 0;
+            if (o.x < 0) o.x = 0;
+            if (a.x > maxX) a.x = maxX;
+            if (o.x > maxX) o.x = maxX;
+            if (a.y > floorY) {
+              a.y = floorY;
+              if (a.vy > 0) a.vy = 0;
+            }
+            if (o.y > floorY) {
+              o.y = floorY;
+              if (o.vy > 0) o.vy = 0;
+            }
+          }
+        }
+      }
+
+      for (i = 0; i < floorBalls.length; i++) {
+        var ball = floorBalls[i];
+        /* Settled on another ball (stack) also unlocks the next shot. */
+        if (
+          ball.pendingRelease &&
+          ball.vy >= 0 &&
+          Math.abs(ball.vy) < 60 &&
+          ball.y < floorY - 2
+        ) {
+          var supported = false;
+          var bcx = ball.x + MASTERBALL_RADIUS;
+          var bcy = ball.y + MASTERBALL_RADIUS;
+          for (j = 0; j < floorBalls.length; j++) {
+            if (i === j) continue;
+            var other = floorBalls[j];
+            var ocx = other.x + MASTERBALL_RADIUS;
+            var ocy = other.y + MASTERBALL_RADIUS;
+            var ddx = bcx - ocx;
+            var ddy = bcy - ocy;
+            var d = Math.sqrt(ddx * ddx + ddy * ddy);
+            if (d < minDist + 2 && bcy < ocy) {
+              supported = true;
+              break;
+            }
+          }
+          if (supported) {
+            ball.pendingRelease = false;
+            releaseMasterBallBusy();
+          }
+        }
+        ball.rot += ball.vx * dt * 2.2;
+        ball.el.style.left = ball.x + "px";
+        ball.el.style.top = ball.y + "px";
+        ball.el.style.transform = "rotate(" + ball.rot + "deg)";
       }
       floorRaf = requestAnimationFrame(tick);
     }
@@ -1416,10 +1516,10 @@
       el: ball,
       x: x,
       y: y,
-      vx: (Math.random() - 0.5) * 160,
-      vy: 40,
+      vx: (Math.random() - 0.5) * 140,
+      vy: 60,
       rot: 0,
-      falling: true,
+      pendingRelease: true,
     });
     ensureFloorBallLoop();
   }
@@ -1471,13 +1571,11 @@
       var t = now - born;
 
       if (phase === "bounce") {
-        /* Ease back a little to the right, then settle. */
         var u = Math.min(1, t / 220);
         var ease = 1 - (1 - u) * (1 - u);
         var bx = hitX + (bounceX - hitX) * ease;
         var by = hitY;
         if (u >= 1) {
-          /* Settle slightly left of peak bounce. */
           var u2 = Math.min(1, (t - 220) / 160);
           var e2 = u2 * u2;
           bx = bounceX + (stopX - bounceX) * e2;
@@ -1500,7 +1598,6 @@
         if (now - born >= 180) {
           phase = "suck";
           suckStart = now;
-          /* Lift target out of flow so it can fly into the ball. */
           var r = target.getBoundingClientRect();
           targetOrigin = {
             left: r.left,
@@ -1543,7 +1640,6 @@
           hideCaughtElement(target);
           phase = "vibrate";
           vibStart = now;
-          vibCount = 0;
           ball.classList.add("is-masterball-vibrating");
         }
         requestAnimationFrame(tick);
@@ -1552,7 +1648,6 @@
 
       if (phase === "vibrate") {
         var vt = now - vibStart;
-        /* ~3 short shakes over ~520ms (CSS animation). */
         if (vt >= 520) {
           ball.classList.remove(
             "is-masterball-vibrating",
@@ -1571,6 +1666,9 @@
   }
 
   function spawnMasterBall() {
+    if (masterBallBusy || !canMasterCatch) return;
+    masterBallBusy = true;
+
     var c = followerCenter();
     var originX = c.cx - (img.offsetWidth || 40) * 0.15;
     var originY = c.cy;
@@ -1597,6 +1695,7 @@
     function removeBall() {
       alive = false;
       if (ball.parentNode) ball.parentNode.removeChild(ball);
+      releaseMasterBallBusy();
     }
 
     function tick(now) {
@@ -1613,7 +1712,6 @@
         curX > window.innerWidth + 80 ||
         curY > window.innerHeight + 80
       ) {
-        /* Miss: fly out and vanish. */
         removeBall();
         return;
       }
@@ -1631,6 +1729,7 @@
         if (target) {
           alive = false;
           ball.style.transform = "";
+          /* Busy stays true until this catch lands on the floor. */
           runMasterCatch(ball, curX, curY, target);
           return;
         }
@@ -1643,12 +1742,7 @@
   function startMasterCatch() {
     if (masterCatching || !canMasterCatch) return;
     masterCatching = true;
-    function scheduleNext() {
-      if (!masterCatching) return;
-      spawnMasterBall();
-      masterCatchInterval = setTimeout(scheduleNext, MASTERBALL_MS);
-    }
-    scheduleNext();
+    if (!masterBallBusy) spawnMasterBall();
   }
 
   function stopMasterCatch() {
