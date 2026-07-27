@@ -76,8 +76,8 @@
             <filter id="open-fx-blur-seam" x="-30%" y="-120%" width="160%" height="340%" color-interpolation-filters="sRGB">
               <feGaussianBlur stdDeviation="0.01"></feGaussianBlur>
             </filter>
-            <filter id="open-fx-blur-bloom" x="-40%" y="-160%" width="180%" height="360%" color-interpolation-filters="sRGB">
-              <feGaussianBlur stdDeviation="0.028"></feGaussianBlur>
+            <filter id="open-fx-blur-bloom" x="-50%" y="-200%" width="200%" height="420%" color-interpolation-filters="sRGB">
+              <feGaussianBlur stdDeviation="0.022"></feGaussianBlur>
             </filter>
             <clipPath id="open-fx-above-clip" clipPathUnits="userSpaceOnUse">
               <polygon id="open-fx-above-poly" points="0,0 1,0 1,0.21 0,0.21"></polygon>
@@ -88,9 +88,10 @@
               <stop offset="100%" stop-color="#ffffff" stop-opacity="0.95"></stop>
             </linearGradient>
           </defs>
-          <!-- 2nd light: blooms upward only (clipped to region above the tear) -->
+          <!-- 2nd light: fan bloom upward only (clipped to region above the tear) -->
           <g class="pack__open-fx__bloom" clip-path="url(#open-fx-above-clip)">
-            <path id="open-fx-bloom-path" d="M 0 0.21 L 1 0.21" fill="none" stroke="#ffe4a0" stroke-width="0.18" stroke-linecap="round" stroke-linejoin="round" filter="url(#open-fx-blur-bloom)"></path>
+            <polygon id="open-fx-fan-fill" points="0,0.21 1,0.21 1,0.08 0,0.08" fill="#ffe6a8" opacity="0.55" filter="url(#open-fx-blur-bloom)"></polygon>
+            <path id="open-fx-fan-rays" d="" fill="none" stroke="#fff6d8" stroke-width="0.012" stroke-linecap="round" opacity="0.85" filter="url(#open-fx-blur-seam)"></path>
           </g>
           <!-- 1st light: soft glow along the exact tear seam -->
           <path id="open-fx-seam-path" class="pack__open-fx__seam" d="M 0 0.21 L 1 0.21" fill="none" stroke="#fffaf0" stroke-width="0.014" stroke-linecap="round" stroke-linejoin="round" filter="url(#open-fx-blur-seam)"></path>

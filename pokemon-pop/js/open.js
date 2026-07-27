@@ -30,7 +30,8 @@
   const tearPolyBody = document.getElementById("tear-poly-body");
   const tearStroke = document.getElementById("tear-stroke");
   const openFxSeam = document.getElementById("open-fx-seam-path");
-  const openFxBloom = document.getElementById("open-fx-bloom-path");
+  const openFxFanFill = document.getElementById("open-fx-fan-fill");
+  const openFxFanRays = document.getElementById("open-fx-fan-rays");
   const openFxAbovePoly = document.getElementById("open-fx-above-poly");
   const hintEl = document.getElementById("open-hint");
   const openInfo = document.getElementById("open-info");
@@ -250,27 +251,81 @@
     syncOpenFx(edge, topParts.join(" "));
   }
 
-  /** PC open FX: seam + upward bloom clipped to the torn top shape. */
+  /** PC open FX: seam along cut + upward fan bloom clipped above the tear. */
   function syncOpenFx(edge, abovePoints) {
-    if (!openFxSeam || !openFxBloom || !openFxAbovePoly) return;
-    if (!edge || edge.length < 2) {
-      const y = TEAR.ratio.toFixed(4);
-      const d = `M 0 ${y} L 1 ${y}`;
-      openFxSeam.setAttribute("d", d);
-      openFxBloom.setAttribute("d", d);
-      openFxAbovePoly.setAttribute("points", `0,0 1,0 1,${y} 0,${y}`);
-      return;
-    }
-    const d =
+    if (!openFxSeam || !openFxFanFill || !openFxFanRays || !openFxAbovePoly) return;
+
+    const y = TEAR.ratio;
+    const fallbackEdge = [
+      { x: 0, y: y },
+      { x: 0.5, y: y },
+      { x: 1, y: y },
+    ];
+    const src = edge && edge.length >= 2 ? edge : fallbackEdge;
+
+    const seamD =
       "M " +
-      edge
+      src
         .map(function (p) {
           return p.x.toFixed(4) + " " + p.y.toFixed(4);
         })
         .join(" L ");
-    openFxSeam.setAttribute("d", d);
-    openFxBloom.setAttribute("d", d);
-    if (abovePoints) openFxAbovePoly.setAttribute("points", abovePoints);
+    openFxSeam.setAttribute("d", seamD);
+
+    // Fan fill: tear edge → flared arc above (부채꼴)
+    const fill = [];
+    for (let i = 0; i < src.length; i++) fill.push(src[i]);
+    for (let i = src.length - 1; i >= 0; i--) {
+      const p = src[i];
+      const t = src.length <= 1 ? 0.5 : i / (src.length - 1);
+      const lift = Math.sin(t * Math.PI); // taller near center
+      const outward = (p.x - 0.5) * (0.22 + 0.45 * lift);
+      fill.push({
+        x: clamp(p.x + outward, -0.08, 1.08),
+        y: clamp(p.y - (0.06 + 0.16 * lift), 0, 1),
+      });
+    }
+    openFxFanFill.setAttribute(
+      "points",
+      fill
+        .map(function (p) {
+          return p.x.toFixed(4) + "," + p.y.toFixed(4);
+        })
+        .join(" ")
+    );
+
+    // Soft rays from seam samples, fanning upward
+    const rayParts = [];
+    const sampleStep = Math.max(1, Math.floor(src.length / 7));
+    for (let i = 0; i < src.length; i += sampleStep) {
+      const p = src[i];
+      const t = src.length <= 1 ? 0.5 : i / (src.length - 1);
+      const angles = [-0.95, -0.55, -0.2, 0.2, 0.55, 0.95]; // radians from vertical
+      for (let a = 0; a < angles.length; a++) {
+        const ang = angles[a];
+        const len = 0.07 + 0.11 * Math.sin(t * Math.PI) * (0.65 + (a % 2) * 0.35);
+        const ex = p.x + Math.sin(ang) * len;
+        const ey = p.y - Math.cos(ang) * len;
+        rayParts.push(
+          "M " +
+            p.x.toFixed(4) +
+            " " +
+            p.y.toFixed(4) +
+            " L " +
+            clamp(ex, -0.1, 1.1).toFixed(4) +
+            " " +
+            clamp(ey, 0, 1).toFixed(4)
+        );
+      }
+    }
+    openFxFanRays.setAttribute("d", rayParts.join(" "));
+
+    if (abovePoints) {
+      openFxAbovePoly.setAttribute("points", abovePoints);
+    } else {
+      const yy = y.toFixed(4);
+      openFxAbovePoly.setAttribute("points", `0,0 1,0 1,${yy} 0,${yy}`);
+    }
   }
 
   function sizeCanvas() {
