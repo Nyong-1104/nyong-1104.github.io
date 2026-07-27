@@ -1030,8 +1030,10 @@
   var WATER_BLOB_ANGLE = Math.PI - (10 * Math.PI) / 180;
   var WATER_BLOB_SPEED = 520;
   var WATER_BLOB_HIT_MS = 40;
+  /* Skip hit tests near the cannon so the blob is visible while leaving. */
+  var WATER_BLOB_ARM_MS = 180;
   var WATER_BLOB_CLUSTER = 6;
-  var WATER_BLOB_CORE_SIZE = 34;
+  var WATER_BLOB_CORE_SIZE = 48;
 
   function spawnWaterScatter(cx, cy) {
     var count = 10 + Math.floor(Math.random() * 6);
@@ -1041,7 +1043,8 @@
       p.alt = "";
       p.draggable = false;
       p.src = burstSrc;
-      var size = 10 + Math.random() * 16;
+      /* 100% larger than initial scatter sizes. */
+      var size = 20 + Math.random() * 32;
       p.style.width = size + "px";
       p.style.height = "auto";
       p.style.left = cx - size / 2 + "px";
@@ -1049,10 +1052,10 @@
       document.body.appendChild(p);
 
       var angle = Math.random() * Math.PI * 2;
-      var speed = 120 + Math.random() * 280;
+      var speed = 140 + Math.random() * 320;
       var vx = Math.cos(angle) * speed;
       var vy = Math.sin(angle) * speed;
-      var life = 320 + Math.random() * 280;
+      var life = 360 + Math.random() * 320;
       var rot = (Math.random() - 0.5) * 480;
       var start = performance.now();
 
@@ -1065,7 +1068,7 @@
           }
           var ease = 1 - (1 - t) * (1 - t);
           var dx = vx0 * (ease * (life0 / 1000));
-          var dy = vy0 * (ease * (life0 / 1000)) + 40 * t * t;
+          var dy = vy0 * (ease * (life0 / 1000)) + 50 * t * t;
           el.style.opacity = String(1 - t);
           el.style.transform =
             "translate3d(" +
@@ -1116,6 +1119,8 @@
     core.draggable = false;
     core.src = burstSrc;
     core.style.width = WATER_BLOB_CORE_SIZE + "px";
+    core.style.left = -WATER_BLOB_CORE_SIZE / 2 + "px";
+    core.style.top = -WATER_BLOB_CORE_SIZE / 2 + "px";
     wrap.appendChild(core);
 
     for (var i = 0; i < WATER_BLOB_CLUSTER; i++) {
@@ -1124,12 +1129,12 @@
       piece.alt = "";
       piece.draggable = false;
       piece.src = burstSrc;
-      var psz = 16 + Math.random() * 14;
-      var ox = (Math.random() - 0.5) * 22;
-      var oy = (Math.random() - 0.5) * 22;
+      var psz = 22 + Math.random() * 18;
+      var ox = (Math.random() - 0.5) * 28;
+      var oy = (Math.random() - 0.5) * 28;
       piece.style.width = psz + "px";
-      piece.style.left = ox + "px";
-      piece.style.top = oy + "px";
+      piece.style.left = ox - psz / 2 + "px";
+      piece.style.top = oy - psz / 2 + "px";
       wrap.appendChild(piece);
     }
 
@@ -1144,7 +1149,8 @@
 
     function tick(now) {
       if (!alive) return;
-      var elapsed = (now - born) / 1000;
+      var elapsedMs = now - born;
+      var elapsed = elapsedMs / 1000;
       var curX = originX + vx * elapsed;
       var curY = originY + vy * elapsed;
 
@@ -1163,7 +1169,10 @@
       wrap.style.top = curY + "px";
       wrap.style.transform = "rotate(" + elapsed * 90 + "deg)";
 
-      if (now - lastHitAt >= WATER_BLOB_HIT_MS) {
+      if (
+        elapsedMs >= WATER_BLOB_ARM_MS &&
+        now - lastHitAt >= WATER_BLOB_HIT_MS
+      ) {
         lastHitAt = now;
         var target = tryWaterHitAt(curX, curY);
         if (target) {

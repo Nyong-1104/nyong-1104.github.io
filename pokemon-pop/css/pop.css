@@ -1781,12 +1781,14 @@ body.nav-drawer-open {
 
 /* Blastoise water blob: clustered round mass projectile */
 .cursor-burst.cursor-burst--water-blob {
-  z-index: 52;
+  z-index: 55;
   width: 0;
   height: 0;
   overflow: visible;
-  transform-origin: center center;
-  mix-blend-mode: screen;
+  transform-origin: 0 0;
+  /* Avoid screen blend — light blue vanishes on light page backgrounds. */
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(40, 140, 220, 0.55));
 }
 
 .water-blob-piece {
@@ -1796,17 +1798,12 @@ body.nav-drawer-open {
   pointer-events: none;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  mix-blend-mode: screen;
-  opacity: 0.92;
+  opacity: 0.95;
   user-select: none;
-  left: -50%;
-  top: -50%;
 }
 
 .water-blob-piece--core {
-  left: -17px;
-  top: -17px;
-  filter: brightness(1.1);
+  filter: brightness(1.12) saturate(1.15);
   opacity: 1;
 }
 
