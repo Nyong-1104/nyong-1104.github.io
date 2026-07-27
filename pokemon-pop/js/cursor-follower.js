@@ -722,7 +722,8 @@
   function clearSoak(el) {
     var state = soakingMap.get(el);
     if (!state) return;
-    if (state.timer) clearTimeout(state.timer);
+    if (state.shakeTimer) clearTimeout(state.shakeTimer);
+    if (state.settleTimer) clearTimeout(state.settleTimer);
     if (state.returnTimer) clearTimeout(state.returnTimer);
     el.classList.remove(
       "is-water-soaked",
@@ -742,63 +743,70 @@
     for (var i = 0; i < els.length; i++) clearSoak(els[i]);
   }
 
-  function scheduleWaterReturn(el) {
+  function beginWaterReturn(el, gen) {
     var state = soakingMap.get(el);
-    if (!state) return;
-    if (state.returnTimer) clearTimeout(state.returnTimer);
+    if (!state || state.hitGen !== gen || !el.isConnected) return;
+    el.classList.remove("is-water-soaked");
+    el.classList.add("is-water-returning");
+    el.style.transition = "translate " + WATER_RETURN_MS / 1000 + "s ease-out";
+    el.style.translate = "0px 0";
     state.returnTimer = setTimeout(function () {
       var cur = soakingMap.get(el);
-      if (!cur || !el.isConnected) {
-        clearSoak(el);
-        return;
-      }
-      el.classList.remove("is-water-soaked");
-      el.classList.add("is-water-returning");
-      /* Smooth slide back to original position. */
-      el.style.transition = "translate " + WATER_RETURN_MS / 1000 + "s ease-out";
-      el.style.translate = "0px 0";
-      cur.pushPx = 0;
-      cur.returnTimer = setTimeout(function () {
-        clearSoak(el);
-      }, WATER_RETURN_MS + 40);
-    }, WATER_RETURN_DELAY_MS);
+      /* Abort if hit again while returning (hitGen changed). */
+      if (!cur || cur.hitGen !== gen) return;
+      clearSoak(el);
+    }, WATER_RETURN_MS + 40);
   }
 
   function shakeElement(el) {
     if (!el) return;
-    var existing = soakingMap.get(el);
-    var pushPx = existing ? existing.pushPx + 3 : 3;
-
-    if (existing) {
-      if (existing.timer) clearTimeout(existing.timer);
-      if (existing.returnTimer) clearTimeout(existing.returnTimer);
-      el.classList.remove("is-water-returning");
-      el.style.transition = "none";
+    var state = soakingMap.get(el);
+    if (!state) {
+      state = {
+        hitGen: 0,
+        shakeTimer: 0,
+        settleTimer: 0,
+        returnTimer: 0,
+        pushPx: 0,
+      };
+      soakingMap.set(el, state);
     }
 
-    /* Accumulate 3px left knock per hit (independent of shake transform). */
-    el.style.translate = -pushPx + "px 0";
+    /* Any new hit cancels shake-end / 1s-settle / return — timers reset. */
+    if (state.shakeTimer) clearTimeout(state.shakeTimer);
+    if (state.settleTimer) clearTimeout(state.settleTimer);
+    if (state.returnTimer) clearTimeout(state.returnTimer);
+
+    if (el.classList.contains("is-water-returning")) {
+      el.classList.remove("is-water-returning");
+      el.style.transition = "none";
+      /* Snap back to the knocked offset before adding another hit. */
+      el.style.translate = -state.pushPx + "px 0";
+      void el.offsetWidth;
+    }
+
+    state.hitGen += 1;
+    var gen = state.hitGen;
+    state.pushPx += 3;
+
+    el.style.translate = -state.pushPx + "px 0";
     el.classList.add("is-water-pushed");
     el.classList.remove("is-water-soaked");
     void el.offsetWidth;
     el.classList.add("is-water-soaked");
 
-    var timer = setTimeout(function () {
+    state.shakeTimer = setTimeout(function () {
       var cur = soakingMap.get(el);
-      if (!cur) return;
+      if (!cur || cur.hitGen !== gen) return;
       el.classList.remove("is-water-soaked");
-      /* Hold pushed pose, then return after 1s. */
       el.style.translate = -cur.pushPx + "px 0";
-      scheduleWaterReturn(el);
+      /* 1s after shake stops; keeps resetting while hits continue. */
+      cur.settleTimer = setTimeout(function () {
+        var s = soakingMap.get(el);
+        if (!s || s.hitGen !== gen) return;
+        beginWaterReturn(el, gen);
+      }, WATER_RETURN_DELAY_MS);
     }, WATER_SHAKE_MS);
-
-    if (existing) {
-      existing.timer = timer;
-      existing.returnTimer = 0;
-      existing.pushPx = pushPx;
-    } else {
-      soakingMap.set(el, { timer: timer, returnTimer: 0, pushPx: pushPx });
-    }
   }
 
   document.addEventListener(
