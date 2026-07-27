@@ -10,6 +10,8 @@
           src: "./assets/cursor-follower-venusaur.png",
           burstFlash: true,
           evolvedXl: true,
+          breathFire: true,
+          breathRangeScale: 0.66,
         },
       ],
     },
@@ -34,6 +36,8 @@
           src: "./assets/cursor-follower-charizard.png",
           burstFlash: true,
           evolvedXl: true,
+          breathFire: true,
+          breathRangeScale: 0.66,
         },
         {
           weight: 30,
@@ -42,6 +46,7 @@
           burstFlash: true,
           evolvedXxl: true,
           breathFire: true,
+          breathRangeScale: 1,
         },
       ],
     },
@@ -54,6 +59,8 @@
           src: "./assets/cursor-follower-blastoise.png",
           burstFlash: true,
           evolvedXl: true,
+          breathFire: true,
+          breathRangeScale: 0.66,
         },
       ],
     },
@@ -127,6 +134,7 @@
   var evolved = false;
   var evolveBurstFlash = false;
   var canBreath = false;
+  var breathRangeScale = 1;
   var breathing = false;
   var breathInterval = 0;
   /* Breath stays on while mouse OR A has been held past BREATH_HOLD_MS. */
@@ -446,7 +454,9 @@
     document.body.appendChild(p);
 
     var angle = BREATH_ANGLE + (Math.random() - 0.5) * BREATH_CONE;
-    var speed = BREATH_SPEED_MIN + Math.random() * (BREATH_SPEED_MAX - BREATH_SPEED_MIN);
+    var speedMin = BREATH_SPEED_MIN * breathRangeScale;
+    var speedMax = BREATH_SPEED_MAX * breathRangeScale;
+    var speed = speedMin + Math.random() * (speedMax - speedMin);
     var vx = Math.cos(angle) * speed;
     var vy = Math.sin(angle) * speed;
     var life = BREATH_LIFE_MIN + Math.random() * (BREATH_LIFE_MAX - BREATH_LIFE_MIN);
@@ -594,6 +604,7 @@
     if (outcome.burst) burstSrc = outcome.burst;
     evolveBurstFlash = !!outcome.burstFlash;
     canBreath = !!outcome.breathFire;
+    breathRangeScale = outcome.breathRangeScale != null ? outcome.breathRangeScale : 1;
     spawnBurst(cx, cy);
   }
 
