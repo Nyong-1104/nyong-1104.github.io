@@ -298,7 +298,6 @@
       el.classList.contains("venusaur-vine-leaf") ||
       el.classList.contains("venusaur-vine-stem") ||
       el.classList.contains("cursor-burst--water-blob") ||
-      el.classList.contains("water-blob-piece") ||
       el.classList.contains("nav-drawer-backdrop")
     );
   }
@@ -1028,12 +1027,12 @@
   var WATER_BLOB_MS = 420;
   /* Left + 10deg up (screen y grows down → subtract). */
   var WATER_BLOB_ANGLE = Math.PI - (10 * Math.PI) / 180;
-  var WATER_BLOB_SPEED = 520;
-  var WATER_BLOB_HIT_MS = 40;
+  var WATER_BLOB_SPEED = 420;
+  var WATER_BLOB_HIT_MS = 45;
   /* Skip hit tests near the cannon so the blob is visible while leaving. */
-  var WATER_BLOB_ARM_MS = 180;
-  var WATER_BLOB_CLUSTER = 6;
-  var WATER_BLOB_CORE_SIZE = 48;
+  var WATER_BLOB_ARM_MS = 220;
+  var WATER_BLOB_CLUSTER = 7;
+  var WATER_BLOB_CORE_SIZE = 72;
 
   function spawnWaterScatter(cx, cy) {
     var count = 10 + Math.floor(Math.random() * 6);
@@ -1105,37 +1104,33 @@
     var vx = Math.cos(angle) * speed;
     var vy = Math.sin(angle) * speed;
 
-    var wrap = document.createElement("div");
-    wrap.className = "cursor-burst cursor-burst--water-blob";
-    wrap.setAttribute("aria-hidden", "true");
-    wrap.style.left = originX + "px";
-    wrap.style.top = originY + "px";
-    document.body.appendChild(wrap);
-
-    /* Round clustered mass: one core + overlapping satellites. */
-    var core = document.createElement("img");
-    core.className = "water-blob-piece water-blob-piece--core";
-    core.alt = "";
-    core.draggable = false;
-    core.src = burstSrc;
-    core.style.width = WATER_BLOB_CORE_SIZE + "px";
-    core.style.left = -WATER_BLOB_CORE_SIZE / 2 + "px";
-    core.style.top = -WATER_BLOB_CORE_SIZE / 2 + "px";
-    wrap.appendChild(core);
-
+    /* Same proven pattern as breath/lightning: fixed <img> + translate3d. */
+    var pieces = [];
+    var offsets = [{ ox: 0, oy: 0, size: WATER_BLOB_CORE_SIZE }];
     for (var i = 0; i < WATER_BLOB_CLUSTER; i++) {
-      var piece = document.createElement("img");
-      piece.className = "water-blob-piece";
-      piece.alt = "";
-      piece.draggable = false;
-      piece.src = burstSrc;
-      var psz = 22 + Math.random() * 18;
-      var ox = (Math.random() - 0.5) * 28;
-      var oy = (Math.random() - 0.5) * 28;
-      piece.style.width = psz + "px";
-      piece.style.left = ox - psz / 2 + "px";
-      piece.style.top = oy - psz / 2 + "px";
-      wrap.appendChild(piece);
+      offsets.push({
+        ox: (Math.random() - 0.5) * 36,
+        oy: (Math.random() - 0.5) * 36,
+        size: 28 + Math.random() * 28,
+      });
+    }
+
+    for (var j = 0; j < offsets.length; j++) {
+      var o = offsets[j];
+      var p = document.createElement("img");
+      p.className =
+        "cursor-burst cursor-burst--water-blob" +
+        (j === 0 ? " cursor-burst--water-core" : "");
+      p.alt = "";
+      p.draggable = false;
+      p.src = burstSrc;
+      p.style.width = o.size + "px";
+      p.style.height = "auto";
+      /* Anchor all pieces at origin; cluster offsets applied in transform. */
+      p.style.left = originX - o.size / 2 + "px";
+      p.style.top = originY - o.size / 2 + "px";
+      document.body.appendChild(p);
+      pieces.push({ el: p, ox: o.ox, oy: o.oy, size: o.size });
     }
 
     var born = performance.now();
@@ -1144,30 +1139,43 @@
 
     function removeBlob() {
       alive = false;
-      if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+      for (var k = 0; k < pieces.length; k++) {
+        var el = pieces[k].el;
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }
     }
 
     function tick(now) {
       if (!alive) return;
       var elapsedMs = now - born;
       var elapsed = elapsedMs / 1000;
-      var curX = originX + vx * elapsed;
-      var curY = originY + vy * elapsed;
+      var dx = vx * elapsed;
+      var dy = vy * elapsed;
+      var curX = originX + dx;
+      var curY = originY + dy;
+      var spin = elapsed * 120;
 
-      /* Full range: keep flying until well past the viewport. */
       if (
-        curX < -120 ||
-        curY < -120 ||
-        curX > window.innerWidth + 120 ||
-        curY > window.innerHeight + 120
+        curX < -160 ||
+        curY < -160 ||
+        curX > window.innerWidth + 160 ||
+        curY > window.innerHeight + 160
       ) {
         removeBlob();
         return;
       }
 
-      wrap.style.left = curX + "px";
-      wrap.style.top = curY + "px";
-      wrap.style.transform = "rotate(" + elapsed * 90 + "deg)";
+      for (var k = 0; k < pieces.length; k++) {
+        var piece = pieces[k];
+        piece.el.style.transform =
+          "translate3d(" +
+          (dx + piece.ox) +
+          "px," +
+          (dy + piece.oy) +
+          "px,0) rotate(" +
+          spin +
+          "deg)";
+      }
 
       if (
         elapsedMs >= WATER_BLOB_ARM_MS &&
