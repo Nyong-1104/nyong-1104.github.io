@@ -274,6 +274,12 @@
   /* --- Raichu lightning: zap HTML under lightning particles --- */
   var zappingMap = new Map();
   var ZAP_MS = 750;
+  /* --- Venusaur leaves: vine chain overlay on hit HTML --- */
+  var vineMap = new Map();
+  var VINE_MS = 2400;
+  var VINE_LEAF_COUNT = 7;
+  var VINE_LEAF_SIZE_MIN = 14;
+  var VINE_LEAF_SIZE_MAX = 26;
 
   function isIgniteChrome(el) {
     if (!el || !el.classList) return false;
@@ -284,6 +290,9 @@
       el.classList.contains("breath-burn-overlay") ||
       el.classList.contains("lightning-zap-flash") ||
       el.classList.contains("lightning-zap-overlay") ||
+      el.classList.contains("venusaur-vine-overlay") ||
+      el.classList.contains("venusaur-vine-leaf") ||
+      el.classList.contains("venusaur-vine-stem") ||
       el.classList.contains("nav-drawer-backdrop")
     );
   }
@@ -556,12 +565,157 @@
     if (target) zapElement(target);
   }
 
+  /* --- Venusaur vine: attach a chain of leaves to the hit element --- */
+  function clearVine(el) {
+    var state = vineMap.get(el);
+    if (!state) return;
+    if (state.timer) clearTimeout(state.timer);
+    if (state.onMove) {
+      window.removeEventListener("scroll", state.onMove, true);
+      window.removeEventListener("resize", state.onMove);
+    }
+    if (state.overlay && state.overlay.parentNode) {
+      state.overlay.parentNode.removeChild(state.overlay);
+    }
+    vineMap.delete(el);
+  }
+
+  function clearAllVines() {
+    var els = [];
+    vineMap.forEach(function (_state, el) {
+      els.push(el);
+    });
+    for (var i = 0; i < els.length; i++) clearVine(els[i]);
+  }
+
+  function syncVineOverlay(overlay, el) {
+    var r = el.getBoundingClientRect();
+    if (r.width < 1 || r.height < 1) return null;
+    var padX = Math.max(4, r.width * 0.06);
+    var padY = Math.max(6, r.height * 0.1);
+    overlay.style.left = r.left - padX + "px";
+    overlay.style.top = r.top - padY + "px";
+    overlay.style.width = r.width + padX * 2 + "px";
+    overlay.style.height = r.height + padY * 2 + "px";
+    return { padX: padX, padY: padY, rect: r };
+  }
+
+  function vineElement(el) {
+    if (!el) return;
+    var existing = vineMap.get(el);
+    if (existing) {
+      clearTimeout(existing.timer);
+      existing.timer = setTimeout(function () {
+        clearVine(el);
+      }, VINE_MS);
+      if (existing.overlay) syncVineOverlay(existing.overlay, el);
+      return;
+    }
+
+    /* Create pinned overlay: stems + multiple leaf sprites (connected chain). */
+    var overlay = document.createElement("div");
+    overlay.className = "venusaur-vine-overlay";
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.appendChild(overlay);
+
+    var sync = syncVineOverlay(overlay, el);
+    if (!sync) {
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      return;
+    }
+    var padX = sync.padX;
+    var padY = sync.padY;
+    var r = sync.rect;
+
+    var points = [];
+    /* Start/end inside the element box (in normalized coordinates). */
+    var startX = 0.18 + Math.random() * 0.2;
+    var startY = 0.25 + Math.random() * 0.2;
+    var endX = 0.68 + Math.random() * 0.18;
+    var endY = 0.65 + Math.random() * 0.2;
+    for (var i = 0; i < VINE_LEAF_COUNT; i++) {
+      var t = VINE_LEAF_COUNT === 1 ? 0 : i / (VINE_LEAF_COUNT - 1);
+      var nx = startX + (endX - startX) * t + (Math.random() - 0.5) * 0.12;
+      var ny = startY + (endY - startY) * t + (Math.random() - 0.5) * 0.14;
+      if (nx < 0.08) nx = 0.08;
+      if (nx > 0.92) nx = 0.92;
+      if (ny < 0.08) ny = 0.08;
+      if (ny > 0.92) ny = 0.92;
+      points.push({
+        x: nx * r.width + padX,
+        y: ny * r.height + padY,
+      });
+    }
+
+    /* Stem segments between consecutive leaves. */
+    for (var s = 0; s < points.length - 1; s++) {
+      var p1 = points[s];
+      var p2 = points[s + 1];
+      var dx = p2.x - p1.x;
+      var dy = p2.y - p1.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 4) continue;
+      var stem = document.createElement("div");
+      stem.className = "venusaur-vine-stem";
+      stem.style.left = p1.x + "px";
+      /* Stem CSS is 3px tall; use top as segment center alignment. */
+      stem.style.top = p1.y - 1.5 + "px";
+      stem.style.width = dist + "px";
+      stem.style.transform = "rotate(" + Math.atan2(dy, dx) + "rad)";
+      overlay.appendChild(stem);
+    }
+
+    /* Leaf sprites along the stem chain. */
+    for (var i2 = 0; i2 < points.length; i2++) {
+      var pt = points[i2];
+      var size = VINE_LEAF_SIZE_MIN + Math.random() * (VINE_LEAF_SIZE_MAX - VINE_LEAF_SIZE_MIN);
+      var rot = Math.random() * 60 - 30;
+      var leaf = document.createElement("img");
+      leaf.className = "venusaur-vine-leaf";
+      leaf.alt = "";
+      leaf.draggable = false;
+      leaf.src = burstSrc;
+      leaf.style.width = size + "px";
+      leaf.style.height = "auto";
+      leaf.style.left = pt.x - size / 2 + "px";
+      leaf.style.top = pt.y - size / 2 + "px";
+      leaf.style.setProperty("--rot", rot + "deg");
+      leaf.style.animationDelay = i2 * 0.04 + "s";
+      overlay.appendChild(leaf);
+    }
+
+    var onMove = function () {
+      if (!el.isConnected) {
+        clearVine(el);
+        return;
+      }
+      syncVineOverlay(overlay, el);
+    };
+    window.addEventListener("scroll", onMove, true);
+    window.addEventListener("resize", onMove);
+
+    var timer = setTimeout(function () {
+      clearVine(el);
+    }, VINE_MS);
+    vineMap.set(el, { timer: timer, overlay: overlay, onMove: onMove });
+  }
+
+  function tryVineAt(px, py) {
+    if (px < 0 || py < 0 || px >= window.innerWidth || py >= window.innerHeight) {
+      return;
+    }
+    var hit = document.elementFromPoint(px, py);
+    var target = resolveIgniteTarget(hit);
+    if (target) vineElement(target);
+  }
+
   document.addEventListener(
     "visibilitychange",
     function () {
       if (document.hidden) {
         clearAllBurns();
         clearAllZaps();
+        clearAllVines();
       }
     },
     { passive: true }
@@ -571,6 +725,7 @@
     function () {
       clearAllBurns();
       clearAllZaps();
+      clearAllVines();
     },
     { passive: true }
   );
@@ -776,6 +931,8 @@
   var LEAF_SIZE = 22;
   /* Each burst, leaves start at LEAF_RADIUS px from center. */
   var LEAF_RADIUS = 28;
+  var LEAF_HIT_SAMPLE = 0.32;
+  var LEAF_HIT_CHECK_MS = 90;
 
   function spawnLeafSpinBurst() {
     var c = followerCenter();
@@ -814,18 +971,26 @@
         var vx = Math.cos(angle) * LEAF_SPIN_SPEED;
         var vy = Math.sin(angle) * LEAF_SPIN_SPEED;
         var born = performance.now();
+        var doVineHit = Math.random() < LEAF_HIT_SAMPLE;
+        var lastVineHitAt = 0;
 
         function tick(now2) {
           var t = (now2 - born) / LEAF_LIFE;
           if (t >= 1) { if (p.parentNode) p.parentNode.removeChild(p); return; }
           var dx = vx * (now2 - born) / 1000;
           var dy = vy * (now2 - born) / 1000;
+          var curX = startX + dx;
+          var curY = startY + dy;
           var spin = t * 360;
           var opacity = t < 0.7 ? 1 : 1 - (t - 0.7) / 0.3;
-          p.style.left = (startX + dx) + "px";
-          p.style.top  = (startY + dy) + "px";
+          p.style.left = curX + "px";
+          p.style.top  = curY + "px";
           p.style.transform = "rotate(" + spin + "deg)";
           p.style.opacity = opacity;
+          if (doVineHit && now2 - lastVineHitAt >= LEAF_HIT_CHECK_MS) {
+            lastVineHitAt = now2;
+            tryVineAt(curX, curY);
+          }
           requestAnimationFrame(tick);
         }
         requestAnimationFrame(tick);

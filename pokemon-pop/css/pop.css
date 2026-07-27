@@ -1704,6 +1704,81 @@ body.nav-drawer-open {
   user-select: none;
 }
 
+.lightning-zap-overlay {
+  position: fixed;
+  pointer-events: none;
+  z-index: 56;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  mix-blend-mode: screen;
+  opacity: 0.95;
+}
+
+.lightning-zap-flash {
+  position: absolute;
+  margin: 0;
+  height: auto;
+  pointer-events: none;
+  z-index: 57;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  mix-blend-mode: screen;
+  opacity: 0.92;
+  animation: cursor-burst-element-flash 0.1s ease-in-out infinite;
+  user-select: none;
+}
+
+/* Venusaur leaf-vine: connected stem + multiple leaves overlay */
+.venusaur-vine-overlay {
+  position: fixed;
+  pointer-events: none;
+  z-index: 54;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  mix-blend-mode: screen;
+  opacity: 0.92;
+  will-change: opacity;
+}
+
+.venusaur-vine-stem {
+  position: absolute;
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(60, 180, 85, 0.85);
+  opacity: 0.75;
+  transform-origin: 0% 50%;
+  box-shadow: 0 0 10px rgba(60, 180, 85, 0.25);
+}
+
+.venusaur-vine-leaf {
+  position: absolute;
+  margin: 0;
+  height: auto;
+  pointer-events: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  mix-blend-mode: screen;
+  opacity: 0;
+  transform-origin: 50% 50%;
+  animation: venusaur-vine-leaf-pop 0.35s ease-out forwards;
+  user-select: none;
+}
+
+@keyframes venusaur-vine-leaf-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.25) rotate(var(--rot, 0deg));
+    filter: brightness(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(var(--rot, 0deg));
+    filter: brightness(1.15);
+  }
+}
+
 /* Evolved elemental burst flash (leaf / fire / bluefire / lightning / water): ~0.1s white pulse */
 .cursor-burst.cursor-burst--element,
 .cursor-burst.cursor-burst--raichu,
