@@ -921,38 +921,141 @@
   border-color: rgba(244, 239, 230, 0.28);
 }
 
-/* PC only: white ambient bloom. Tear sheen keeps the shared warm sweep (visible on white packs). */
+/* PC only: no idle/drawing ambient glow — quality burst only when the pack opens. */
 @media (hover: hover) and (pointer: fine) {
+  .pack__ambient-glow {
+    opacity: 0;
+    animation: none;
+    width: 160%;
+    min-height: 3.2rem;
+  }
+
+  .pack[data-state="drawing"] .pack__ambient-glow {
+    opacity: 0;
+    animation: none;
+    transform: translate(-50%, -20%) scale(1);
+  }
+
   .pack__ambient-glow::before {
+    inset: -30% -20%;
     background:
       radial-gradient(
-        ellipse 50% 90% at 50% 50%,
-        rgba(255, 255, 255, 0.88) 0%,
-        rgba(255, 255, 255, 0.45) 30%,
-        rgba(255, 255, 255, 0.18) 54%,
-        rgba(255, 255, 255, 0.06) 70%,
-        transparent 84%
+        ellipse 70% 55% at 50% 50%,
+        rgba(255, 248, 230, 0.95) 0%,
+        rgba(255, 220, 150, 0.55) 28%,
+        rgba(255, 180, 90, 0.28) 52%,
+        rgba(255, 140, 50, 0.1) 70%,
+        transparent 86%
       ),
       radial-gradient(
-        ellipse 90% 60% at 30% 50%,
-        rgba(255, 255, 255, 0.28) 0%,
-        transparent 70%
+        ellipse 110% 80% at 50% 50%,
+        rgba(255, 255, 255, 0.35) 0%,
+        transparent 60%
       ),
       radial-gradient(
-        ellipse 90% 60% at 70% 50%,
-        rgba(255, 255, 255, 0.24) 0%,
-        transparent 70%
+        ellipse 95% 70% at 28% 50%,
+        rgba(255, 200, 110, 0.28) 0%,
+        transparent 72%
+      ),
+      radial-gradient(
+        ellipse 95% 70% at 72% 50%,
+        rgba(255, 185, 95, 0.24) 0%,
+        transparent 72%
       );
-    filter: blur(var(--glow-blur)) brightness(1.15);
+    filter: blur(16px) brightness(1.15) saturate(1.15);
+    box-shadow:
+      0 0 28px 10px rgba(255, 230, 170, 0.35),
+      0 0 60px 24px rgba(255, 190, 100, 0.18);
   }
 
   .pack[data-state="drawing"] .pack__ambient-glow::before {
-    filter: blur(var(--glow-blur)) brightness(1.25);
+    inset: -30% -20%;
+    background-size: auto;
+    filter: blur(16px) brightness(1.15) saturate(1.15);
+  }
+
+  .pack[data-state="splitting"] .pack__ambient-glow {
+    animation: tear-glow-burst-pc 1.35s cubic-bezier(0.16, 0.84, 0.28, 1) forwards;
+  }
+
+  .pack[data-state="torn"] .pack__ambient-glow {
+    animation: tear-glow-linger-pc 1.7s ease-out forwards;
   }
 
   .pack[data-state="splitting"] .pack__ambient-glow::before,
   .pack[data-state="torn"] .pack__ambient-glow::before {
-    filter: blur(var(--glow-blur)) brightness(1.35);
+    filter: blur(18px) brightness(1.22) saturate(1.2);
+  }
+
+  .pack[data-state="splitting"] .pack__ambient-sparks {
+    animation: tear-sparks-burst-pc 1.45s ease-out forwards;
+  }
+
+  .pack[data-state="torn"] .pack__ambient-sparks {
+    animation: tear-sparks-linger-pc 1.7s ease-out forwards;
+  }
+
+  @keyframes tear-glow-burst-pc {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -20%) scale(0.85);
+    }
+    14% {
+      opacity: 1;
+      transform: translate(-50%, -20%) scale(1.25);
+    }
+    40% {
+      opacity: 1;
+      transform: translate(-50%, -20%) scale(1.55);
+    }
+    100% {
+      opacity: 0.55;
+      transform: translate(-50%, -20%) scale(1.72);
+    }
+  }
+
+  @keyframes tear-glow-linger-pc {
+    0% {
+      opacity: 0.55;
+      transform: translate(-50%, -20%) scale(1.72);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -20%) scale(2.05);
+    }
+  }
+
+  @keyframes tear-sparks-burst-pc {
+    0% {
+      opacity: 0;
+      transform: translateX(-50%) scale(0.4);
+      filter: drop-shadow(0 0 4px rgba(255, 230, 160, 0.5));
+    }
+    15% {
+      opacity: 1;
+      transform: translateX(-50%) scale(0.95);
+      filter: drop-shadow(0 0 14px rgba(255, 240, 190, 1));
+    }
+    55% {
+      opacity: 0.95;
+      transform: translateX(-50%) scale(1.45);
+    }
+    100% {
+      opacity: 0.5;
+      transform: translateX(-50%) scale(1.85);
+      filter: drop-shadow(0 0 16px rgba(255, 220, 140, 0.55));
+    }
+  }
+
+  @keyframes tear-sparks-linger-pc {
+    0% {
+      opacity: 0.5;
+      transform: translateX(-50%) scale(1.85);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-50%) scale(2.35);
+    }
   }
 }
 
