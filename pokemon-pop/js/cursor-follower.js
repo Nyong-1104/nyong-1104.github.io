@@ -1369,6 +1369,31 @@
     return null;
   }
 
+  function findCardLink(el) {
+    var cur = el;
+    while (cur && cur !== document.body) {
+      if (cur.classList && cur.classList.contains("card-link")) {
+        return cur;
+      }
+      cur = cur.parentElement;
+    }
+    return null;
+  }
+
+  function isMasterCatchBusy(els) {
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (
+        !el ||
+        el.classList.contains("is-masterball-caught") ||
+        el.classList.contains("is-masterball-catching")
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   function tryMasterHitAt(px, py) {
     if (px < 0 || py < 0 || px >= window.innerWidth || py >= window.innerHeight) {
       return null;
@@ -1380,23 +1405,30 @@
     }
     if (!cur) return null;
 
-    /* Master Ball only catches card pack tiles (holo + meta). */
+    /* Pack tiles: holo-card--pack + pack-entry__meta */
     var packEntry = findPackEntry(cur);
-    if (!packEntry) return null;
-
-    var holo = packEntry.querySelector(".holo-card.holo-card--pack");
-    if (!holo) holo = packEntry.querySelector(".holo-card--pack");
-    var meta = packEntry.querySelector(".pack-entry__meta");
-    if (!holo || !meta) return null;
-    if (
-      holo.classList.contains("is-masterball-caught") ||
-      holo.classList.contains("is-masterball-catching") ||
-      meta.classList.contains("is-masterball-caught") ||
-      meta.classList.contains("is-masterball-catching")
-    ) {
+    if (packEntry) {
+      var packHolo = packEntry.querySelector(".holo-card.holo-card--pack");
+      if (!packHolo) packHolo = packEntry.querySelector(".holo-card--pack");
+      var packMeta = packEntry.querySelector(".pack-entry__meta");
+      if (packHolo && packMeta && !isMasterCatchBusy([packHolo, packMeta])) {
+        return { parts: [packHolo, packMeta] };
+      }
       return null;
     }
-    return { parts: [holo, meta] };
+
+    /* Cards inside a pack / search: holo-card + card-meta */
+    var cardLink = findCardLink(cur);
+    if (cardLink) {
+      var cardHolo = cardLink.querySelector(".holo-card");
+      var cardMeta = cardLink.querySelector(".card-meta");
+      if (cardHolo && cardMeta && !isMasterCatchBusy([cardHolo, cardMeta])) {
+        return { parts: [cardHolo, cardMeta] };
+      }
+      return null;
+    }
+
+    return null;
   }
 
   function spawnMasterWhiteBurst(cx, cy) {
