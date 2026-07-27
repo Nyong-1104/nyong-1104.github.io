@@ -1380,30 +1380,23 @@
     }
     if (!cur) return null;
 
-    /* Pack tiles: catch holo-card--pack + pack-entry__meta together. */
+    /* Master Ball only catches card pack tiles (holo + meta). */
     var packEntry = findPackEntry(cur);
-    if (packEntry) {
-      var holo = packEntry.querySelector(".holo-card.holo-card--pack");
-      if (!holo) holo = packEntry.querySelector(".holo-card--pack");
-      var meta = packEntry.querySelector(".pack-entry__meta");
-      if (holo && meta) {
-        if (
-          holo.classList.contains("is-masterball-caught") ||
-          holo.classList.contains("is-masterball-catching") ||
-          meta.classList.contains("is-masterball-caught") ||
-          meta.classList.contains("is-masterball-catching")
-        ) {
-          return null;
-        }
-        return { parts: [holo, meta] };
-      }
-    }
+    if (!packEntry) return null;
 
-    var target = resolveIgniteTarget(hit);
-    if (!target) return null;
-    if (target.classList.contains("is-masterball-caught")) return null;
-    if (target.classList.contains("is-masterball-catching")) return null;
-    return { parts: [target] };
+    var holo = packEntry.querySelector(".holo-card.holo-card--pack");
+    if (!holo) holo = packEntry.querySelector(".holo-card--pack");
+    var meta = packEntry.querySelector(".pack-entry__meta");
+    if (!holo || !meta) return null;
+    if (
+      holo.classList.contains("is-masterball-caught") ||
+      holo.classList.contains("is-masterball-catching") ||
+      meta.classList.contains("is-masterball-caught") ||
+      meta.classList.contains("is-masterball-catching")
+    ) {
+      return null;
+    }
+    return { parts: [holo, meta] };
   }
 
   function spawnMasterWhiteBurst(cx, cy) {
