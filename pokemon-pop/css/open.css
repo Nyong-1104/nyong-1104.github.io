@@ -133,8 +133,7 @@
   --glow-blur: 18px;
   position: absolute;
   left: 50%;
-  /* Match pack width — wider hosts were leaking the bloom past the pack sides */
-  width: 100%;
+  width: 240%;
   top: calc(var(--tear-y-min) * 100% - 10%);
   height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100% + 20%);
   transform: translate(-50%, -20%) scale(1);
@@ -243,10 +242,10 @@
 }
 
 .pack[data-state="drawing"] .pack__ambient-glow::before {
-  /* Vertical padding only — horizontal grow was sticking out past the pack */
-  inset: -55% 0;
+  inset: -55% -40%;
   filter: blur(var(--glow-blur)) brightness(2.1);
-  background-size: 100% 48%, 85% 42%, 85% 42%;
+  /* Core stays ~original size; padding is transparent margin for blur falloff */
+  background-size: 48% 48%, 42% 42%, 42% 42%;
   background-repeat: no-repeat;
   background-position: 50% 50%, 32% 50%, 68% 50%;
 }
