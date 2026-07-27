@@ -767,7 +767,7 @@
   function shakeElement(el) {
     if (!el) return;
     var existing = soakingMap.get(el);
-    var pushPx = existing ? existing.pushPx + 1 : 1;
+    var pushPx = existing ? existing.pushPx + 3 : 3;
 
     if (existing) {
       if (existing.timer) clearTimeout(existing.timer);
@@ -776,7 +776,7 @@
       el.style.transition = "none";
     }
 
-    /* Accumulate 1px left knock per hit (independent of shake transform). */
+    /* Accumulate 3px left knock per hit (independent of shake transform). */
     el.style.translate = -pushPx + "px 0";
     el.classList.add("is-water-pushed");
     el.classList.remove("is-water-soaked");
