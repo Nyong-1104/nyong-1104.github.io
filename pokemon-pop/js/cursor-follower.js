@@ -1354,16 +1354,56 @@
     }
   }
 
+  function findPackEntry(el) {
+    var cur = el;
+    while (cur && cur !== document.body) {
+      if (
+        cur.classList &&
+        cur.classList.contains("pack-entry") &&
+        !cur.classList.contains("pack-entry--box")
+      ) {
+        return cur;
+      }
+      cur = cur.parentElement;
+    }
+    return null;
+  }
+
   function tryMasterHitAt(px, py) {
     if (px < 0 || py < 0 || px >= window.innerWidth || py >= window.innerHeight) {
       return null;
     }
     var hit = document.elementFromPoint(px, py);
+    var cur = hit;
+    while (cur && isIgniteChrome(cur)) {
+      cur = cur.parentElement;
+    }
+    if (!cur) return null;
+
+    /* Pack tiles: catch holo-card--pack + pack-entry__meta together. */
+    var packEntry = findPackEntry(cur);
+    if (packEntry) {
+      var holo = packEntry.querySelector(".holo-card.holo-card--pack");
+      if (!holo) holo = packEntry.querySelector(".holo-card--pack");
+      var meta = packEntry.querySelector(".pack-entry__meta");
+      if (holo && meta) {
+        if (
+          holo.classList.contains("is-masterball-caught") ||
+          holo.classList.contains("is-masterball-catching") ||
+          meta.classList.contains("is-masterball-caught") ||
+          meta.classList.contains("is-masterball-catching")
+        ) {
+          return null;
+        }
+        return { parts: [holo, meta] };
+      }
+    }
+
     var target = resolveIgniteTarget(hit);
     if (!target) return null;
     if (target.classList.contains("is-masterball-caught")) return null;
     if (target.classList.contains("is-masterball-catching")) return null;
-    return target;
+    return { parts: [target] };
   }
 
   function spawnMasterWhiteBurst(cx, cy) {
@@ -1562,73 +1602,125 @@
     el.style.opacity = "";
   }
 
-  function restoreCaughtElement(caught, fromX, fromY, done) {
-    var el = caught.el;
-    if (!el || !el.isConnected) {
-      if (done) done();
-      return;
+  function snapshotCatchParts(els) {
+    var parts = [];
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      var r = el.getBoundingClientRect();
+      parts.push({
+        el: el,
+        left: r.left,
+        top: r.top,
+        width: r.width,
+        height: r.height,
+      });
     }
-    el.classList.remove("is-masterball-caught");
-    el.removeAttribute("aria-hidden");
-    el.classList.add("is-masterball-whitened", "is-masterball-catching");
+    return { parts: parts };
+  }
+
+  function liftCatchPart(part) {
+    var el = part.el;
+    var r = el.getBoundingClientRect();
+    part.left = r.left;
+    part.top = r.top;
+    part.width = r.width;
+    part.height = r.height;
     el.style.position = "fixed";
-    el.style.left = fromX - caught.width * 0.08 + "px";
-    el.style.top = fromY - caught.height * 0.08 + "px";
-    el.style.width = caught.width + "px";
-    el.style.height = caught.height + "px";
+    el.style.left = r.left + "px";
+    el.style.top = r.top + "px";
+    el.style.width = r.width + "px";
+    el.style.height = r.height + "px";
     el.style.margin = "0";
     el.style.zIndex = "58";
     el.style.transformOrigin = "50% 50%";
     el.style.transition = "none";
-    el.style.opacity = "0.2";
-    el.style.transform = "scale(0.12)";
-    void el.offsetWidth;
+  }
 
-    var start = performance.now();
-    var life = 480;
-    function tick(now) {
-      var t = Math.min(1, (now - start) / life);
-      var e = 1 - (1 - t) * (1 - t);
-      var x =
-        fromX -
-        caught.width / 2 +
-        (caught.left - (fromX - caught.width / 2)) * e;
-      var y =
-        fromY -
-        caught.height / 2 +
-        (caught.top - (fromY - caught.height / 2)) * e;
-      var scale = 0.12 + e * 0.88;
-      var opacity = 0.2 + e * 0.8;
-      el.style.left = x + "px";
-      el.style.top = y + "px";
-      el.style.transform = "scale(" + scale + ")";
-      el.style.opacity = String(opacity);
-      if (t >= 1) {
-        el.classList.remove("is-masterball-whitened", "is-masterball-catching");
-        el.style.position = "";
-        el.style.left = "";
-        el.style.top = "";
-        el.style.width = "";
-        el.style.height = "";
-        el.style.margin = "";
-        el.style.transform = "";
-        el.style.zIndex = "";
-        el.style.transition = "";
-        el.style.filter = "";
-        el.style.opacity = "";
-        if (done) done();
-        return;
-      }
-      requestAnimationFrame(tick);
+  function restoreCaughtElement(caught, fromX, fromY, done) {
+    var parts = caught && caught.parts ? caught.parts : null;
+    if (!parts || !parts.length) {
+      if (done) done();
+      return;
     }
-    requestAnimationFrame(tick);
+
+    var pending = parts.length;
+    function oneDone() {
+      pending -= 1;
+      if (pending <= 0 && done) done();
+    }
+
+    for (var i = 0; i < parts.length; i++) {
+      (function (part) {
+        var el = part.el;
+        if (!el || !el.isConnected) {
+          oneDone();
+          return;
+        }
+        el.classList.remove("is-masterball-caught");
+        el.removeAttribute("aria-hidden");
+        el.classList.add("is-masterball-whitened", "is-masterball-catching");
+        el.style.position = "fixed";
+        el.style.left = fromX - part.width * 0.08 + "px";
+        el.style.top = fromY - part.height * 0.08 + "px";
+        el.style.width = part.width + "px";
+        el.style.height = part.height + "px";
+        el.style.margin = "0";
+        el.style.zIndex = "58";
+        el.style.transformOrigin = "50% 50%";
+        el.style.transition = "none";
+        el.style.opacity = "0.2";
+        el.style.transform = "scale(0.12)";
+        void el.offsetWidth;
+
+        var start = performance.now();
+        var life = 480;
+        function tick(now) {
+          var t = Math.min(1, (now - start) / life);
+          var e = 1 - (1 - t) * (1 - t);
+          var x =
+            fromX -
+            part.width / 2 +
+            (part.left - (fromX - part.width / 2)) * e;
+          var y =
+            fromY -
+            part.height / 2 +
+            (part.top - (fromY - part.height / 2)) * e;
+          var scale = 0.12 + e * 0.88;
+          var opacity = 0.2 + e * 0.8;
+          el.style.left = x + "px";
+          el.style.top = y + "px";
+          el.style.transform = "scale(" + scale + ")";
+          el.style.opacity = String(opacity);
+          if (t >= 1) {
+            el.classList.remove(
+              "is-masterball-whitened",
+              "is-masterball-catching"
+            );
+            el.style.position = "";
+            el.style.left = "";
+            el.style.top = "";
+            el.style.width = "";
+            el.style.height = "";
+            el.style.margin = "";
+            el.style.transform = "";
+            el.style.zIndex = "";
+            el.style.transition = "";
+            el.style.filter = "";
+            el.style.opacity = "";
+            oneDone();
+            return;
+          }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      })(parts[i]);
+    }
   }
 
   function releaseCaughtMasterBall(entry) {
     if (!entry || entry.releasing || !entry.caught) return;
     entry.releasing = true;
 
-    /* Remove from physics pile. */
     var idx = floorBalls.indexOf(entry);
     if (idx !== -1) floorBalls.splice(idx, 1);
 
@@ -1639,10 +1731,7 @@
     ball.style.transform = "";
     ball.classList.add("is-masterball-whitened", "is-masterball-vibrating");
 
-    /* Same absorb FX in reverse: HTML pops out while ball vibrates + white flash. */
-    restoreCaughtElement(entry.caught, cx, cy, function () {
-      /* keep going */
-    });
+    restoreCaughtElement(entry.caught, cx, cy, function () {});
 
     setTimeout(function () {
       ball.classList.remove("is-masterball-vibrating");
@@ -1652,8 +1741,10 @@
     }, 520);
   }
 
-  function runMasterCatch(ball, hitX, hitY, target) {
-    target.classList.add("is-masterball-catching");
+  function runMasterCatch(ball, hitX, hitY, group) {
+    var parts = group && group.parts ? group.parts.slice() : [];
+    if (!parts.length) return;
+
     var size = MASTERBALL_SIZE;
     var bounceX = hitX + MASTERBALL_BOUNCE_PX;
     var stopX = hitX + MASTERBALL_BOUNCE_PX * 0.45;
@@ -1662,21 +1753,14 @@
     var phase = "bounce";
     var suckStart = 0;
     var vibStart = 0;
-    var targetRect = target.getBoundingClientRect();
-    var targetOrigin = {
-      left: targetRect.left,
-      top: targetRect.top,
-      width: targetRect.width,
-      height: targetRect.height,
-    };
-    /* Snapshot for click-to-release later. */
-    var caughtSnapshot = {
-      el: target,
-      left: targetRect.left,
-      top: targetRect.top,
-      width: targetRect.width,
-      height: targetRect.height,
-    };
+    var i;
+
+    for (i = 0; i < parts.length; i++) {
+      parts[i].classList.add("is-masterball-catching");
+    }
+
+    var caughtSnapshot = snapshotCatchParts(parts);
+    var liveParts = caughtSnapshot.parts;
 
     function placeBall(x, y, extraTransform) {
       ball.style.left = x - size / 2 + "px";
@@ -1703,7 +1787,9 @@
             born = now;
             placeBall(stopX, stopY);
             ball.classList.add("is-masterball-whitened");
-            target.classList.add("is-masterball-whitened");
+            for (i = 0; i < parts.length; i++) {
+              parts[i].classList.add("is-masterball-whitened");
+            }
             requestAnimationFrame(tick);
             return;
           }
@@ -1717,22 +1803,9 @@
         if (now - born >= 180) {
           phase = "suck";
           suckStart = now;
-          var r = target.getBoundingClientRect();
-          targetOrigin = {
-            left: r.left,
-            top: r.top,
-            width: r.width,
-            height: r.height,
-          };
-          target.style.position = "fixed";
-          target.style.left = r.left + "px";
-          target.style.top = r.top + "px";
-          target.style.width = r.width + "px";
-          target.style.height = r.height + "px";
-          target.style.margin = "0";
-          target.style.zIndex = "58";
-          target.style.transformOrigin = "50% 50%";
-          target.style.transition = "none";
+          for (i = 0; i < liveParts.length; i++) {
+            liftCatchPart(liveParts[i]);
+          }
           placeBall(stopX, stopY);
         }
         requestAnimationFrame(tick);
@@ -1742,21 +1815,22 @@
       if (phase === "suck") {
         var st = Math.min(1, (now - suckStart) / 480);
         var se = st * st;
-        var tx =
-          targetOrigin.left +
-          (stopX - targetOrigin.width / 2 - targetOrigin.left) * se;
-        var ty =
-          targetOrigin.top +
-          (stopY - targetOrigin.height / 2 - targetOrigin.top) * se;
         var scale = 1 - se * 0.92;
         var opacity = 1 - se * 0.85;
-        target.style.left = tx + "px";
-        target.style.top = ty + "px";
-        target.style.transform = "scale(" + scale + ")";
-        target.style.opacity = String(opacity);
+        for (i = 0; i < liveParts.length; i++) {
+          var part = liveParts[i];
+          var tx = part.left + (stopX - part.width / 2 - part.left) * se;
+          var ty = part.top + (stopY - part.height / 2 - part.top) * se;
+          part.el.style.left = tx + "px";
+          part.el.style.top = ty + "px";
+          part.el.style.transform = "scale(" + scale + ")";
+          part.el.style.opacity = String(opacity);
+        }
         placeBall(stopX, stopY);
         if (st >= 1) {
-          hideCaughtElement(target);
+          for (i = 0; i < liveParts.length; i++) {
+            hideCaughtElement(liveParts[i].el);
+          }
           phase = "vibrate";
           vibStart = now;
           ball.classList.add("is-masterball-vibrating");
