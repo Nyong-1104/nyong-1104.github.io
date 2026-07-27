@@ -317,12 +317,10 @@
 @keyframes tear-glow-linger {
   0% {
     opacity: 0.55;
-    filter: blur(32px) brightness(2);
     transform: translate(-50%, -20%) scale(1.7);
   }
   100% {
     opacity: 0;
-    filter: blur(48px) brightness(1);
     transform: translate(-50%, -20%) scale(2.15);
   }
 }
