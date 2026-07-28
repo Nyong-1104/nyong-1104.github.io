@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-07-28T16:20:07+09:00",
+  "ranAt": "2026-07-28T18:41:47+09:00",
   "stats": {
     "asOf": "2026-07-28",
-    "asOfIso": "2026-07-28T16:20:07+09:00",
+    "asOfIso": "2026-07-28T18:41:47+09:00",
     "cardsTotal": 4635,
     "cardsLive": 1984,
     "skippedTierC": 2651,
@@ -28,7 +28,7 @@
           "cardsMatched": 1779,
           "cardsNoBrgEntry": 2332,
           "cardsAttempted": 4111,
-          "brgEntriesFetched": 3016,
+          "brgEntriesFetched": 3017,
           "dryRun": false,
           "setMap": [
             {
@@ -680,7 +680,7 @@
       "cardsMatched": 1779,
       "cardsNoBrgEntry": 2332,
       "cardsAttempted": 4111,
-      "brgEntriesFetched": 3016,
+      "brgEntriesFetched": 3017,
       "dryRun": 0,
       "cardsUnmatched": 2332
     },
