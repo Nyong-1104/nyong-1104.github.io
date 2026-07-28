@@ -2,13 +2,21 @@
   const { MAP_W, MAP_H, TILE, createPatrit14Grid, isSolid, isBreakable, isHard, SEAT_SPAWNS } =
     window.PatritMap;
 
-  const TILE_SIZE = 48;
+  /** Native art tile is 13×13; draw scaled up for readability. */
+  const PIXEL = 13;
+  const SCALE = 4;
+  const TILE_SIZE = PIXEL * SCALE;
   const STAT_MIN = 1;
   const STAT_MAX = 10;
   const BLAST_TTL = 0.42;
   const SNAPSHOT_MS = 50;
-  const STUN_TIME = 5;
+  const STUN_TIME = 10;
   const INVULN_TIME = 1;
+  const START_COUNTDOWN = 3;
+  const RESCUE_DIST = 0.55;
+  const BOMB_FUSE = 2.4;
+  const BOMB_FRAME_SEC = 0.16;
+  const BOMB_CYCLE = [1, 2, 3, 2];
   const SCORE_KILL = 100;
   const SCORE_SAVE = 50;
   const SCORE_WIN = 200;
@@ -20,7 +28,10 @@
     hard: "assets/tiles/hard.png",
     ship: "assets/tiles/ship.png",
     pillar: "assets/tiles/pillar.png",
-    bomb: "assets/tiles/bomb.png",
+    tree: "assets/tiles/tree.png",
+    bomb1: "assets/tiles/bomb1.png",
+    bomb2: "assets/tiles/bomb2.png",
+    bomb3: "assets/tiles/bomb3.png",
     blast: "assets/tiles/blast.png",
     itemBalloon: "assets/tiles/item-balloon.png",
     itemFire: "assets/tiles/item-fire.png",
@@ -59,6 +70,7 @@
 
   canvas.width = MAP_W * TILE_SIZE;
   canvas.height = MAP_H * TILE_SIZE;
+  ctx.imageSmoothingEnabled = false;
 
   let mode = "menu";
   let grid;
@@ -78,6 +90,7 @@
   let multiEnded = false;
   let soloBotCount = 3;
   let mySocketId = null;
+  let startCountdown = 0;
 
   function bombKey(x, y) {
     return `${x},${y}`;
@@ -194,6 +207,7 @@
     savedThisRound = false;
     multiEnded = false;
     remoteInputs = {};
+    startCountdown = START_COUNTDOWN;
     running = true;
     overlay.hidden = true;
     soloActions.hidden = false;
@@ -226,6 +240,7 @@
     stats = { timeSec: 0 };
     pendingResult = null;
     remoteInputs = {};
+    startCountdown = START_COUNTDOWN;
     running = true;
     overlay.hidden = true;
     soloActions.hidden = true;
@@ -307,7 +322,7 @@
     if (bombs.some((b) => b.x === cx && b.y === cy)) return;
     const active = bombs.filter((b) => b.owner === p.seat).length;
     if (active >= p.maxBalloon) return;
-    bombs.push({ x: cx, y: cy, owner: p.seat, fuse: 2.4, range: p.fire });
+    bombs.push({ x: cx, y: cy, owner: p.seat, fuse: BOMB_FUSE, range: p.fire });
     p.softPass.add(bombKey(cx, cy));
   }
 
@@ -320,6 +335,28 @@
     p.lastHitBy = null;
     syncHud();
     return true;
+  }
+
+  function tryTeamRescues() {
+    for (let i = 0; i < players.length; i += 1) {
+      const victim = players[i];
+      if (!victim.alive || !victim.stunned) continue;
+      for (let j = 0; j < players.length; j += 1) {
+        const rescuer = players[j];
+        if (rescuer.seat === victim.seat) continue;
+        if (!rescuer.alive || rescuer.stunned) continue;
+        const dx = rescuer.x - victim.x;
+        const dy = rescuer.y - victim.y;
+        if (dx * dx + dy * dy > RESCUE_DIST * RESCUE_DIST) continue;
+        victim.stunned = false;
+        victim.stunTimer = 0;
+        victim.invuln = INVULN_TIME;
+        victim.lastHitBy = null;
+        rescuer.saves += 1;
+        syncHud();
+        break;
+      }
+    }
   }
 
   function creditKill(killerSeat, victimSeat) {
@@ -583,6 +620,7 @@
   function buildSnapshot() {
     return {
       t: Date.now(),
+      startCountdown,
       grid: grid.map((row) => row.slice()),
       items: items.map((it) => ({ ...it })),
       bombs: bombs.map((b) => ({ ...b })),
@@ -610,6 +648,7 @@
 
   function applySnapshot(snap) {
     if (!snap || isHost) return;
+    if (typeof snap.startCountdown === "number") startCountdown = snap.startCountdown;
     grid = snap.grid;
     items = snap.items || [];
     bombs = (snap.bombs || []).map((b) => ({ ...b }));
@@ -642,6 +681,31 @@
     if (mode === "menu" || mode === "lobby") return;
     if (!running) return;
 
+    if (startCountdown > 0) {
+      // Host owns the timer in multi; clients follow snapshots.
+      if (!(mode === "multi" && !isHost)) {
+        startCountdown = Math.max(0, startCountdown - dt);
+      }
+      if (mode === "multi" && !isHost) {
+        window.BnbNet.sendInput({
+          up: false,
+          down: false,
+          left: false,
+          right: false,
+          bomb: false,
+          item: false,
+        });
+      }
+      if (mode === "multi" && isHost) {
+        snapAcc += dt * 1000;
+        if (snapAcc >= SNAPSHOT_MS) {
+          snapAcc = 0;
+          window.BnbNet.sendState(buildSnapshot());
+        }
+      }
+      return;
+    }
+
     if (mode === "multi" && !isHost) {
       window.BnbNet.sendInput(window.GameInput.poll());
       syncHud();
@@ -663,6 +727,8 @@
       }
       pickItems(p);
     });
+
+    tryTeamRescues();
 
     for (let i = bombs.length - 1; i >= 0; i -= 1) {
       bombs[i].fuse -= dt;
@@ -688,7 +754,95 @@
   }
 
   function drawTile(img, cx, cy) {
+    if (!img) return;
     ctx.drawImage(img, cx * TILE_SIZE, cy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  }
+
+  function spriteSize(img, fallbackW, fallbackH) {
+    const w = img && (img.naturalWidth || img.width) ? img.naturalWidth || img.width : fallbackW;
+    const h = img && (img.naturalHeight || img.height) ? img.naturalHeight || img.height : fallbackH;
+    return { w, h };
+  }
+
+  function drawScaled(img, px, py, sw, sh) {
+    if (!img) return;
+    ctx.drawImage(img, px * SCALE, py * SCALE, sw * SCALE, sh * SCALE);
+  }
+
+  /** Bottom-align tall sprites (tree 13×22) to the cell. */
+  function drawBottomAligned(img, cx, cy, fallbackW, fallbackH) {
+    const { w, h } = spriteSize(img, fallbackW, fallbackH);
+    const px = cx * PIXEL;
+    const py = (cy + 1) * PIXEL - h;
+    drawScaled(img, px, py, w, h);
+  }
+
+  function bombFrameImg(bomb) {
+    const age = Math.max(0, BOMB_FUSE - (bomb.fuse || 0));
+    const idx = Math.floor(age / BOMB_FRAME_SEC) % BOMB_CYCLE.length;
+    const frame = BOMB_CYCLE[idx];
+    return imgs[`bomb${frame}`] || imgs.bomb1;
+  }
+
+  /**
+   * Pikachu placement in a 13×13 cell (native px):
+   * front(down): bottom-right, then 1px left
+   * back(up): bottom-left, then 1px right
+   * left: bottom-left
+   * right: bottom-right
+   */
+  function drawPlayerSprite(p) {
+    const sprite =
+      p.dir === "back"
+        ? imgs.charBack
+        : p.dir === "left"
+          ? imgs.charLeft
+          : p.dir === "right"
+            ? imgs.charRight
+            : imgs.charFront;
+    if (!sprite) return;
+    const { w: sw, h: sh } = spriteSize(sprite, 15, 18);
+    const baseX = p.x * PIXEL - PIXEL / 2;
+    const baseY = p.y * PIXEL - PIXEL / 2;
+    let dx;
+    let dy = baseY + PIXEL - sh;
+    if (p.dir === "back") dx = baseX + 1;
+    else if (p.dir === "left") dx = baseX;
+    else if (p.dir === "right") dx = baseX + PIXEL - sw;
+    else dx = baseX + PIXEL - 1 - sw;
+
+    if (p.stunned) ctx.globalAlpha = 0.55;
+    else if (p.invuln > 0 && Math.floor(performance.now() / 80) % 2 === 0) ctx.globalAlpha = 0.35;
+    drawScaled(sprite, dx, dy, sw, sh);
+    ctx.globalAlpha = 1;
+
+    const labelX = (dx + sw / 2) * SCALE;
+    const labelY = dy * SCALE - 4;
+    if (p.stunned) {
+      ctx.fillStyle = "rgba(255, 220, 80, 0.85)";
+      ctx.font = "bold 11px Pretendard, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(`기절 ${Math.ceil(p.stunTimer)}`, labelX, labelY);
+    }
+    if (p.seat === localSeat) {
+      ctx.fillStyle = "rgba(61,155,233,0.9)";
+      ctx.beginPath();
+      ctx.arc(labelX, labelY - 6, 4, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (p.isBot) {
+      ctx.fillStyle = "rgba(255,120,120,0.9)";
+      ctx.beginPath();
+      ctx.arc(labelX, labelY - 6, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function drawGroundTile(x, y) {
+    const t = grid[y][x];
+    if (t === TILE.SOFT) drawTile(imgs.soft, x, y);
+    else if (t === TILE.PUSH) drawTile(imgs.push, x, y);
+    else if (t === TILE.PILLAR) drawTile(imgs.pillar, x, y);
+    else if (t === TILE.SHIP) drawTile(imgs.ship, x, y);
   }
 
   function draw() {
@@ -696,75 +850,62 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       return;
     }
+    ctx.imageSmoothingEnabled = false;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let y = 0; y < MAP_H; y += 1) {
+      for (let x = 0; x < MAP_W; x += 1) drawTile(imgs.floor, x, y);
+    }
+
+    // Top → bottom so tree tops (22px) cover entities on the cell above.
     for (let y = 0; y < MAP_H; y += 1) {
       for (let x = 0; x < MAP_W; x += 1) {
-        drawTile(imgs.floor, x, y);
-        const t = grid[y][x];
-        if (t === TILE.SOFT) drawTile(imgs.soft, x, y);
-        else if (t === TILE.PUSH) drawTile(imgs.push, x, y);
-        else if (t === TILE.PILLAR) drawTile(imgs.pillar, x, y);
-        else if (t === TILE.SHIP) drawTile(imgs.ship, x, y);
+        if (grid[y][x] !== TILE.TREE) drawGroundTile(x, y);
+      }
+
+      (items || []).forEach((it) => {
+        if (it.y !== y) return;
+        let img = imgs.itemBalloon;
+        if (it.type === "fire") img = imgs.itemFire;
+        else if (it.type === "speed") img = imgs.itemSpeed;
+        else if (it.type === "needle") img = imgs.itemNeedle;
+        drawTile(img, it.x, it.y);
+      });
+
+      (blasts || []).forEach((b) => {
+        if (b.y === y) drawTile(imgs.blast, b.x, b.y);
+      });
+
+      (bombs || []).forEach((b) => {
+        if (b.y !== y) return;
+        const img = bombFrameImg(b);
+        drawBottomAligned(img, b.x, b.y, PIXEL, PIXEL);
+      });
+
+      (players || []).forEach((p) => {
+        if (!p.alive) return;
+        if (Math.floor(p.y) !== y) return;
+        drawPlayerSprite(p);
+      });
+
+      for (let x = 0; x < MAP_W; x += 1) {
+        if (grid[y][x] === TILE.TREE) drawBottomAligned(imgs.tree, x, y, PIXEL, 22);
       }
     }
 
-    items.forEach((it) => {
-      let img = imgs.itemBalloon;
-      if (it.type === "fire") img = imgs.itemFire;
-      else if (it.type === "speed") img = imgs.itemSpeed;
-      else if (it.type === "needle") img = imgs.itemNeedle;
-      drawTile(img, it.x, it.y);
-    });
-
-    bombs.forEach((b) => {
-      const pulse = 1 + Math.sin(performance.now() / 120) * 0.06;
-      const size = TILE_SIZE * pulse;
-      ctx.drawImage(
-        imgs.bomb,
-        b.x * TILE_SIZE + (TILE_SIZE - size) / 2,
-        b.y * TILE_SIZE + (TILE_SIZE - size) / 2,
-        size,
-        size
-      );
-    });
-    blasts.forEach((b) => drawTile(imgs.blast, b.x, b.y));
-
-    (players || []).forEach((p) => {
-      if (!p.alive) return;
-      const sprite =
-        p.dir === "back"
-          ? imgs.charBack
-          : p.dir === "left"
-            ? imgs.charLeft
-            : p.dir === "right"
-              ? imgs.charRight
-              : imgs.charFront;
-      const w = TILE_SIZE * 0.9;
-      const h = TILE_SIZE * 0.9;
-      const dx = p.x * TILE_SIZE - w / 2;
-      const dy = p.y * TILE_SIZE - h * 0.72;
-      if (p.stunned) ctx.globalAlpha = 0.55;
-      else if (p.invuln > 0 && Math.floor(performance.now() / 80) % 2 === 0) ctx.globalAlpha = 0.35;
-      ctx.drawImage(sprite, dx, dy, w, h);
-      ctx.globalAlpha = 1;
-      if (p.stunned) {
-        ctx.fillStyle = "rgba(255, 220, 80, 0.85)";
-        ctx.font = "bold 11px Pretendard, sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText(`기절 ${Math.ceil(p.stunTimer)}`, p.x * TILE_SIZE, dy - 4);
-      }
-      if (p.seat === localSeat) {
-        ctx.fillStyle = "rgba(61,155,233,0.9)";
-        ctx.beginPath();
-        ctx.arc(p.x * TILE_SIZE, dy - 2, 4, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (p.isBot) {
-        ctx.fillStyle = "rgba(255,120,120,0.9)";
-        ctx.beginPath();
-        ctx.arc(p.x * TILE_SIZE, dy - 2, 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    });
+    if (startCountdown > 0) {
+      const n = Math.ceil(startCountdown);
+      ctx.fillStyle = "rgba(8, 12, 20, 0.55)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 96px Pretendard, sans-serif";
+      ctx.fillText(String(n), canvas.width / 2, canvas.height / 2 - 8);
+      ctx.fillStyle = "rgba(255,255,255,0.75)";
+      ctx.font = "600 22px Pretendard, sans-serif";
+      ctx.fillText("잠시 후 시작", canvas.width / 2, canvas.height / 2 + 58);
+    }
   }
 
   function frame(ts) {

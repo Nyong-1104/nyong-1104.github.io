@@ -182,21 +182,29 @@
   function bind() {
     document.getElementById("btn-login").addEventListener("click", async () => {
       menuError.textContent = "";
-      const res = await window.BnbAccount.login(authNick.value, authPass.value);
-      if (!res.ok) menuError.textContent = res.error;
-      else {
-        authPass.value = "";
-        refreshAuthUI();
+      try {
+        const res = await window.BnbAccount.login(authNick.value, authPass.value);
+        if (!res.ok) menuError.textContent = res.error;
+        else {
+          authPass.value = "";
+          refreshAuthUI();
+        }
+      } catch (err) {
+        menuError.textContent = err?.message || "로그인에 실패했어요.";
       }
     });
 
     document.getElementById("btn-register").addEventListener("click", async () => {
       menuError.textContent = "";
-      const res = await window.BnbAccount.register(authNick.value, authPass.value);
-      if (!res.ok) menuError.textContent = res.error;
-      else {
-        authPass.value = "";
-        refreshAuthUI();
+      try {
+        const res = await window.BnbAccount.register(authNick.value, authPass.value);
+        if (!res.ok) menuError.textContent = res.error;
+        else {
+          authPass.value = "";
+          refreshAuthUI();
+        }
+      } catch (err) {
+        menuError.textContent = err?.message || "계정 등록에 실패했어요.";
       }
     });
 

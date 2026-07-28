@@ -31,22 +31,15 @@
 
     <div class="play-area" id="touch-controls">
       <div class="touch-side touch-side--left">
-        <div class="dpad" aria-label="방향키">
-          <span class="gap"></span>
-          <button type="button" class="pad-btn" data-dir="up" aria-label="위">▲</button>
-          <span class="gap"></span>
-          <button type="button" class="pad-btn" data-dir="left" aria-label="왼쪽">◀</button>
-          <span class="gap"></span>
-          <button type="button" class="pad-btn" data-dir="right" aria-label="오른쪽">▶</button>
-          <span class="gap"></span>
-          <button type="button" class="pad-btn" data-dir="down" aria-label="아래">▼</button>
-          <span class="gap"></span>
+        <div class="joystick" id="move-joystick" aria-label="이동 조이스틱">
+          <div class="joystick__base"></div>
+          <div class="joystick__knob" id="move-joystick-knob"></div>
         </div>
       </div>
 
       <div class="canvas-wrap">
-        <canvas id="game-canvas" width="720" height="624"></canvas>
-        <div class="hint">이동 WASD/방향키 · 폭탄 Space/Z · 바늘(기절 시) X</div>
+        <canvas id="game-canvas" width="780" height="676"></canvas>
+        <div class="hint">이동 WASD/방향키 · 폭탄 Space/Z · 바늘(기절 시) X · 기절한 동료는 닿아서 구조</div>
 
         <div class="overlay" id="menu-overlay">
           <div class="overlay__card overlay__card--wide">

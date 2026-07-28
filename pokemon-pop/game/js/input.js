@@ -51,23 +51,93 @@
   window.addEventListener("keydown", (e) => onKey(e, true), { passive: false });
   window.addEventListener("keyup", (e) => onKey(e, false), { passive: false });
 
-  function bindHold(el, dir) {
-    if (!el) return;
-    const set = (v) => {
-      dirs[dir] = v;
-    };
-    const start = (e) => {
-      e.preventDefault();
-      set(true);
-    };
-    const end = (e) => {
-      e.preventDefault();
-      set(false);
-    };
-    el.addEventListener("pointerdown", start);
-    el.addEventListener("pointerup", end);
-    el.addEventListener("pointerleave", end);
-    el.addEventListener("pointercancel", end);
+  function clearDirs() {
+    dirs.up = false;
+    dirs.down = false;
+    dirs.left = false;
+    dirs.right = false;
+  }
+
+  function bindJoystick(root) {
+    if (!root) return;
+    const knob = root.querySelector(".joystick__knob") || document.getElementById("move-joystick-knob");
+    const maxR = 46;
+    const dead = 0.28;
+    let pointerId = null;
+    let originX = 0;
+    let originY = 0;
+
+    function setKnob(nx, ny) {
+      if (!knob) return;
+      knob.style.transform = `translate(calc(-50% + ${nx * maxR}px), calc(-50% + ${ny * maxR}px))`;
+    }
+
+    function applyVector(dx, dy) {
+      const len = Math.hypot(dx, dy) || 1;
+      let nx = dx / len;
+      let ny = dy / len;
+      const mag = Math.min(1, Math.hypot(dx, dy) / maxR);
+      if (mag < dead) {
+        clearDirs();
+        setKnob(0, 0);
+        return;
+      }
+      nx *= mag;
+      ny *= mag;
+      dirs.left = nx < -dead;
+      dirs.right = nx > dead;
+      dirs.up = ny < -dead;
+      dirs.down = ny > dead;
+      setKnob(nx, ny);
+    }
+
+    function endStick(e) {
+      if (pointerId == null || e.pointerId !== pointerId) return;
+      pointerId = null;
+      clearDirs();
+      setKnob(0, 0);
+      try {
+        root.releasePointerCapture(e.pointerId);
+      } catch {
+        /* ignore */
+      }
+    }
+
+    root.addEventListener(
+      "pointerdown",
+      (e) => {
+        e.preventDefault();
+        pointerId = e.pointerId;
+        const rect = root.getBoundingClientRect();
+        originX = rect.left + rect.width / 2;
+        originY = rect.top + rect.height / 2;
+        try {
+          root.setPointerCapture(e.pointerId);
+        } catch {
+          /* ignore */
+        }
+        applyVector(e.clientX - originX, e.clientY - originY);
+      },
+      { passive: false }
+    );
+
+    root.addEventListener(
+      "pointermove",
+      (e) => {
+        if (pointerId == null || e.pointerId !== pointerId) return;
+        e.preventDefault();
+        applyVector(e.clientX - originX, e.clientY - originY);
+      },
+      { passive: false }
+    );
+
+    root.addEventListener("pointerup", endStick);
+    root.addEventListener("pointercancel", endStick);
+    root.addEventListener("lostpointercapture", () => {
+      pointerId = null;
+      clearDirs();
+      setKnob(0, 0);
+    });
   }
 
   function bindTap(el, kind) {
@@ -80,10 +150,8 @@
   }
 
   function bindTouchUI(root) {
-    bindHold(root.querySelector('[data-dir="up"]'), "up");
-    bindHold(root.querySelector('[data-dir="down"]'), "down");
-    bindHold(root.querySelector('[data-dir="left"]'), "left");
-    bindHold(root.querySelector('[data-dir="right"]'), "right");
+    if (!root) return;
+    bindJoystick(root.querySelector("#move-joystick") || root.querySelector(".joystick"));
     bindTap(root.querySelector('[data-action="bomb"]'), "bomb");
     bindTap(root.querySelector('[data-action="item"]'), "item");
   }
