@@ -81,6 +81,21 @@ img {
   min-width: 0;
 }
 
+.nav-link {
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
 .site-nav:has(.nav-search) .nav-actions {
   margin-left: 0;
   justify-self: end;
