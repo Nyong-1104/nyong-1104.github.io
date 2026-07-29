@@ -844,6 +844,10 @@ body.nav-drawer-open {
   font-size: 0.9rem;
 }
 
+.set-ext-links[hidden] {
+  display: none;
+}
+
 .set-ext-links a {
   color: #ffb087;
   text-decoration: underline;

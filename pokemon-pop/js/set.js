@@ -12,8 +12,10 @@
     SR: 65,
     RRR: 60,
     RR: 50,
+    MSB: 44,
     PRISM: 45,
     AR: 40,
+    MB: 36,
     R: 30,
     PROMO: 25,
     U: 20,
@@ -114,6 +116,28 @@
     }
   }
 
+  let extLinks = document.getElementById("set-ext-links");
+  if (!extLinks) {
+    extLinks = document.createElement("p");
+    extLinks.id = "set-ext-links";
+    extLinks.className = "set-ext-links";
+    const head = document.querySelector(".set-head");
+    const meta = document.querySelector(".set-head__meta");
+    if (head) head.insertBefore(extLinks, meta || null);
+  }
+  extLinks.innerHTML = "";
+  if (pack.id === "sv2a-151") {
+    const a = document.createElement("a");
+    a.href = "https://poke-151.simey.me/";
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.textContent = PT.t("simey151Holo");
+    extLinks.appendChild(a);
+    extLinks.hidden = false;
+  } else {
+    extLinks.hidden = true;
+  }
+
   const back = document.querySelector(".nav-back");
   if (back) back.textContent = PT.t("backPacks");
 
@@ -185,7 +209,7 @@
         image: primary || fallback || PT.cardImageForEdition(card, editionLang),
         fallbackImage: primary ? fallback : "",
         name: PT.cardName(card),
-        holoStyle: card.holoStyle,
+        holoStyle: PT.resolveHoloStyle ? PT.resolveHoloStyle(card) : card.holoStyle,
         compact: true,
       });
       a.appendChild(holo);

@@ -411,7 +411,7 @@
     const holo = PT.createHoloCardEl({
       name: PT.cardName ? PT.cardName(card) : card.nameKo || card.nameEn || "",
       image: cardImage(card),
-      holoStyle: card.holoStyle || "holo",
+      holoStyle: PT.resolveHoloStyle ? PT.resolveHoloStyle(card) : card.holoStyle || "holo",
     });
     revealFront.appendChild(holo);
     PT.mountHoloCard(holo);

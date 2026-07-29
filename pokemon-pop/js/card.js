@@ -452,7 +452,7 @@
       imageNote.textContent = PT.t("imageFallback");
     },
     name: displayName,
-    holoStyle: card.holoStyle,
+    holoStyle: PT.resolveHoloStyle ? PT.resolveHoloStyle(card) : card.holoStyle,
   });
   visual.appendChild(holo);
   PT.mountHoloCard(holo);

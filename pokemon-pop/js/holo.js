@@ -86,10 +86,22 @@ window.PopTracker = window.PopTracker || {};
     reset();
   };
 
+  PT.resolveHoloStyle = function (card) {
+    if (!card) return "holo";
+    const rarity = String(card.rarity || "").toUpperCase();
+    const parallel = String(card.parallel || "").toLowerCase();
+    if (rarity === "MSB" || parallel === "master-ball") return "master-ball";
+    if (rarity === "MB" || parallel === "monster-ball") return "monster-ball";
+    return card.holoStyle || "holo";
+  };
+
   PT.createHoloCardEl = function (opts) {
     const style = opts.holoStyle || "sar";
     const wrap = document.createElement("div");
     wrap.className = `holo-card holo-card--${style}${opts.compact ? " holo-card--compact" : ""}`;
+    if (style === "monster-ball" || style === "master-ball") {
+      wrap.dataset.ballHolo = style;
+    }
     const img = document.createElement("img");
     img.className = "holo-card__img";
     img.loading = "lazy";

@@ -160,7 +160,7 @@
         const holo = PT.createHoloCardEl({
           image: PT.cardImageForEdition(card, "jp") || card.image || "",
           name: PT.cardName(card),
-          holoStyle: card.holoStyle || "holo",
+          holoStyle: PT.resolveHoloStyle ? PT.resolveHoloStyle(card) : card.holoStyle || "holo",
           compact: true,
         });
         const meta = document.createElement("div");
