@@ -12,6 +12,7 @@ window.PopTracker = window.PopTracker || {};
       open: "OPEN →",
       packOpen: "팩 오픈 시뮬레이터",
       packOpenPromo: "프로모 카드팩 25th ANNIVERSARY edition",
+      packOpen151: "포켓몬카드 151",
       simey151Holo: "151 홀로 효과 데모 (simey) →",
       backPacks: "← 팩 목록",
       backToSet: "← 세트 목록",
@@ -83,6 +84,7 @@ window.PopTracker = window.PopTracker || {};
       open: "OPEN →",
       packOpen: "Pack Open Simulator",
       packOpenPromo: "Promo Card Pack 25th ANNIVERSARY edition",
+      packOpen151: "Pokémon Card 151",
       simey151Holo: "151 holo demo (simey) →",
       backPacks: "← Packs",
       backToSet: "← Back to set",
@@ -154,6 +156,7 @@ window.PopTracker = window.PopTracker || {};
       open: "OPEN →",
       packOpen: "パック開封シミュレーター",
       packOpenPromo: "プロモカードパック 25th ANNIVERSARY edition",
+      packOpen151: "ポケモンカード151",
       simey151Holo: "151ホロデモ (simey) →",
       backPacks: "← パック一覧",
       backToSet: "← セットに戻る",
@@ -512,6 +515,7 @@ window.PopTracker = window.PopTracker || {};
           <h3 class="nav-drawer__section-title">${PT.t("packOpen")}</h3>
           <div class="nav-drawer__links">
             <a class="nav-drawer__link" href="./open.html">${PT.t("packOpenPromo")}</a>
+            <a class="nav-drawer__link" href="./open-151.html">${PT.t("packOpen151")}</a>
           </div>
         </section>
         <section class="nav-drawer__section" data-pack-section="booster">

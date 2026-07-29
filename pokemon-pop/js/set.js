@@ -104,10 +104,11 @@
   const setActions = document.getElementById("set-actions");
   if (setActions) {
     setActions.innerHTML = "";
-    if (pack.id === "s8a-p-25th-anniversary") {
+    if (pack.id === "s8a-p-25th-anniversary" || pack.id === "sv2a-151") {
       const openLink = document.createElement("a");
       openLink.className = "set-pack-open";
-      openLink.href = "./open.html";
+      openLink.href =
+        pack.id === "sv2a-151" ? "./open-151.html" : "./open.html";
       openLink.textContent = PT.t("packOpen");
       setActions.appendChild(openLink);
       setActions.hidden = false;

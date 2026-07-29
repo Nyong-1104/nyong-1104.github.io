@@ -1,0 +1,540 @@
+/* 151 pack open — multi-card reveal + gallery */
+
+/* Prevent page scrollbar; don't clip pack/cards mid-frame */
+html:has(body.open-page--151) {
+  overflow: hidden;
+  height: 100%;
+}
+
+body.open-page.open-page--151 {
+  overflow: hidden;
+  height: 100%;
+  max-height: 100dvh;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+.open-page--151 .open-main {
+  overflow: visible;
+  max-height: none;
+  padding-bottom: 1.5rem;
+}
+
+.open-page--151 .open-stage {
+  overflow: visible;
+  min-height: 0;
+}
+
+.open-page--151 .open-info {
+  height: 4.6rem;
+  z-index: 8;
+}
+
+/* Gallery focus: keep name above focus card */
+body.is-gallery-focus .open-info {
+  z-index: 95;
+}
+
+.open-page--151 .open-info.is-gallery.has-result .open-result__name {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: #fff8ee;
+  -webkit-text-fill-color: #fff8ee;
+  background-image: none;
+  animation: none;
+  filter: drop-shadow(0 0 14px rgba(255, 220, 140, 0.35));
+}
+
+.open-page--151 .open-info.is-gallery.has-result .open-result__name.open-result__shine--gold {
+  color: #ffe7a0;
+  -webkit-text-fill-color: #ffe7a0;
+  filter: drop-shadow(0 0 16px rgba(255, 200, 100, 0.45));
+}
+
+.open-page--151 .open-info.is-gallery.has-result .open-result__meta {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 248, 235, 0.82);
+  -webkit-text-fill-color: rgba(255, 248, 235, 0.82);
+  background-image: none;
+  animation: none;
+  filter: none;
+}
+
+.open-page--151 .open-result__name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.open-page--151 .open-result__meta {
+  margin-top: 0.2rem;
+  font-size: 0.86rem;
+}
+
+.open-page--151 .open-result__price {
+  display: none;
+}
+
+/* Pack art — overflow visible so fling + bottom art aren't clipped */
+.pack.pack--151 {
+  aspect-ratio: 418 / 813;
+  overflow: visible;
+  width: min(100%, 250px);
+}
+
+.pack.pack--151 .pack__inner {
+  aspect-ratio: 418 / 813;
+  overflow: visible;
+}
+
+.pack.pack--151 .pack__body,
+.pack.pack--151 .pack__top {
+  background-image: url("../assets/pack-151.png");
+}
+
+/* Dimmed pack remnant (unused in gallery; kept for reveal phase only) */
+.pack.pack--151.is-gallery-behind {
+  display: none !important;
+}
+
+.open151-rise[hidden],
+.open151-gallery[hidden],
+.open151-focus[hidden],
+.open151-modal[hidden] {
+  display: none !important;
+}
+
+/* Cards rise inside pack (25th-style), slightly smaller */
+.open151-rise.pack__card-rise {
+  z-index: 4;
+  left: 10%;
+  right: 10%;
+  top: 6%;
+  bottom: 6%;
+  justify-content: center;
+  padding-top: 0;
+  overflow: visible;
+}
+
+.open151-stack {
+  position: relative;
+  width: min(100%, 200px);
+  aspect-ratio: 0.716;
+  perspective: 900px;
+  touch-action: none;
+  overflow: visible;
+}
+
+.open151-card {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+  transform-origin: center center;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform, opacity;
+}
+
+.open151-card.is-dragging {
+  cursor: grabbing;
+  transition: none !important;
+}
+
+.open151-card.is-top {
+  pointer-events: auto;
+  z-index: 10;
+}
+
+.open151-card:not(.is-top):not(.open151-card--gallery) {
+  pointer-events: none;
+}
+
+.open151-card.is-flung {
+  pointer-events: none;
+  z-index: 200 !important;
+  visibility: visible;
+}
+
+.open151-card__inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.58s cubic-bezier(0.22, 0.82, 0.25, 1);
+  background: transparent;
+  overflow: visible;
+}
+
+.open151-stack.is-flipping-all .open151-card:not(.is-flat) .open151-card__inner,
+.open151-card.is-front:not(.is-flat) .open151-card__inner {
+  transform: rotateY(180deg);
+}
+
+.open151-card.is-flat .open151-card__inner {
+  transform: none !important;
+  transform-style: flat;
+}
+
+.open151-card.is-hit.is-front::after {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  border-radius: 8%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(255, 220, 120, 0.35),
+    transparent 62%
+  );
+  animation: open151-hit-pulse 0.9s ease-out;
+  z-index: 3;
+}
+
+@keyframes open151-hit-pulse {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
+.open151-card__face {
+  position: absolute;
+  inset: 0;
+  border-radius: 4.55% / 3.5%;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: transparent;
+  box-shadow:
+    0 0 3px -1px rgba(0, 0, 0, 0.4),
+    0 10px 22px -8px rgba(0, 0, 0, 0.45);
+}
+
+.open151-card__face--back {
+  background: #1a1520;
+}
+
+.open151-card__face--back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.open151-card__face--front {
+  transform: rotateY(180deg);
+  background: transparent;
+  overflow: visible;
+}
+
+.open151-card.is-flat .open151-card__face--front {
+  transform: none !important;
+  overflow: visible;
+}
+
+.open151-card__face--front .holo-card,
+.open151-card.is-flat .holo-card {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  background: transparent;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.open151-card__face--front .holo-card__front,
+.open151-card.is-flat .holo-card__front {
+  background: transparent;
+  background-color: transparent;
+}
+
+/* Gallery — 4 top / 3 bottom */
+.open151-gallery {
+  position: relative;
+  z-index: 6;
+  width: min(100%, 420px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0.5rem 0 1rem;
+}
+
+.open151-gallery__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: 100%;
+  overflow: visible;
+}
+
+.open151-gallery__row {
+  display: flex;
+  justify-content: center;
+  gap: 0.55rem;
+  width: 100%;
+}
+
+.open151-gallery__row--4 .open151-gallery__cell {
+  width: calc((100% - 1.65rem) / 4);
+}
+
+.open151-gallery__row--3 .open151-gallery__cell {
+  width: calc((100% - 1.1rem) / 3);
+  max-width: calc((100% - 1.65rem) / 4);
+}
+
+/* Mobile 2-3-2: same card size as middle row of 3 */
+.open151-gallery__row--2 .open151-gallery__cell {
+  width: calc((100% - 1.1rem) / 3);
+}
+
+@media (max-width: 560px) {
+  .open151-gallery__row--3 .open151-gallery__cell {
+    max-width: none;
+    width: calc((100% - 1.1rem) / 3);
+  }
+}
+
+.open151-gallery__cell {
+  position: relative;
+  aspect-ratio: 0.716;
+  flex: 0 0 auto;
+  animation: open151-gallery-in 0.45s ease both;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+/* After first entrance, never replay pop-in (focus/unfocus used to retrigger it) */
+.open151-gallery.is-ready .open151-gallery__cell {
+  animation: none;
+}
+
+.open151-gallery.has-focus .open151-gallery__cell:not(.is-focused) {
+  opacity: 0.3 !important;
+}
+
+.open151-gallery.has-focus .open151-gallery__cell.is-focused {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+@keyframes open151-gallery-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.open151-card--gallery {
+  position: absolute;
+  inset: 0;
+  transform: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.open151-card--gallery .open151-card__inner {
+  transform: none !important;
+}
+
+.open151-card--gallery .open151-card__face--front {
+  transform: none !important;
+}
+
+/* Center focus overlay — FLIP from cell → center → back */
+.open151-focus {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background: transparent;
+}
+
+.open151-focus__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.open151-focus__card {
+  position: fixed;
+  z-index: 2;
+  pointer-events: auto;
+  cursor: pointer;
+  background: transparent !important;
+  background-color: transparent !important;
+  overflow: visible;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.open151-focus.is-flying .open151-focus__card {
+  pointer-events: none;
+}
+
+/* Match set-list holo tilt — don't flatten with filter */
+.open151-focus__holo,
+.open151-focus__holo.holo-card {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  background: transparent !important;
+  background-color: transparent !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+  touch-action: none;
+  transform-origin: center center;
+  perspective: 600px;
+  transform: translate3d(0, 0, 0.1px);
+  will-change: transform;
+}
+
+.open151-focus__holo.interacting {
+  /* box-shadow only — filter flattens preserve-3d tilt */
+  filter: none;
+}
+
+.open151-focus__holo .holo-card__rotator {
+  background: transparent !important;
+  background-color: transparent !important;
+  overflow: visible;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.open151-focus__holo .holo-card__front {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow:
+    0 0 3px -1px rgba(0, 0, 0, 0.35),
+    0 22px 36px -10px rgba(0, 0, 0, 0.55);
+}
+
+body.is-gallery-focus {
+  overflow: hidden;
+}
+
+/* Prevent accidental reset taps while a card is focused up front */
+body.is-gallery-focus #btn-reset {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.open-btn--ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--ink-muted);
+}
+
+/* Modal */
+body.is-modal-open {
+  overflow: hidden;
+}
+
+.open151-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.open151-modal[hidden] {
+  display: none;
+}
+
+.open151-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(6, 5, 10, 0.72);
+  cursor: pointer;
+}
+
+.open151-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 320px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 1rem 1rem 1.15rem;
+  border-radius: 1rem;
+  background: rgba(22, 18, 30, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+}
+
+.open151-modal__card {
+  width: min(100%, 220px);
+}
+
+.open151-modal__card .holo-card {
+  width: 100%;
+  max-width: none;
+  background: transparent;
+}
+
+.open151-modal__card .holo-card__front {
+  background: transparent;
+  background-color: transparent;
+}
+
+.open151-modal__name {
+  margin: 0.35rem 0 0;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.open151-modal__meta,
+.open151-modal__price {
+  margin: 0;
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 0.88rem;
+}
+
+.open151-modal__price {
+  color: #f0d48a;
+}
+
+.open151-modal__link {
+  margin-top: 0.15rem;
+  color: var(--volt);
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+
+.open151-modal__link:hover {
+  text-decoration: underline;
+}
