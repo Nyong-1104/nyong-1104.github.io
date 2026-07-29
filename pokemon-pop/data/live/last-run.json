@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-07-29T18:46:50+09:00",
+  "ranAt": "2026-07-29T20:05:49+09:00",
   "stats": {
     "asOf": "2026-07-29",
-    "asOfIso": "2026-07-29T18:46:50+09:00",
+    "asOfIso": "2026-07-29T20:05:49+09:00",
     "cardsTotal": 4635,
     "cardsLive": 1984,
     "skippedTierC": 2651,
@@ -15,7 +15,7 @@
       "C": 2651
     },
     "ebayPricesRestored": 2561,
-    "brgPopsRestored": 1799,
+    "brgPopsRestored": 1801,
     "psaPopsRestored": 1136,
     "brg": {
       "brgEnabled": true,
