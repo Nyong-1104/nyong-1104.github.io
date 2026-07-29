@@ -118,24 +118,8 @@
   }
 
   let extLinks = document.getElementById("set-ext-links");
-  if (!extLinks) {
-    extLinks = document.createElement("p");
-    extLinks.id = "set-ext-links";
-    extLinks.className = "set-ext-links";
-    const head = document.querySelector(".set-head");
-    const meta = document.querySelector(".set-head__meta");
-    if (head) head.insertBefore(extLinks, meta || null);
-  }
-  extLinks.innerHTML = "";
-  if (pack.id === "sv2a-151") {
-    const a = document.createElement("a");
-    a.href = "https://poke-151.simey.me/";
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    a.textContent = PT.t("simey151Holo");
-    extLinks.appendChild(a);
-    extLinks.hidden = false;
-  } else {
+  if (extLinks) {
+    extLinks.innerHTML = "";
     extLinks.hidden = true;
   }
 
