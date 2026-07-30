@@ -739,8 +739,21 @@
     }, 430);
   }
 
-  function openAllAtOnce() {
-    if (!stackReady || flingBusy || openAllBusy) return;
+  function openAllAtOnce(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (openAllBusy || revealPhase.hidden || !btnOpenAll || btnOpenAll.hidden) return;
+    // Single-card fling still settling — first tap used to no-op; retry once ready
+    if (flingBusy) {
+      window.setTimeout(function () {
+        openAllAtOnce();
+      }, 70);
+      return;
+    }
+    if (!stackReady) return;
+
     const cards = Array.prototype.slice.call(
       cardStack.querySelectorAll(".open151-card:not(.is-flung)")
     );
@@ -758,8 +771,8 @@
 
     const cardH = Math.max(cards[0].offsetHeight || 0, 220);
     const travel = cardH * 1.55;
-    const stagger = 85;
-    const flyMs = 320;
+    const stagger = 150;
+    const flyMs = 520;
 
     cards.forEach(function (card, i) {
       window.setTimeout(function () {
@@ -770,10 +783,10 @@
         card.style.transition =
           "transform " +
           flyMs / 1000 +
-          "s cubic-bezier(0.15, 0.85, 0.25, 1), opacity " +
-          flyMs / 1000 * 0.55 +
+          "s cubic-bezier(0.18, 0.78, 0.25, 1), opacity " +
+          (flyMs / 1000) * 0.55 +
           "s ease " +
-          flyMs / 1000 * 0.2 +
+          (flyMs / 1000) * 0.22 +
           "s";
         card.style.transform = "translateY(-" + travel + "px) scale(0.94)";
         card.style.opacity = "0";
@@ -784,7 +797,7 @@
       revealIndex = drawnSlots.length;
       openAllBusy = false;
       enterGallery();
-    }, (cards.length - 1) * stagger + flyMs + 80);
+    }, (cards.length - 1) * stagger + flyMs + 100);
   }
 
   function dealThenFlipStack() {
@@ -1282,7 +1295,12 @@
     });
 
     btnReset.addEventListener("click", reset);
-    if (btnOpenAll) btnOpenAll.addEventListener("click", openAllAtOnce);
+    if (btnOpenAll) {
+      btnOpenAll.addEventListener("pointerdown", function (e) {
+        e.stopPropagation();
+      });
+      btnOpenAll.addEventListener("click", openAllAtOnce);
+    }
     modalClose.addEventListener("click", closeModal);
     modalBackdrop.addEventListener("click", closeModal);
     if (galleryFocusBackdrop) {
