@@ -415,67 +415,59 @@ body.is-gallery-focus .open-info {
   animation-duration: 1.85s;
 }
 
-/* AR — prism / rainbow foil sweep (distinct from generic foil & hits) */
+/* AR — soft prism sweep (no sparkle lines; continuous linear flow) */
 .open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::before {
-  background-image:
-    linear-gradient(
-      118deg,
-      transparent 0%,
-      transparent 28%,
-      rgba(255, 80, 140, 0.55) 36%,
-      rgba(255, 200, 60, 0.75) 42%,
-      rgba(80, 255, 180, 0.7) 48%,
-      rgba(90, 190, 255, 0.8) 54%,
-      rgba(180, 110, 255, 0.7) 60%,
-      rgba(255, 120, 200, 0.55) 66%,
-      transparent 74%,
-      transparent 100%
-    ),
-    repeating-linear-gradient(
-      -18deg,
-      transparent 0 10px,
-      rgba(255, 255, 255, 0.22) 10px 11px,
-      transparent 11px 22px
-    );
-  background-size: 280% 100%, 140% 140%;
-  mix-blend-mode: color-dodge;
-  opacity: 0.88;
-  animation: open151-ar-foil 2.1s ease-in-out infinite;
-  filter: saturate(1.25) brightness(1.08);
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 34%,
+    rgba(255, 140, 180, 0.28) 42%,
+    rgba(255, 210, 120, 0.38) 47%,
+    rgba(140, 230, 200, 0.36) 52%,
+    rgba(140, 190, 255, 0.4) 57%,
+    rgba(190, 150, 255, 0.32) 62%,
+    transparent 70%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: soft-light;
+  opacity: 0.62;
+  animation: open151-ar-foil 3.4s linear infinite;
+  filter: none;
 }
 
 .open151-card.is-ar.is-foil.is-front.is-flat.is-top .holo-card__front::before,
 .open151-card.is-ar.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
-  opacity: 1;
+  opacity: 0.78;
 }
 
 .open151-stack.is-face-up .open151-card.is-top.is-ar .holo-card.interacting .holo-card__shine,
 .open151-card--gallery.is-ar .holo-card.interacting .holo-card__shine {
-  opacity: calc(0.78 * var(--card-opacity, 1));
+  opacity: calc(0.42 * var(--card-opacity, 1));
   mix-blend-mode: soft-light;
   background-image:
     linear-gradient(
       125deg,
-      transparent 12%,
-      rgba(255, 90, 130, 0.55) 32%,
-      rgba(255, 210, 80, 0.5) 42%,
-      rgba(90, 255, 190, 0.5) 52%,
-      rgba(110, 170, 255, 0.55) 62%,
-      rgba(210, 120, 255, 0.5) 72%,
-      transparent 88%
+      transparent 18%,
+      rgba(255, 150, 180, 0.28) 36%,
+      rgba(255, 210, 120, 0.3) 46%,
+      rgba(140, 230, 200, 0.28) 56%,
+      rgba(150, 190, 255, 0.3) 66%,
+      transparent 82%
     ),
     radial-gradient(
       farthest-corner circle at var(--pointer-x) var(--pointer-y),
-      rgba(255, 255, 255, 0.65) 0%,
-      rgba(255, 255, 255, 0.12) 32%,
-      transparent 62%
+      rgba(255, 255, 255, 0.35) 0%,
+      rgba(255, 255, 255, 0.08) 30%,
+      transparent 58%
     );
-  background-size: 220% 220%, 160% 160%;
+  background-size: 200% 200%, 160% 160%;
 }
 
 .open151-stack.is-face-up .open151-card.is-top.is-ar .holo-card.interacting .holo-card__glare,
 .open151-card--gallery.is-ar .holo-card.interacting .holo-card__glare {
-  opacity: calc(0.55 * var(--card-opacity, 1));
+  opacity: calc(0.28 * var(--card-opacity, 1));
   mix-blend-mode: overlay;
 }
 
@@ -546,13 +538,10 @@ body.is-gallery-focus .open-info {
 
 @keyframes open151-ar-foil {
   0% {
-    background-position: 130% 40%, 0% 50%;
-  }
-  50% {
-    background-position: 40% 55%, 50% 20%;
+    background-position: 125% 50%;
   }
   100% {
-    background-position: -130% 60%, 100% 80%;
+    background-position: -125% 50%;
   }
 }
 
@@ -564,8 +553,8 @@ body.is-gallery-focus .open-info {
   }
 
   .open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::before {
-    background-position: 45% 50%, 30% 40%;
-    opacity: 0.75;
+    background-position: 45% 50%;
+    opacity: 0.6;
   }
 }
 
