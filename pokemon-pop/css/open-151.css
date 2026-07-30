@@ -469,7 +469,7 @@ body.is-gallery-focus .open-info {
   mix-blend-mode: overlay;
 }
 
-/* AR silver frame — rim shine (2% width L/R, 3% height T/B) */
+/* AR silver frame — rim shine (2% width L/R, 1.5% height T/B) */
 .open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::after {
   content: "";
   position: absolute;
@@ -478,7 +478,7 @@ body.is-gallery-focus .open-info {
   border-radius: inherit;
   pointer-events: none;
   box-sizing: border-box;
-  padding: calc(3% / 0.716) 2%;
+  padding: calc(1.5% / 0.716) 2%;
   background-image: linear-gradient(
     115deg,
     transparent 0%,
@@ -913,7 +913,7 @@ body.is-gallery-focus .open-info {
   border-radius: inherit;
   pointer-events: none;
   box-sizing: border-box;
-  padding: calc(3% / 0.716) 2%;
+  padding: calc(1.5% / 0.716) 2%;
   background-image: linear-gradient(
     115deg,
     transparent 0%,
