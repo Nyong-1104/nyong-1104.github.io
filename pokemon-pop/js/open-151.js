@@ -388,12 +388,22 @@
     return style === "monster-ball" || style === "master-ball";
   }
 
+  function isAR(card) {
+    return !!(card && String(card.rarity || "").toUpperCase() === "AR");
+  }
+
+  function arHoloStyle(card) {
+    if (isAR(card)) return "sar";
+    return PT.resolveHoloStyle ? PT.resolveHoloStyle(card) : card.holoStyle || "holo";
+  }
+
   function makeFace(card, faceDown) {
     const wrap = document.createElement("button");
     wrap.type = "button";
     wrap.className = "open151-card" + (faceDown ? " is-back" : " is-front is-flat");
     if (card && isHit(card)) wrap.classList.add("is-hit");
     if (card && isFoil(card)) wrap.classList.add("is-foil");
+    if (card && isAR(card)) wrap.classList.add("is-ar");
     wrap.setAttribute("aria-label", card ? PT.cardName(card) : "카드");
 
     const inner = document.createElement("span");
@@ -405,7 +415,7 @@
       const holo = PT.createHoloCardEl({
         name: PT.cardName(card),
         image: cardImage(card),
-        holoStyle: PT.resolveHoloStyle ? PT.resolveHoloStyle(card) : card.holoStyle || "holo",
+        holoStyle: arHoloStyle(card),
       });
       front.appendChild(holo);
       PT.mountHoloCard(holo);
@@ -968,7 +978,7 @@
     const holo = PT.createHoloCardEl({
       name: PT.cardName(card),
       image: cardImage(card),
-      holoStyle: PT.resolveHoloStyle ? PT.resolveHoloStyle(card) : card.holoStyle || "holo",
+      holoStyle: arHoloStyle(card),
     });
     holo.classList.add("open151-focus__holo");
     holo.style.background = "transparent";
@@ -1105,7 +1115,7 @@
     const holo = PT.createHoloCardEl({
       name: PT.cardName(card),
       image: cardImage(card),
-      holoStyle: PT.resolveHoloStyle ? PT.resolveHoloStyle(card) : card.holoStyle || "holo",
+      holoStyle: arHoloStyle(card),
     });
     modalCard.appendChild(holo);
     PT.mountHoloCard(holo);
