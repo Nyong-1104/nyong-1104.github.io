@@ -16,6 +16,8 @@
   };
 
   const HIT_RARITIES = { MSB: 1, SR: 1, SAR: 1, UR: 1 };
+  /** Foil light during flat reveal — skip commons / R */
+  const FOIL_RARITIES = { RR: 1, AR: 1, SR: 1, SAR: 1, UR: 1, MB: 1, MSB: 1 };
 
   const packEl = document.getElementById("pack");
   const packInner = document.getElementById("pack-inner");
@@ -374,11 +376,20 @@
     return !!(card && HIT_RARITIES[String(card.rarity || "").toUpperCase()]);
   }
 
+  function isFoil(card) {
+    if (!card) return false;
+    const rarity = String(card.rarity || "").toUpperCase();
+    if (FOIL_RARITIES[rarity]) return true;
+    const style = PT.resolveHoloStyle ? PT.resolveHoloStyle(card) : card.holoStyle;
+    return style === "monster-ball" || style === "master-ball";
+  }
+
   function makeFace(card, faceDown) {
     const wrap = document.createElement("button");
     wrap.type = "button";
     wrap.className = "open151-card" + (faceDown ? " is-back" : " is-front is-flat");
     if (card && isHit(card)) wrap.classList.add("is-hit");
+    if (card && isFoil(card)) wrap.classList.add("is-foil");
     wrap.setAttribute("aria-label", card ? PT.cardName(card) : "카드");
 
     const inner = document.createElement("span");
@@ -437,7 +448,11 @@
       flatHoloRaf = 0;
       return;
     }
-    const top = cardStack.querySelector(".open151-card.is-top:not(.is-flung) .holo-card");
+    const topCard = cardStack.querySelector(".open151-card.is-top:not(.is-flung)");
+    const top =
+      topCard && topCard.classList.contains("is-foil")
+        ? topCard.querySelector(".holo-card")
+        : null;
     cardStack.querySelectorAll(".holo-card.is-flat-sweep").forEach(function (holo) {
       if (holo !== top) {
         holo.classList.remove("is-flat-sweep", "interacting");

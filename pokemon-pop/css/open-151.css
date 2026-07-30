@@ -264,7 +264,7 @@ body.is-gallery-focus .open-info {
   background-color: transparent;
 }
 
-/* Flat foil light — keep card planar; sweep a gradient instead of 3D tilt */
+/* Flat foil light — foil cards only (not C/U/R); planar sweep, no 3D tilt */
 .open151-card.is-flat .holo-card {
   --rotate-x: 0deg !important;
   --rotate-y: 0deg !important;
@@ -276,11 +276,19 @@ body.is-gallery-focus .open-info {
   transition: none;
 }
 
-.open151-card.is-front.is-flat .holo-card__front {
+.open151-card.is-flat:not(.is-foil) .holo-card__shine,
+.open151-card.is-flat:not(.is-foil) .holo-card__glare,
+.open151-card.is-flat:not(.is-foil) .holo-card__front::before {
+  display: none !important;
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+.open151-card.is-foil.is-front.is-flat .holo-card__front {
   isolation: isolate;
 }
 
-.open151-card.is-front.is-flat .holo-card__front::before {
+.open151-card.is-foil.is-front.is-flat .holo-card__front::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -307,12 +315,12 @@ body.is-gallery-focus .open-info {
   animation: open151-flat-foil 2.6s ease-in-out infinite;
 }
 
-.open151-card.is-front.is-flat.is-top .holo-card__front::before,
-.open151-card.is-front.is-flat.open151-card--gallery .holo-card__front::before {
+.open151-card.is-foil.is-front.is-flat.is-top .holo-card__front::before,
+.open151-card.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
   opacity: 0.72;
 }
 
-.open151-card.is-hit.is-front.is-flat .holo-card__front::before {
+.open151-card.is-hit.is-foil.is-front.is-flat .holo-card__front::before {
   background-image: linear-gradient(
     112deg,
     transparent 0%,
@@ -331,30 +339,50 @@ body.is-gallery-focus .open-info {
   animation-duration: 1.85s;
 }
 
-.open151-card.is-front.is-flat .holo-card--monster-ball .holo-card__front::before,
-.open151-card.is-front.is-flat .holo-card--master-ball .holo-card__front::before {
+.open151-card.is-foil.is-front.is-flat .holo-card--monster-ball .holo-card__front::before,
+.open151-card.is-foil.is-front.is-flat .holo-card--master-ball .holo-card__front::before {
   mix-blend-mode: color-dodge;
   opacity: 0.85;
   animation-duration: 2.1s;
 }
 
+/* Reveal stack only: MB outer uses full tile mask like inner (no radial spotlight clip).
+   Gallery focus 3D keeps the original dual-mask outer in holo.css. */
+.open151-stack.is-face-up .open151-card.is-flat .holo-card--monster-ball .holo-card__shine::after {
+  -webkit-mask-image: url("../assets/pokeball-outer.webp");
+  mask-image: url("../assets/pokeball-outer.webp");
+  -webkit-mask-size: 42% auto;
+  mask-size: 42% auto;
+  -webkit-mask-position: calc(var(--seed) * 420px) calc(var(--seed) * 280px);
+  mask-position: calc(var(--seed) * 420px) calc(var(--seed) * 280px);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
+  background-size: 170% 170%;
+  background-position: var(--pointer-y) var(--pointer-x);
+  filter: brightness(var(--ball-inner-brightness)) contrast(2)
+    saturate(calc(0.2 + var(--pointer-from-center)));
+  mix-blend-mode: lighten;
+}
+
 /* Reuse built-in foil layers on the top reveal card (still flat) */
-.open151-stack.is-face-up .open151-card.is-top .holo-card.interacting .holo-card__shine {
+.open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card.interacting .holo-card__shine {
   opacity: calc(0.55 * var(--card-opacity, 1));
 }
 
-.open151-stack.is-face-up .open151-card.is-top .holo-card.interacting .holo-card__glare {
+.open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card.interacting .holo-card__glare {
   opacity: calc(0.45 * var(--card-opacity, 1));
 }
 
-.open151-stack.is-face-up .open151-card.is-top.is-hit .holo-card.interacting .holo-card__shine,
-.open151-stack.is-face-up .open151-card.is-top .holo-card--monster-ball.interacting .holo-card__shine,
-.open151-stack.is-face-up .open151-card.is-top .holo-card--master-ball.interacting .holo-card__shine {
+.open151-stack.is-face-up .open151-card.is-top.is-hit.is-foil .holo-card.interacting .holo-card__shine,
+.open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card--monster-ball.interacting .holo-card__shine,
+.open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card--master-ball.interacting .holo-card__shine {
   opacity: calc(0.9 * var(--card-opacity, 1));
 }
 
-.open151-stack.is-face-up .open151-card.is-top .holo-card--monster-ball.interacting .holo-card__glare,
-.open151-stack.is-face-up .open151-card.is-top .holo-card--master-ball.interacting .holo-card__glare {
+.open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card--monster-ball.interacting .holo-card__glare,
+.open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card--master-ball.interacting .holo-card__glare {
   opacity: calc(0.6 * var(--card-opacity, 1));
 }
 
@@ -368,7 +396,7 @@ body.is-gallery-focus .open-info {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .open151-card.is-front.is-flat .holo-card__front::before {
+  .open151-card.is-foil.is-front.is-flat .holo-card__front::before {
     animation: none;
     background-position: 40% 50%;
     opacity: 0.55;
