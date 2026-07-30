@@ -724,33 +724,61 @@
       } else {
         dirY = scoreY < 0 ? -1 : 1;
       }
-      flingTopCard(dirX, dirY);
+      flingTopCard(dirX, dirY, {
+        fromX: dx,
+        fromY: dy,
+        speed: speed,
+        vx: vx,
+        vy: vy,
+      });
       return;
     }
-    top.style.transition = "transform 0.28s ease, opacity 0.28s ease";
-    top.style.transform = "";
+
+    // Snap back: decelerate into place, then a light opposite overshoot
+    top.style.transition =
+      "transform 0.52s cubic-bezier(0.2, 1.5, 0.32, 1), opacity 0.28s ease";
+    top.style.transform = "translate(0px, 0px)";
     top.style.opacity = "1";
     window.setTimeout(function () {
       top.style.transition = "";
-    }, 300);
+      top.style.transform = "";
+    }, 560);
   }
 
-  function flingTopCard(dirX, dirY) {
+  function flingTopCard(dirX, dirY, motion) {
     if (flingBusy || openAllBusy) return;
     const top = cardStack.querySelector(".open151-card.is-top");
     if (!top) return;
     flingBusy = true;
+    motion = motion || {};
+    const fromX = Number(motion.fromX) || 0;
+    const fromY = Number(motion.fromY) || 0;
+    const speed = Math.max(Number(motion.speed) || 0, 0.4);
     const cardW = Math.max(top.offsetWidth, 160);
     const cardH = Math.max(top.offsetHeight, 220);
-    // Travel ~1.35× card size so fade starts after one card-length
-    const travel = (dirX !== 0 ? cardW : cardH) * 1.35;
+
+    // Faster flick → shorter flight + farther throw (keeps drag momentum)
+    const throwBoost = clamp(speed / 0.85, 0.75, 2.35);
+    const travel = (dirX !== 0 ? cardW : cardH) * (1.05 + throwBoost * 0.42);
+    const duration = clamp(0.46 / Math.max(throwBoost, 0.7), 0.22, 0.5);
     const tx = dirX * travel;
     const ty = dirY * travel;
+
     top.classList.add("is-flung");
     top.style.pointerEvents = "none";
-    // Ease-in: starts gentle, then accelerates away
+    top.style.transition = "none";
+    top.style.transform = "translate(" + fromX + "px, " + fromY + "px)";
+    void top.offsetWidth;
+
+    // Ease-out: leaves with flick energy, then coasts away
     top.style.transition =
-      "transform 0.48s cubic-bezier(0.55, 0.02, 0.92, 0.28), opacity 0.3s ease 0.16s";
+      "transform " +
+      duration +
+      "s cubic-bezier(0.05, 0.78, 0.18, 1), opacity " +
+      duration * 0.5 +
+      "s linear " +
+      duration * 0.12 +
+      "s";
     top.style.transform = "translate(" + tx + "px, " + ty + "px)";
     top.style.opacity = "0";
 
@@ -765,7 +793,7 @@
       applyStackLayout();
       bindTopFling();
       showRevealInfo(drawnSlots[revealIndex].card);
-    }, 500);
+    }, Math.round(duration * 1000) + 40);
   }
 
   function openAllAtOnce(e) {
