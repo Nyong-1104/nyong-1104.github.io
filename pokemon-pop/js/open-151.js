@@ -394,6 +394,7 @@
 
   function arHoloStyle(card) {
     if (isAR(card)) return "sar";
+    if (card && String(card.rarity || "").toUpperCase() === "RR") return "birthday";
     return PT.resolveHoloStyle ? PT.resolveHoloStyle(card) : card.holoStyle || "holo";
   }
 
@@ -404,6 +405,7 @@
     if (card && isHit(card)) wrap.classList.add("is-hit");
     if (card && isFoil(card)) wrap.classList.add("is-foil");
     if (card && isAR(card)) wrap.classList.add("is-ar");
+    if (card && String(card.rarity || "").toUpperCase() === "RR") wrap.classList.add("is-rr");
     wrap.setAttribute("aria-label", card ? PT.cardName(card) : "카드");
 
     const inner = document.createElement("span");
