@@ -130,12 +130,12 @@
    Outer node scales/fades; ::before holds a CONSTANT blur.
    Scaling a filtered node up is OK on iOS — scaling it back down cages into a box. */
 .pack__ambient-glow {
-  --glow-blur: 18px;
+  --glow-blur: 22px;
   position: absolute;
   left: 50%;
-  width: 240%;
-  top: calc(var(--tear-y-min) * 100% - 10%);
-  height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100% + 20%);
+  width: 280%;
+  top: calc(var(--tear-y-min) * 100% - 14%);
+  height: calc((var(--tear-y-max) - var(--tear-y-min)) * 100% + 32%);
   transform: translate(-50%, -20%) scale(1);
   min-height: 4.5rem;
   z-index: 0;
@@ -145,6 +145,23 @@
   opacity: 0.95;
   animation: tear-glow-breathe 3.2s ease-in-out infinite;
   transition: opacity 0.35s ease;
+  /* Soft elliptical falloff so the filter cage never reads as a hard rectangle */
+  -webkit-mask-image: radial-gradient(
+    ellipse 58% 72% at 50% 48%,
+    #000 0%,
+    #000 28%,
+    rgba(0, 0, 0, 0.55) 52%,
+    rgba(0, 0, 0, 0.18) 68%,
+    transparent 82%
+  );
+  mask-image: radial-gradient(
+    ellipse 58% 72% at 50% 48%,
+    #000 0%,
+    #000 28%,
+    rgba(0, 0, 0, 0.55) 52%,
+    rgba(0, 0, 0, 0.18) 68%,
+    transparent 82%
+  );
 }
 
 .pack__ambient-glow::before {
@@ -242,10 +259,10 @@
 }
 
 .pack[data-state="drawing"] .pack__ambient-glow::before {
-  inset: -55% -40%;
+  inset: -70% -55%;
   filter: blur(var(--glow-blur)) brightness(2.1);
   /* Core stays ~original size; padding is transparent margin for blur falloff */
-  background-size: 48% 48%, 42% 42%, 42% 42%;
+  background-size: 40% 40%, 36% 36%, 36% 36%;
   background-repeat: no-repeat;
   background-position: 50% 50%, 32% 50%, 68% 50%;
 }
@@ -385,7 +402,11 @@
 
 .pack[data-state="splitting"] .pack__ambient-glow::before,
 .pack[data-state="torn"] .pack__ambient-glow::before {
-  filter: blur(var(--glow-blur)) brightness(2.4);
+  inset: -70% -55%;
+  filter: blur(calc(var(--glow-blur) + 4px)) brightness(2.4);
+  background-size: 40% 40%, 36% 36%, 36% 36%;
+  background-repeat: no-repeat;
+  background-position: 50% 50%, 32% 50%, 68% 50%;
 }
 
 /* Soft sheen across the tearable band — clipped to pack only */
