@@ -469,6 +469,48 @@ body.is-gallery-focus .open-info {
   mix-blend-mode: overlay;
 }
 
+/* AR silver frame — rim shine (2% width L/R, 3% height T/B) */
+.open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  pointer-events: none;
+  box-sizing: border-box;
+  padding: calc(3% / 0.716) 2%;
+  background-image: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 46.5%,
+    rgba(200, 220, 255, 0.2) 48%,
+    rgba(255, 255, 255, 0.95) 49.5%,
+    rgba(210, 230, 255, 0.8) 50.5%,
+    rgba(170, 200, 255, 0.2) 52%,
+    transparent 53.5%,
+    transparent 100%
+  );
+  background-size: 360% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.92;
+  animation: open151-ar-foil 3.4s linear infinite;
+  filter: blur(1px);
+  -webkit-mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  -webkit-mask-clip: content-box, border-box;
+  mask-clip: content-box, border-box;
+  -webkit-mask-origin: content-box, border-box;
+  mask-origin: content-box, border-box;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.open151-card.is-ar.is-foil.is-front.is-flat.is-top .holo-card__front::after,
+.open151-card.is-ar.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::after {
+  opacity: 1;
+}
+
 /* RR — birthday-holo-dank texture during flat reveal / gallery */
 .open151-card.is-rr.is-foil.is-front.is-flat .holo-card__front::before {
   background-image: none;
@@ -608,6 +650,12 @@ body.is-gallery-focus .open-info {
   .open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::before {
     background-position: 45% 50%;
     opacity: 0.72;
+  }
+
+  .open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::after {
+    animation: none;
+    background-position: 48% 50%;
+    opacity: 0.85;
   }
 
   .open151-card.is-msb.is-foil.is-front.is-flat .holo-card__front::before {
@@ -855,6 +903,42 @@ body.is-gallery-focus .open-info {
   opacity: 0.9;
   animation: open151-ar-foil 3.4s linear infinite;
   filter: none;
+}
+
+.open151-focus__holo.is-ar.is-foil .holo-card__front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  pointer-events: none;
+  box-sizing: border-box;
+  padding: calc(3% / 0.716) 2%;
+  background-image: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 46.5%,
+    rgba(200, 220, 255, 0.2) 48%,
+    rgba(255, 255, 255, 0.95) 49.5%,
+    rgba(210, 230, 255, 0.8) 50.5%,
+    rgba(170, 200, 255, 0.2) 52%,
+    transparent 53.5%,
+    transparent 100%
+  );
+  background-size: 360% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: plus-lighter;
+  opacity: 1;
+  animation: open151-ar-foil 3.4s linear infinite;
+  filter: blur(1px);
+  -webkit-mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  -webkit-mask-clip: content-box, border-box;
+  mask-clip: content-box, border-box;
+  -webkit-mask-origin: content-box, border-box;
+  mask-origin: content-box, border-box;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
 }
 
 .open151-focus__holo.is-rr.is-foil .holo-card__front::before {
