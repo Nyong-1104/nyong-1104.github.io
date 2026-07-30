@@ -719,22 +719,15 @@
     const distanceOk = dist > 70;
     const velocityOk = speed > 0.55;
     if (distanceOk || velocityOk) {
-      const scoreX = dx + vx * 40;
-      const scoreY = dy + vy * 40;
-      let dirX = 0;
-      let dirY = 0;
-      if (Math.abs(scoreX) > Math.abs(scoreY)) {
-        dirX = scoreX < 0 ? -1 : 1;
-      } else {
-        dirY = scoreY < 0 ? -1 : 1;
-      }
-      flingTopCard(dirX, dirY, {
+      // Keep the actual swipe angle (not snapped to axis)
+      const scoreX = dx + vx * 48;
+      const scoreY = dy + vy * 48;
+      const mag = Math.hypot(scoreX, scoreY) || 1;
+      flingTopCard(scoreX / mag, scoreY / mag, {
         fromX: dx,
         fromY: dy,
-        // Cap flick speed — don't chase ultra-fast drags
         speed: Math.min(speed, 1.05),
-        vx: vx,
-        vy: vy,
+        free: true,
       });
       return;
     }
@@ -778,9 +771,13 @@
     } else {
       const speed = clamp(Number(motion.speed) || 0.55, 0.4, 1.05);
       const throwBoost = clamp(speed / 0.85, 0.7, 1.25);
-      const travel = (dirX !== 0 ? cardW : cardH) * (1.08 + throwBoost * 0.28);
-      tx = dirX * travel;
-      ty = dirY * travel;
+      const len = Math.hypot(dirX, dirY) || 1;
+      const ux = dirX / len;
+      const uy = dirY / len;
+      // Continue along the swipe ray from the release point
+      const travel = Math.max(cardW, cardH) * (1.12 + throwBoost * 0.3);
+      tx = fromX + ux * travel;
+      ty = fromY + uy * travel;
       duration = clamp(0.52 / Math.max(throwBoost, 0.75), 0.34, 0.56);
       easing = "cubic-bezier(0.08, 0.72, 0.2, 1)";
     }
