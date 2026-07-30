@@ -21,6 +21,7 @@
 
   const packEl = document.getElementById("pack");
   const packInner = document.getElementById("pack-inner");
+  const skyEject = document.getElementById("sky-eject");
   const tearZone = document.getElementById("tear-zone");
   const tearPolyTop = document.getElementById("tear-poly-top");
   const tearPolyBody = document.getElementById("tear-poly-body");
@@ -885,7 +886,7 @@
     stopFlatHoloSweep();
     setOpenAllVisible(false);
     cardStack.innerHTML = "";
-    cardStack.classList.remove("is-face-up", "is-flipping-all", "has-deck", "is-ejecting");
+    cardStack.classList.remove("is-face-up", "is-flipping-all", "has-deck");
     cardStack.style.removeProperty("--deck-n");
     stackReady = false;
     flingBusy = false;
@@ -893,76 +894,42 @@
     revealIndex = 0;
 
     const total = drawnSlots.length;
-    cardStack.classList.add("is-ejecting");
     for (let i = 0; i < total; i++) {
       const el = makeFace(drawnSlots[i].card, true);
       el.dataset.index = String(i);
       el.classList.add("is-dealing");
-      const rot = (i % 2 === 0 ? -1 : 1) * (5 + (i % 3) * 2.2);
-      el.style.setProperty("--eject-rot", rot.toFixed(1) + "deg");
       el.style.opacity = "0";
-      el.style.transform =
-        "translateY(82%) scale(0.84) rotate(" + rot.toFixed(1) + "deg)";
+      el.style.transform = "translateY(46%) scale(0.9)";
       el.style.zIndex = String(100 - i);
-      el.style.transition = "none";
       cardStack.appendChild(el);
     }
 
-    // Whoosh out of the torn pack: bottom card first, top card last
-    let delay = 80;
-    const ejectGap = 72;
-    const whooshMs = 380;
-    const settleMs = 340;
+    // Rise bottom→top visually: card6 first, card0 last (ends on top)
+    let delay = 0;
     for (let step = 0; step < total; step++) {
       const idx = total - 1 - step;
       const el = cardStack.querySelector('[data-index="' + idx + '"]');
       if (!el) continue;
-      const rot = parseFloat(el.style.getPropertyValue("--eject-rot")) || 0;
       window.setTimeout(
-        function (node, fromTop, spin) {
+        function (node, fromTop) {
           node.classList.remove("is-dealing");
-          node.classList.add("is-eject-fly");
+          node.classList.add("is-dealt");
           node.style.transition =
-            "transform " +
-            whooshMs / 1000 +
-            "s cubic-bezier(0.12, 0.82, 0.22, 1), opacity 0.12s ease-out";
+            "transform 0.55s cubic-bezier(0.2, 0.75, 0.25, 1), opacity 0.45s ease";
+          const o = stackOffset(fromTop);
           node.style.opacity = "1";
-          node.style.zIndex = String(120 - fromTop);
-          // Shoot up past the tear opening
+          node.style.zIndex = String(o.z);
           node.style.transform =
-            "translateY(-46%) scale(1.05) rotate(" +
-            (-spin * 0.35).toFixed(1) +
-            "deg)";
+            "translateY(" + o.y + "px) scale(" + o.scale + ")";
         },
         delay,
         el,
-        idx,
-        rot
-      );
-      window.setTimeout(
-        function (node, fromTop) {
-          const o = stackOffset(fromTop);
-          node.classList.remove("is-eject-fly");
-          node.classList.add("is-dealt");
-          node.style.transition =
-            "transform " +
-            settleMs / 1000 +
-            "s cubic-bezier(0.22, 1.18, 0.36, 1)";
-          node.style.zIndex = String(o.z);
-          node.style.transform =
-            "translateY(" + o.y + "px) scale(" + o.scale + ") rotate(0deg)";
-        },
-        delay + whooshMs - 40,
-        el,
         idx
       );
-      delay += ejectGap;
+      delay += 115;
     }
 
-    const ejectDone = delay + whooshMs + settleMs;
-
     window.setTimeout(function () {
-      cardStack.classList.remove("is-ejecting");
       cardStack.classList.add("is-flipping-all");
       const all = cardStack.querySelectorAll(".open151-card");
       all.forEach(function (el) {
@@ -980,7 +947,7 @@
         setOpenAllVisible(true);
         showRevealInfo(drawnSlots[0] && drawnSlots[0].card);
       }, 620);
-    }, ejectDone);
+    }, delay + 260);
   }
 
   function focusCardSize(maxW, maxH) {
@@ -1250,7 +1217,7 @@
     dealThenFlipStack();
     window.setTimeout(function () {
       if (packEl.dataset.state === "torn") setState("revealed");
-    }, 2100);
+    }, 1600);
   }
 
   function packHasPrismHit() {
@@ -1285,6 +1252,39 @@
     return true;
   }
 
+  function clearSkyEject() {
+    if (!skyEject) return;
+    skyEject.classList.remove("is-flying");
+    skyEject.innerHTML = "";
+    document.body.classList.remove("is-sky-ejecting");
+  }
+
+  /** Face-down cards shoot upward behind the shrinking pack (into the sky). */
+  function playSkyEject() {
+    if (!skyEject) return;
+    clearSkyEject();
+    document.body.classList.add("is-sky-ejecting");
+    const n = Math.max(drawnSlots.length || 7, 7);
+    for (let i = 0; i < n; i++) {
+      const card = document.createElement("div");
+      card.className = "pack__sky-eject-card";
+      const side = i % 2 === 0 ? -1 : 1;
+      const dx = side * (4 + (i % 4) * 5.5);
+      const rot = side * (8 + (i % 3) * 4);
+      card.style.setProperty("--i", String(i));
+      card.style.setProperty("--dx", dx.toFixed(1) + "%");
+      card.style.setProperty("--rot", rot.toFixed(1) + "deg");
+      skyEject.appendChild(card);
+    }
+    // reflow so animation restarts cleanly
+    void skyEject.offsetWidth;
+    skyEject.classList.add("is-flying");
+    window.setTimeout(function () {
+      clearSkyEject();
+      document.body.classList.remove("is-sky-ejecting");
+    }, 950 + n * 68);
+  }
+
   function completeTear() {
     if (torn) return;
     torn = true;
@@ -1309,10 +1309,11 @@
     }
 
     hintEl.textContent = "";
-    // Let the lid fly clear, then eject face-down cards from the torn pack
+    // Cards fly behind the dimming pack into the sky, then normal deal
+    playSkyEject();
     window.setTimeout(function () {
       startRevealPhase();
-    }, 720);
+    }, 980);
   }
 
   function openAlongPath() {
@@ -1399,6 +1400,7 @@
     setState("sealed");
     packEl.hidden = false;
     packEl.classList.remove("is-gallery-behind", "has-prism-open");
+    clearSkyEject();
     revealPhase.hidden = true;
     galleryPhase.hidden = true;
     cardStack.innerHTML = "";

@@ -263,29 +263,60 @@ body.is-gallery-focus .open-info {
   gap: 0;
 }
 
-/* Skip generic single-card rise — 151 does its own whoosh eject */
-.pack.pack--151[data-state="torn"] .open151-rise.pack__card-rise,
-.pack.pack--151[data-state="revealed"] .open151-rise.pack__card-rise,
-.pack.pack--151[data-state="flipped"] .open151-rise.pack__card-rise {
-  animation: none;
-  opacity: 1;
-  transform: none;
+body.open-page.open-page--151.is-sky-ejecting {
+  overflow: hidden;
 }
 
-.open151-stack.is-ejecting {
+/* Face-down cards whoosh behind the shrinking pack into the sky */
+.pack__sky-eject {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   overflow: visible;
 }
 
-.open151-card.is-dealing {
-  pointer-events: none;
+.pack__sky-eject-card {
+  position: absolute;
+  left: 50%;
+  top: 38%;
+  width: 54%;
+  aspect-ratio: 0.716;
+  margin-left: -27%;
+  border-radius: 4.55% / 3.5%;
+  background: #1a1520 url("../assets/card-back-jp.png") center / cover no-repeat;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translate3d(var(--dx, 0%), 18%, 0) scale(0.72) rotate(var(--rot, 0deg));
   will-change: transform, opacity;
-  filter: brightness(0.92);
 }
 
-.open151-card.is-eject-fly {
-  pointer-events: none;
-  z-index: 140 !important;
-  filter: brightness(1.06) drop-shadow(0 14px 18px rgba(0, 0, 0, 0.35));
+.pack__sky-eject.is-flying .pack__sky-eject-card {
+  animation: open151-sky-eject 0.95s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 68ms);
+}
+
+@keyframes open151-sky-eject {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--dx, 0%), 22%, 0) scale(0.7) rotate(var(--rot, 0deg));
+  }
+  12% {
+    opacity: 0.95;
+  }
+  55% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(
+        calc(var(--dx, 0%) * 1.6),
+        calc(-1 * min(92vh, 820px)),
+        0
+      )
+      scale(0.92)
+      rotate(calc(var(--rot, 0deg) * -1.4));
+  }
 }
 
 .open151-open-all {
