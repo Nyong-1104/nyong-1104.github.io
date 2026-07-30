@@ -1,28 +1,41 @@
 /* 151 pack open — multi-card reveal + gallery */
 
-/* Prevent page scrollbar; don't clip pack/cards mid-frame */
+/* Allow full page height on phone — don't clip to viewport (shows white) */
 html:has(body.open-page--151) {
-  overflow: hidden;
-  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+  min-height: 100%;
+  background-color: #0b0910;
+  background-image:
+    radial-gradient(ellipse 70% 45% at 8% -5%, rgba(255, 138, 61, 0.18), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 92% 0%, rgba(42, 157, 143, 0.14), transparent 50%),
+    radial-gradient(ellipse 50% 35% at 50% 100%, rgba(88, 60, 140, 0.16), transparent 55%),
+    linear-gradient(165deg, #100e16 0%, #0b0910 45%, #12101a 100%);
+  background-attachment: fixed;
 }
 
 body.open-page.open-page--151 {
-  overflow: hidden;
-  height: 100%;
-  max-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: visible;
+  height: auto;
+  max-height: none;
+  min-height: 100dvh;
   overscroll-behavior: none;
   touch-action: manipulation;
+  background: transparent;
 }
 
 .open-page--151 .open-main {
   overflow: visible;
   max-height: none;
-  padding-bottom: 1.5rem;
+  padding-bottom: 2.75rem;
 }
 
 .open-page--151 .open-stage {
   overflow: visible;
   min-height: 0;
+  padding-bottom: 0.5rem;
 }
 
 .open-page--151 .open-info {
@@ -90,6 +103,34 @@ body.is-gallery-focus .open-info {
 .pack.pack--151 .pack__inner {
   aspect-ratio: 418 / 813;
   overflow: visible;
+  /* drop-shadow on tall pack can paint a dark rectangular plate */
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.35));
+}
+
+@media (max-height: 780px), (max-width: 560px) {
+  .pack.pack--151 {
+    width: min(100%, 200px);
+  }
+
+  .open-page--151 .open-main {
+    gap: 0.85rem;
+    padding-bottom: 3.25rem;
+  }
+
+  .open-page--151 .open-head {
+    display: none;
+  }
+
+  .open-page--151 .open-info {
+    height: 3.8rem;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-height: 680px) {
+  .pack.pack--151 {
+    width: min(100%, 170px);
+  }
 }
 
 .pack.pack--151 .pack__body,
@@ -129,7 +170,8 @@ body.is-gallery-focus .open-info {
   z-index: 20;
   flex: 0 0 auto;
   min-width: 9.5rem;
-  margin-top: 0.85rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
   padding: 0.55rem 1.1rem;
   font-size: 0.92rem;
   touch-action: manipulation;
@@ -258,29 +300,44 @@ body.is-gallery-focus .open-info {
 
 .open151-card__face--front {
   transform: rotateY(180deg);
-  background: transparent;
-  overflow: visible;
+  background: transparent !important;
+  background-color: transparent !important;
+  overflow: hidden;
 }
 
 .open151-card.is-flat .open151-card__face--front {
   transform: none !important;
-  overflow: visible;
+  overflow: hidden;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.open151-card__face--front .holo-card,
+.open151-card.is-flat .holo-card,
+.open151-card__face--front .holo-card__rotator,
+.open151-card.is-flat .holo-card__rotator,
+.open151-card__face--front .holo-card__front,
+.open151-card.is-flat .holo-card__front {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  background: transparent !important;
+  background-color: transparent !important;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .open151-card__face--front .holo-card,
 .open151-card.is-flat .holo-card {
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  background: transparent;
-  overflow: visible;
-  pointer-events: none;
+  aspect-ratio: auto;
 }
 
-.open151-card__face--front .holo-card__front,
-.open151-card.is-flat .holo-card__front {
-  background: transparent;
-  background-color: transparent;
+.open151-card--gallery .holo-card,
+.open151-card--gallery .holo-card__rotator,
+.open151-card--gallery .holo-card__front {
+  background: transparent !important;
+  background-color: transparent !important;
+  overflow: hidden;
 }
 
 /* Flat foil light — foil cards only (not C/U/R); planar sweep, no 3D tilt */
@@ -439,7 +496,7 @@ body.is-gallery-focus .open-info {
   flex-direction: column;
   align-items: center;
   gap: 1.1rem;
-  padding: 0.5rem 0 1rem;
+  padding: 0.5rem 0 2.5rem;
 }
 
 .open151-gallery__grid {
