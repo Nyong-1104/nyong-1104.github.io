@@ -282,9 +282,9 @@
 }
 
 .holo-card--master-ball {
-  /* Match monster-ball intensity; keep a soft purple cast */
-  --ball-outer-brightness: 0.56;
-  --ball-inner-brightness: 0.72;
+  /* Soft purple cast; mark layers stay a bit clearer than monster-ball */
+  --ball-outer-brightness: 0.78;
+  --ball-inner-brightness: 0.9;
   --sunpillar-1: hsl(280, 78%, 68%);
   --sunpillar-2: hsl(210, 72%, 66%);
   --sunpillar-3: hsl(320, 72%, 68%);
@@ -437,6 +437,9 @@
   mask-repeat: no-repeat;
   -webkit-mask-composite: source-over;
   mask-composite: add;
+  /* Sharper mark read without restoring the old punchy wash */
+  filter: brightness(var(--ball-outer-brightness)) contrast(2.15)
+    saturate(calc(0.42 + var(--pointer-from-center) * 0.95));
 }
 
 .holo-card--master-ball .holo-card__shine::before {
@@ -450,6 +453,8 @@
   mask-position: 0 0;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
+  filter: brightness(var(--ball-inner-brightness)) contrast(2.35)
+    saturate(calc(0.28 + var(--pointer-from-center) * 0.85));
 }
 
 .holo-card--monster-ball:is(.interacting, .is-idle-holo) .holo-card__glare,
