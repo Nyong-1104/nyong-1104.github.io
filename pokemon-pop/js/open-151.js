@@ -885,7 +885,7 @@
     stopFlatHoloSweep();
     setOpenAllVisible(false);
     cardStack.innerHTML = "";
-    cardStack.classList.remove("is-face-up", "is-flipping-all", "has-deck");
+    cardStack.classList.remove("is-face-up", "is-flipping-all", "has-deck", "is-ejecting");
     cardStack.style.removeProperty("--deck-n");
     stackReady = false;
     flingBusy = false;
@@ -893,42 +893,76 @@
     revealIndex = 0;
 
     const total = drawnSlots.length;
+    cardStack.classList.add("is-ejecting");
     for (let i = 0; i < total; i++) {
       const el = makeFace(drawnSlots[i].card, true);
       el.dataset.index = String(i);
       el.classList.add("is-dealing");
+      const rot = (i % 2 === 0 ? -1 : 1) * (5 + (i % 3) * 2.2);
+      el.style.setProperty("--eject-rot", rot.toFixed(1) + "deg");
       el.style.opacity = "0";
-      el.style.transform = "translateY(46%) scale(0.9)";
+      el.style.transform =
+        "translateY(82%) scale(0.84) rotate(" + rot.toFixed(1) + "deg)";
       el.style.zIndex = String(100 - i);
+      el.style.transition = "none";
       cardStack.appendChild(el);
     }
 
-    // Rise bottom→top visually: card6 first, card0 last (ends on top)
-    let delay = 0;
+    // Whoosh out of the torn pack: bottom card first, top card last
+    let delay = 80;
+    const ejectGap = 72;
+    const whooshMs = 380;
+    const settleMs = 340;
     for (let step = 0; step < total; step++) {
       const idx = total - 1 - step;
       const el = cardStack.querySelector('[data-index="' + idx + '"]');
       if (!el) continue;
+      const rot = parseFloat(el.style.getPropertyValue("--eject-rot")) || 0;
       window.setTimeout(
-        function (node, fromTop) {
+        function (node, fromTop, spin) {
           node.classList.remove("is-dealing");
-          node.classList.add("is-dealt");
+          node.classList.add("is-eject-fly");
           node.style.transition =
-            "transform 0.55s cubic-bezier(0.2, 0.75, 0.25, 1), opacity 0.45s ease";
-          const o = stackOffset(fromTop);
+            "transform " +
+            whooshMs / 1000 +
+            "s cubic-bezier(0.12, 0.82, 0.22, 1), opacity 0.12s ease-out";
           node.style.opacity = "1";
-          node.style.zIndex = String(o.z);
+          node.style.zIndex = String(120 - fromTop);
+          // Shoot up past the tear opening
           node.style.transform =
-            "translateY(" + o.y + "px) scale(" + o.scale + ")";
+            "translateY(-46%) scale(1.05) rotate(" +
+            (-spin * 0.35).toFixed(1) +
+            "deg)";
         },
         delay,
         el,
+        idx,
+        rot
+      );
+      window.setTimeout(
+        function (node, fromTop) {
+          const o = stackOffset(fromTop);
+          node.classList.remove("is-eject-fly");
+          node.classList.add("is-dealt");
+          node.style.transition =
+            "transform " +
+            settleMs / 1000 +
+            "s cubic-bezier(0.22, 1.18, 0.36, 1)";
+          node.style.zIndex = String(o.z);
+          node.style.transform =
+            "translateY(" + o.y + "px) scale(" + o.scale + ") rotate(0deg)";
+        },
+        delay + whooshMs - 40,
+        el,
         idx
       );
-      delay += 115;
+      delay += ejectGap;
     }
 
+    const ejectDone = delay + whooshMs + settleMs;
+
     window.setTimeout(function () {
+      cardStack.classList.remove("is-ejecting");
       cardStack.classList.add("is-flipping-all");
       const all = cardStack.querySelectorAll(".open151-card");
       all.forEach(function (el) {
@@ -946,7 +980,7 @@
         setOpenAllVisible(true);
         showRevealInfo(drawnSlots[0] && drawnSlots[0].card);
       }, 620);
-    }, delay + 260);
+    }, ejectDone);
   }
 
   function focusCardSize(maxW, maxH) {
@@ -1216,7 +1250,7 @@
     dealThenFlipStack();
     window.setTimeout(function () {
       if (packEl.dataset.state === "torn") setState("revealed");
-    }, 1600);
+    }, 2100);
   }
 
   function packHasPrismHit() {
@@ -1275,9 +1309,10 @@
     }
 
     hintEl.textContent = "";
+    // Let the lid fly clear, then eject face-down cards from the torn pack
     window.setTimeout(function () {
       startRevealPhase();
-    }, 900);
+    }, 720);
   }
 
   function openAlongPath() {

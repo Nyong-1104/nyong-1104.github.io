@@ -263,6 +263,31 @@ body.is-gallery-focus .open-info {
   gap: 0;
 }
 
+/* Skip generic single-card rise — 151 does its own whoosh eject */
+.pack.pack--151[data-state="torn"] .open151-rise.pack__card-rise,
+.pack.pack--151[data-state="revealed"] .open151-rise.pack__card-rise,
+.pack.pack--151[data-state="flipped"] .open151-rise.pack__card-rise {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+.open151-stack.is-ejecting {
+  overflow: visible;
+}
+
+.open151-card.is-dealing {
+  pointer-events: none;
+  will-change: transform, opacity;
+  filter: brightness(0.92);
+}
+
+.open151-card.is-eject-fly {
+  pointer-events: none;
+  z-index: 140 !important;
+  filter: brightness(1.06) drop-shadow(0 14px 18px rgba(0, 0, 0, 0.35));
+}
+
 .open151-open-all {
   position: relative;
   z-index: 20;
