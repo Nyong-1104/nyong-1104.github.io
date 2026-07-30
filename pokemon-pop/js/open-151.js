@@ -1257,6 +1257,12 @@
     dragging = false;
     setTear(1);
     setState("torn");
+    // Wipe stroke pixels as the pack remnant starts shrinking
+    if (strokeCtx && tearStroke) {
+      const size = sizeCanvas();
+      strokeCtx.setTransform(size.dpr, 0, 0, size.dpr, 0, 0);
+      strokeCtx.clearRect(0, 0, size.w, size.h);
+    }
 
     if (!ensurePackDrawn()) {
       torn = false;

@@ -343,8 +343,10 @@
   animation: tear-sparks-linger 1.55s ease-out forwards;
 }
 
+/* No glint linger once the pack remnant starts shrinking */
 .pack[data-state="torn"] .pack__tear-glints {
-  animation: tear-glints-linger 1.55s ease-out forwards;
+  opacity: 0 !important;
+  animation: none !important;
 }
 
 @keyframes tear-glow-linger {
@@ -553,34 +555,15 @@
   100% { filter: blur(10px) brightness(2.2); }
 }
 
-.pack[data-state="torn"] .pack__tear-sheen {
-  animation: tear-sheen-linger 1.35s ease-out forwards;
-}
-
-.pack[data-state="torn"] .pack__tear-sheen::before {
-  animation: tear-sheen-linger-bg 1.35s ease-out forwards;
-}
-
-@keyframes tear-sheen-linger {
-  0% { opacity: 0.7; }
-  100% { opacity: 0; }
-}
-
-@keyframes tear-sheen-linger-bg {
-  0% { filter: blur(8px) brightness(2); }
-  100% { filter: blur(14px) brightness(1.2); }
-}
-
+/* Pack remnant shrinks on torn — kill sheen residual immediately (no linger) */
+.pack[data-state="torn"] .pack__tear-sheen,
+.pack[data-state="torn"] .pack__tear-sheen::before,
 .pack[data-state="revealed"] .pack__tear-sheen,
-.pack[data-state="flipped"] .pack__tear-sheen {
-  opacity: 0;
-  animation: none;
-}
-
 .pack[data-state="revealed"] .pack__tear-sheen::before,
+.pack[data-state="flipped"] .pack__tear-sheen,
 .pack[data-state="flipped"] .pack__tear-sheen::before {
-  animation: none;
-  opacity: 0;
+  opacity: 0 !important;
+  animation: none !important;
 }
 
 .pack__inner {
@@ -700,7 +683,8 @@
 .pack[data-state="revealed"] .pack__tear-stroke,
 .pack[data-state="flipped"] .pack__tear-stroke {
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transition: none;
+  visibility: hidden;
 }
 
 /* Rising card — slightly high, with reset button under the card */
@@ -1009,10 +993,6 @@
     animation: open-fx-host-pc 1.2s ease-out forwards;
   }
 
-  .pack[data-state="torn"] .pack__open-fx {
-    animation: open-fx-host-pc 1.35s ease-out forwards;
-  }
-
   .pack[data-state="splitting"] .pack__open-fx__seam {
     animation: open-fx-seam-pc 0.95s ease-out forwards;
   }
@@ -1021,10 +1001,12 @@
     animation: open-fx-bloom-pc 1.15s ease-out forwards;
   }
 
+  /* Remnant shrink starts on torn — hide seam afterimage instantly */
+  .pack[data-state="torn"] .pack__open-fx,
   .pack[data-state="torn"] .pack__open-fx__seam,
   .pack[data-state="torn"] .pack__open-fx__bloom {
-    opacity: 0;
-    animation: none;
+    opacity: 0 !important;
+    animation: none !important;
   }
 
   @keyframes open-fx-host-pc {
