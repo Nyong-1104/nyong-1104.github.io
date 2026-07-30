@@ -281,6 +281,16 @@
   --sunpillar-6: hsl(283, 100%, 73%);
 }
 
+/* Resting pose: keep ball foil readable without pointer interaction */
+.holo-card--monster-ball:not(.interacting):not(.is-idle-holo),
+.holo-card--master-ball:not(.interacting):not(.is-idle-holo) {
+  --pointer-x: 36%;
+  --pointer-y: 40%;
+  --pointer-from-center: 0.48;
+  --background-x: 42%;
+  --background-y: 40%;
+}
+
 .holo-card--master-ball {
   /* Soft purple cast; mark layers stay a bit clearer than monster-ball */
   --ball-outer-brightness: 0.78;
@@ -293,9 +303,9 @@
   --sunpillar-6: hsl(300, 70%, 66%);
 }
 
-.holo-card--monster-ball:is(.interacting, .is-idle-holo) .holo-card__shine,
-.holo-card--master-ball:is(.interacting, .is-idle-holo) .holo-card__shine {
-  opacity: calc(0.52 * var(--card-opacity));
+.holo-card--monster-ball .holo-card__shine,
+.holo-card--master-ball .holo-card__shine {
+  opacity: 0.34;
   mix-blend-mode: color-dodge;
   filter: brightness(0.52) contrast(1.05) saturate(0.85);
   background-image: linear-gradient(
@@ -307,10 +317,11 @@
   );
   background-size: 200% 200%;
   background-position: var(--pointer-x) var(--pointer-y);
+  transition: opacity 0.3s ease;
 }
 
-.holo-card--master-ball:is(.interacting, .is-idle-holo) .holo-card__shine {
-  opacity: calc(0.54 * var(--card-opacity));
+.holo-card--master-ball .holo-card__shine {
+  opacity: 0.38;
   filter: brightness(0.54) contrast(1.06) saturate(0.9);
   background-image: linear-gradient(
     45deg,
@@ -319,6 +330,14 @@
     hsla(300, 20%, 26%) 58%,
     hsla(195, 24%, 40%) 88%
   );
+}
+
+.holo-card--monster-ball:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.52 * var(--card-opacity));
+}
+
+.holo-card--master-ball:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.54 * var(--card-opacity));
 }
 
 .holo-card--monster-ball .holo-card__shine::before,
@@ -457,25 +476,35 @@
     saturate(calc(0.28 + var(--pointer-from-center) * 0.85));
 }
 
-.holo-card--monster-ball:is(.interacting, .is-idle-holo) .holo-card__glare,
-.holo-card--master-ball:is(.interacting, .is-idle-holo) .holo-card__glare {
-  opacity: calc(0.28 * var(--card-opacity));
+.holo-card--monster-ball .holo-card__glare,
+.holo-card--master-ball .holo-card__glare {
+  opacity: 0.14;
   mix-blend-mode: overlay;
   background-image: radial-gradient(
     farthest-corner circle at var(--pointer-x) var(--pointer-y),
     hsl(346, 25%, 80%) 8%,
     hsla(207, 30%, 40%, 0.85) 88%
   );
+  transition: opacity 0.3s ease;
 }
 
+.holo-card--monster-ball:is(.interacting, .is-idle-holo) .holo-card__glare,
 .holo-card--master-ball:is(.interacting, .is-idle-holo) .holo-card__glare {
-  opacity: calc(0.3 * var(--card-opacity));
+  opacity: calc(0.28 * var(--card-opacity));
+}
+
+.holo-card--master-ball .holo-card__glare {
+  opacity: 0.16;
   background-image: radial-gradient(
     farthest-corner circle at var(--pointer-x) var(--pointer-y),
     hsl(280, 35%, 82%) 6%,
     hsla(210, 28%, 42%, 0.85) 55%,
     hsla(300, 28%, 30%, 0.8) 92%
   );
+}
+
+.holo-card--master-ball:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.3 * var(--card-opacity));
 }
 
 .holo-card--compact {
