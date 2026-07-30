@@ -32,6 +32,7 @@
   const openFxAbovePoly = document.getElementById("open-fx-above-poly");
   const hintEl = document.getElementById("open-hint");
   const openInfo = document.getElementById("open-info");
+  const packBanner = document.getElementById("pack-banner");
   const resultEl = document.getElementById("open-result");
   const resultName = document.getElementById("result-name");
   const resultMeta = document.getElementById("result-meta");
@@ -395,6 +396,72 @@
 
   function isAR(card) {
     return rarityKey(card) === "AR";
+  }
+
+  const ENCOURAGE_LINES = [
+    "The best is yet to come",
+    "Better days are coming",
+    "It'll get better",
+    "Give it another try",
+  ];
+
+  function clearPackBanner() {
+    if (!packBanner) return;
+    packBanner.hidden = true;
+    packBanner.textContent = "";
+    packBanner.classList.remove(
+      "is-visible",
+      "is-gold",
+      "is-rainbow",
+      "is-silver",
+      "is-multi",
+      "is-dense"
+    );
+    if (openInfo) openInfo.classList.remove("has-banner", "has-banner-multi");
+  }
+
+  function showPackBanner() {
+    if (!packBanner) return;
+    const cards = drawnSlots.map(function (s) { return s && s.card; }).filter(Boolean);
+    const hitRank = { UR: 0, SAR: 1, SR: 2, MSB: 3 };
+    const hits = cards
+      .filter(function (card) {
+        return hitRank[rarityKey(card)] != null;
+      })
+      .slice()
+      .sort(function (a, b) {
+        return hitRank[rarityKey(a)] - hitRank[rarityKey(b)];
+      });
+
+    clearPackBanner();
+    packBanner.hidden = false;
+    packBanner.classList.add("is-visible");
+    if (openInfo) openInfo.classList.add("has-banner");
+
+    if (!hits.length) {
+      packBanner.classList.add("is-silver");
+      packBanner.textContent =
+        ENCOURAGE_LINES[Math.floor(Math.random() * ENCOURAGE_LINES.length)];
+      return;
+    }
+
+    const parts = hits.map(function (card) {
+      return PT.cardName(card) + " · " + (card.rarity || rarityKey(card));
+    });
+    packBanner.textContent = parts.join(", ") + " HIT!";
+
+    if (hits.length >= 2) {
+      packBanner.classList.add("is-multi");
+      if (openInfo) openInfo.classList.add("has-banner-multi");
+    }
+    if (hits.length >= 3 || packBanner.textContent.length > 42) {
+      packBanner.classList.add("is-dense");
+    }
+
+    const hasUR = hits.some(function (card) {
+      return rarityKey(card) === "UR";
+    });
+    packBanner.classList.add(hasUR ? "is-gold" : "is-rainbow");
   }
 
   function arHoloStyle(card) {
@@ -1158,6 +1225,7 @@
     openInfo.classList.add("is-gallery");
     packEl.hidden = true;
     packEl.classList.remove("is-gallery-behind");
+    showPackBanner();
 
     galleryGrid.innerHTML = "";
     const cards = drawnSlots.map(function (s) { return s && s.card; }).filter(Boolean);
@@ -1214,6 +1282,7 @@
     hintEl.textContent = "";
     openInfo.classList.remove("is-gallery", "has-result");
     resultEl.classList.remove("is-visible", "is-hit");
+    clearPackBanner();
     dealThenFlipStack();
     window.setTimeout(function () {
       if (packEl.dataset.state === "torn") setState("revealed");
@@ -1413,6 +1482,7 @@
     resultName.classList.remove("open-result__shine--gold");
     resultMeta.textContent = "";
     resultPrice.textContent = "";
+    clearPackBanner();
     hintEl.textContent = "팩을 그어 개봉해주세요";
   }
 

@@ -2,40 +2,71 @@
   "packId": "sv2a-151",
   "cardsPerPack": 7,
   "packsPerBox": 20,
-  "note": "Community box-rate calibration (not official). Targets ~AR 0.15, RR 0.25, SR 0.05, SAR 0.012, UR 0.003, MSB 0.05, MB 0.80 per pack.",
+  "note": "Fun simulator rates (not official). Per-slot custom weights.",
   "slots": [
-    { "id": "n1", "label": "노멀1", "table": "common_mix" },
-    { "id": "n2", "label": "노멀2", "table": "common_mix" },
-    { "id": "n3", "label": "노멀3", "table": "common_mix" },
-    { "id": "n4", "label": "노멀4", "table": "common_mix" },
-    { "id": "rev", "label": "리버스", "table": "reverse_slot" },
-    { "id": "rare", "label": "레어", "table": "rare_slot" },
-    { "id": "hit", "label": "히트", "table": "hit_slot" }
+    { "id": "n1", "label": "1장", "table": "slot1" },
+    { "id": "n2", "label": "2장", "table": "slot2" },
+    { "id": "n3", "label": "3장", "table": "slot3" },
+    { "id": "n4", "label": "4장", "table": "slot4" },
+    { "id": "rev", "label": "5장", "table": "slot5" },
+    { "id": "rare", "label": "6장", "table": "slot6" },
+    { "id": "hit", "label": "7장", "table": "slot7" }
   ],
   "tables": {
-    "common_mix": [
-      { "pool": "C", "w": 55 },
+    "slot1": [
+      { "pool": "C", "w": 45 },
       { "pool": "U", "w": 35 },
-      { "pool": "R", "w": 10 }
+      { "pool": "R", "w": 15 },
+      { "pool": "AR", "w": 5 }
     ],
-    "reverse_slot": [
-      { "pool": "MB", "w": 80 },
-      { "pool": "C", "w": 12 },
-      { "pool": "U", "w": 8 }
+    "slot2": [
+      { "pool": "C", "w": 30 },
+      { "pool": "U", "w": 25 },
+      { "pool": "R", "w": 20 },
+      { "pool": "RR", "w": 15 },
+      { "pool": "AR", "w": 10 }
     ],
-    "rare_slot": [
-      { "pool": "R", "w": 85 },
-      { "pool": "RR", "w": 15 }
+    "slot3": [
+      { "pool": "C", "w": 25 },
+      { "pool": "U", "w": 25 },
+      { "pool": "R", "w": 20 },
+      { "pool": "RR", "w": 15 },
+      { "pool": "AR", "w": 15 }
     ],
-    "hit_slot": [
-      { "pool": "R", "w": 550 },
-      { "pool": "AR", "w": 150 },
-      { "pool": "RR", "w": 100 },
-      { "pool": "MB", "w": 85 },
-      { "pool": "SR", "w": 50 },
-      { "pool": "MSB", "w": 50 },
-      { "pool": "SAR", "w": 12 },
-      { "pool": "UR", "w": 3 }
+    "slot4": [
+      { "pool": "C", "w": 20 },
+      { "pool": "U", "w": 20 },
+      { "pool": "R", "w": 15 },
+      { "pool": "RR", "w": 15 },
+      { "pool": "AR", "w": 15 },
+      { "pool": "MB", "w": 10 },
+      { "pool": "MSB", "w": 5 }
+    ],
+    "slot5": [
+      { "pool": "MB", "w": 70 },
+      { "pool": "MSB", "w": 20 },
+      { "pool": "AR", "w": 5 },
+      { "pool": "SR", "w": 4 },
+      { "pool": "SAR", "w": 1 }
+    ],
+    "slot6": [
+      { "pool": "R", "w": 30 },
+      { "pool": "RR", "w": 30 },
+      { "pool": "AR", "w": 10 },
+      { "pool": "MB", "w": 10 },
+      { "pool": "MSB", "w": 10 },
+      { "pool": "SR", "w": 5 },
+      { "pool": "SAR", "w": 4 },
+      { "pool": "UR", "w": 1 }
+    ],
+    "slot7": [
+      { "pool": "R", "w": 20 },
+      { "pool": "RR", "w": 25 },
+      { "pool": "AR", "w": 30 },
+      { "pool": "MSB", "w": 10 },
+      { "pool": "SR", "w": 10 },
+      { "pool": "SAR", "w": 4 },
+      { "pool": "UR", "w": 1 }
     ]
   }
 }
