@@ -207,7 +207,16 @@ body.is-gallery-focus .open-info {
   }
 
   .open-page--151 .open-head {
-    display: none;
+    display: block;
+    margin: 0;
+    padding: 0.1rem 0 0;
+  }
+
+  .open-page--151 .open-head__eyebrow {
+    margin: 0;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    opacity: 0.9;
   }
 
   .open-page--151 .open-info {

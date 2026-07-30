@@ -706,9 +706,13 @@
     const dist = Math.hypot(dx, dy);
     const speed = Math.hypot(vx, vy);
 
-    // Last card: tap opens gallery
-    if (remainingCount() <= 1 && dist < 12 && speed < 0.2) {
-      enterGallery();
+    // Tap: soft upward fling (open-all feel). Last card → gallery.
+    if (dist < 14 && speed < 0.25) {
+      if (remainingCount() <= 1) {
+        enterGallery();
+        return;
+      }
+      flingTopCard(0, -1, { mode: "tap" });
       return;
     }
 
@@ -727,22 +731,23 @@
       flingTopCard(dirX, dirY, {
         fromX: dx,
         fromY: dy,
-        speed: speed,
+        // Cap flick speed — don't chase ultra-fast drags
+        speed: Math.min(speed, 1.05),
         vx: vx,
         vy: vy,
       });
       return;
     }
 
-    // Snap back: decelerate into place, then a light opposite overshoot
+    // Snap back: slower ease + soft opposite overshoot
     top.style.transition =
-      "transform 0.52s cubic-bezier(0.2, 1.5, 0.32, 1), opacity 0.28s ease";
+      "transform 0.88s cubic-bezier(0.22, 1.28, 0.36, 1), opacity 0.4s ease";
     top.style.transform = "translate(0px, 0px)";
     top.style.opacity = "1";
     window.setTimeout(function () {
       top.style.transition = "";
       top.style.transform = "";
-    }, 560);
+    }, 920);
   }
 
   function flingTopCard(dirX, dirY, motion) {
@@ -751,18 +756,34 @@
     if (!top) return;
     flingBusy = true;
     motion = motion || {};
-    const fromX = Number(motion.fromX) || 0;
-    const fromY = Number(motion.fromY) || 0;
-    const speed = Math.max(Number(motion.speed) || 0, 0.4);
     const cardW = Math.max(top.offsetWidth, 160);
     const cardH = Math.max(top.offsetHeight, 220);
 
-    // Faster flick → shorter flight + farther throw (keeps drag momentum)
-    const throwBoost = clamp(speed / 0.85, 0.75, 2.35);
-    const travel = (dirX !== 0 ? cardW : cardH) * (1.05 + throwBoost * 0.42);
-    const duration = clamp(0.46 / Math.max(throwBoost, 0.7), 0.22, 0.5);
-    const tx = dirX * travel;
-    const ty = dirY * travel;
+    let fromX = Number(motion.fromX) || 0;
+    let fromY = Number(motion.fromY) || 0;
+    let tx;
+    let ty;
+    let duration;
+    let easing;
+
+    if (motion.mode === "tap") {
+      // Match "한번에 열기" first-card feel — soft accelerate upward
+      fromX = 0;
+      fromY = 0;
+      const travel = cardH * 1.55;
+      tx = 0;
+      ty = -travel;
+      duration = 0.56;
+      easing = "cubic-bezier(0.55, 0.02, 0.92, 0.28)";
+    } else {
+      const speed = clamp(Number(motion.speed) || 0.55, 0.4, 1.05);
+      const throwBoost = clamp(speed / 0.85, 0.7, 1.25);
+      const travel = (dirX !== 0 ? cardW : cardH) * (1.08 + throwBoost * 0.28);
+      tx = dirX * travel;
+      ty = dirY * travel;
+      duration = clamp(0.52 / Math.max(throwBoost, 0.75), 0.34, 0.56);
+      easing = "cubic-bezier(0.08, 0.72, 0.2, 1)";
+    }
 
     top.classList.add("is-flung");
     top.style.pointerEvents = "none";
@@ -770,14 +791,15 @@
     top.style.transform = "translate(" + fromX + "px, " + fromY + "px)";
     void top.offsetWidth;
 
-    // Ease-out: leaves with flick energy, then coasts away
     top.style.transition =
       "transform " +
       duration +
-      "s cubic-bezier(0.05, 0.78, 0.18, 1), opacity " +
+      "s " +
+      easing +
+      ", opacity " +
       duration * 0.5 +
       "s linear " +
-      duration * 0.12 +
+      duration * 0.14 +
       "s";
     top.style.transform = "translate(" + tx + "px, " + ty + "px)";
     top.style.opacity = "0";
