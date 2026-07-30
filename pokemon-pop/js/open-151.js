@@ -1028,15 +1028,13 @@
     resetFocusDom();
 
     const origin = cell.getBoundingClientRect();
-    cell.classList.add("is-focused");
-    galleryPhase.classList.add("has-focus");
     galleryFocusSlot = { cell: cell, card: card };
     document.body.classList.add("is-gallery-focus");
 
+    // Paint overlay at the thumb first, then hide the source (avoids a blank blink)
     mountFocusHolo(card);
     galleryFocus.hidden = false;
     galleryFocus.classList.add("is-flying");
-
     galleryFocusCard.style.transition = "none";
     galleryFocusCard.style.opacity = "1";
     setFocusCardBox({
@@ -1047,6 +1045,9 @@
     });
     void galleryFocusCard.offsetWidth;
 
+    cell.classList.add("is-focused");
+    galleryPhase.classList.add("has-focus");
+
     requestAnimationFrame(function () {
       showRevealInfo(card);
       requestAnimationFrame(function () {
@@ -1055,10 +1056,6 @@
         setFocusCardBox(centerFocusBox());
         window.setTimeout(function () {
           galleryFocus.classList.remove("is-flying");
-          // Remount holo at final size so tilt math / listeners are fresh
-          if (galleryFocusSlot && galleryFocusSlot.card) {
-            mountFocusHolo(galleryFocusSlot.card);
-          }
         }, 430);
       });
     });
@@ -1169,6 +1166,38 @@
     }, 1600);
   }
 
+  function packHasPrismHit() {
+    return drawnSlots.some(function (s) {
+      const r = rarityKey(s && s.card);
+      return r === "SR" || r === "SAR" || r === "UR";
+    });
+  }
+
+  function syncPrismOpenFx() {
+    if (!packEl) return;
+    packEl.classList.toggle("has-prism-open", packHasPrismHit());
+  }
+
+  function ensurePackDrawn() {
+    if (drawnSlots.length) return true;
+    if (!rates) {
+      hintEl.textContent = "확률표를 아직 불러오지 못했어요. 잠시 후 다시 그어주세요";
+      return false;
+    }
+    const cards = PT.getCards ? PT.getCards() : [];
+    drawnSlots = PT.drawPackFromRates(rates, cards);
+    const ok = drawnSlots.some(function (s) {
+      return s && s.card;
+    });
+    if (!ok) {
+      drawnSlots = [];
+      hintEl.textContent = "카드 풀을 찾지 못했어요 (catalog " + cards.length + ")";
+      return false;
+    }
+    syncPrismOpenFx();
+    return true;
+  }
+
   function completeTear() {
     if (torn) return;
     torn = true;
@@ -1176,23 +1205,13 @@
     setTear(1);
     setState("torn");
 
-    if (!rates) {
+    if (!ensurePackDrawn()) {
       torn = false;
       setTear(0);
       resetClip();
       drawStroke();
       setState("sealed");
-      hintEl.textContent = "확률표를 아직 불러오지 못했어요. 잠시 후 다시 그어주세요";
-      return;
-    }
-
-    const cards = PT.getCards ? PT.getCards() : [];
-    drawnSlots = PT.drawPackFromRates(rates, cards);
-    const ok = drawnSlots.some(function (s) {
-      return s && s.card;
-    });
-    if (!ok) {
-      hintEl.textContent = "카드 풀을 찾지 못했어요 (catalog " + cards.length + ")";
+      packEl.classList.remove("has-prism-open");
       return;
     }
 
@@ -1204,6 +1223,15 @@
 
   function openAlongPath() {
     if (torn) return;
+    // Draw before the burst so SR/SAR/UR can tint open light rainbow
+    if (!ensurePackDrawn()) {
+      points = [];
+      resetClip();
+      drawStroke();
+      setTear(0);
+      setState("sealed");
+      return;
+    }
     updateClip();
     setState("splitting");
     window.setTimeout(completeTear, 520);
@@ -1276,7 +1304,7 @@
     drawStroke();
     setState("sealed");
     packEl.hidden = false;
-    packEl.classList.remove("is-gallery-behind");
+    packEl.classList.remove("is-gallery-behind", "has-prism-open");
     revealPhase.hidden = true;
     galleryPhase.hidden = true;
     cardStack.innerHTML = "";
