@@ -406,6 +406,7 @@
     if (card && isFoil(card)) wrap.classList.add("is-foil");
     if (card && isAR(card)) wrap.classList.add("is-ar");
     if (card && String(card.rarity || "").toUpperCase() === "RR") wrap.classList.add("is-rr");
+    if (card && String(card.rarity || "").toUpperCase() === "MSB") wrap.classList.add("is-msb");
     wrap.setAttribute("aria-label", card ? PT.cardName(card) : "카드");
 
     const inner = document.createElement("span");

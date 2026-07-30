@@ -471,6 +471,47 @@ body.is-gallery-focus .open-info {
   mix-blend-mode: overlay;
 }
 
+/* AR silver frame only — bright chrome sweep on the border ring */
+.open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  pointer-events: none;
+  box-sizing: border-box;
+  padding: 4.4% 5.4% 7.4%;
+  background-image: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 36%,
+    rgba(200, 220, 255, 0.2) 43%,
+    rgba(255, 255, 255, 0.95) 48%,
+    rgba(210, 230, 255, 0.85) 51%,
+    rgba(170, 200, 255, 0.35) 56%,
+    transparent 64%,
+    transparent 100%
+  );
+  background-size: 280% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.95;
+  animation: open151-ar-foil 3.4s linear infinite;
+  -webkit-mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  -webkit-mask-clip: content-box, border-box;
+  mask-clip: content-box, border-box;
+  -webkit-mask-origin: content-box, border-box;
+  mask-origin: content-box, border-box;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.open151-card.is-ar.is-foil.is-front.is-flat.is-top .holo-card__front::after,
+.open151-card.is-ar.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::after {
+  opacity: 1;
+}
+
 /* RR — birthday-holo-dank texture during flat reveal / gallery */
 .open151-card.is-rr.is-foil.is-front.is-flat .holo-card__front::before {
   background-image: none;
@@ -495,6 +536,43 @@ body.is-gallery-focus .open-info {
   opacity: 0.42;
   animation-duration: 2.1s;
   filter: none;
+}
+
+/* MSB — punchier purple/cyan flat sweep so master ball reads as a hit */
+.open151-card.is-msb.is-foil.is-front.is-flat .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 30%,
+    rgba(180, 90, 255, 0.45) 38%,
+    rgba(90, 200, 255, 0.7) 46%,
+    rgba(255, 120, 230, 0.65) 52%,
+    rgba(120, 160, 255, 0.7) 58%,
+    rgba(200, 100, 255, 0.5) 66%,
+    transparent 74%,
+    transparent 100%
+  );
+  background-size: 270% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: color-dodge;
+  opacity: 0.72;
+  animation: open151-ar-foil 2.8s linear infinite;
+  filter: saturate(1.15);
+}
+
+.open151-card.is-msb.is-foil.is-front.is-flat.is-top .holo-card__front::before,
+.open151-card.is-msb.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
+  opacity: 0.9;
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-msb .holo-card.interacting .holo-card__shine,
+.open151-card--gallery.is-msb .holo-card.interacting .holo-card__shine {
+  opacity: calc(0.95 * var(--card-opacity, 1));
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-msb .holo-card.interacting .holo-card__glare,
+.open151-card--gallery.is-msb .holo-card.interacting .holo-card__glare {
+  opacity: calc(0.58 * var(--card-opacity, 1));
 }
 
 /* Reveal + gallery thumbs: MB outer uses full tile mask like inner.
@@ -573,6 +651,18 @@ body.is-gallery-focus .open-info {
   .open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::before {
     background-position: 45% 50%;
     opacity: 0.72;
+  }
+
+  .open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::after {
+    animation: none;
+    background-position: 48% 50%;
+    opacity: 0.85;
+  }
+
+  .open151-card.is-msb.is-foil.is-front.is-flat .holo-card__front::before {
+    animation: none;
+    background-position: 45% 50%;
+    opacity: 0.7;
   }
 }
 
