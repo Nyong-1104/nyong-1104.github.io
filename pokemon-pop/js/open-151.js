@@ -1393,6 +1393,9 @@
       openBack.href = "./set.html?pack=" + encodeURIComponent(PACK_ID);
       openBack.textContent = PT.t("backToSet") || "← 세트 목록";
     }
+    if (PT.mountLangSwitcher) {
+      PT.mountLangSwitcher(document.querySelector(".site-nav"));
+    }
     document.title = "151 Pack Open Simulator · PokePop";
 
     applyTearConfig();

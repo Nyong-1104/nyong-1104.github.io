@@ -765,6 +765,9 @@
 
     const back = document.getElementById("open-back");
     if (back && PT.t) back.textContent = PT.t("backToSet");
+    if (PT.mountLangSwitcher) {
+      PT.mountLangSwitcher(document.querySelector(".site-nav"));
+    }
 
     tearZone.addEventListener("pointerdown", onPointerDown);
     tearZone.addEventListener("pointermove", onPointerMove);
