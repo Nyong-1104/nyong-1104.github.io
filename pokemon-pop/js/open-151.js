@@ -71,6 +71,8 @@
   let glowAliveRaf = 0;
   let glowAlivePhase = 0;
   let flatHoloRaf = 0;
+  /** @type {"stack"|"gallery"|null} */
+  let flatHoloMode = null;
   /** @type {{x:number,y:number,rawX?:number,rawY?:number}[]} */
   let points = [];
   const strokeCtx = tearStroke.getContext("2d");
@@ -427,62 +429,91 @@
     return wrap;
   }
 
+  function clearFlatHoloNode(holo) {
+    if (!holo) return;
+    holo.classList.remove("is-flat-sweep", "interacting");
+    holo.style.setProperty("--card-opacity", "0");
+    holo.style.setProperty("--rotate-x", "0deg");
+    holo.style.setProperty("--rotate-y", "0deg");
+    holo.style.setProperty("--pointer-x", "50%");
+    holo.style.setProperty("--pointer-y", "50%");
+    holo.style.setProperty("--background-x", "50%");
+    holo.style.setProperty("--background-y", "50%");
+    holo.style.setProperty("--pointer-from-center", "0");
+  }
+
+  function applyFlatHoloPan(holo, phase) {
+    const t = performance.now() / 1000 + phase;
+    const x = 50 + Math.sin(t * 1.15) * 40;
+    const y = 48 + Math.cos(t * 0.9) * 30;
+    const dx = x - 50;
+    const dy = y - 50;
+    const fromCenter = Math.min(1, Math.sqrt(dx * dx + dy * dy) / 50);
+    holo.classList.add("is-flat-sweep", "interacting");
+    holo.style.setProperty("--pointer-x", x.toFixed(2) + "%");
+    holo.style.setProperty("--pointer-y", y.toFixed(2) + "%");
+    holo.style.setProperty("--background-x", (37 + (x / 100) * 26).toFixed(2) + "%");
+    holo.style.setProperty("--background-y", (33 + (y / 100) * 34).toFixed(2) + "%");
+    holo.style.setProperty("--card-opacity", "1");
+    holo.style.setProperty("--pointer-from-center", fromCenter.toFixed(3));
+    holo.style.setProperty("--rotate-x", "0deg");
+    holo.style.setProperty("--rotate-y", "0deg");
+  }
+
   function stopFlatHoloSweep() {
     if (flatHoloRaf) cancelAnimationFrame(flatHoloRaf);
     flatHoloRaf = 0;
-    cardStack.querySelectorAll(".holo-card.is-flat-sweep").forEach(function (holo) {
-      holo.classList.remove("is-flat-sweep", "interacting");
-      holo.style.setProperty("--card-opacity", "0");
-      holo.style.setProperty("--rotate-x", "0deg");
-      holo.style.setProperty("--rotate-y", "0deg");
-      holo.style.setProperty("--pointer-x", "50%");
-      holo.style.setProperty("--pointer-y", "50%");
-      holo.style.setProperty("--background-x", "50%");
-      holo.style.setProperty("--background-y", "50%");
-      holo.style.setProperty("--pointer-from-center", "0");
-    });
+    flatHoloMode = null;
+    cardStack.querySelectorAll(".holo-card.is-flat-sweep").forEach(clearFlatHoloNode);
+    galleryGrid.querySelectorAll(".holo-card.is-flat-sweep").forEach(clearFlatHoloNode);
   }
 
   function pumpFlatHoloSweep() {
-    if (!stackReady || revealPhase.hidden) {
-      flatHoloRaf = 0;
+    if (flatHoloMode === "stack") {
+      if (!stackReady || revealPhase.hidden) {
+        flatHoloRaf = 0;
+        flatHoloMode = null;
+        return;
+      }
+      const topCard = cardStack.querySelector(".open151-card.is-top:not(.is-flung)");
+      const top =
+        topCard && topCard.classList.contains("is-foil")
+          ? topCard.querySelector(".holo-card")
+          : null;
+      cardStack.querySelectorAll(".holo-card.is-flat-sweep").forEach(function (holo) {
+        if (holo !== top) clearFlatHoloNode(holo);
+      });
+      if (top) applyFlatHoloPan(top, 0);
+      flatHoloRaf = requestAnimationFrame(pumpFlatHoloSweep);
       return;
     }
-    const topCard = cardStack.querySelector(".open151-card.is-top:not(.is-flung)");
-    const top =
-      topCard && topCard.classList.contains("is-foil")
-        ? topCard.querySelector(".holo-card")
-        : null;
-    cardStack.querySelectorAll(".holo-card.is-flat-sweep").forEach(function (holo) {
-      if (holo !== top) {
-        holo.classList.remove("is-flat-sweep", "interacting");
-        holo.style.setProperty("--card-opacity", "0");
-        holo.style.setProperty("--rotate-x", "0deg");
-        holo.style.setProperty("--rotate-y", "0deg");
+
+    if (flatHoloMode === "gallery") {
+      if (galleryPhase.hidden) {
+        flatHoloRaf = 0;
+        flatHoloMode = null;
+        return;
       }
-    });
-    if (top) {
-      const t = performance.now() / 1000;
-      const x = 50 + Math.sin(t * 1.15) * 40;
-      const y = 48 + Math.cos(t * 0.9) * 30;
-      const dx = x - 50;
-      const dy = y - 50;
-      const fromCenter = Math.min(1, Math.sqrt(dx * dx + dy * dy) / 50);
-      top.classList.add("is-flat-sweep", "interacting");
-      top.style.setProperty("--pointer-x", x.toFixed(2) + "%");
-      top.style.setProperty("--pointer-y", y.toFixed(2) + "%");
-      top.style.setProperty("--background-x", (37 + (x / 100) * 26).toFixed(2) + "%");
-      top.style.setProperty("--background-y", (33 + (y / 100) * 34).toFixed(2) + "%");
-      top.style.setProperty("--card-opacity", "1");
-      top.style.setProperty("--pointer-from-center", fromCenter.toFixed(3));
-      // Option 2: keep planar — shine moves, card does not tilt
-      top.style.setProperty("--rotate-x", "0deg");
-      top.style.setProperty("--rotate-y", "0deg");
+      // Thumbnails keep flat foil light; focused 3D card is a separate overlay
+      const holos = galleryGrid.querySelectorAll(
+        ".open151-gallery__cell:not(.is-focused) .open151-card--gallery.is-foil .holo-card"
+      );
+      const live = new Set(holos);
+      galleryGrid.querySelectorAll(".holo-card.is-flat-sweep").forEach(function (holo) {
+        if (!live.has(holo)) clearFlatHoloNode(holo);
+      });
+      holos.forEach(function (holo, i) {
+        applyFlatHoloPan(holo, i * 0.55);
+      });
+      flatHoloRaf = requestAnimationFrame(pumpFlatHoloSweep);
+      return;
     }
-    flatHoloRaf = requestAnimationFrame(pumpFlatHoloSweep);
+
+    flatHoloRaf = 0;
   }
 
-  function startFlatHoloSweep() {
+  function startFlatHoloSweep(mode) {
+    flatHoloMode = mode || "stack";
     if (flatHoloRaf) return;
     flatHoloRaf = requestAnimationFrame(pumpFlatHoloSweep);
   }
@@ -749,7 +780,7 @@
         applyStackLayout();
         stackReady = true;
         bindTopFling();
-        startFlatHoloSweep();
+        startFlatHoloSweep("stack");
         showRevealInfo(drawnSlots[0] && drawnSlots[0].card);
       }, 620);
     }, delay + 260);
@@ -976,6 +1007,8 @@
       }
       galleryGrid.appendChild(row);
     });
+
+    startFlatHoloSweep("gallery");
 
     window.setTimeout(function () {
       galleryPhase.classList.add("is-ready");
