@@ -413,6 +413,157 @@ body.is-gallery-focus .open-info {
   animation-duration: 1.85s;
 }
 
+/* SR — flashier cool rainbow than base foil */
+.open151-card.is-sr.is-foil.is-front.is-flat .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 28%,
+    rgba(120, 200, 255, 0.45) 36%,
+    rgba(180, 140, 255, 0.62) 44%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(120, 230, 255, 0.58) 56%,
+    rgba(200, 140, 255, 0.45) 64%,
+    transparent 74%,
+    transparent 100%
+  );
+  background-size: 280% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.92;
+  animation: open151-ar-foil 2.2s linear infinite;
+  filter: saturate(1.1);
+}
+
+.open151-card.is-sr.is-foil.is-front.is-flat.is-top .holo-card__front::before,
+.open151-card.is-sr.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
+  opacity: 1;
+}
+
+.open151-card.is-sr.is-front::after {
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(170, 210, 255, 0.22),
+    transparent 64%
+  );
+  animation: open151-hit-pulse 2.4s ease-in-out infinite;
+}
+
+/* SAR — richer prism sweep */
+.open151-card.is-sar.is-foil.is-front.is-flat .holo-card__front::before {
+  background-image: linear-gradient(
+    122deg,
+    transparent 0%,
+    transparent 24%,
+    rgba(255, 110, 150, 0.5) 34%,
+    rgba(255, 210, 90, 0.72) 42%,
+    rgba(110, 245, 190, 0.68) 50%,
+    rgba(120, 180, 255, 0.72) 58%,
+    rgba(210, 130, 255, 0.58) 66%,
+    transparent 78%,
+    transparent 100%
+  );
+  background-size: 300% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 1;
+  animation: open151-ar-foil 1.7s linear infinite;
+  filter: saturate(1.25) brightness(1.05);
+}
+
+.open151-card.is-sar.is-foil.is-front.is-flat.is-top .holo-card__front::before,
+.open151-card.is-sar.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
+  opacity: 1;
+}
+
+.open151-card.is-sar.is-front::after {
+  inset: -10%;
+  background: radial-gradient(
+    circle at 50% 42%,
+    rgba(255, 180, 220, 0.2) 0%,
+    rgba(140, 220, 255, 0.16) 40%,
+    transparent 66%
+  );
+  animation: open151-hit-pulse 2.1s ease-in-out infinite;
+}
+
+/* UR — brightest foil + soft gold aura around the card */
+.open151-card.is-ur.is-foil.is-front.is-flat .holo-card__front::before {
+  background-image: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 20%,
+    rgba(255, 230, 150, 0.55) 32%,
+    rgba(255, 255, 255, 0.92) 44%,
+    rgba(255, 210, 90, 0.85) 50%,
+    rgba(255, 255, 255, 0.9) 56%,
+    rgba(255, 190, 80, 0.55) 68%,
+    transparent 80%,
+    transparent 100%
+  );
+  background-size: 320% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 1;
+  animation: open151-ar-foil 1.35s linear infinite;
+  filter: saturate(1.15) brightness(1.12);
+}
+
+.open151-card.is-ur.is-foil.is-front.is-flat.is-top .holo-card__front::before,
+.open151-card.is-ur.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
+  opacity: 1;
+}
+
+.open151-card.is-ur.is-front {
+  box-shadow:
+    0 0 14px rgba(255, 210, 120, 0.42),
+    0 0 28px rgba(255, 185, 70, 0.28),
+    0 0 42px rgba(255, 170, 50, 0.14);
+}
+
+.open151-card.is-ur.is-front::after {
+  inset: -16%;
+  border-radius: 10%;
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 220, 140, 0.34) 0%,
+    rgba(255, 195, 90, 0.16) 38%,
+    rgba(255, 175, 60, 0.06) 58%,
+    transparent 72%
+  );
+  animation: open151-ur-gold 3.2s ease-in-out infinite;
+}
+
+@keyframes open151-ur-gold {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.72;
+    transform: scale(1.03);
+  }
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-sr .holo-card.interacting .holo-card__shine,
+.open151-card--gallery.is-sr .holo-card.interacting .holo-card__shine {
+  opacity: calc(0.68 * var(--card-opacity, 1));
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-sar .holo-card.interacting .holo-card__shine,
+.open151-card--gallery.is-sar .holo-card.interacting .holo-card__shine {
+  opacity: calc(0.84 * var(--card-opacity, 1));
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-ur .holo-card.interacting .holo-card__shine,
+.open151-card--gallery.is-ur .holo-card.interacting .holo-card__shine {
+  opacity: calc(0.98 * var(--card-opacity, 1));
+  filter: brightness(1.08) saturate(1.1);
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-ur .holo-card.interacting .holo-card__glare,
+.open151-card--gallery.is-ur .holo-card.interacting .holo-card__glare {
+  opacity: calc(0.55 * var(--card-opacity, 1));
+}
+
 /* AR — soft prism sweep (no sparkle lines; continuous linear flow) */
 .open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::before {
   background-image: linear-gradient(
@@ -663,6 +814,19 @@ body.is-gallery-focus .open-info {
     background-position: 45% 50%;
     opacity: 0.7;
   }
+
+  .open151-card.is-sr.is-foil.is-front.is-flat .holo-card__front::before,
+  .open151-card.is-sar.is-foil.is-front.is-flat .holo-card__front::before,
+  .open151-card.is-ur.is-foil.is-front.is-flat .holo-card__front::before {
+    animation: none;
+    background-position: 45% 50%;
+  }
+
+  .open151-card.is-ur.is-front::after {
+    animation: none;
+    opacity: 0.45;
+    transform: none;
+  }
 }
 
 /* Gallery — 4 top / 3 bottom */
@@ -883,6 +1047,88 @@ body.is-gallery-focus .open-info {
   mix-blend-mode: plus-lighter;
   opacity: 0.9;
   animation-duration: 1.85s;
+}
+
+.open151-focus__holo.is-sr.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 28%,
+    rgba(120, 200, 255, 0.45) 36%,
+    rgba(180, 140, 255, 0.62) 44%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(120, 230, 255, 0.58) 56%,
+    rgba(200, 140, 255, 0.45) 64%,
+    transparent 74%,
+    transparent 100%
+  );
+  background-size: 280% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 1;
+  animation: open151-ar-foil 2.2s linear infinite;
+  filter: saturate(1.1);
+}
+
+.open151-focus__holo.is-sar.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    122deg,
+    transparent 0%,
+    transparent 24%,
+    rgba(255, 110, 150, 0.5) 34%,
+    rgba(255, 210, 90, 0.72) 42%,
+    rgba(110, 245, 190, 0.68) 50%,
+    rgba(120, 180, 255, 0.72) 58%,
+    rgba(210, 130, 255, 0.58) 66%,
+    transparent 78%,
+    transparent 100%
+  );
+  background-size: 300% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 1;
+  animation: open151-ar-foil 1.7s linear infinite;
+  filter: saturate(1.25) brightness(1.05);
+}
+
+.open151-focus__holo.is-ur.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 20%,
+    rgba(255, 230, 150, 0.55) 32%,
+    rgba(255, 255, 255, 0.92) 44%,
+    rgba(255, 210, 90, 0.85) 50%,
+    rgba(255, 255, 255, 0.9) 56%,
+    rgba(255, 190, 80, 0.55) 68%,
+    transparent 80%,
+    transparent 100%
+  );
+  background-size: 320% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 1;
+  animation: open151-ar-foil 1.35s linear infinite;
+  filter: saturate(1.15) brightness(1.12);
+}
+
+.open151-focus__card:has(.open151-focus__holo.is-ur) {
+  filter: drop-shadow(0 0 14px rgba(255, 210, 120, 0.45))
+    drop-shadow(0 0 28px rgba(255, 185, 70, 0.28));
+}
+
+.open151-focus__holo.is-sr:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.68 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-sar:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.84 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-ur:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.98 * var(--card-opacity, 1));
+  filter: brightness(1.08) saturate(1.1);
+}
+
+.open151-focus__holo.is-ur:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.55 * var(--card-opacity, 1));
 }
 
 .open151-focus__holo.is-ar.is-foil .holo-card__front::before {

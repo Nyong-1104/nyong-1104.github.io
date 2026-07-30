@@ -388,25 +388,40 @@
     return style === "monster-ball" || style === "master-ball";
   }
 
+  function rarityKey(card) {
+    return String((card && card.rarity) || "").toUpperCase();
+  }
+
   function isAR(card) {
-    return !!(card && String(card.rarity || "").toUpperCase() === "AR");
+    return rarityKey(card) === "AR";
   }
 
   function arHoloStyle(card) {
-    if (isAR(card)) return "sar";
-    if (card && String(card.rarity || "").toUpperCase() === "RR") return "birthday";
+    const r = rarityKey(card);
+    if (r === "AR" || r === "SAR" || r === "UR") return "sar";
+    if (r === "SR") return "holo";
+    if (r === "RR") return "birthday";
     return PT.resolveHoloStyle ? PT.resolveHoloStyle(card) : card.holoStyle || "holo";
+  }
+
+  function applyOpen151RarityClasses(el, card) {
+    if (!el || !card) return;
+    const r = rarityKey(card);
+    if (isHit(card)) el.classList.add("is-hit");
+    if (isFoil(card)) el.classList.add("is-foil");
+    if (r === "AR") el.classList.add("is-ar");
+    if (r === "RR") el.classList.add("is-rr");
+    if (r === "MSB") el.classList.add("is-msb");
+    if (r === "SR") el.classList.add("is-sr");
+    if (r === "SAR") el.classList.add("is-sar");
+    if (r === "UR") el.classList.add("is-ur");
   }
 
   function makeFace(card, faceDown) {
     const wrap = document.createElement("button");
     wrap.type = "button";
     wrap.className = "open151-card" + (faceDown ? " is-back" : " is-front is-flat");
-    if (card && isHit(card)) wrap.classList.add("is-hit");
-    if (card && isFoil(card)) wrap.classList.add("is-foil");
-    if (card && isAR(card)) wrap.classList.add("is-ar");
-    if (card && String(card.rarity || "").toUpperCase() === "RR") wrap.classList.add("is-rr");
-    if (card && String(card.rarity || "").toUpperCase() === "MSB") wrap.classList.add("is-msb");
+    applyOpen151RarityClasses(wrap, card);
     wrap.setAttribute("aria-label", card ? PT.cardName(card) : "카드");
 
     const inner = document.createElement("span");
@@ -985,11 +1000,7 @@
       holoStyle: arHoloStyle(card),
     });
     holo.classList.add("open151-focus__holo");
-    if (foil) holo.classList.add("is-foil");
-    if (card && isHit(card)) holo.classList.add("is-hit");
-    if (card && isAR(card)) holo.classList.add("is-ar");
-    if (card && String(card.rarity || "").toUpperCase() === "RR") holo.classList.add("is-rr");
-    if (card && String(card.rarity || "").toUpperCase() === "MSB") holo.classList.add("is-msb");
+    applyOpen151RarityClasses(holo, card);
     holo.style.background = "transparent";
     holo.style.backgroundColor = "transparent";
     holo.style.pointerEvents = "auto";
