@@ -978,12 +978,18 @@
 
   function mountFocusHolo(card) {
     galleryFocusCard.innerHTML = "";
+    const foil = !!(card && isFoil(card));
     const holo = PT.createHoloCardEl({
       name: PT.cardName(card),
       image: cardImage(card),
       holoStyle: arHoloStyle(card),
     });
     holo.classList.add("open151-focus__holo");
+    if (foil) holo.classList.add("is-foil");
+    if (card && isHit(card)) holo.classList.add("is-hit");
+    if (card && isAR(card)) holo.classList.add("is-ar");
+    if (card && String(card.rarity || "").toUpperCase() === "RR") holo.classList.add("is-rr");
+    if (card && String(card.rarity || "").toUpperCase() === "MSB") holo.classList.add("is-msb");
     holo.style.background = "transparent";
     holo.style.backgroundColor = "transparent";
     holo.style.pointerEvents = "auto";
@@ -996,7 +1002,7 @@
     // Allow remount after fly-in (mountHoloCard is one-shot via dataset)
     delete holo.dataset.holoReady;
     galleryFocusCard.appendChild(holo);
-    PT.mountHoloCard(holo);
+    PT.mountHoloCard(holo, { ambient: foil });
 
     // Mobile: keep receiving move events while dragging on the card
     holo.addEventListener("pointerdown", function (e) {

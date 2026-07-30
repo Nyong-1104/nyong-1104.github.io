@@ -12,13 +12,17 @@ window.PopTracker = window.PopTracker || {};
     return Math.round(n * 100) / 100;
   }
 
-  PT.mountHoloCard = function (root) {
+  PT.mountHoloCard = function (root, opts) {
     if (!root || root.dataset.holoReady) return;
     root.dataset.holoReady = "1";
+    opts = opts || {};
+    const ambient = !!opts.ambient;
     root.style.setProperty("--seed", String(Math.random()));
 
     let raf = null;
     let pending = null;
+    let ambientRaf = 0;
+    let pointerActive = false;
 
     const apply = (bg, rotate, glareO) => {
       root.style.setProperty("--background-x", `${bg.x}%`);
@@ -34,7 +38,33 @@ window.PopTracker = window.PopTracker || {};
       root.style.setProperty("--pointer-from-center", String(round(fromCenter)));
     };
 
+    const pumpAmbient = () => {
+      if (!ambient || !root.isConnected) {
+        ambientRaf = 0;
+        return;
+      }
+      if (!pointerActive) {
+        const t = performance.now() / 1000;
+        const x = 50 + Math.sin(t * 1.05) * 36;
+        const y = 48 + Math.cos(t * 0.85) * 28;
+        root.classList.remove("interacting");
+        root.classList.add("is-idle-holo");
+        apply(
+          {
+            x: 37 + (x / 100) * 26,
+            y: 33 + (y / 100) * 34,
+            px: x,
+            py: y,
+          },
+          { x: 0, y: 0 },
+          0.72
+        );
+      }
+      ambientRaf = requestAnimationFrame(pumpAmbient);
+    };
+
     const interact = (clientX, clientY) => {
+      pointerActive = true;
       const rect = root.getBoundingClientRect();
       const x = clamp(((clientX - rect.left) / rect.width) * 100, 0, 100);
       const y = clamp(((clientY - rect.top) / rect.height) * 100, 0, 100);
@@ -56,6 +86,7 @@ window.PopTracker = window.PopTracker || {};
       if (raf == null) {
         raf = requestAnimationFrame(() => {
           if (pending) {
+            root.classList.remove("is-idle-holo");
             root.classList.add("interacting");
             apply(pending.bg, pending.rotate, pending.o);
             pending = null;
@@ -66,8 +97,15 @@ window.PopTracker = window.PopTracker || {};
     };
 
     const reset = () => {
+      pointerActive = false;
       root.classList.remove("interacting");
-      apply({ x: 50, y: 50, px: 50, py: 50 }, { x: 0, y: 0 }, 0);
+      if (ambient) {
+        root.classList.add("is-idle-holo");
+        apply({ x: 50, y: 50, px: 50, py: 50 }, { x: 0, y: 0 }, 0.68);
+      } else {
+        root.classList.remove("is-idle-holo");
+        apply({ x: 50, y: 50, px: 50, py: 50 }, { x: 0, y: 0 }, 0);
+      }
     };
 
     root.addEventListener("pointermove", (e) => interact(e.clientX, e.clientY));
@@ -84,6 +122,7 @@ window.PopTracker = window.PopTracker || {};
     root.addEventListener("touchend", reset);
 
     reset();
+    if (ambient) ambientRaf = requestAnimationFrame(pumpAmbient);
   };
 
   PT.resolveHoloStyle = function (card) {

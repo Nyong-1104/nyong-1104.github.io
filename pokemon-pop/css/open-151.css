@@ -253,24 +253,22 @@ body.is-gallery-focus .open-info {
   pointer-events: none;
   background: radial-gradient(
     circle at 50% 40%,
-    rgba(255, 220, 120, 0.35),
+    rgba(255, 220, 120, 0.175),
     transparent 62%
   );
-  animation: open151-hit-pulse 0.9s ease-out;
+  animation: open151-hit-pulse 2.8s ease-in-out infinite;
   z-index: 3;
 }
 
 @keyframes open151-hit-pulse {
-  from {
+  0%,
+  100% {
     opacity: 0;
-    transform: scale(0.92);
+    transform: scale(1);
   }
-  40% {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-    transform: scale(1.05);
+  50% {
+    opacity: 0.5;
+    transform: scale(1.02);
   }
 }
 
@@ -471,48 +469,6 @@ body.is-gallery-focus .open-info {
   mix-blend-mode: overlay;
 }
 
-/* AR silver frame only — thin chrome band, soft inner edge */
-.open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  border-radius: inherit;
-  pointer-events: none;
-  box-sizing: border-box;
-  padding: 4.4% 5.4% 7.4%;
-  background-image: linear-gradient(
-    115deg,
-    transparent 0%,
-    transparent 46.5%,
-    rgba(200, 220, 255, 0.2) 48%,
-    rgba(255, 255, 255, 0.95) 49.5%,
-    rgba(210, 230, 255, 0.8) 50.5%,
-    rgba(170, 200, 255, 0.2) 52%,
-    transparent 53.5%,
-    transparent 100%
-  );
-  background-size: 360% 100%;
-  background-repeat: no-repeat;
-  mix-blend-mode: plus-lighter;
-  opacity: 0.92;
-  animation: open151-ar-foil 3.4s linear infinite;
-  filter: blur(1.35px);
-  -webkit-mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
-  mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
-  -webkit-mask-clip: content-box, border-box;
-  mask-clip: content-box, border-box;
-  -webkit-mask-origin: content-box, border-box;
-  mask-origin: content-box, border-box;
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-}
-
-.open151-card.is-ar.is-foil.is-front.is-flat.is-top .holo-card__front::after,
-.open151-card.is-ar.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::after {
-  opacity: 1;
-}
-
 /* RR — birthday-holo-dank texture during flat reveal / gallery */
 .open151-card.is-rr.is-foil.is-front.is-flat .holo-card__front::before {
   background-image: none;
@@ -652,12 +608,6 @@ body.is-gallery-focus .open-info {
   .open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::before {
     background-position: 45% 50%;
     opacity: 0.72;
-  }
-
-  .open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::after {
-    animation: none;
-    background-position: 48% 50%;
-    opacity: 0.85;
   }
 
   .open151-card.is-msb.is-foil.is-front.is-flat .holo-card__front::before {
@@ -838,6 +788,161 @@ body.is-gallery-focus .open-info {
   box-shadow:
     0 0 3px -1px rgba(0, 0, 0, 0.35),
     0 22px 36px -10px rgba(0, 0, 0, 0.55);
+  isolation: isolate;
+}
+
+/* Focus foil: keep a soft gradient sweep even when flat / idle */
+.open151-focus__holo.is-foil .holo-card__front::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: linear-gradient(
+    112deg,
+    transparent 0%,
+    transparent 36%,
+    rgba(255, 236, 200, 0.05) 42%,
+    rgba(255, 200, 130, 0.45) 47%,
+    rgba(190, 220, 255, 0.55) 50%,
+    rgba(255, 160, 210, 0.42) 53%,
+    rgba(255, 236, 200, 0.05) 58%,
+    transparent 64%,
+    transparent 100%
+  );
+  background-size: 240% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: soft-light;
+  opacity: 0.7;
+  animation: open151-flat-foil 2.6s ease-in-out infinite;
+}
+
+.open151-focus__holo.is-hit.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    112deg,
+    transparent 0%,
+    transparent 32%,
+    rgba(255, 90, 90, 0.35) 40%,
+    rgba(255, 210, 90, 0.7) 45%,
+    rgba(90, 240, 190, 0.65) 50%,
+    rgba(120, 170, 255, 0.7) 55%,
+    rgba(230, 120, 255, 0.55) 60%,
+    transparent 68%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.9;
+  animation-duration: 1.85s;
+}
+
+.open151-focus__holo.is-ar.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 32%,
+    rgba(255, 120, 170, 0.4) 40%,
+    rgba(255, 205, 100, 0.52) 46%,
+    rgba(110, 235, 195, 0.48) 52%,
+    rgba(120, 185, 255, 0.55) 58%,
+    rgba(185, 140, 255, 0.45) 64%,
+    transparent 72%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  mix-blend-mode: soft-light;
+  opacity: 0.9;
+  animation: open151-ar-foil 3.4s linear infinite;
+  filter: none;
+}
+
+.open151-focus__holo.is-rr.is-foil .holo-card__front::before {
+  background-image: none;
+  opacity: 0;
+  animation: none;
+  filter: none;
+}
+
+.open151-focus__holo.is-msb.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 30%,
+    rgba(180, 90, 255, 0.45) 38%,
+    rgba(90, 200, 255, 0.7) 46%,
+    rgba(255, 120, 230, 0.65) 52%,
+    rgba(120, 160, 255, 0.7) 58%,
+    rgba(200, 100, 255, 0.5) 66%,
+    transparent 74%,
+    transparent 100%
+  );
+  background-size: 270% 100%;
+  mix-blend-mode: color-dodge;
+  opacity: 0.88;
+  animation: open151-ar-foil 2.8s linear infinite;
+  filter: saturate(1.15);
+}
+
+.open151-focus__holo.is-foil:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.55 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-foil:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.45 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-ar:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.55 * var(--card-opacity, 1));
+  mix-blend-mode: soft-light;
+  background-image:
+    linear-gradient(
+      125deg,
+      transparent 16%,
+      rgba(255, 130, 170, 0.36) 34%,
+      rgba(255, 205, 110, 0.4) 45%,
+      rgba(120, 235, 195, 0.36) 55%,
+      rgba(130, 185, 255, 0.4) 66%,
+      transparent 84%
+    ),
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      rgba(255, 255, 255, 0.42) 0%,
+      rgba(255, 255, 255, 0.1) 30%,
+      transparent 58%
+    );
+  background-size: 200% 200%, 160% 160%;
+}
+
+.open151-focus__holo.is-ar:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.36 * var(--card-opacity, 1));
+  mix-blend-mode: overlay;
+}
+
+.open151-focus__holo.is-rr:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.78 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-rr:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.42 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-msb:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.95 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-msb:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.58 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-foil.holo-card--monster-ball:is(.interacting, .is-idle-holo) .holo-card__shine,
+.open151-focus__holo.is-foil.holo-card--master-ball:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.62 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-foil.holo-card--monster-ball:is(.interacting, .is-idle-holo) .holo-card__glare,
+.open151-focus__holo.is-foil.holo-card--master-ball:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.32 * var(--card-opacity, 1));
 }
 
 body.is-gallery-focus {
