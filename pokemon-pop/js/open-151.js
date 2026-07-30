@@ -748,8 +748,9 @@
     const ty = dirY * travel;
     top.classList.add("is-flung");
     top.style.pointerEvents = "none";
+    // Ease-in: starts gentle, then accelerates away
     top.style.transition =
-      "transform 0.42s cubic-bezier(0.2, 0.8, 0.25, 1), opacity 0.28s ease 0.14s";
+      "transform 0.48s cubic-bezier(0.55, 0.02, 0.92, 0.28), opacity 0.3s ease 0.16s";
     top.style.transform = "translate(" + tx + "px, " + ty + "px)";
     top.style.opacity = "0";
 
@@ -764,7 +765,7 @@
       applyStackLayout();
       bindTopFling();
       showRevealInfo(drawnSlots[revealIndex].card);
-    }, 430);
+    }, 500);
   }
 
   function openAllAtOnce(e) {
@@ -799,10 +800,14 @@
 
     const cardH = Math.max(cards[0].offsetHeight || 0, 220);
     const travel = cardH * 1.55;
-    const stagger = 150;
-    const flyMs = 520;
+    let totalMs = 0;
 
     cards.forEach(function (card, i) {
+      // Later cards launch sooner and finish faster → accelerating cascade
+      const stagger = Math.max(55, Math.round(165 - i * 16));
+      const flyMs = Math.max(300, Math.round(560 - i * 38));
+      const startAt = totalMs;
+      totalMs += stagger;
       window.setTimeout(function () {
         card.classList.add("is-flung");
         card.classList.remove("is-top", "is-dragging");
@@ -811,21 +816,22 @@
         card.style.transition =
           "transform " +
           flyMs / 1000 +
-          "s cubic-bezier(0.18, 0.78, 0.25, 1), opacity " +
-          (flyMs / 1000) * 0.55 +
+          "s cubic-bezier(0.55, 0.02, 0.92, 0.28), opacity " +
+          (flyMs / 1000) * 0.5 +
           "s ease " +
-          (flyMs / 1000) * 0.22 +
+          (flyMs / 1000) * 0.2 +
           "s";
         card.style.transform = "translateY(-" + travel + "px) scale(0.94)";
         card.style.opacity = "0";
-      }, i * stagger);
+      }, startAt);
+      if (i === cards.length - 1) {
+        window.setTimeout(function () {
+          revealIndex = drawnSlots.length;
+          openAllBusy = false;
+          enterGallery();
+        }, startAt + flyMs + 80);
+      }
     });
-
-    window.setTimeout(function () {
-      revealIndex = drawnSlots.length;
-      openAllBusy = false;
-      enterGallery();
-    }, (cards.length - 1) * stagger + flyMs + 100);
   }
 
   function dealThenFlipStack() {
