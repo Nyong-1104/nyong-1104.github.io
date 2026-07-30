@@ -279,43 +279,41 @@ body.open-page.open-page--151.is-sky-ejecting {
 .pack__sky-eject-card {
   position: absolute;
   left: 50%;
-  top: 38%;
-  width: 54%;
+  /* Align with the stack slot inside the pack remnant */
+  top: 18%;
+  width: 80%;
   aspect-ratio: 0.716;
-  margin-left: -27%;
+  margin-left: -40%;
   border-radius: 4.55% / 3.5%;
   background: #1a1520 url("../assets/card-back-jp.png") center / cover no-repeat;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.4);
+  /* Match torn pack remnant dimming */
+  filter: brightness(0.42) saturate(0.75) contrast(1.05);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
   opacity: 0;
-  transform: translate3d(var(--dx, 0%), 18%, 0) scale(0.72) rotate(var(--rot, 0deg));
+  transform: translate3d(0, 12%, 0) scale(0.96);
   will-change: transform, opacity;
 }
 
 .pack__sky-eject.is-flying .pack__sky-eject-card {
-  animation: open151-sky-eject 0.95s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
-  animation-delay: calc(var(--i, 0) * 68ms);
+  /* Same cadence as bottom deal: 0.55s ease, 115ms stagger */
+  animation: open151-sky-eject 0.55s cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 115ms);
 }
 
 @keyframes open151-sky-eject {
   0% {
     opacity: 0;
-    transform: translate3d(var(--dx, 0%), 22%, 0) scale(0.7) rotate(var(--rot, 0deg));
+    transform: translate3d(0, 18%, 0) scale(0.94);
   }
-  12% {
-    opacity: 0.95;
+  14% {
+    opacity: 1;
   }
-  55% {
-    opacity: 0.9;
+  72% {
+    opacity: 1;
   }
   100% {
     opacity: 0;
-    transform: translate3d(
-        calc(var(--dx, 0%) * 1.6),
-        calc(-1 * min(92vh, 820px)),
-        0
-      )
-      scale(0.92)
-      rotate(calc(var(--rot, 0deg) * -1.4));
+    transform: translate3d(0, calc(-1 * min(88vh, 760px)), 0) scale(1);
   }
 }
 

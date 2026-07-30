@@ -1268,21 +1268,17 @@
     for (let i = 0; i < n; i++) {
       const card = document.createElement("div");
       card.className = "pack__sky-eject-card";
-      const side = i % 2 === 0 ? -1 : 1;
-      const dx = side * (4 + (i % 4) * 5.5);
-      const rot = side * (8 + (i % 3) * 4);
       card.style.setProperty("--i", String(i));
-      card.style.setProperty("--dx", dx.toFixed(1) + "%");
-      card.style.setProperty("--rot", rot.toFixed(1) + "deg");
       skyEject.appendChild(card);
     }
     // reflow so animation restarts cleanly
     void skyEject.offsetWidth;
     skyEject.classList.add("is-flying");
+    // Match deal cadence: 115ms stagger + 0.55s flight
     window.setTimeout(function () {
       clearSkyEject();
       document.body.classList.remove("is-sky-ejecting");
-    }, 950 + n * 68);
+    }, 550 + (n - 1) * 115 + 80);
   }
 
   function completeTear() {
