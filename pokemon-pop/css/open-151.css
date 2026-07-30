@@ -115,13 +115,14 @@ body.is-gallery-focus .open-info {
   left: 10%;
   right: 10%;
   top: 6%;
-  bottom: 6%;
+  bottom: 2%;
   justify-content: center;
   padding-top: 0;
+  padding-bottom: 0.35rem;
   overflow: visible;
   flex-direction: column;
   align-items: center;
-  gap: 0.85rem;
+  gap: 1.35rem;
 }
 
 .open151-open-all {
@@ -129,6 +130,7 @@ body.is-gallery-focus .open-info {
   z-index: 12;
   flex: 0 0 auto;
   min-width: 9.5rem;
+  margin-top: 0.35rem;
   padding: 0.55rem 1.1rem;
   font-size: 0.92rem;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);

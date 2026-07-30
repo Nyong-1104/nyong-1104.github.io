@@ -712,7 +712,6 @@
     const top = cardStack.querySelector(".open151-card.is-top");
     if (!top) return;
     flingBusy = true;
-    setOpenAllVisible(false);
     const cardW = Math.max(top.offsetWidth, 160);
     const cardH = Math.max(top.offsetHeight, 220);
     // Travel ~1.35× card size so fade starts after one card-length
@@ -736,7 +735,6 @@
       }
       applyStackLayout();
       bindTopFling();
-      setOpenAllVisible(true);
       showRevealInfo(drawnSlots[revealIndex].card);
     }, 430);
   }
