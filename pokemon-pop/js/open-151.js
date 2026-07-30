@@ -40,6 +40,7 @@
   const galleryPhase = document.getElementById("gallery-phase");
   const galleryGrid = document.getElementById("gallery-grid");
   const btnReset = document.getElementById("btn-reset");
+  const btnOpenAll = document.getElementById("btn-open-all");
   const modal = document.getElementById("card-modal");
   const modalCard = document.getElementById("modal-card");
   const modalName = document.getElementById("modal-name");
@@ -61,6 +62,7 @@
   let revealIndex = 0;
   let stackReady = false;
   let flingBusy = false;
+  let openAllBusy = false;
   let galleryFocusSlot = null;
   let focusBusy = false;
   /** @type {null|{pointerId:number,startX:number,startY:number,dx:number,dy:number,lastX:number,lastY:number,lastT:number,vx:number,vy:number}} */
@@ -582,6 +584,11 @@
     });
   }
 
+  function setOpenAllVisible(show) {
+    if (!btnOpenAll) return;
+    btnOpenAll.hidden = !show;
+  }
+
   function bindTopFling() {
     const top = cardStack.querySelector(".open151-card.is-top");
     if (!top) return;
@@ -591,13 +598,24 @@
     top.onpointercancel = onFlingUp;
   }
 
+  function unbindAllFling() {
+    cardStack.querySelectorAll(".open151-card").forEach(function (el) {
+      el.onpointerdown = null;
+      el.onpointermove = null;
+      el.onpointerup = null;
+      el.onpointercancel = null;
+      el.classList.remove("is-dragging");
+    });
+    flingDrag = null;
+  }
+
   function flingFadeOpacity(dist, threshold) {
     if (dist <= threshold) return 1;
     return clamp(1 - (dist - threshold) / (threshold * 0.9), 0, 1);
   }
 
   function onFlingDown(e) {
-    if (!stackReady || flingBusy) return;
+    if (!stackReady || flingBusy || openAllBusy) return;
     const top = cardStack.querySelector(".open151-card.is-top");
     if (!top || e.currentTarget !== top) return;
     flingDrag = {
@@ -690,10 +708,11 @@
   }
 
   function flingTopCard(dirX, dirY) {
-    if (flingBusy) return;
+    if (flingBusy || openAllBusy) return;
     const top = cardStack.querySelector(".open151-card.is-top");
     if (!top) return;
     flingBusy = true;
+    setOpenAllVisible(false);
     const cardW = Math.max(top.offsetWidth, 160);
     const cardH = Math.max(top.offsetHeight, 220);
     // Travel ~1.35× card size so fade starts after one card-length
@@ -717,17 +736,68 @@
       }
       applyStackLayout();
       bindTopFling();
+      setOpenAllVisible(true);
       showRevealInfo(drawnSlots[revealIndex].card);
     }, 430);
   }
 
+  function openAllAtOnce() {
+    if (!stackReady || flingBusy || openAllBusy) return;
+    const cards = Array.prototype.slice.call(
+      cardStack.querySelectorAll(".open151-card:not(.is-flung)")
+    );
+    if (!cards.length) {
+      enterGallery();
+      return;
+    }
+
+    openAllBusy = true;
+    stackReady = false;
+    flingDrag = null;
+    setOpenAllVisible(false);
+    unbindAllFling();
+    stopFlatHoloSweep();
+
+    const cardH = Math.max(cards[0].offsetHeight || 0, 220);
+    const travel = cardH * 1.55;
+    const stagger = 85;
+    const flyMs = 320;
+
+    cards.forEach(function (card, i) {
+      window.setTimeout(function () {
+        card.classList.add("is-flung");
+        card.classList.remove("is-top", "is-dragging");
+        card.style.pointerEvents = "none";
+        card.style.zIndex = String(220 - i);
+        card.style.transition =
+          "transform " +
+          flyMs / 1000 +
+          "s cubic-bezier(0.15, 0.85, 0.25, 1), opacity " +
+          flyMs / 1000 * 0.55 +
+          "s ease " +
+          flyMs / 1000 * 0.2 +
+          "s";
+        card.style.transform = "translateY(-" + travel + "px) scale(0.94)";
+        card.style.opacity = "0";
+      }, i * stagger);
+    });
+
+    window.setTimeout(function () {
+      revealIndex = drawnSlots.length;
+      openAllBusy = false;
+      enterGallery();
+    }, (cards.length - 1) * stagger + flyMs + 80);
+  }
+
   function dealThenFlipStack() {
     stopFlatHoloSweep();
+    setOpenAllVisible(false);
     cardStack.innerHTML = "";
     cardStack.classList.remove("is-face-up", "is-flipping-all", "has-deck");
     cardStack.style.removeProperty("--deck-n");
     stackReady = false;
     flingBusy = false;
+    openAllBusy = false;
     revealIndex = 0;
 
     const total = drawnSlots.length;
@@ -781,6 +851,7 @@
         stackReady = true;
         bindTopFling();
         startFlatHoloSweep("stack");
+        setOpenAllVisible(true);
         showRevealInfo(drawnSlots[0] && drawnSlots[0].card);
       }, 620);
     }, delay + 260);
@@ -982,7 +1053,10 @@
 
   function enterGallery() {
     stopFlatHoloSweep();
+    setOpenAllVisible(false);
     stackReady = false;
+    openAllBusy = false;
+    flingBusy = false;
     revealPhase.hidden = true;
     cardStack.innerHTML = "";
     galleryPhase.hidden = false;
@@ -1151,9 +1225,11 @@
     revealIndex = 0;
     stackReady = false;
     flingBusy = false;
+    openAllBusy = false;
     flingDrag = null;
     points = [];
     stopFlatHoloSweep();
+    setOpenAllVisible(false);
     setTear(0);
     resetClip();
     drawStroke();
@@ -1208,6 +1284,7 @@
     });
 
     btnReset.addEventListener("click", reset);
+    if (btnOpenAll) btnOpenAll.addEventListener("click", openAllAtOnce);
     modalClose.addEventListener("click", closeModal);
     modalBackdrop.addEventListener("click", closeModal);
     if (galleryFocusBackdrop) {

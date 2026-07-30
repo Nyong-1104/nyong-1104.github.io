@@ -119,6 +119,23 @@ body.is-gallery-focus .open-info {
   justify-content: center;
   padding-top: 0;
   overflow: visible;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.open151-open-all {
+  position: relative;
+  z-index: 12;
+  flex: 0 0 auto;
+  min-width: 9.5rem;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.92rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.open151-open-all[hidden] {
+  display: none !important;
 }
 
 .open151-stack {
@@ -341,8 +358,8 @@ body.is-gallery-focus .open-info {
 
 .open151-card.is-foil.is-front.is-flat .holo-card--monster-ball .holo-card__front::before,
 .open151-card.is-foil.is-front.is-flat .holo-card--master-ball .holo-card__front::before {
-  mix-blend-mode: color-dodge;
-  opacity: 0.85;
+  mix-blend-mode: soft-light;
+  opacity: 0.42;
   animation-duration: 2.1s;
 }
 
@@ -384,14 +401,14 @@ body.is-gallery-focus .open-info {
 .open151-card--gallery.is-hit.is-foil .holo-card.interacting .holo-card__shine,
 .open151-card--gallery.is-foil .holo-card--monster-ball.interacting .holo-card__shine,
 .open151-card--gallery.is-foil .holo-card--master-ball.interacting .holo-card__shine {
-  opacity: calc(0.9 * var(--card-opacity, 1));
+  opacity: calc(0.62 * var(--card-opacity, 1));
 }
 
 .open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card--monster-ball.interacting .holo-card__glare,
 .open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card--master-ball.interacting .holo-card__glare,
 .open151-card--gallery.is-foil .holo-card--monster-ball.interacting .holo-card__glare,
 .open151-card--gallery.is-foil .holo-card--master-ball.interacting .holo-card__glare {
-  opacity: calc(0.6 * var(--card-opacity, 1));
+  opacity: calc(0.32 * var(--card-opacity, 1));
 }
 
 @keyframes open151-flat-foil {
