@@ -1704,6 +1704,38 @@ body.open-page.open-page--151.is-sky-ejecting {
   opacity: calc(0.32 * var(--card-opacity, 1));
 }
 
+/* Focus 3D: keep ball outer continuous — radial spotlight cuts mid-mark and looks broken */
+.open151-focus__holo.holo-card--monster-ball .holo-card__shine::after,
+.open151-focus__holo.holo-card--master-ball .holo-card__shine::after {
+  -webkit-mask-image: url("../assets/pokeball-outer.webp");
+  mask-image: url("../assets/pokeball-outer.webp");
+  -webkit-mask-size: 42% auto;
+  mask-size: 42% auto;
+  -webkit-mask-position: calc(var(--seed) * 420px) calc(var(--seed) * 280px);
+  mask-position: calc(var(--seed) * 420px) calc(var(--seed) * 280px);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
+  background-size: 170% 170%;
+  background-position: var(--pointer-y) var(--pointer-x);
+  filter: brightness(var(--ball-inner-brightness)) contrast(2)
+    saturate(calc(0.2 + var(--pointer-from-center)));
+  mix-blend-mode: lighten;
+}
+
+.open151-focus__holo.holo-card--master-ball .holo-card__shine::after {
+  -webkit-mask-image: url("../assets/masterball-outer.webp");
+  mask-image: url("../assets/masterball-outer.webp");
+}
+
+/* Don't lay a hard color-dodge band over the tiled master-ball marks in 3D */
+.open151-focus__holo.is-msb.is-foil.holo-card--master-ball .holo-card__front::before {
+  opacity: 0.28;
+  mix-blend-mode: soft-light;
+  filter: none;
+}
+
 body.is-gallery-focus {
   overflow: hidden;
 }
