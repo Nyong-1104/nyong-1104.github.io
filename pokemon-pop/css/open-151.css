@@ -1109,10 +1109,12 @@ body.open-page.open-page--151.is-sky-ejecting {
   opacity: calc(0.58 * var(--card-opacity, 1));
 }
 
-/* Reveal + gallery thumbs: MB outer uses full tile mask like inner.
+/* Reveal + gallery thumbs: MB/MSB outer uses full tile mask like inner.
    Gallery focus 3D keeps the original dual-mask outer in holo.css. */
 .open151-stack.is-face-up .open151-card.is-flat .holo-card--monster-ball .holo-card__shine::after,
-.open151-card--gallery.is-flat .holo-card--monster-ball .holo-card__shine::after {
+.open151-card--gallery.is-flat .holo-card--monster-ball .holo-card__shine::after,
+.open151-stack.is-face-up .open151-card.is-flat .holo-card--master-ball .holo-card__shine::after,
+.open151-card--gallery.is-flat .holo-card--master-ball .holo-card__shine::after {
   -webkit-mask-image: url("../assets/pokeball-outer.webp");
   mask-image: url("../assets/pokeball-outer.webp");
   -webkit-mask-size: 42% auto;
@@ -1128,6 +1130,12 @@ body.open-page.open-page--151.is-sky-ejecting {
   filter: brightness(var(--ball-inner-brightness)) contrast(2)
     saturate(calc(0.2 + var(--pointer-from-center)));
   mix-blend-mode: lighten;
+}
+
+.open151-stack.is-face-up .open151-card.is-flat .holo-card--master-ball .holo-card__shine::after,
+.open151-card--gallery.is-flat .holo-card--master-ball .holo-card__shine::after {
+  -webkit-mask-image: url("../assets/masterball-outer.webp");
+  mask-image: url("../assets/masterball-outer.webp");
 }
 
 /* Built-in foil layers on top reveal card + gallery foil thumbs (still flat) */

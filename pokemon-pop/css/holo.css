@@ -442,38 +442,27 @@
   mask-image: url("../assets/pokeball-inner.webp");
 }
 
-/* JP Master Ball: full-card framing (bottom-center), local assets */
+/* Master Ball — same tiled pattern as monster-ball, JP mark assets */
 .holo-card--master-ball .holo-card__shine::after {
-  -webkit-mask-image: url("../assets/masterball-outer-JP.webp");
-  mask-image: url("../assets/masterball-outer-JP.webp");
-  -webkit-mask-mode: alpha;
-  mask-mode: alpha;
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-position: 0 0;
-  mask-position: 0 0;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-composite: source-over;
-  mask-composite: add;
-  /* Sharper mark read without restoring the old punchy wash */
-  filter: brightness(var(--ball-outer-brightness)) contrast(2.15)
-    saturate(calc(0.42 + var(--pointer-from-center) * 0.95));
+  -webkit-mask-image: url("../assets/masterball-outer.webp"),
+    radial-gradient(
+      farthest-corner at var(--pointer-x) var(--pointer-y),
+      #fff 46%,
+      rgba(255, 255, 255, 0.55) 68%,
+      transparent 96%
+    );
+  mask-image: url("../assets/masterball-outer.webp"),
+    radial-gradient(
+      farthest-corner at var(--pointer-x) var(--pointer-y),
+      #fff 46%,
+      rgba(255, 255, 255, 0.55) 68%,
+      transparent 96%
+    );
 }
 
 .holo-card--master-ball .holo-card__shine::before {
-  -webkit-mask-image: url("../assets/masterball-inner-JP.webp");
-  mask-image: url("../assets/masterball-inner-JP.webp");
-  -webkit-mask-mode: alpha;
-  mask-mode: alpha;
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-position: 0 0;
-  mask-position: 0 0;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  filter: brightness(var(--ball-inner-brightness)) contrast(2.35)
-    saturate(calc(0.28 + var(--pointer-from-center) * 0.85));
+  -webkit-mask-image: url("../assets/masterball-inner.webp");
+  mask-image: url("../assets/masterball-inner.webp");
 }
 
 .holo-card--monster-ball .holo-card__glare,
