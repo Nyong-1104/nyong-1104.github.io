@@ -1,0 +1,1840 @@
+/* Pokekyun pack open — adapted from open-151 */
+/* 151 pack open — multi-card reveal + gallery */
+
+/* Allow full page height on phone — don't clip to viewport (shows white) */
+html:has(body.open-page--pokekyun) {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+  min-height: 100%;
+  background-color: #0b0910;
+  background-image:
+    radial-gradient(ellipse 70% 45% at 8% -5%, rgba(255, 138, 61, 0.18), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 92% 0%, rgba(42, 157, 143, 0.14), transparent 50%),
+    radial-gradient(ellipse 50% 35% at 50% 100%, rgba(88, 60, 140, 0.16), transparent 55%),
+    linear-gradient(165deg, #100e16 0%, #0b0910 45%, #12101a 100%);
+  background-attachment: fixed;
+}
+
+body.open-page.open-page--pokekyun {
+  overflow-x: hidden;
+  overflow-y: visible;
+  height: auto;
+  max-height: none;
+  min-height: 100dvh;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  background: transparent;
+}
+
+.open-page--pokekyun .open-main {
+  overflow: visible;
+  max-height: none;
+  padding-bottom: 2.75rem;
+}
+
+.open-page--pokekyun .open-stage {
+  overflow: visible;
+  min-height: 0;
+  padding-bottom: 0.5rem;
+}
+
+.open-page--pokekyun .open-info {
+  height: 4.6rem;
+  z-index: 8;
+}
+
+.open-page--pokekyun .open-info.has-banner-multi {
+  height: 5.6rem;
+  overflow: visible;
+}
+
+/* Gallery pack outcome banner — between title and cards */
+.open151-pack-banner {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 1.25rem);
+  margin: 0;
+  padding: 0 0.35rem;
+  text-align: center;
+  font-family: "Pretendard", system-ui, sans-serif;
+  font-size: clamp(1.05rem, 3.6vw, 1.45rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.28;
+  white-space: normal;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+  z-index: 2;
+}
+
+.open151-pack-banner.is-visible {
+  display: block;
+}
+
+.open151-pack-banner.is-multi {
+  font-size: clamp(0.88rem, 3vw, 1.15rem);
+  line-height: 1.32;
+}
+
+.open151-pack-banner.is-dense {
+  font-size: clamp(0.78rem, 2.6vw, 1rem);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+.open-page--pokekyun .open-info.has-banner:not(.has-result) .open-info__hint {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.open-page--pokekyun .open-info.has-result .open151-pack-banner {
+  display: none;
+}
+
+/* Seamless looping sheen — color cycle is duplicated so 0%→100% never jumps */
+.open151-pack-banner.is-gold {
+  background-image: linear-gradient(
+    90deg,
+    #8a6410,
+    #c9a227,
+    #ffe7a0,
+    #fff8e0,
+    #ffd56a,
+    #c9a227,
+    #8a6410,
+    #c9a227,
+    #ffe7a0,
+    #fff8e0,
+    #ffd56a,
+    #c9a227,
+    #8a6410
+  );
+  background-size: 200% 100%;
+  animation: open151-banner-sheen 3.2s linear infinite;
+  filter: drop-shadow(0 0 14px rgba(255, 200, 80, 0.45));
+}
+
+.open151-pack-banner.is-rainbow {
+  background-image: linear-gradient(
+    90deg,
+    #ff6b9d,
+    #ffb347,
+    #ffe66d,
+    #7dffb3,
+    #6ecbff,
+    #b388ff,
+    #ff6b9d,
+    #ffb347,
+    #ffe66d,
+    #7dffb3,
+    #6ecbff,
+    #b388ff,
+    #ff6b9d
+  );
+  background-size: 200% 100%;
+  animation: open151-banner-sheen 2.8s linear infinite;
+  filter: drop-shadow(0 0 12px rgba(180, 140, 255, 0.4));
+}
+
+.open151-pack-banner.is-silver {
+  background-image: linear-gradient(
+    90deg,
+    #6e7580,
+    #9aa3ad,
+    #e8eef4,
+    #ffffff,
+    #c5ced8,
+    #8a939e,
+    #6e7580,
+    #9aa3ad,
+    #e8eef4,
+    #ffffff,
+    #c5ced8,
+    #8a939e,
+    #6e7580
+  );
+  background-size: 200% 100%;
+  animation: open151-banner-sheen 3.6s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(200, 210, 230, 0.28));
+  font-weight: 700;
+  font-size: clamp(0.95rem, 3.2vw, 1.25rem);
+}
+
+@keyframes open151-banner-sheen {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .open151-pack-banner.is-gold,
+  .open151-pack-banner.is-rainbow,
+  .open151-pack-banner.is-silver {
+    animation: none;
+    background-position: 50% 50%;
+  }
+}
+
+/* Gallery focus: keep name above focus card */
+body.is-gallery-focus .open-info {
+  z-index: 95;
+}
+
+.open-page--pokekyun .open-info.is-gallery.has-result .open-result__name {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: #fff8ee;
+  -webkit-text-fill-color: #fff8ee;
+  background-image: none;
+  animation: none;
+  filter: drop-shadow(0 0 14px rgba(255, 220, 140, 0.35));
+}
+
+.open-page--pokekyun .open-info.is-gallery.has-result .open-result__name.open-result__shine--gold {
+  color: #ffe7a0;
+  -webkit-text-fill-color: #ffe7a0;
+  filter: drop-shadow(0 0 16px rgba(255, 200, 100, 0.45));
+}
+
+.open-page--pokekyun .open-info.is-gallery.has-result .open-result__meta {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 248, 235, 0.82);
+  -webkit-text-fill-color: rgba(255, 248, 235, 0.82);
+  background-image: none;
+  animation: none;
+  filter: none;
+}
+
+.open-page--pokekyun .open-result__name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.open-page--pokekyun .open-result__meta {
+  margin-top: 0.2rem;
+  font-size: 0.86rem;
+}
+
+.open-page--pokekyun .open-result__price {
+  display: none;
+}
+
+/* Pack art — overflow visible so fling + bottom art aren't clipped */
+.pack.pack--pokekyun {
+  aspect-ratio: 418 / 813;
+  overflow: visible;
+  width: min(100%, 250px);
+}
+
+/* SR / SAR / UR in pack → rainbow open light instead of warm gold */
+.pack.has-prism-open .pack__ambient-glow::before {
+  background:
+    radial-gradient(
+      ellipse 50% 90% at 50% 50%,
+      rgba(255, 240, 255, 0.72) 0%,
+      rgba(255, 160, 200, 0.4) 22%,
+      rgba(255, 220, 120, 0.32) 36%,
+      rgba(120, 240, 200, 0.3) 50%,
+      rgba(140, 190, 255, 0.28) 62%,
+      rgba(200, 150, 255, 0.18) 74%,
+      transparent 86%
+    ),
+    radial-gradient(
+      ellipse 90% 60% at 28% 50%,
+      rgba(255, 120, 180, 0.28) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 90% 60% at 72% 50%,
+      rgba(120, 180, 255, 0.26) 0%,
+      transparent 70%
+    );
+  filter: blur(var(--glow-blur)) brightness(1.4) saturate(1.15);
+}
+
+.pack.has-prism-open .pack__ambient-sparks {
+  background-image:
+    radial-gradient(circle, rgba(255, 180, 220, 0.95) 0 1.2px, transparent 2px),
+    radial-gradient(circle, rgba(255, 220, 130, 0.9) 0 1px, transparent 2px),
+    radial-gradient(circle, rgba(140, 245, 210, 0.95) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle, rgba(140, 190, 255, 0.9) 0 1px, transparent 2px),
+    radial-gradient(circle, rgba(210, 160, 255, 0.9) 0 1.2px, transparent 2.2px),
+    radial-gradient(circle, #fff 0 1px, transparent 2px);
+  filter: drop-shadow(0 0 4px rgba(200, 170, 255, 0.65));
+}
+
+.pack.has-prism-open .pack__tear-glints {
+  background-image:
+    radial-gradient(circle, #fff 0 1px, transparent 2px),
+    radial-gradient(circle, rgba(255, 160, 210, 1) 0 1.2px, transparent 2.4px),
+    radial-gradient(circle, rgba(255, 220, 130, 1) 0 1px, transparent 2px),
+    radial-gradient(circle, rgba(130, 240, 200, 0.95) 0 1.4px, transparent 2.6px),
+    radial-gradient(circle, rgba(140, 190, 255, 0.95) 0 1px, transparent 2px),
+    radial-gradient(circle, rgba(210, 160, 255, 0.95) 0 1.1px, transparent 2.2px);
+}
+
+.pack.has-prism-open .pack__tear-sheen::before {
+  background:
+    linear-gradient(
+      100deg,
+      transparent 0%,
+      transparent 28%,
+      rgba(255, 160, 210, 0.12) 36%,
+      rgba(255, 220, 130, 0.28) 42%,
+      rgba(140, 245, 200, 0.4) 48%,
+      rgba(150, 190, 255, 0.48) 50%,
+      rgba(210, 150, 255, 0.36) 52%,
+      rgba(255, 180, 220, 0.2) 58%,
+      rgba(255, 255, 255, 0.08) 64%,
+      transparent 74%,
+      transparent 100%
+    ),
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(200, 170, 255, 0.08) 25%,
+      rgba(160, 210, 255, 0.16) 50%,
+      rgba(255, 180, 210, 0.08) 75%,
+      transparent 100%
+    );
+}
+
+.pack.has-prism-open #open-fx-fan-fill {
+  fill: #e8c4ff;
+}
+
+.pack.has-prism-open #open-fx-fan-rays {
+  stroke: #fff0ff;
+}
+
+.pack.has-prism-open #open-fx-seam-path {
+  stroke: #f5e8ff;
+}
+
+.pack.has-prism-open .pack__top {
+  filter: drop-shadow(0 0 calc(8px + var(--tear) * 18px) rgba(190, 160, 255, calc(0.22 + var(--tear) * 0.4)));
+}
+
+.pack.pack--pokekyun .pack__inner {
+  aspect-ratio: 418 / 813;
+  overflow: visible;
+  /* drop-shadow on tall pack can paint a dark rectangular plate */
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.35));
+}
+
+@media (max-height: 780px), (max-width: 560px) {
+  .pack.pack--pokekyun {
+    width: min(100%, 200px);
+  }
+
+  .open-page--pokekyun .open-main {
+    gap: 0.85rem;
+    padding-bottom: 3.25rem;
+  }
+
+  .open-page--pokekyun .open-head {
+    display: block;
+    margin: 0;
+    padding: 0.1rem 0 0;
+  }
+
+  .open-page--pokekyun .open-head__eyebrow {
+    margin: 0;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    opacity: 0.9;
+  }
+
+  .open-page--pokekyun .open-info {
+    height: 3.8rem;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-height: 680px) {
+  .pack.pack--pokekyun {
+    width: min(100%, 170px);
+  }
+}
+
+.pack.pack--pokekyun .pack__body,
+.pack.pack--pokekyun .pack__top {
+  background-image: url("../assets/pack-pokekyun.png");
+}
+
+/* Dimmed pack remnant (unused in gallery; kept for reveal phase only) */
+.pack.pack--pokekyun.is-gallery-behind {
+  display: none !important;
+}
+
+.open151-rise[hidden],
+.open151-gallery[hidden],
+.open151-focus[hidden],
+.open151-modal[hidden] {
+  display: none !important;
+}
+
+/* Cards rise inside pack (25th-style), slightly smaller */
+.open151-rise.pack__card-rise {
+  z-index: 4;
+  left: 10%;
+  right: 10%;
+  top: 6%;
+  bottom: 6%;
+  justify-content: center;
+  padding-top: 0;
+  overflow: visible;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+body.open-page.open-page--pokekyun.is-sky-ejecting {
+  overflow: hidden;
+}
+
+/* Face-down cards whoosh behind the shrinking pack into the sky */
+.pack__sky-eject {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.pack__sky-eject-card {
+  position: absolute;
+  left: 50%;
+  /* Align with the stack slot inside the pack remnant */
+  top: 18%;
+  width: 80%;
+  aspect-ratio: 0.716;
+  margin-left: -40%;
+  border-radius: 4.55% / 3.5%;
+  background: #1a1520 url("../assets/card-back-jp.png") center / cover no-repeat;
+  /* Match torn pack remnant dimming */
+  filter: brightness(0.42) saturate(0.75) contrast(1.05);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transform: translate3d(0, 12%, 0) scale(0.96);
+  will-change: transform, opacity;
+}
+
+.pack__sky-eject.is-flying .pack__sky-eject-card {
+  /* Same cadence as bottom deal: 0.55s ease, 115ms stagger */
+  animation: open151-sky-eject 0.55s cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 115ms);
+}
+
+@keyframes open151-sky-eject {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 18%, 0) scale(0.94);
+  }
+  14% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, calc(-1 * min(88vh, 760px)), 0) scale(1);
+  }
+}
+
+.open151-open-all {
+  position: relative;
+  z-index: 20;
+  flex: 0 0 auto;
+  min-width: 9.5rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.92rem;
+  touch-action: manipulation;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.open151-open-all[hidden] {
+  display: none !important;
+}
+
+.open151-stack {
+  position: relative;
+  width: min(100%, 200px);
+  aspect-ratio: 0.716;
+  perspective: 900px;
+  touch-action: none;
+  overflow: visible;
+}
+
+.open151-card {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+  transform-origin: center center;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform, opacity;
+}
+
+.open151-card.is-dragging {
+  cursor: grabbing;
+  transition: none !important;
+}
+
+.open151-card.is-top {
+  pointer-events: auto;
+  z-index: 10;
+}
+
+.open151-card:not(.is-top):not(.open151-card--gallery) {
+  pointer-events: none;
+}
+
+.open151-card.is-flung {
+  pointer-events: none;
+  z-index: 200 !important;
+  visibility: visible;
+}
+
+.open151-card__inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.58s cubic-bezier(0.22, 0.82, 0.25, 1);
+  background: transparent;
+  overflow: visible;
+}
+
+.open151-stack.is-flipping-all .open151-card:not(.is-flat) .open151-card__inner,
+.open151-card.is-front:not(.is-flat) .open151-card__inner {
+  transform: rotateY(180deg);
+}
+
+.open151-card.is-flat .open151-card__inner {
+  transform: none !important;
+  transform-style: flat;
+}
+
+.open151-card.is-hit.is-front::after {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  border-radius: 8%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(255, 220, 120, 0.175),
+    transparent 62%
+  );
+  animation: open151-hit-pulse 2.8s ease-in-out infinite;
+  z-index: 3;
+}
+
+@keyframes open151-hit-pulse {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.02);
+  }
+}
+
+.open151-card__face {
+  position: absolute;
+  inset: 0;
+  border-radius: 4.55% / 3.5%;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: transparent;
+  box-shadow:
+    0 0 3px -1px rgba(0, 0, 0, 0.4),
+    0 10px 22px -8px rgba(0, 0, 0, 0.45);
+}
+
+.open151-card__face--back {
+  background: #1a1520;
+}
+
+.open151-card__face--back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.open151-card__face--front {
+  transform: rotateY(180deg);
+  background: transparent !important;
+  background-color: transparent !important;
+  overflow: hidden;
+}
+
+.open151-card.is-flat .open151-card__face--front {
+  transform: none !important;
+  overflow: hidden;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.open151-card__face--front .holo-card,
+.open151-card.is-flat .holo-card,
+.open151-card__face--front .holo-card__rotator,
+.open151-card.is-flat .holo-card__rotator,
+.open151-card__face--front .holo-card__front,
+.open151-card.is-flat .holo-card__front {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  background: transparent !important;
+  background-color: transparent !important;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.open151-card__face--front .holo-card,
+.open151-card.is-flat .holo-card {
+  aspect-ratio: auto;
+}
+
+.open151-card--gallery .holo-card,
+.open151-card--gallery .holo-card__rotator,
+.open151-card--gallery .holo-card__front {
+  background: transparent !important;
+  background-color: transparent !important;
+  overflow: hidden;
+}
+
+/* Flat foil light — foil cards only (not C/U/R); planar sweep, no 3D tilt */
+.open151-card.is-flat .holo-card {
+  --rotate-x: 0deg !important;
+  --rotate-y: 0deg !important;
+}
+
+.open151-card.is-flat .holo-card__rotator,
+.open151-card.is-flat .holo-card.interacting .holo-card__rotator {
+  transform: none !important;
+  transition: none;
+}
+
+.open151-card.is-flat:not(.is-foil) .holo-card__shine,
+.open151-card.is-flat:not(.is-foil) .holo-card__glare,
+.open151-card.is-flat:not(.is-foil) .holo-card__front::before {
+  display: none !important;
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+.open151-card.is-foil.is-front.is-flat .holo-card__front {
+  isolation: isolate;
+}
+
+.open151-card.is-foil.is-front.is-flat .holo-card__front::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: linear-gradient(
+    112deg,
+    transparent 0%,
+    transparent 36%,
+    rgba(255, 236, 200, 0.05) 42%,
+    rgba(255, 200, 130, 0.45) 47%,
+    rgba(190, 220, 255, 0.55) 50%,
+    rgba(255, 160, 210, 0.42) 53%,
+    rgba(255, 236, 200, 0.05) 58%,
+    transparent 64%,
+    transparent 100%
+  );
+  background-size: 240% 100%;
+  background-repeat: no-repeat;
+  background-position: 120% 50%;
+  mix-blend-mode: soft-light;
+  opacity: 0.5;
+  animation: open151-flat-foil 2.6s ease-in-out infinite;
+}
+
+.open151-card.is-foil.is-front.is-flat.is-top .holo-card__front::before,
+.open151-card.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
+  opacity: 0.72;
+}
+
+.open151-card.is-hit.is-foil.is-front.is-flat .holo-card__front::before {
+  background-image: linear-gradient(
+    112deg,
+    transparent 0%,
+    transparent 32%,
+    rgba(255, 90, 90, 0.35) 40%,
+    rgba(255, 210, 90, 0.7) 45%,
+    rgba(90, 240, 190, 0.65) 50%,
+    rgba(120, 170, 255, 0.7) 55%,
+    rgba(230, 120, 255, 0.55) 60%,
+    transparent 68%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.95;
+  animation-duration: 1.85s;
+}
+
+/* SR — flashier cool rainbow than base foil */
+.open151-card.is-sr.is-foil.is-front.is-flat .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 28%,
+    rgba(120, 200, 255, 0.45) 36%,
+    rgba(180, 140, 255, 0.62) 44%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(120, 230, 255, 0.58) 56%,
+    rgba(200, 140, 255, 0.45) 64%,
+    transparent 74%,
+    transparent 100%
+  );
+  background-size: 280% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.92;
+  animation: open151-ar-foil 2.2s linear infinite;
+  filter: saturate(1.1);
+}
+
+.open151-card.is-sr.is-foil.is-front.is-flat.is-top .holo-card__front::before,
+.open151-card.is-sr.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
+  opacity: 1;
+}
+
+.open151-card.is-sr.is-front {
+  box-shadow: none;
+}
+
+.open151-card.is-sr.is-front::after {
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  width: 150%;
+  height: 150%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(240, 248, 255, 0.34) 0%,
+    rgba(200, 215, 235, 0.16) 38%,
+    rgba(180, 200, 225, 0.06) 58%,
+    transparent 72%
+  );
+  filter: blur(10px);
+  animation: open151-sr-silver 3.2s ease-in-out infinite;
+}
+
+@keyframes open151-sr-silver {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: translate(-50%, -50%) scale(0.98);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.03);
+  }
+}
+
+/* SAR — richer prism sweep (slower / softer) */
+.open151-card.is-sar.is-foil.is-front.is-flat .holo-card__front::before {
+  background-image: linear-gradient(
+    122deg,
+    transparent 0%,
+    transparent 24%,
+    rgba(255, 110, 150, 0.36) 34%,
+    rgba(255, 210, 90, 0.5) 42%,
+    rgba(110, 245, 190, 0.48) 50%,
+    rgba(120, 180, 255, 0.5) 58%,
+    rgba(210, 130, 255, 0.4) 66%,
+    transparent 78%,
+    transparent 100%
+  );
+  background-size: 300% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.82;
+  animation: open151-ar-foil 2.2s linear infinite;
+  filter: saturate(1.1) brightness(0.96);
+}
+
+.open151-card.is-sar.is-foil.is-front.is-flat.is-top .holo-card__front::before,
+.open151-card.is-sar.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
+  opacity: 0.9;
+}
+
+.open151-card.is-sar.is-front {
+  box-shadow: none;
+}
+
+/* Soft circular rainbow mist — color blobs drift (no spinning rect) */
+.open151-card.is-sar.is-front::after {
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  width: 150%;
+  height: 150%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background-image:
+    radial-gradient(circle at 28% 32%, rgba(255, 130, 170, 0.42), transparent 40%),
+    radial-gradient(circle at 72% 30%, rgba(255, 210, 110, 0.34), transparent 38%),
+    radial-gradient(circle at 78% 68%, rgba(110, 230, 185, 0.34), transparent 40%),
+    radial-gradient(circle at 30% 72%, rgba(120, 175, 255, 0.38), transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(190, 140, 255, 0.24), transparent 46%);
+  background-repeat: no-repeat;
+  background-size: 130% 130%;
+  background-position:
+    0% 40%,
+    100% 35%,
+    85% 100%,
+    15% 95%,
+    50% 50%;
+  filter: blur(16px);
+  animation:
+    open151-sar-aura-drift 9s ease-in-out infinite,
+    open151-sar-rainbow-breathe 3.4s ease-in-out infinite;
+}
+
+@keyframes open151-sar-aura-drift {
+  0%,
+  100% {
+    background-position:
+      0% 40%,
+      100% 35%,
+      85% 100%,
+      15% 95%,
+      50% 50%;
+  }
+  33% {
+    background-position:
+      70% 15%,
+      20% 75%,
+      25% 30%,
+      90% 55%,
+      50% 50%;
+  }
+  66% {
+    background-position:
+      40% 85%,
+      85% 20%,
+      95% 55%,
+      5% 35%,
+      50% 50%;
+  }
+}
+
+@keyframes open151-sar-rainbow-breathe {
+  0%,
+  100% {
+    opacity: 0.34;
+  }
+  50% {
+    opacity: 0.64;
+  }
+}
+
+/* UR — brightest foil + soft gold aura around the card */
+.open151-card.is-ur.is-foil.is-front.is-flat .holo-card__front::before {
+  background-image: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 20%,
+    rgba(255, 230, 150, 0.55) 32%,
+    rgba(255, 255, 255, 0.92) 44%,
+    rgba(255, 210, 90, 0.85) 50%,
+    rgba(255, 255, 255, 0.9) 56%,
+    rgba(255, 190, 80, 0.55) 68%,
+    transparent 80%,
+    transparent 100%
+  );
+  background-size: 320% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 1;
+  animation: open151-ar-foil 2.2s linear infinite;
+  filter: saturate(1.15) brightness(1.12);
+}
+
+.open151-card.is-ur.is-foil.is-front.is-flat.is-top .holo-card__front::before,
+.open151-card.is-ur.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
+  opacity: 1;
+}
+
+.open151-card.is-ur.is-front {
+  box-shadow: none;
+}
+
+/* Soft circular gold mist — avoid rectangular box-shadow plate */
+.open151-card.is-ur.is-front::after {
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  width: 150%;
+  height: 150%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 220, 140, 0.36) 0%,
+    rgba(255, 195, 90, 0.16) 38%,
+    rgba(255, 175, 60, 0.06) 58%,
+    transparent 72%
+  );
+  filter: blur(10px);
+  animation: open151-ur-gold 3.2s ease-in-out infinite;
+}
+
+@keyframes open151-ur-gold {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: translate(-50%, -50%) scale(0.98);
+  }
+  50% {
+    opacity: 0.72;
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-sr .holo-card.interacting .holo-card__shine,
+.open151-card--gallery.is-sr .holo-card.interacting .holo-card__shine {
+  opacity: calc(0.68 * var(--card-opacity, 1));
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-sar .holo-card.interacting .holo-card__shine,
+.open151-card--gallery.is-sar .holo-card.interacting .holo-card__shine {
+  opacity: calc(0.72 * var(--card-opacity, 1));
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-ur .holo-card.interacting .holo-card__shine,
+.open151-card--gallery.is-ur .holo-card.interacting .holo-card__shine {
+  opacity: calc(0.98 * var(--card-opacity, 1));
+  filter: brightness(1.08) saturate(1.1);
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-ur .holo-card.interacting .holo-card__glare,
+.open151-card--gallery.is-ur .holo-card.interacting .holo-card__glare {
+  opacity: calc(0.55 * var(--card-opacity, 1));
+}
+
+/* AR — soft prism sweep (no sparkle lines; continuous linear flow) */
+.open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 32%,
+    rgba(255, 120, 170, 0.4) 40%,
+    rgba(255, 205, 100, 0.52) 46%,
+    rgba(110, 235, 195, 0.48) 52%,
+    rgba(120, 185, 255, 0.55) 58%,
+    rgba(185, 140, 255, 0.45) 64%,
+    transparent 72%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: soft-light;
+  opacity: 0.78;
+  animation: open151-ar-foil 3.4s linear infinite;
+  filter: none;
+}
+
+.open151-card.is-ar.is-foil.is-front.is-flat.is-top .holo-card__front::before,
+.open151-card.is-ar.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
+  opacity: 0.92;
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-ar .holo-card.interacting .holo-card__shine,
+.open151-card--gallery.is-ar .holo-card.interacting .holo-card__shine {
+  opacity: calc(0.55 * var(--card-opacity, 1));
+  mix-blend-mode: soft-light;
+  background-image:
+    linear-gradient(
+      125deg,
+      transparent 16%,
+      rgba(255, 130, 170, 0.36) 34%,
+      rgba(255, 205, 110, 0.4) 45%,
+      rgba(120, 235, 195, 0.36) 55%,
+      rgba(130, 185, 255, 0.4) 66%,
+      transparent 84%
+    ),
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      rgba(255, 255, 255, 0.42) 0%,
+      rgba(255, 255, 255, 0.1) 30%,
+      transparent 58%
+    );
+  background-size: 200% 200%, 160% 160%;
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-ar .holo-card.interacting .holo-card__glare,
+.open151-card--gallery.is-ar .holo-card.interacting .holo-card__glare {
+  opacity: calc(0.36 * var(--card-opacity, 1));
+  mix-blend-mode: overlay;
+}
+
+/* AR silver frame — rim shine (2% width L/R, 1.5% height T/B) */
+.open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  pointer-events: none;
+  box-sizing: border-box;
+  padding: calc(1.5% / 0.716) 2%;
+  background-image: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 46.5%,
+    rgba(200, 220, 255, 0.2) 48%,
+    rgba(255, 255, 255, 0.95) 49.5%,
+    rgba(210, 230, 255, 0.8) 50.5%,
+    rgba(170, 200, 255, 0.2) 52%,
+    transparent 53.5%,
+    transparent 100%
+  );
+  background-size: 360% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.92;
+  animation: open151-ar-foil 3.4s linear infinite;
+  filter: blur(1px);
+  -webkit-mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  -webkit-mask-clip: content-box, border-box;
+  mask-clip: content-box, border-box;
+  -webkit-mask-origin: content-box, border-box;
+  mask-origin: content-box, border-box;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.open151-card.is-ar.is-foil.is-front.is-flat.is-top .holo-card__front::after,
+.open151-card.is-ar.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::after {
+  opacity: 1;
+}
+
+/* RR — birthday-holo-dank texture during flat reveal / gallery */
+.open151-card.is-rr.is-foil.is-front.is-flat .holo-card__front::before {
+  background-image: none;
+  opacity: 0;
+  animation: none;
+  filter: none;
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-rr .holo-card.interacting .holo-card__shine,
+.open151-card--gallery.is-rr .holo-card.interacting .holo-card__shine {
+  opacity: calc(0.78 * var(--card-opacity, 1));
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-rr .holo-card.interacting .holo-card__glare,
+.open151-card--gallery.is-rr .holo-card.interacting .holo-card__glare {
+  opacity: calc(0.42 * var(--card-opacity, 1));
+}
+
+.open151-card.is-foil.is-front.is-flat .holo-card--monster-ball .holo-card__front::before,
+.open151-card.is-foil.is-front.is-flat .holo-card--master-ball .holo-card__front::before {
+  mix-blend-mode: soft-light;
+  opacity: 0.42;
+  animation-duration: 2.1s;
+  filter: none;
+}
+
+/* MSB — punchier purple/cyan flat sweep so master ball reads as a hit */
+.open151-card.is-msb.is-foil.is-front.is-flat .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 30%,
+    rgba(180, 90, 255, 0.45) 38%,
+    rgba(90, 200, 255, 0.7) 46%,
+    rgba(255, 120, 230, 0.65) 52%,
+    rgba(120, 160, 255, 0.7) 58%,
+    rgba(200, 100, 255, 0.5) 66%,
+    transparent 74%,
+    transparent 100%
+  );
+  background-size: 270% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: color-dodge;
+  opacity: 0.72;
+  animation: open151-ar-foil 2.8s linear infinite;
+  filter: saturate(1.15);
+}
+
+.open151-card.is-msb.is-foil.is-front.is-flat.is-top .holo-card__front::before,
+.open151-card.is-msb.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
+  opacity: 0.9;
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-msb .holo-card.interacting .holo-card__shine,
+.open151-card--gallery.is-msb .holo-card.interacting .holo-card__shine {
+  opacity: calc(0.95 * var(--card-opacity, 1));
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-msb .holo-card.interacting .holo-card__glare,
+.open151-card--gallery.is-msb .holo-card.interacting .holo-card__glare {
+  opacity: calc(0.58 * var(--card-opacity, 1));
+}
+
+/* Reveal + gallery thumbs: MB/MSB outer uses full tile mask like inner.
+   Gallery focus 3D keeps the original dual-mask outer in holo.css. */
+.open151-stack.is-face-up .open151-card.is-flat .holo-card--monster-ball .holo-card__shine::after,
+.open151-card--gallery.is-flat .holo-card--monster-ball .holo-card__shine::after,
+.open151-stack.is-face-up .open151-card.is-flat .holo-card--master-ball .holo-card__shine::after,
+.open151-card--gallery.is-flat .holo-card--master-ball .holo-card__shine::after {
+  -webkit-mask-image: url("../assets/pokeball-outer.webp");
+  mask-image: url("../assets/pokeball-outer.webp");
+  -webkit-mask-size: 42% auto;
+  mask-size: 42% auto;
+  -webkit-mask-position: calc(var(--seed) * 420px) calc(var(--seed) * 280px);
+  mask-position: calc(var(--seed) * 420px) calc(var(--seed) * 280px);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
+  background-size: 170% 170%;
+  background-position: var(--pointer-y) var(--pointer-x);
+  filter: brightness(var(--ball-inner-brightness)) contrast(2)
+    saturate(calc(0.2 + var(--pointer-from-center)));
+  mix-blend-mode: lighten;
+}
+
+.open151-stack.is-face-up .open151-card.is-flat .holo-card--master-ball .holo-card__shine::after,
+.open151-card--gallery.is-flat .holo-card--master-ball .holo-card__shine::after {
+  -webkit-mask-image: url("../assets/masterball-outer.webp");
+  mask-image: url("../assets/masterball-outer.webp");
+}
+
+/* Built-in foil layers on top reveal card + gallery foil thumbs (still flat) */
+.open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card.interacting .holo-card__shine,
+.open151-card--gallery.is-foil .holo-card.interacting .holo-card__shine {
+  opacity: calc(0.55 * var(--card-opacity, 1));
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card.interacting .holo-card__glare,
+.open151-card--gallery.is-foil .holo-card.interacting .holo-card__glare {
+  opacity: calc(0.45 * var(--card-opacity, 1));
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-hit.is-foil .holo-card.interacting .holo-card__shine,
+.open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card--monster-ball.interacting .holo-card__shine,
+.open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card--master-ball.interacting .holo-card__shine,
+.open151-card--gallery.is-hit.is-foil .holo-card.interacting .holo-card__shine,
+.open151-card--gallery.is-foil .holo-card--monster-ball.interacting .holo-card__shine,
+.open151-card--gallery.is-foil .holo-card--master-ball.interacting .holo-card__shine {
+  opacity: calc(0.62 * var(--card-opacity, 1));
+}
+
+.open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card--monster-ball.interacting .holo-card__glare,
+.open151-stack.is-face-up .open151-card.is-top.is-foil .holo-card--master-ball.interacting .holo-card__glare,
+.open151-card--gallery.is-foil .holo-card--monster-ball.interacting .holo-card__glare,
+.open151-card--gallery.is-foil .holo-card--master-ball.interacting .holo-card__glare {
+  opacity: calc(0.32 * var(--card-opacity, 1));
+}
+
+@keyframes open151-flat-foil {
+  0% {
+    background-position: 125% 45%;
+  }
+  100% {
+    background-position: -125% 55%;
+  }
+}
+
+@keyframes open151-ar-foil {
+  0% {
+    background-position: 125% 50%;
+  }
+  100% {
+    background-position: -125% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .open151-card.is-foil.is-front.is-flat .holo-card__front::before {
+    animation: none;
+    background-position: 40% 50%;
+    opacity: 0.55;
+  }
+
+  .open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::before {
+    background-position: 45% 50%;
+    opacity: 0.72;
+  }
+
+  .open151-card.is-ar.is-foil.is-front.is-flat .holo-card__front::after {
+    animation: none;
+    background-position: 48% 50%;
+    opacity: 0.85;
+  }
+
+  .open151-card.is-msb.is-foil.is-front.is-flat .holo-card__front::before {
+    animation: none;
+    background-position: 45% 50%;
+    opacity: 0.7;
+  }
+
+  .open151-card.is-sr.is-foil.is-front.is-flat .holo-card__front::before,
+  .open151-card.is-sar.is-foil.is-front.is-flat .holo-card__front::before,
+  .open151-card.is-ur.is-foil.is-front.is-flat .holo-card__front::before {
+    animation: none;
+    background-position: 45% 50%;
+  }
+
+  .open151-card.is-ur.is-front::after,
+  .open151-card.is-sr.is-front::after,
+  .open151-card.is-sar.is-front::after {
+    animation: none;
+    opacity: 0.45;
+    filter: blur(16px);
+    transform: translate(-50%, -50%);
+  }
+
+  .open151-card.is-sar.is-front::after {
+    background-position: 50% 50%;
+  }
+}
+
+/* Gallery — 3 top / 2 bottom */
+.open151-gallery {
+  position: relative;
+  z-index: 6;
+  width: min(100%, 420px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0.5rem 0 2.5rem;
+}
+
+.open151-gallery__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: 100%;
+  overflow: visible;
+}
+
+.open151-gallery__row {
+  display: flex;
+  justify-content: center;
+  gap: 0.55rem;
+  width: 100%;
+}
+
+.open151-gallery__row--4 .open151-gallery__cell {
+  width: calc((100% - 1.65rem) / 4);
+}
+
+.open151-gallery__row--3 .open151-gallery__cell {
+  width: calc((100% - 1.1rem) / 3);
+  max-width: calc((100% - 1.65rem) / 4);
+}
+
+/* Mobile 2-3-2: same card size as middle row of 3 */
+.open151-gallery__row--2 .open151-gallery__cell {
+  width: calc((100% - 1.1rem) / 3);
+}
+
+@media (max-width: 560px) {
+  .open151-gallery__row--3 .open151-gallery__cell {
+    max-width: none;
+    width: calc((100% - 1.1rem) / 3);
+  }
+}
+
+.open151-gallery__cell {
+  position: relative;
+  aspect-ratio: 0.716;
+  flex: 0 0 auto;
+  animation: open151-gallery-in 0.45s ease both;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+/* After first entrance, never replay pop-in (focus/unfocus used to retrigger it) */
+.open151-gallery.is-ready .open151-gallery__cell {
+  animation: none;
+}
+
+.open151-gallery.has-focus .open151-gallery__cell:not(.is-focused) {
+  opacity: 0.3 !important;
+}
+
+.open151-gallery.has-focus .open151-gallery__cell.is-focused {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+@keyframes open151-gallery-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.open151-card--gallery {
+  position: absolute;
+  inset: 0;
+  transform: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.open151-card--gallery .open151-card__inner {
+  transform: none !important;
+}
+
+.open151-card--gallery .open151-card__face--front {
+  transform: none !important;
+}
+
+/* Center focus overlay — FLIP from cell → center → back */
+.open151-focus {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background: transparent;
+}
+
+.open151-focus__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.open151-focus__card {
+  position: fixed;
+  z-index: 2;
+  pointer-events: auto;
+  cursor: pointer;
+  background: transparent !important;
+  background-color: transparent !important;
+  overflow: visible;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.open151-focus.is-flying .open151-focus__card {
+  pointer-events: none;
+}
+
+/* Match set-list holo tilt — don't flatten with filter */
+.open151-focus__holo,
+.open151-focus__holo.holo-card {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  background: transparent !important;
+  background-color: transparent !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+  touch-action: none;
+  transform-origin: center center;
+  perspective: 600px;
+  transform: translate3d(0, 0, 0.1px);
+  will-change: transform;
+}
+
+.open151-focus__holo.interacting {
+  /* box-shadow only — filter flattens preserve-3d tilt */
+  filter: none;
+}
+
+.open151-focus__holo .holo-card__rotator {
+  background: transparent !important;
+  background-color: transparent !important;
+  overflow: visible;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.open151-focus__holo .holo-card__front {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow:
+    0 0 3px -1px rgba(0, 0, 0, 0.35),
+    0 22px 36px -10px rgba(0, 0, 0, 0.55);
+  isolation: isolate;
+}
+
+/* Focus foil: keep a soft gradient sweep even when flat / idle */
+.open151-focus__holo.is-foil .holo-card__front::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: linear-gradient(
+    112deg,
+    transparent 0%,
+    transparent 36%,
+    rgba(255, 236, 200, 0.05) 42%,
+    rgba(255, 200, 130, 0.45) 47%,
+    rgba(190, 220, 255, 0.55) 50%,
+    rgba(255, 160, 210, 0.42) 53%,
+    rgba(255, 236, 200, 0.05) 58%,
+    transparent 64%,
+    transparent 100%
+  );
+  background-size: 240% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: soft-light;
+  opacity: 0.7;
+  animation: open151-flat-foil 2.6s ease-in-out infinite;
+}
+
+.open151-focus__holo.is-hit.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    112deg,
+    transparent 0%,
+    transparent 32%,
+    rgba(255, 90, 90, 0.35) 40%,
+    rgba(255, 210, 90, 0.7) 45%,
+    rgba(90, 240, 190, 0.65) 50%,
+    rgba(120, 170, 255, 0.7) 55%,
+    rgba(230, 120, 255, 0.55) 60%,
+    transparent 68%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.9;
+  animation-duration: 1.85s;
+}
+
+.open151-focus__holo.is-sr.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 28%,
+    rgba(120, 200, 255, 0.45) 36%,
+    rgba(180, 140, 255, 0.62) 44%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(120, 230, 255, 0.58) 56%,
+    rgba(200, 140, 255, 0.45) 64%,
+    transparent 74%,
+    transparent 100%
+  );
+  background-size: 280% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 1;
+  animation: open151-ar-foil 2.2s linear infinite;
+  filter: saturate(1.1);
+}
+
+.open151-focus__holo.is-sar.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    122deg,
+    transparent 0%,
+    transparent 24%,
+    rgba(255, 110, 150, 0.36) 34%,
+    rgba(255, 210, 90, 0.5) 42%,
+    rgba(110, 245, 190, 0.48) 50%,
+    rgba(120, 180, 255, 0.5) 58%,
+    rgba(210, 130, 255, 0.4) 66%,
+    transparent 78%,
+    transparent 100%
+  );
+  background-size: 300% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.82;
+  animation: open151-ar-foil 2.2s linear infinite;
+  filter: saturate(1.1) brightness(0.96);
+}
+
+.open151-focus__holo.is-ur.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 20%,
+    rgba(255, 230, 150, 0.55) 32%,
+    rgba(255, 255, 255, 0.92) 44%,
+    rgba(255, 210, 90, 0.85) 50%,
+    rgba(255, 255, 255, 0.9) 56%,
+    rgba(255, 190, 80, 0.55) 68%,
+    transparent 80%,
+    transparent 100%
+  );
+  background-size: 320% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 1;
+  animation: open151-ar-foil 2.2s linear infinite;
+  filter: saturate(1.15) brightness(1.12);
+}
+
+.open151-focus__card:has(.open151-focus__holo.is-sr) {
+  filter: drop-shadow(0 0 14px rgba(210, 225, 240, 0.45))
+    drop-shadow(0 0 28px rgba(185, 205, 230, 0.26));
+}
+
+.open151-focus__card:has(.open151-focus__holo.is-sar) {
+  filter: drop-shadow(0 0 12px rgba(255, 150, 200, 0.35))
+    drop-shadow(0 0 22px rgba(130, 210, 255, 0.28))
+    drop-shadow(0 0 30px rgba(180, 140, 255, 0.2));
+}
+
+.open151-focus__card:has(.open151-focus__holo.is-ur) {
+  filter: none;
+}
+
+.open151-focus__card:has(.open151-focus__holo.is-ur)::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 140%;
+  height: 140%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(
+    circle,
+    rgba(255, 220, 140, 0.32) 0%,
+    rgba(255, 185, 70, 0.14) 42%,
+    transparent 70%
+  );
+  filter: blur(12px);
+}
+
+.open151-focus__holo.is-sr:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.68 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-sar:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.72 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-ur:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.98 * var(--card-opacity, 1));
+  filter: brightness(1.08) saturate(1.1);
+}
+
+.open151-focus__holo.is-ur:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.55 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-ar.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 32%,
+    rgba(255, 120, 170, 0.4) 40%,
+    rgba(255, 205, 100, 0.52) 46%,
+    rgba(110, 235, 195, 0.48) 52%,
+    rgba(120, 185, 255, 0.55) 58%,
+    rgba(185, 140, 255, 0.45) 64%,
+    transparent 72%,
+    transparent 100%
+  );
+  background-size: 260% 100%;
+  mix-blend-mode: soft-light;
+  opacity: 0.9;
+  animation: open151-ar-foil 3.4s linear infinite;
+  filter: none;
+}
+
+.open151-focus__holo.is-ar.is-foil .holo-card__front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  pointer-events: none;
+  box-sizing: border-box;
+  padding: calc(1.5% / 0.716) 2%;
+  background-image: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 46.5%,
+    rgba(200, 220, 255, 0.2) 48%,
+    rgba(255, 255, 255, 0.95) 49.5%,
+    rgba(210, 230, 255, 0.8) 50.5%,
+    rgba(170, 200, 255, 0.2) 52%,
+    transparent 53.5%,
+    transparent 100%
+  );
+  background-size: 360% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: plus-lighter;
+  opacity: 1;
+  animation: open151-ar-foil 3.4s linear infinite;
+  filter: blur(1px);
+  -webkit-mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+  -webkit-mask-clip: content-box, border-box;
+  mask-clip: content-box, border-box;
+  -webkit-mask-origin: content-box, border-box;
+  mask-origin: content-box, border-box;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.open151-focus__holo.is-rr.is-foil .holo-card__front::before {
+  background-image: none;
+  opacity: 0;
+  animation: none;
+  filter: none;
+}
+
+.open151-focus__holo.is-msb.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 30%,
+    rgba(180, 90, 255, 0.45) 38%,
+    rgba(90, 200, 255, 0.7) 46%,
+    rgba(255, 120, 230, 0.65) 52%,
+    rgba(120, 160, 255, 0.7) 58%,
+    rgba(200, 100, 255, 0.5) 66%,
+    transparent 74%,
+    transparent 100%
+  );
+  background-size: 270% 100%;
+  mix-blend-mode: color-dodge;
+  opacity: 0.88;
+  animation: open151-ar-foil 2.8s linear infinite;
+  filter: saturate(1.15);
+}
+
+.open151-focus__holo.is-foil:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.55 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-foil:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.45 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-ar:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.55 * var(--card-opacity, 1));
+  mix-blend-mode: soft-light;
+  background-image:
+    linear-gradient(
+      125deg,
+      transparent 16%,
+      rgba(255, 130, 170, 0.36) 34%,
+      rgba(255, 205, 110, 0.4) 45%,
+      rgba(120, 235, 195, 0.36) 55%,
+      rgba(130, 185, 255, 0.4) 66%,
+      transparent 84%
+    ),
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      rgba(255, 255, 255, 0.42) 0%,
+      rgba(255, 255, 255, 0.1) 30%,
+      transparent 58%
+    );
+  background-size: 200% 200%, 160% 160%;
+}
+
+.open151-focus__holo.is-ar:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.36 * var(--card-opacity, 1));
+  mix-blend-mode: overlay;
+}
+
+.open151-focus__holo.is-rr:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.78 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-rr:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.42 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-msb:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.95 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-msb:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.58 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-foil.holo-card--monster-ball:is(.interacting, .is-idle-holo) .holo-card__shine,
+.open151-focus__holo.is-foil.holo-card--master-ball:is(.interacting, .is-idle-holo) .holo-card__shine {
+  opacity: calc(0.62 * var(--card-opacity, 1));
+}
+
+.open151-focus__holo.is-foil.holo-card--monster-ball:is(.interacting, .is-idle-holo) .holo-card__glare,
+.open151-focus__holo.is-foil.holo-card--master-ball:is(.interacting, .is-idle-holo) .holo-card__glare {
+  opacity: calc(0.32 * var(--card-opacity, 1));
+}
+
+/* Focus 3D: keep ball outer continuous — radial spotlight cuts mid-mark and looks broken */
+.open151-focus__holo.holo-card--monster-ball .holo-card__shine::after,
+.open151-focus__holo.holo-card--master-ball .holo-card__shine::after {
+  -webkit-mask-image: url("../assets/pokeball-outer.webp");
+  mask-image: url("../assets/pokeball-outer.webp");
+  -webkit-mask-size: 42% auto;
+  mask-size: 42% auto;
+  -webkit-mask-position: calc(var(--seed) * 420px) calc(var(--seed) * 280px);
+  mask-position: calc(var(--seed) * 420px) calc(var(--seed) * 280px);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
+  background-size: 170% 170%;
+  background-position: var(--pointer-y) var(--pointer-x);
+  filter: brightness(var(--ball-inner-brightness)) contrast(2)
+    saturate(calc(0.2 + var(--pointer-from-center)));
+  mix-blend-mode: lighten;
+}
+
+.open151-focus__holo.holo-card--master-ball .holo-card__shine::after {
+  -webkit-mask-image: url("../assets/masterball-outer.webp");
+  mask-image: url("../assets/masterball-outer.webp");
+}
+
+/* Don't lay a hard color-dodge band over the tiled master-ball marks in 3D */
+.open151-focus__holo.is-msb.is-foil.holo-card--master-ball .holo-card__front::before {
+  opacity: 0.28;
+  mix-blend-mode: soft-light;
+  filter: none;
+}
+
+body.is-gallery-focus {
+  overflow: hidden;
+}
+
+/* Prevent accidental reset taps while a card is focused up front */
+body.is-gallery-focus #btn-reset {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.open-btn--ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--ink-muted);
+}
+
+/* Modal */
+body.is-modal-open {
+  overflow: hidden;
+}
+
+.open151-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.open151-modal[hidden] {
+  display: none;
+}
+
+.open151-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(6, 5, 10, 0.72);
+  cursor: pointer;
+}
+
+.open151-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 320px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 1rem 1rem 1.15rem;
+  border-radius: 1rem;
+  background: rgba(22, 18, 30, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+}
+
+.open151-modal__card {
+  width: min(100%, 220px);
+}
+
+.open151-modal__card .holo-card {
+  width: 100%;
+  max-width: none;
+  background: transparent;
+}
+
+.open151-modal__card .holo-card__front {
+  background: transparent;
+  background-color: transparent;
+}
+
+.open151-modal__name {
+  margin: 0.35rem 0 0;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.open151-modal__meta,
+.open151-modal__price {
+  margin: 0;
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 0.88rem;
+}
+
+.open151-modal__price {
+  color: #f0d48a;
+}
+
+.open151-modal__link {
+  margin-top: 0.15rem;
+  color: var(--volt);
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+
+.open151-modal__link:hover {
+  text-decoration: underline;
+}

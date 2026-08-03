@@ -24,10 +24,14 @@ window.PopTracker = window.PopTracker || {};
       MB: [],
       MSB: [],
     };
+    const byId = {};
     packCards.forEach(function (c) {
       const r = rarityKey(c);
       if (pools[r]) pools[r].push(c);
+      if (c && c.id) byId[c.id] = c;
     });
+    pools._all = packCards;
+    pools._byId = byId;
     return pools;
   }
 
@@ -69,13 +73,16 @@ window.PopTracker = window.PopTracker || {};
       for (let attempt = 0; attempt < 8 && !card; attempt++) {
         const entry = pickWeighted(table);
         if (!entry) break;
-        card = pickFromPool(pools[entry.pool], used);
+        if (entry.cardId) {
+          const specific = pools._byId && pools._byId[entry.cardId];
+          if (specific && !used.has(specific.id)) card = specific;
+        } else {
+          card = pickFromPool(pools[entry.pool], used);
+        }
       }
       if (!card) {
         // fallback: any unused pack card, then any
-        const all = Object.keys(pools).reduce(function (acc, key) {
-          return acc.concat(pools[key]);
-        }, []);
+        const all = pools._all || [];
         card = pickFromPool(all, used) || all[0] || null;
       }
       if (card) used.add(card.id);

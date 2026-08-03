@@ -104,11 +104,15 @@
   const setActions = document.getElementById("set-actions");
   if (setActions) {
     setActions.innerHTML = "";
-    if (pack.id === "s8a-p-25th-anniversary" || pack.id === "sv2a-151") {
+    if (pack.id === "s8a-p-25th-anniversary" || pack.id === "sv2a-151" || pack.id === "pokekyun") {
       const openLink = document.createElement("a");
       openLink.className = "set-pack-open";
       openLink.href =
-        pack.id === "sv2a-151" ? "./open-151.html" : "./open.html";
+        pack.id === "sv2a-151"
+          ? "./open-151.html"
+          : pack.id === "pokekyun"
+            ? "./open-pokekyun.html"
+            : "./open.html";
       openLink.textContent = PT.t("packOpen");
       setActions.appendChild(openLink);
       setActions.hidden = false;

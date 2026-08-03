@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>포켓심쿵 Pack Open Simulator · PokePop</title>
+  <meta name="description" content="포켓심쿵 컬렉션 팩을 그어 열어보는 Pack Open Simulator">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="./css/pop.css">
+  <link rel="stylesheet" href="./css/holo.css?v=masterball-jp-pattern-1">
+  <link rel="stylesheet" href="./css/open.css?v=tear-residual-cut-1">
+  <link rel="stylesheet" href="./css/open-pokekyun.css?v=pokekyun-open-1">
+</head>
+<body class="open-page open-page--pokekyun">
+  <nav class="site-nav">
+    <a class="nav-brand" href="./index.html">
+      <img class="nav-brand__logo" src="./assets/pokepop-logo.png" alt="PokePop">
+      <span class="nav-brand__text">PokePop</span>
+    </a>
+    <div class="nav-actions">
+      <a class="nav-back" id="open-back" href="./set.html?pack=pokekyun">← 세트 목록</a>
+    </div>
+  </nav>
+
+  <main class="page open-main">
+    <header class="open-head">
+      <p class="open-head__eyebrow">Pack Open Simulator</p>
+    </header>
+
+    <section class="open-stage" id="open-stage" aria-label="포켓심쿵 Pack Open Simulator">
+      <div class="open-info" id="open-info">
+        <p class="open151-pack-banner" id="pack-banner" hidden aria-live="polite"></p>
+        <p class="open-info__hint" id="open-hint">팩을 그어 개봉해주세요</p>
+        <div class="open-result" id="open-result" aria-hidden="true">
+          <p class="open-result__name open-result__shine" id="result-name"></p>
+          <p class="open-result__meta open-result__shine open-result__shine--soft" id="result-meta"></p>
+          <p class="open-result__price" id="result-price" hidden></p>
+        </div>
+      </div>
+
+      <!-- Phase: sealed pack tear -->
+      <div class="pack pack--pokekyun" id="pack" data-state="sealed">
+        <div class="pack__ambient-glow" aria-hidden="true"></div>
+        <div class="pack__ambient-sparks" aria-hidden="true"></div>
+        <div class="pack__sky-eject" id="sky-eject" aria-hidden="true"></div>
+        <div class="pack__inner" id="pack-inner">
+          <svg class="pack__defs" width="0" height="0" aria-hidden="true" focusable="false">
+            <defs>
+              <clipPath id="pack-tear-clip" clipPathUnits="objectBoundingBox">
+                <polygon id="tear-poly-top" points="0,0 1,0 1,0.21 0,0.21"></polygon>
+              </clipPath>
+              <clipPath id="pack-body-clip" clipPathUnits="objectBoundingBox">
+                <polygon id="tear-poly-body" points="0,0.21 1,0.21 1,1 0,1"></polygon>
+              </clipPath>
+            </defs>
+          </svg>
+
+          <div class="pack__card-rise open151-rise" id="reveal-phase" hidden>
+            <div class="open151-stack" id="card-stack" aria-live="polite"></div>
+          </div>
+
+          <div class="pack__body" aria-hidden="true"></div>
+          <div class="pack__top" id="pack-top" aria-hidden="true"></div>
+          <div class="pack__tear-sheen" aria-hidden="true"></div>
+          <div class="pack__tear-glints" aria-hidden="true"></div>
+          <canvas class="pack__tear-stroke" id="tear-stroke" aria-hidden="true"></canvas>
+        </div>
+        <svg class="pack__open-fx" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <filter id="pokekyun-fx-blur-seam" x="-30%" y="-120%" width="160%" height="340%" color-interpolation-filters="sRGB">
+              <feGaussianBlur stdDeviation="0.01"></feGaussianBlur>
+            </filter>
+            <filter id="pokekyun-fx-blur-bloom" x="-50%" y="-200%" width="200%" height="420%" color-interpolation-filters="sRGB">
+              <feGaussianBlur stdDeviation="0.022"></feGaussianBlur>
+            </filter>
+            <clipPath id="pokekyun-fx-above-clip" clipPathUnits="userSpaceOnUse">
+              <polygon id="pokekyun-fx-above-poly" points="0,0 1,0 1,0.21 0,0.21"></polygon>
+            </clipPath>
+          </defs>
+          <g class="pack__open-fx__bloom" clip-path="url(#pokekyun-fx-above-clip)">
+            <polygon id="pokekyun-fx-fan-fill" points="0,0.21 1,0.21 1,0.08 0,0.08" fill="#ffe6a8" opacity="0.55" filter="url(#pokekyun-fx-blur-bloom)"></polygon>
+            <path id="pokekyun-fx-fan-rays" d="" fill="none" stroke="#fff6d8" stroke-width="0.012" stroke-linecap="round" opacity="0.85" filter="url(#pokekyun-fx-blur-seam)"></path>
+          </g>
+          <path id="pokekyun-fx-seam-path" class="pack__open-fx__seam" d="M 0 0.21 L 1 0.21" fill="none" stroke="#fffaf0" stroke-width="0.014" stroke-linecap="round" stroke-linejoin="round" filter="url(#pokekyun-fx-blur-seam)"></path>
+        </svg>
+        <div class="pack__tear-zone" id="tear-zone" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="팩 상단 찢기"></div>
+      </div>
+
+      <!-- Outside pack so card fling / pack layers cannot steal the first tap -->
+      <button type="button" class="open-btn open151-open-all" id="btn-open-all" hidden>한번에 열기</button>
+
+      <!-- Phase: gallery -->
+      <div class="open151-gallery" id="gallery-phase" hidden>
+        <div class="open151-gallery__grid" id="gallery-grid"></div>
+        <button type="button" class="open-btn" id="btn-reset">다시 열기</button>
+      </div>
+    </section>
+
+    <!-- Outside open-stage: stage perspective breaks position:fixed centering -->
+    <div class="open151-focus" id="gallery-focus" hidden>
+      <button type="button" class="open151-focus__backdrop" id="gallery-focus-backdrop" aria-label="닫기"></button>
+      <div class="open151-focus__card" id="gallery-focus-card"></div>
+    </div>
+
+    <!-- Detail modal -->
+    <div class="open151-modal" id="card-modal" hidden>
+      <button type="button" class="open151-modal__backdrop" id="modal-backdrop" aria-label="닫기"></button>
+      <div class="open151-modal__panel" role="dialog" aria-modal="true" aria-labelledby="modal-name">
+        <div class="open151-modal__card" id="modal-card"></div>
+        <p class="open151-modal__name" id="modal-name"></p>
+        <p class="open151-modal__meta" id="modal-meta"></p>
+        <p class="open151-modal__price" id="modal-price"></p>
+        <a class="open151-modal__link" id="modal-link" href="#">카드 상세 보기</a>
+        <button type="button" class="open-btn open-btn--ghost" id="modal-close">닫기</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="./data/data.js"></script>
+  <script src="./data/open-rates/pokekyun.js"></script>
+  <script src="./js/shared.js"></script>
+  <script src="./js/i18n.js"></script>
+  <script src="./js/holo.js?v=focus-idle-holo-1"></script>
+  <script src="./js/open-engine.js"></script>
+  <script src="./js/open-pokekyun.js?v=pokekyun-open-1"></script>
+</body>
+</html>
