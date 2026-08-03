@@ -65,5 +65,16 @@ jobs:
           git config user.name "Nyong-1104"
           git config user.email "cmy3544@gmail.com"
           git commit -m "chore(pokepop): eBay PSA prices for 151 (sv2a) cards"
-          git pull --rebase origin main
+          if ! git pull --rebase origin main; then
+            # Keep this run's live files (theirs during rebase = our commit).
+            git checkout --theirs \
+              pokemon-pop/data/live/pop-price.json \
+              pokemon-pop/data/live/last-run.json \
+              pokemon-pop/data/data.js
+            git add \
+              pokemon-pop/data/live/pop-price.json \
+              pokemon-pop/data/live/last-run.json \
+              pokemon-pop/data/data.js
+            GIT_EDITOR=true git rebase --continue
+          fi
           git push origin HEAD:main
