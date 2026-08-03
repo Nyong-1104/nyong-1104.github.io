@@ -481,9 +481,12 @@
     if (isHit(card)) el.classList.add("is-hit");
     if (isFoil(card)) el.classList.add("is-foil");
     if (r === "RR") el.classList.add("is-rr");
-    /* Chase RR → gold (UR FX); other RR → rainbow (SR FX) */
-    if (isGoldHit(card)) el.classList.add("is-ur");
-    else if (r === "RR") el.classList.add("is-sr");
+    /* Chase RR → SAR aurora + silver sweep; other RR → SR rainbow */
+    if (isGoldHit(card)) {
+      el.classList.add("is-sar", "is-chase-rr");
+    } else if (r === "RR") {
+      el.classList.add("is-sr");
+    }
   }
 
   function makeFace(card, faceDown) {

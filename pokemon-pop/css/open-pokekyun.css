@@ -316,15 +316,15 @@ body.is-gallery-focus .open-info {
     );
 }
 
-.pack.has-prism-open #open-fx-fan-fill {
+.pack.has-prism-open #pokekyun-fx-fan-fill {
   fill: #e8c4ff;
 }
 
-.pack.has-prism-open #open-fx-fan-rays {
+.pack.has-prism-open #pokekyun-fx-fan-rays {
   stroke: #fff0ff;
 }
 
-.pack.has-prism-open #open-fx-seam-path {
+.pack.has-prism-open #pokekyun-fx-seam-path {
   stroke: #f5e8ff;
 }
 
@@ -1838,3 +1838,53 @@ body.is-modal-open {
 .open151-modal__link:hover {
   text-decoration: underline;
 }
+
+/* Chase RR (Pikachu / Flareon EX 007): SAR aurora behind + silver sweep on card */
+.open-page--pokekyun .open151-card.is-chase-rr.is-foil.is-front.is-flat .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 30%,
+    rgba(190, 210, 235, 0.35) 38%,
+    rgba(255, 255, 255, 0.88) 48%,
+    rgba(210, 225, 245, 0.55) 54%,
+    rgba(175, 195, 225, 0.32) 62%,
+    transparent 72%,
+    transparent 100%
+  );
+  background-size: 280% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.95;
+  animation: open151-ar-foil 2.2s linear infinite;
+  filter: saturate(0.85) brightness(1.05);
+}
+
+.open-page--pokekyun .open151-card.is-chase-rr.is-foil.is-front.is-flat.is-top .holo-card__front::before,
+.open-page--pokekyun .open151-card.is-chase-rr.is-foil.is-front.is-flat.open151-card--gallery .holo-card__front::before {
+  opacity: 1;
+}
+
+.open151-focus__holo.is-chase-rr.is-foil .holo-card__front::before {
+  background-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    transparent 30%,
+    rgba(190, 210, 235, 0.35) 38%,
+    rgba(255, 255, 255, 0.9) 48%,
+    rgba(210, 225, 245, 0.55) 54%,
+    rgba(175, 195, 225, 0.32) 62%,
+    transparent 72%,
+    transparent 100%
+  );
+  background-size: 280% 100%;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.95;
+  animation: open151-ar-foil 2.2s linear infinite;
+  filter: saturate(0.85) brightness(1.05);
+}
+
+.open151-focus__card:has(.open151-focus__holo.is-chase-rr) {
+  filter: drop-shadow(0 0 18px rgba(255, 150, 200, 0.35))
+    drop-shadow(0 0 28px rgba(140, 200, 255, 0.28));
+}
+
