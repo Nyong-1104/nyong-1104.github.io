@@ -168,6 +168,29 @@ body.open-page.open-page--pokekyun {
   font-size: clamp(0.95rem, 3.2vw, 1.25rem);
 }
 
+.open151-pack-banner.is-cute {
+  background-image: linear-gradient(
+    90deg,
+    #c45a7a,
+    #f090b0,
+    #ffd0e0,
+    #fff0f6,
+    #ffe0a8,
+    #ffd0e0,
+    #f090b0,
+    #c45a7a,
+    #f090b0,
+    #ffd0e0,
+    #fff0f6,
+    #ffe0a8,
+    #f090b0,
+    #c45a7a
+  );
+  background-size: 200% 100%;
+  animation: open151-banner-sheen 2.6s linear infinite;
+  filter: drop-shadow(0 0 14px rgba(255, 140, 180, 0.45));
+}
+
 @keyframes open151-banner-sheen {
   from {
     background-position: 0% 50%;
@@ -180,7 +203,8 @@ body.open-page.open-page--pokekyun {
 @media (prefers-reduced-motion: reduce) {
   .open151-pack-banner.is-gold,
   .open151-pack-banner.is-rainbow,
-  .open151-pack-banner.is-silver {
+  .open151-pack-banner.is-silver,
+  .open151-pack-banner.is-cute {
     animation: none;
     background-position: 50% 50%;
   }
@@ -243,6 +267,17 @@ body.is-gallery-focus .open-info {
   filter: none;
 }
 
+.open-page--pokekyun .open-info.is-gallery.has-result .open-result__price {
+  margin-top: 0.2rem;
+  font-size: 0.88rem;
+  font-weight: 650;
+  color: #ffe7a0;
+  -webkit-text-fill-color: #ffe7a0;
+  background-image: none;
+  animation: none;
+  filter: drop-shadow(0 0 10px rgba(255, 200, 100, 0.35));
+}
+
 .open-page--pokekyun .open-result__name {
   font-size: 1.15rem;
   font-weight: 700;
@@ -256,7 +291,10 @@ body.is-gallery-focus .open-info {
 }
 
 .open-page--pokekyun .open-result__price {
-  display: none;
+  margin-top: 0.28rem;
+  font-size: 0.9rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
 }
 
 /* Pack art — overflow visible so fling + bottom art aren't clipped */

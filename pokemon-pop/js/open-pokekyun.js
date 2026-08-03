@@ -20,6 +20,11 @@
   /** Foil light during flat reveal — skip commons */
   const FOIL_RARITIES = { RR: 1, U: 1, C: 1 };
 
+  const GOD_PACK_RATE = 0.001; /* 0.1% — 4× Pikachu */
+  const DEDENNE_PACK_RATE = 0.005; /* 0.5% — 4× Dedenne */
+  const GOD_PACK_CARD_ID = "cp3-010";
+  const DEDENNE_PACK_CARD_ID = "cp3-012";
+
   const packEl = document.getElementById("pack");
   const packInner = document.getElementById("pack-inner");
   const skyEject = document.getElementById("sky-eject");
@@ -62,6 +67,8 @@
 
   let rates = null;
   let drawnSlots = [];
+  /** @type {null|"god"|"dedenne"} */
+  let specialPackKind = null;
   let revealIndex = 0;
   let stackReady = false;
   let flingBusy = false;
@@ -417,6 +424,7 @@
       "is-gold",
       "is-rainbow",
       "is-silver",
+      "is-cute",
       "is-multi",
       "is-dense"
     );
@@ -425,6 +433,22 @@
 
   function showPackBanner() {
     if (!packBanner) return;
+    clearPackBanner();
+    packBanner.hidden = false;
+    packBanner.classList.add("is-visible");
+    if (openInfo) openInfo.classList.add("has-banner");
+
+    if (specialPackKind === "god") {
+      packBanner.classList.add("is-gold");
+      packBanner.textContent = "Pulling a GOD PACK!!";
+      return;
+    }
+    if (specialPackKind === "dedenne") {
+      packBanner.classList.add("is-cute");
+      packBanner.textContent = "Pulling a Cute Dedenne Pack!";
+      return;
+    }
+
     const cards = drawnSlots.map(function (s) { return s && s.card; }).filter(Boolean);
     const hits = cards
       .filter(function (card) {
@@ -436,11 +460,6 @@
         const rb = isGoldHit(b) ? 0 : 1;
         return ra - rb;
       });
-
-    clearPackBanner();
-    packBanner.hidden = false;
-    packBanner.classList.add("is-visible");
-    if (openInfo) openInfo.classList.add("has-banner");
 
     if (!hits.length) {
       packBanner.classList.add("is-silver");
@@ -645,7 +664,8 @@
     if (!card) return;
     resultName.textContent = PT.cardName(card);
     resultMeta.textContent = `${card.number || ""} · ${card.rarity || ""}`;
-    resultPrice.textContent = "";
+    resultPrice.textContent = formatPriceLine(card);
+    resultPrice.hidden = false;
     resultEl.classList.add("is-visible");
     resultEl.setAttribute("aria-hidden", "false");
     openInfo.classList.add("has-result");
@@ -1311,6 +1331,51 @@
     packEl.classList.toggle("has-prism-open", packHasPrismHit());
   }
 
+  function findPackCardById(cards, cardId) {
+    for (let i = 0; i < cards.length; i++) {
+      if (cards[i] && cards[i].id === cardId) return cards[i];
+    }
+    return null;
+  }
+
+  function slotsFilledWithCard(card) {
+    const defs =
+      (rates && rates.slots) ||
+      [
+        { id: "n1", label: "1장" },
+        { id: "n2", label: "2장" },
+        { id: "n3", label: "3장" },
+        { id: "hit", label: "4장" },
+      ];
+    return defs.map(function (slot) {
+      return {
+        slotId: slot.id,
+        label: slot.label || slot.id,
+        card: card,
+      };
+    });
+  }
+
+  function drawPokekyunPack(cards) {
+    const roll = Math.random();
+    if (roll < GOD_PACK_RATE) {
+      const god = findPackCardById(cards, GOD_PACK_CARD_ID);
+      if (god) {
+        specialPackKind = "god";
+        return slotsFilledWithCard(god);
+      }
+    }
+    if (roll < GOD_PACK_RATE + DEDENNE_PACK_RATE) {
+      const cute = findPackCardById(cards, DEDENNE_PACK_CARD_ID);
+      if (cute) {
+        specialPackKind = "dedenne";
+        return slotsFilledWithCard(cute);
+      }
+    }
+    specialPackKind = null;
+    return PT.drawPackFromRates(rates, cards);
+  }
+
   function ensurePackDrawn() {
     if (drawnSlots.length) return true;
     if (!rates) {
@@ -1318,12 +1383,13 @@
       return false;
     }
     const cards = PT.getCards ? PT.getCards() : [];
-    drawnSlots = PT.drawPackFromRates(rates, cards);
+    drawnSlots = drawPokekyunPack(cards);
     const ok = drawnSlots.some(function (s) {
       return s && s.card;
     });
     if (!ok) {
       drawnSlots = [];
+      specialPackKind = null;
       hintEl.textContent = "카드 풀을 찾지 못했어요 (catalog " + cards.length + ")";
       return false;
     }
@@ -1343,7 +1409,7 @@
     if (!skyEject) return;
     clearSkyEject();
     document.body.classList.add("is-sky-ejecting");
-    const n = Math.max(drawnSlots.length || 5, 5);
+    const n = Math.max(drawnSlots.length || 4, 4);
     for (let i = 0; i < n; i++) {
       const card = document.createElement("div");
       card.className = "pack__sky-eject-card";
@@ -1384,6 +1450,7 @@
     }
 
     hintEl.textContent = "";
+    if (specialPackKind) showPackBanner();
     // Cards fly behind the dimming pack into the sky, then normal deal
     playSkyEject();
     window.setTimeout(function () {
@@ -1461,6 +1528,7 @@
     torn = false;
     dragging = false;
     drawnSlots = [];
+    specialPackKind = null;
     revealIndex = 0;
     stackReady = false;
     flingBusy = false;
@@ -1492,6 +1560,7 @@
     clearResultNameShine();
     resultMeta.textContent = "";
     resultPrice.textContent = "";
+    resultPrice.hidden = true;
     clearPackBanner();
     hintEl.textContent = "팩을 그어 개봉해주세요";
   }
