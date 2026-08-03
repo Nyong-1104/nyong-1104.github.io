@@ -1,29 +1,25 @@
 {
   "packId": "pokekyun",
-  "cardsPerPack": 5,
+  "cardsPerPack": 4,
   "packsPerBox": 20,
-  "note": "Simulator rates (not official). Hit slot = 25% RR; cp3-010 2%, cp3-007 3%, other RR share 20%.",
+  "note": "JP CP3 is 4 cards/pack. Simulator rates (not official). Hit slot = 25% RR; cp3-010 2%, cp3-007 3%, other RR share 20%.",
   "slots": [
     { "id": "n1", "label": "1장", "table": "slot1" },
     { "id": "n2", "label": "2장", "table": "slot2" },
     { "id": "n3", "label": "3장", "table": "slot3" },
-    { "id": "n4", "label": "4장", "table": "slot4" },
-    { "id": "hit", "label": "5장", "table": "hit_slot" }
+    { "id": "hit", "label": "4장", "table": "hit_slot" }
   ],
   "tables": {
     "slot1": [
       { "pool": "C", "w": 100 }
     ],
     "slot2": [
-      { "pool": "C", "w": 90 },
-      { "pool": "U", "w": 10 }
+      { "pool": "C", "w": 85 },
+      { "pool": "U", "w": 15 }
     ],
     "slot3": [
-      { "pool": "U", "w": 100 }
-    ],
-    "slot4": [
-      { "pool": "C", "w": 20 },
-      { "pool": "U", "w": 80 }
+      { "pool": "U", "w": 90 },
+      { "pool": "C", "w": 10 }
     ],
     "hit_slot": [
       { "cardId": "cp3-010", "w": 2 },

@@ -1,5 +1,5 @@
 /**
- * Pokekyun Pack Open — tear → flip 1/5…5/5 → gallery (3+2)
+ * Pokekyun Pack Open — tear → flip 1/4…4/4 → gallery (mobile 2×2 / PC 1×4)
  */
 (function () {
   const PT = window.PopTracker;
@@ -462,10 +462,11 @@
       packBanner.classList.add("is-dense");
     }
 
-    const hasUR = hits.some(function (card) {
+    const hasChase = hits.some(function (card) {
       return isGoldHit(card);
     });
-    packBanner.classList.add(hasUR ? "is-gold" : "is-rainbow");
+    /* Chase RR → gold; other RR names → silver */
+    packBanner.classList.add(hasChase ? "is-gold" : "is-silver");
   }
 
   function arHoloStyle(card) {
@@ -636,6 +637,10 @@
     });
   }
 
+  function clearResultNameShine() {
+    resultName.classList.remove("open-result__shine--gold", "open-result__shine--silver");
+  }
+
   function showRevealInfo(card) {
     if (!card) return;
     resultName.textContent = PT.cardName(card);
@@ -645,8 +650,11 @@
     resultEl.setAttribute("aria-hidden", "false");
     openInfo.classList.add("has-result");
     const hit = isHit(card);
+    const chase = isGoldHit(card);
     resultEl.classList.toggle("is-hit", hit);
-    resultName.classList.toggle("open-result__shine--gold", hit);
+    clearResultNameShine();
+    if (chase) resultName.classList.add("open-result__shine--gold");
+    else if (hit) resultName.classList.add("open-result__shine--silver");
   }
 
   function stackOffset(iFromTop) {
@@ -1083,7 +1091,7 @@
     resultEl.classList.remove("is-visible", "is-hit");
     resultEl.setAttribute("aria-hidden", "true");
     openInfo.classList.remove("has-result");
-    resultName.classList.remove("open-result__shine--gold");
+    clearResultNameShine();
   }
 
   function clearGalleryFocus(animate) {
@@ -1099,7 +1107,7 @@
     galleryFocus.classList.add("is-flying");
     resultEl.classList.remove("is-visible", "is-hit");
     openInfo.classList.remove("has-result");
-    resultName.classList.remove("open-result__shine--gold");
+    clearResultNameShine();
 
     galleryFocusCard.style.transition =
       "left 0.38s cubic-bezier(0.22, 0.82, 0.25, 1), top 0.38s cubic-bezier(0.22, 0.82, 0.25, 1), width 0.38s cubic-bezier(0.22, 0.82, 0.25, 1), height 0.38s cubic-bezier(0.22, 0.82, 0.25, 1)";
@@ -1233,8 +1241,8 @@
 
     galleryGrid.innerHTML = "";
     const cards = drawnSlots.map(function (s) { return s && s.card; }).filter(Boolean);
-    // Pokekyun: always 3 top / 2 bottom
-    const pattern = [3, 2];
+    // JP pack = 4 cards: mobile 2×2, PC one row of 4
+    const pattern = isMobileGalleryLayout() ? [2, 2] : [4];
     let idx = 0;
     pattern.forEach(function (count) {
       const row = document.createElement("div");
@@ -1481,7 +1489,7 @@
     resultEl.setAttribute("aria-hidden", "true");
     openInfo.classList.remove("has-result", "is-gallery");
     resultName.textContent = "";
-    resultName.classList.remove("open-result__shine--gold");
+    clearResultNameShine();
     resultMeta.textContent = "";
     resultPrice.textContent = "";
     clearPackBanner();

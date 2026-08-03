@@ -209,6 +209,29 @@ body.is-gallery-focus .open-info {
   filter: drop-shadow(0 0 16px rgba(255, 200, 100, 0.45));
 }
 
+.open-page--pokekyun .open-result__shine--silver {
+  background-image: linear-gradient(
+    105deg,
+    #8a929c 0%,
+    #a8b0ba 36%,
+    #e8eef4 46%,
+    #c5ced8 50%,
+    #e8eef4 54%,
+    #a8b0ba 64%,
+    #8a929c 100%
+  );
+  filter: drop-shadow(0 0 10px rgba(180, 195, 210, 0.28));
+  animation-duration: 3.2s;
+}
+
+.open-page--pokekyun .open-info.is-gallery.has-result .open-result__name.open-result__shine--silver {
+  color: #c5ced8;
+  -webkit-text-fill-color: #c5ced8;
+  background-image: none;
+  animation: none;
+  filter: drop-shadow(0 0 14px rgba(180, 195, 210, 0.4));
+}
+
 .open-page--pokekyun .open-info.is-gallery.has-result .open-result__meta {
   margin-top: 0.25rem;
   font-size: 0.9rem;
@@ -1241,6 +1264,16 @@ body.open-page.open-page--pokekyun.is-sky-ejecting {
   padding: 0.5rem 0 2.5rem;
 }
 
+.open-page--pokekyun .open151-gallery {
+  width: min(100%, 560px);
+}
+
+@media (min-width: 561px) {
+  .open-page--pokekyun .open151-gallery {
+    width: min(100%, 680px);
+  }
+}
+
 .open151-gallery__grid {
   display: flex;
   flex-direction: column;
@@ -1265,7 +1298,13 @@ body.open-page.open-page--pokekyun.is-sky-ejecting {
   max-width: calc((100% - 1.65rem) / 4);
 }
 
-/* Mobile 2-3-2: same card size as middle row of 3 */
+/* Pokekyun mobile 2×2: half-width thumbs */
+.open-page--pokekyun .open151-gallery__row--2 .open151-gallery__cell {
+  width: calc((100% - 0.55rem) / 2);
+  max-width: none;
+}
+
+/* Legacy / other packs: 2-across matches middle-of-3 size */
 .open151-gallery__row--2 .open151-gallery__cell {
   width: calc((100% - 1.1rem) / 3);
 }
