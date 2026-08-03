@@ -1,0 +1,68 @@
+name: PokePop eBay Pokekyun (심쿵) fetch
+
+# Push branch `ebay-pokekyun-fetch` (or workflow_dispatch) to refresh
+# eBay PSA asking prices for the PokéKyun Collection (CP3) pack.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - ebay-pokekyun-fetch
+
+concurrency:
+  group: ebay-pokekyun-fetch
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-pokekyun-ebay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Merge fetch scripts from trigger branch
+        if: github.event_name == 'push'
+        run: |
+          git fetch origin "${{ github.ref_name }}"
+          git checkout "origin/${{ github.ref_name }}" -- \
+            pokemon-pop/scripts/fetch_live.py \
+            pokemon-pop/scripts/ebay_prices.py \
+            pokemon-pop/scripts/fetch_ebay_new_packs.py \
+            pokemon-pop/data/packs.json || true
+
+      - name: Fetch eBay prices for Pokekyun (CP3)
+        env:
+          EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
+          EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
+          EBAY_FETCH_LIMIT: "80"
+        run: |
+          python pokemon-pop/scripts/fetch_live.py \
+            --skip-brg \
+            --pack pokekyun \
+            --langs jp,kr \
+            --ebay-limit 80 \
+            --max-age-days 0
+
+      - name: Commit and push to main
+        run: |
+          git add pokemon-pop/data/live/pop-price.json pokemon-pop/data/live/last-run.json pokemon-pop/data/data.js
+          if git diff --staged --quiet; then
+            echo "No live data changes to commit."
+            exit 0
+          fi
+          git config user.name "Nyong-1104"
+          git config user.email "cmy3544@gmail.com"
+          git commit -m "chore(pokepop): eBay PSA prices for Pokekyun (심쿵) cards"
+          git pull --rebase origin main
+          git push origin HEAD:main

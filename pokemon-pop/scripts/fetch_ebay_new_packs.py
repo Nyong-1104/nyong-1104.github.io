@@ -32,6 +32,7 @@ KST = timezone(timedelta(hours=9))
 
 # Packs added in the recent upload batch (boosters + promo/box).
 NEW_PACKS = [
+    "pokekyun",
     "s12a-vstar-universe",
     "sm12a-tag-all-stars",
     "s1a-vmax-rising",
