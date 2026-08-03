@@ -1,0 +1,69 @@
+name: PokePop eBay 151 fetch
+
+# Push branch `ebay-151-fetch` (or workflow_dispatch) to refresh
+# eBay PSA asking prices for Pokémon Card 151 (sv2a).
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - ebay-151-fetch
+
+concurrency:
+  group: ebay-151-fetch
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-151-ebay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Merge fetch scripts from trigger branch
+        if: github.event_name == 'push'
+        run: |
+          git fetch origin "${{ github.ref_name }}"
+          git checkout "origin/${{ github.ref_name }}" -- \
+            pokemon-pop/scripts/fetch_live.py \
+            pokemon-pop/scripts/ebay_prices.py \
+            pokemon-pop/scripts/fetch_ebay_new_packs.py \
+            pokemon-pop/data/packs.json || true
+
+      - name: Fetch eBay prices for 151 (sv2a)
+        env:
+          EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
+          EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
+          EBAY_FETCH_LIMIT: "1600"
+        run: |
+          # Fill missing slots only (keep existing eBay prices).
+          python pokemon-pop/scripts/fetch_live.py \
+            --skip-brg \
+            --pack sv2a-151 \
+            --langs jp,kr,en \
+            --ebay-limit 1600 \
+            --max-age-days 36500
+
+      - name: Commit and push to main
+        run: |
+          git add pokemon-pop/data/live/pop-price.json pokemon-pop/data/live/last-run.json pokemon-pop/data/data.js
+          if git diff --staged --quiet; then
+            echo "No live data changes to commit."
+            exit 0
+          fi
+          git config user.name "Nyong-1104"
+          git config user.email "cmy3544@gmail.com"
+          git commit -m "chore(pokepop): eBay PSA prices for 151 (sv2a) cards"
+          git pull --rebase origin main
+          git push origin HEAD:main
