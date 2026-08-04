@@ -3,7 +3,7 @@ window.POP_OPEN_RATES["sv2a-151"] = {
   "packId": "sv2a-151",
   "cardsPerPack": 7,
   "packsPerBox": 20,
-  "note": "Fun simulator rates (not official). Per-slot custom weights.",
+  "note": "Fun simulator rates (not official). Per-slot custom weights. Special: 0.3% SAR God Pack (7x SAR), 0.2% UR God Pack (7x UR), 0.5% SR+ God Pack (7x SR/SAR/UR), 0.5% Master Ball God Pack (7x MSB).",
   "slots": [
     { "id": "n1", "label": "1장", "table": "slot1" },
     { "id": "n2", "label": "2장", "table": "slot2" },

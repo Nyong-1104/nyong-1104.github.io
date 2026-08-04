@@ -18,6 +18,11 @@
   const HIT_RARITIES = { MSB: 1, SR: 1, SAR: 1, UR: 1 };
   /** Foil light during flat reveal — skip commons / R */
   const FOIL_RARITIES = { RR: 1, AR: 1, SR: 1, SAR: 1, UR: 1, MB: 1, MSB: 1 };
+  /** Special packs (mutually exclusive sequential rolls) */
+  const SAR_GOD_PACK_RATE = 0.003; /* 0.3% — 7× SAR */
+  const UR_GOD_PACK_RATE = 0.002; /* 0.2% — 7× UR */
+  const SR_PLUS_GOD_PACK_RATE = 0.005; /* 0.5% — 7× SR/SAR/UR */
+  const MSB_GOD_PACK_RATE = 0.005; /* 0.5% — 7× MSB */
 
   const packEl = document.getElementById("pack");
   const packInner = document.getElementById("pack-inner");
@@ -72,6 +77,8 @@
   let tear = 0;
   let dragging = false;
   let torn = false;
+  /** @type {null|"sar-god"|"ur-god"|"sr-plus-god"|"msb-god"} */
+  let specialPackKind = null;
   let glowAliveRaf = 0;
   let glowAlivePhase = 0;
   let flatHoloRaf = 0;
@@ -422,6 +429,32 @@
 
   function showPackBanner() {
     if (!packBanner) return;
+    clearPackBanner();
+    packBanner.hidden = false;
+    packBanner.classList.add("is-visible");
+    if (openInfo) openInfo.classList.add("has-banner");
+
+    if (specialPackKind === "sar-god") {
+      packBanner.classList.add("is-gold");
+      packBanner.textContent = "Pulling a SAR GOD PACK!!";
+      return;
+    }
+    if (specialPackKind === "ur-god") {
+      packBanner.classList.add("is-gold");
+      packBanner.textContent = "Pulling a UR GOD PACK!!";
+      return;
+    }
+    if (specialPackKind === "sr-plus-god") {
+      packBanner.classList.add("is-gold");
+      packBanner.textContent = "Pulling a SR+ GOD PACK!!";
+      return;
+    }
+    if (specialPackKind === "msb-god") {
+      packBanner.classList.add("is-rainbow");
+      packBanner.textContent = "Pulling a Master Ball GOD PACK!!";
+      return;
+    }
+
     const cards = drawnSlots.map(function (s) { return s && s.card; }).filter(Boolean);
     const hitRank = { UR: 0, SAR: 1, SR: 2, MSB: 3 };
     const hits = cards
@@ -432,11 +465,6 @@
       .sort(function (a, b) {
         return hitRank[rarityKey(a)] - hitRank[rarityKey(b)];
       });
-
-    clearPackBanner();
-    packBanner.hidden = false;
-    packBanner.classList.add("is-visible");
-    if (openInfo) openInfo.classList.add("has-banner");
 
     if (!hits.length) {
       packBanner.classList.add("is-silver");
@@ -1302,6 +1330,87 @@
     packEl.classList.toggle("has-prism-open", packHasPrismHit());
   }
 
+  function packCardPool(cards, rarities) {
+    const want = {};
+    (rarities || []).forEach(function (r) {
+      want[String(r).toUpperCase()] = 1;
+    });
+    return (cards || []).filter(function (c) {
+      return c && c.packId === PACK_ID && want[rarityKey(c)];
+    });
+  }
+
+  function drawRandomFromRarities(cards, rarities, count) {
+    const pool = packCardPool(cards, rarities);
+    if (!pool.length) return null;
+    const picked = [];
+    for (let i = 0; i < count; i++) {
+      picked.push(pool[Math.floor(Math.random() * pool.length)]);
+    }
+    return picked;
+  }
+
+  function slotsFilledWithCards(cardList) {
+    const defs =
+      (rates && rates.slots) ||
+      [
+        { id: "n1", label: "1장" },
+        { id: "n2", label: "2장" },
+        { id: "n3", label: "3장" },
+        { id: "n4", label: "4장" },
+        { id: "rev", label: "5장" },
+        { id: "rare", label: "6장" },
+        { id: "hit", label: "7장" },
+      ];
+    return defs.map(function (slot, i) {
+      return {
+        slotId: slot.id,
+        label: slot.label || slot.id,
+        card: cardList[i] || cardList[0] || null,
+      };
+    });
+  }
+
+  function cardsPerPack() {
+    return (rates && rates.cardsPerPack) || 7;
+  }
+
+  function draw151Pack(cards) {
+    const n = cardsPerPack();
+    const roll = Math.random();
+    let cursor = 0;
+    if (roll < (cursor += SAR_GOD_PACK_RATE)) {
+      const picked = drawRandomFromRarities(cards, ["SAR"], n);
+      if (picked && picked.length === n) {
+        specialPackKind = "sar-god";
+        return slotsFilledWithCards(picked);
+      }
+    }
+    if (roll < (cursor += UR_GOD_PACK_RATE)) {
+      const picked = drawRandomFromRarities(cards, ["UR"], n);
+      if (picked && picked.length === n) {
+        specialPackKind = "ur-god";
+        return slotsFilledWithCards(picked);
+      }
+    }
+    if (roll < (cursor += SR_PLUS_GOD_PACK_RATE)) {
+      const picked = drawRandomFromRarities(cards, ["SR", "SAR", "UR"], n);
+      if (picked && picked.length === n) {
+        specialPackKind = "sr-plus-god";
+        return slotsFilledWithCards(picked);
+      }
+    }
+    if (roll < (cursor += MSB_GOD_PACK_RATE)) {
+      const picked = drawRandomFromRarities(cards, ["MSB"], n);
+      if (picked && picked.length === n) {
+        specialPackKind = "msb-god";
+        return slotsFilledWithCards(picked);
+      }
+    }
+    specialPackKind = null;
+    return PT.drawPackFromRates(rates, cards);
+  }
+
   function ensurePackDrawn() {
     if (drawnSlots.length) return true;
     if (!rates) {
@@ -1309,12 +1418,13 @@
       return false;
     }
     const cards = PT.getCards ? PT.getCards() : [];
-    drawnSlots = PT.drawPackFromRates(rates, cards);
+    drawnSlots = draw151Pack(cards);
     const ok = drawnSlots.some(function (s) {
       return s && s.card;
     });
     if (!ok) {
       drawnSlots = [];
+      specialPackKind = null;
       hintEl.textContent = "카드 풀을 찾지 못했어요 (catalog " + cards.length + ")";
       return false;
     }
@@ -1375,6 +1485,7 @@
     }
 
     hintEl.textContent = "";
+    if (specialPackKind) showPackBanner();
     // Cards fly behind the dimming pack into the sky, then normal deal
     playSkyEject();
     window.setTimeout(function () {
@@ -1457,6 +1568,7 @@
     flingBusy = false;
     openAllBusy = false;
     flingDrag = null;
+    specialPackKind = null;
     points = [];
     stopFlatHoloSweep();
     setOpenAllVisible(false);
