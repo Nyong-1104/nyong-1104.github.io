@@ -116,6 +116,7 @@ PACKS = [
         "code": "CP3",
         "releaseYear": 2016,
         "languages": ["jp", "kr"],
+        "trackAllPrices": True,
         "blurb": "2016년 발매된 귀여움 특화 세트. 피카츄·데덴네가 대표 카드입니다.",
         "blurbEn": "A 2016 cute-themed concept set. Pikachu and Dedenne are the face cards.",
         "blurbJa": "2016年発売のかわいい特化セット。ピカチュウ・デデンネが代表カードです。",

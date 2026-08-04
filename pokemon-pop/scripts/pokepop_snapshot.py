@@ -155,12 +155,12 @@ def build_live_snapshot(catalog, packs, asof_iso: str, previous=None):
 
     for card in catalog:
         tier = ensure_card_tier(card)
-        if tier == "C":
-            stats["skippedTierC"] += 1
-            continue
-
         pack = packs_by_id.get(card["packId"])
         if not pack:
+            continue
+        # Packs may opt in so C/U commons still get live eBay price shells.
+        if tier == "C" and not pack.get("trackAllPrices"):
+            stats["skippedTierC"] += 1
             continue
 
         seed = card.get("seed") or {}
