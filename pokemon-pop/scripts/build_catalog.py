@@ -100,6 +100,7 @@ PACKS = [
         "code": "sv2a",
         "releaseYear": 2023,
         "languages": ["jp", "kr", "en"],
+        "trackAllPrices": True,
         "blurb": "원조 151마리를 모은 강화 확장팩. 리자몽·뮤 SAR가 대표 카드입니다.",
         "blurbEn": "Enhanced expansion featuring the original 151. Charizard and Mew SARs headline the set.",
         "blurbJa": "初代151匹を集めた強化拡張パック。リザードン・ミュウSARが代表カードです。",

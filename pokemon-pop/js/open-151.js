@@ -636,7 +636,8 @@
     if (!card) return;
     resultName.textContent = PT.cardName(card);
     resultMeta.textContent = `${card.number || ""} · ${card.rarity || ""}`;
-    resultPrice.textContent = "";
+    resultPrice.textContent = formatPriceLine(card);
+    resultPrice.hidden = false;
     resultEl.classList.add("is-visible");
     resultEl.setAttribute("aria-hidden", "false");
     openInfo.classList.add("has-result");
@@ -1482,6 +1483,7 @@
     resultName.classList.remove("open-result__shine--gold");
     resultMeta.textContent = "";
     resultPrice.textContent = "";
+    resultPrice.hidden = true;
     clearPackBanner();
     hintEl.textContent = "팩을 그어 개봉해주세요";
   }
