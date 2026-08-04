@@ -1056,6 +1056,7 @@
   }
 
   function focusCardSize(maxW, maxH) {
+    // Match 151 focus size — only the layout band differs (viewport, not reset gap)
     const widthCap = Math.min(200, Math.max(140, (maxW || window.innerWidth) * 0.48));
     let w = widthCap;
     let h = w / 0.716;
@@ -1081,21 +1082,33 @@
   }
 
   function centerFocusBox() {
-    // Use layout viewport — focus overlay is outside .open-stage now
+    // Sit over the gallery card area (not vertically centered in the whole page)
     const width = window.innerWidth;
     const height = window.innerHeight;
     const infoRect = openInfo ? openInfo.getBoundingClientRect() : null;
-    const resetRect = btnReset ? btnReset.getBoundingClientRect() : null;
+    const gridRect = galleryGrid ? galleryGrid.getBoundingClientRect() : null;
+    const galleryRect = galleryPhase ? galleryPhase.getBoundingClientRect() : null;
+    const area = gridRect && gridRect.height > 40 ? gridRect : galleryRect;
 
-    const topBound = (infoRect ? infoRect.bottom : 88) + 10;
-    let bottomBound = height - 20;
-    if (resetRect && resetRect.top > topBound + 80) {
-      bottomBound = resetRect.top - 12;
-    }
+    const topBound = (infoRect ? infoRect.bottom : 88) + 8;
+    const bottomBound = height - 20;
     const bandH = Math.max(160, bottomBound - topBound);
     const size = focusCardSize(width, bandH * 0.9);
     const left = (width - size.w) / 2;
-    const top = topBound + Math.max(0, (bandH - size.h) / 2);
+
+    let top;
+    if (area && area.height > 40) {
+      // Center on the gallery thumbnails row/block
+      const areaMid = area.top + area.height / 2;
+      top = areaMid - size.h / 2;
+    } else {
+      top = topBound + 12;
+    }
+    // Keep fully on-screen under the info strip
+    const minTop = topBound;
+    const maxTop = Math.max(minTop, bottomBound - size.h);
+    top = Math.min(Math.max(top, minTop), maxTop);
+
     return { left: left, top: top, width: size.w, height: size.h };
   }
 
