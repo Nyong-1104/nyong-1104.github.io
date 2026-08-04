@@ -21,6 +21,7 @@
   const FOIL_RARITIES = { RR: 1, U: 1, C: 1 };
 
   const GOD_PACK_RATE = 0.001; /* 0.1% — 4× Pikachu */
+  const RR_GOD_PACK_RATE = 0.004; /* 0.4% — 4× random RR (dupes ok) */
   const DEDENNE_PACK_RATE = 0.005; /* 0.5% — 4× Dedenne */
   const GOD_PACK_CARD_ID = "cp3-010";
   const DEDENNE_PACK_CARD_ID = "cp3-012";
@@ -67,7 +68,7 @@
 
   let rates = null;
   let drawnSlots = [];
-  /** @type {null|"god"|"dedenne"} */
+  /** @type {null|"god"|"rr-god"|"dedenne"} */
   let specialPackKind = null;
   let revealIndex = 0;
   let stackReady = false;
@@ -441,6 +442,11 @@
     if (specialPackKind === "god") {
       packBanner.classList.add("is-gold");
       packBanner.textContent = "Pulling a GOD PACK!!";
+      return;
+    }
+    if (specialPackKind === "rr-god") {
+      packBanner.classList.add("is-gold");
+      packBanner.textContent = "Pulling a RR GOD PACK!!";
       return;
     }
     if (specialPackKind === "dedenne") {
@@ -1356,16 +1362,58 @@
     });
   }
 
+  function slotsFilledWithCards(cardList) {
+    const defs =
+      (rates && rates.slots) ||
+      [
+        { id: "n1", label: "1장" },
+        { id: "n2", label: "2장" },
+        { id: "n3", label: "3장" },
+        { id: "hit", label: "4장" },
+      ];
+    return defs.map(function (slot, i) {
+      return {
+        slotId: slot.id,
+        label: slot.label || slot.id,
+        card: cardList[i] || cardList[0] || null,
+      };
+    });
+  }
+
+  function packRrPool(cards) {
+    return (cards || []).filter(function (c) {
+      return c && c.packId === PACK_ID && rarityKey(c) === "RR";
+    });
+  }
+
+  function drawRandomRrCards(cards, count) {
+    const pool = packRrPool(cards);
+    if (!pool.length) return null;
+    const picked = [];
+    for (let i = 0; i < count; i++) {
+      picked.push(pool[Math.floor(Math.random() * pool.length)]);
+    }
+    return picked;
+  }
+
   function drawPokekyunPack(cards) {
     const roll = Math.random();
-    if (roll < GOD_PACK_RATE) {
+    let cursor = 0;
+    if (roll < (cursor += GOD_PACK_RATE)) {
       const god = findPackCardById(cards, GOD_PACK_CARD_ID);
       if (god) {
         specialPackKind = "god";
         return slotsFilledWithCard(god);
       }
     }
-    if (roll < GOD_PACK_RATE + DEDENNE_PACK_RATE) {
+    if (roll < (cursor += RR_GOD_PACK_RATE)) {
+      const rrCards = drawRandomRrCards(cards, 4);
+      if (rrCards && rrCards.length === 4) {
+        specialPackKind = "rr-god";
+        return slotsFilledWithCards(rrCards);
+      }
+    }
+    if (roll < (cursor += DEDENNE_PACK_RATE)) {
       const cute = findPackCardById(cards, DEDENNE_PACK_CARD_ID);
       if (cute) {
         specialPackKind = "dedenne";

@@ -3,7 +3,7 @@ window.POP_OPEN_RATES["pokekyun"] = {
   "packId": "pokekyun",
   "cardsPerPack": 4,
   "packsPerBox": 20,
-  "note": "JP CP3 is 4 cards/pack. Simulator rates (not official). Hit slot = 25% RR; cp3-010 2%, cp3-007 3%, other RR share 20%. Special: 0.1% God Pack (4x cp3-010), 0.5% Cute Dedenne Pack (4x cp3-012).",
+  "note": "JP CP3 is 4 cards/pack. Simulator rates (not official). Hit slot = 25% RR; cp3-010 2%, cp3-007 3%, other RR share 20%. Special: 0.1% God Pack (4x cp3-010), 0.4% RR God Pack (4x random RR, dupes ok), 0.5% Cute Dedenne Pack (4x cp3-012).",
   "slots": [
     { "id": "n1", "label": "1장", "table": "slot1" },
     { "id": "n2", "label": "2장", "table": "slot2" },
