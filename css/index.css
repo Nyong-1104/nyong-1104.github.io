@@ -31,10 +31,10 @@ body {
 }
 
 .site-title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Covered By Your Grace', cursive;
   font-size: clamp(2.8rem, 12vw, 4.5rem);
   font-weight: 400;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.02em;
   color: var(--white);
   line-height: 0.95;
 }
@@ -42,18 +42,9 @@ body {
 .hero-line {
   width: min(360px, 78vw);
   height: 5px;
-  margin: 16px auto 14px;
+  margin: 16px auto 0;
   background: linear-gradient(90deg, var(--yellow), var(--purple), var(--green), var(--red));
   border: 2px solid var(--black);
-}
-
-.site-tagline {
-  font-family: 'Covered By Your Grace', cursive;
-  font-size: clamp(1.15rem, 3.2vw, 1.45rem);
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  color: var(--white);
-  font-style: normal;
 }
 
 .stage {
