@@ -39,14 +39,6 @@ body {
   line-height: 0.95;
 }
 
-.hero-line {
-  width: min(360px, 78vw);
-  height: 5px;
-  margin: 16px auto 0;
-  background: linear-gradient(90deg, var(--yellow), var(--purple), var(--green), var(--red));
-  border: 2px solid var(--black);
-}
-
 .stage {
   position: relative;
   width: 100%;
