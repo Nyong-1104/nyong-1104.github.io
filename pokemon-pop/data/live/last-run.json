@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-08-17T15:03:36+09:00",
+  "ranAt": "2026-08-17T16:09:43+09:00",
   "stats": {
     "asOf": "2026-08-17",
-    "asOfIso": "2026-08-17T15:03:36+09:00",
+    "asOfIso": "2026-08-17T16:09:43+09:00",
     "cardsTotal": 4941,
     "cardsLive": 2443,
     "skippedTierC": 2498,
@@ -28,7 +28,7 @@
           "cardsMatched": 2310,
           "cardsNoBrgEntry": 2719,
           "cardsAttempted": 5029,
-          "brgEntriesFetched": 3165,
+          "brgEntriesFetched": 3161,
           "dryRun": false,
           "setMap": [
             {
@@ -587,8 +587,8 @@
             {
               "packId": "m6-storm-emerald",
               "lang": "jp",
-              "setName": "POKEMON S&M JAPANESE SM6",
-              "year": 2018
+              "setName": "POKEMON MG JAPANESE M6",
+              "year": 2026
             },
             {
               "packId": "m6-storm-emerald",
@@ -680,7 +680,7 @@
       "cardsMatched": 2310,
       "cardsNoBrgEntry": 2719,
       "cardsAttempted": 5029,
-      "brgEntriesFetched": 3165,
+      "brgEntriesFetched": 3161,
       "dryRun": 0,
       "cardsUnmatched": 2719
     },
