@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-08-23T20:52:06+09:00",
+  "ranAt": "2026-08-23T21:55:20+09:00",
   "stats": {
     "asOf": "2026-08-23",
-    "asOfIso": "2026-08-23T20:52:06+09:00",
+    "asOfIso": "2026-08-23T21:55:20+09:00",
     "cardsTotal": 4941,
     "cardsLive": 2443,
     "skippedTierC": 2498,
@@ -691,15 +691,29 @@
           "ebayEnabled": true,
           "jobsPlanned": 50,
           "jobsOk": 0,
-          "jobsEmpty": 50,
-          "jobsFailed": 0,
-          "dryRun": false
+          "jobsEmpty": 49,
+          "jobsFailed": 1,
+          "dryRun": false,
+          "errors": [
+            {
+              "cardId": "sv4k-092",
+              "lang": "kr",
+              "error": "The read operation timed out"
+            }
+          ]
         }
       },
       "jobsPlanned": 50,
       "jobsOk": 0,
-      "jobsEmpty": 50,
-      "jobsFailed": 0
+      "jobsEmpty": 49,
+      "jobsFailed": 1,
+      "errors": [
+        {
+          "cardId": "sv4k-092",
+          "lang": "kr",
+          "error": "The read operation timed out"
+        }
+      ]
     },
     "liveSource": "eBay+seed+BRG"
   }
