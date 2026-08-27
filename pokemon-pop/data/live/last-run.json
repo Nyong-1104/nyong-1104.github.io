@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-08-27T08:19:29+09:00",
+  "ranAt": "2026-08-27T10:01:53+09:00",
   "stats": {
     "asOf": "2026-08-27",
-    "asOfIso": "2026-08-27T08:19:29+09:00",
+    "asOfIso": "2026-08-27T10:01:53+09:00",
     "cardsTotal": 4941,
     "cardsLive": 2443,
     "skippedTierC": 2498,
@@ -25,10 +25,10 @@
           "setsResolved": 102,
           "setsMissing": 1,
           "setsUnavailable": 4,
-          "cardsMatched": 2327,
-          "cardsNoBrgEntry": 2702,
+          "cardsMatched": 2328,
+          "cardsNoBrgEntry": 2701,
           "cardsAttempted": 5029,
-          "brgEntriesFetched": 3176,
+          "brgEntriesFetched": 3180,
           "dryRun": false,
           "setMap": [
             {
@@ -593,8 +593,8 @@
             {
               "packId": "m6-storm-emerald",
               "lang": "kr",
-              "setName": "POKEMON S&M KOREAN SM60A",
-              "year": 2017
+              "setName": "POKEMON MG KOREAN M6",
+              "year": 2026
             },
             {
               "packId": "japan-post-stamp-box",
@@ -670,19 +670,19 @@
             }
           ],
           "errors": [],
-          "matchRate": 0.4627,
-          "cardsUnmatched": 2702
+          "matchRate": 0.4629,
+          "cardsUnmatched": 2701
         }
       },
       "setsResolved": 102,
       "setsMissing": 1,
       "setsUnavailable": 4,
-      "cardsMatched": 2327,
-      "cardsNoBrgEntry": 2702,
+      "cardsMatched": 2328,
+      "cardsNoBrgEntry": 2701,
       "cardsAttempted": 5029,
-      "brgEntriesFetched": 3176,
+      "brgEntriesFetched": 3180,
       "dryRun": 0,
-      "cardsUnmatched": 2702
+      "cardsUnmatched": 2701
     },
     "ebay": {
       "ebayEnabled": true,
@@ -690,15 +690,15 @@
         "all": {
           "ebayEnabled": true,
           "jobsPlanned": 50,
-          "jobsOk": 0,
-          "jobsEmpty": 50,
+          "jobsOk": 31,
+          "jobsEmpty": 19,
           "jobsFailed": 0,
           "dryRun": false
         }
       },
       "jobsPlanned": 50,
-      "jobsOk": 0,
-      "jobsEmpty": 50,
+      "jobsOk": 31,
+      "jobsEmpty": 19,
       "jobsFailed": 0
     },
     "liveSource": "eBay+seed+BRG"
