@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-08-31T08:47:49+09:00",
+  "ranAt": "2026-08-31T14:19:38+09:00",
   "stats": {
     "asOf": "2026-08-31",
-    "asOfIso": "2026-08-31T08:47:49+09:00",
+    "asOfIso": "2026-08-31T14:19:38+09:00",
     "cardsTotal": 4941,
     "cardsLive": 2443,
     "skippedTierC": 2498,
@@ -25,10 +25,10 @@
           "setsResolved": 102,
           "setsMissing": 1,
           "setsUnavailable": 4,
-          "cardsMatched": 2331,
-          "cardsNoBrgEntry": 2698,
+          "cardsMatched": 2337,
+          "cardsNoBrgEntry": 2692,
           "cardsAttempted": 5029,
-          "brgEntriesFetched": 3191,
+          "brgEntriesFetched": 3204,
           "dryRun": false,
           "setMap": [
             {
@@ -670,19 +670,19 @@
             }
           ],
           "errors": [],
-          "matchRate": 0.4635,
-          "cardsUnmatched": 2698
+          "matchRate": 0.4647,
+          "cardsUnmatched": 2692
         }
       },
       "setsResolved": 102,
       "setsMissing": 1,
       "setsUnavailable": 4,
-      "cardsMatched": 2331,
-      "cardsNoBrgEntry": 2698,
+      "cardsMatched": 2337,
+      "cardsNoBrgEntry": 2692,
       "cardsAttempted": 5029,
-      "brgEntriesFetched": 3191,
+      "brgEntriesFetched": 3204,
       "dryRun": 0,
-      "cardsUnmatched": 2698
+      "cardsUnmatched": 2692
     },
     "ebay": {
       "ebayEnabled": true,
@@ -690,15 +690,15 @@
         "all": {
           "ebayEnabled": true,
           "jobsPlanned": 50,
-          "jobsOk": 0,
-          "jobsEmpty": 50,
+          "jobsOk": 6,
+          "jobsEmpty": 44,
           "jobsFailed": 0,
           "dryRun": false
         }
       },
       "jobsPlanned": 50,
-      "jobsOk": 0,
-      "jobsEmpty": 50,
+      "jobsOk": 6,
+      "jobsEmpty": 44,
       "jobsFailed": 0
     },
     "liveSource": "eBay+seed+BRG"
