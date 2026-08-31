@@ -1,5 +1,5 @@
 card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,details
-001,Bulbasaur,Master Ball Reverse Holo,14,7,1,14,24,d3e91cf873fc434f893af843e5600c036704b174,Bulbasaur Master Ball Reverse Holo 001
+001,Bulbasaur,Master Ball Reverse Holo,14,8,1,14,25,d3e91cf873fc434f893af843e5600c036704b174,Bulbasaur Master Ball Reverse Holo 001
 001,Bulbasaur,Reverse Holo,5,1,0,5,7,ba4cd64a2127c6cd6e322052e58a41a75576cdd8,Bulbasaur Reverse Holo 001
 001,Bulbasaur,Base,0,0,1,0,2,c4b3e49eea12110b97ccc1e6775ea36c555f9e7b,Bulbasaur Base 001
 002,Ivysaur,Master Ball Reverse Holo,7,5,2,7,14,731318f63de99cd342f1512bece3f9382dd769bb,Ivysaur Master Ball Reverse Holo 002
@@ -7,18 +7,18 @@ card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,detai
 002,Ivysaur,Base,1,0,0,1,1,5782884a6738a513022ffe9e919587d614cd6732,Ivysaur Base 002
 003,Venusaur EX,Base,25,7,1,25,33,0c341d3a48c48dc05ca6159dfc474219d2dff3cb,Venusaur EX Base 003
 004,Charmander,Master Ball Reverse Holo,10,16,0,10,26,a420243edb304c860ebd89fbd1af3f06fb6bd3ed,Charmander Master Ball Reverse Holo 004
-004,Charmander,Reverse Holo,2,3,0,2,5,ae8d4a897b6ef67cef62b4548199199b27c84ca3,Charmander Reverse Holo 004
+004,Charmander,Reverse Holo,4,3,0,4,7,ae8d4a897b6ef67cef62b4548199199b27c84ca3,Charmander Reverse Holo 004
 004,Charmander,Base,0,1,0,0,1,83ee31306db40cc158555a652c7aa51f55f435e2,Charmander Base 004
 005,Charmeleon,Master Ball Reverse Holo,9,9,0,9,18,6c7a175ea4918b1dc745855fb2cbb8e66dc5d42e,Charmeleon Master Ball Reverse Holo 005
 005,Charmeleon,Reverse Holo,1,2,1,1,4,96b82b1ad8bce2ebda438633ae8c083877d7757b,Charmeleon Reverse Holo 005
 005,Charmeleon,Base,0,1,0,0,1,948ab1ac4324f3a67e9984ec4f9fa6e7d38d2322,Charmeleon Base 005
-006,Charizard EX,Base,97,21,6,97,128,df351d2518a18677963605ac7ed67fa59a3b1a8d,Charizard EX Base 006
-007,Squirtle,Master Ball Reverse Holo,16,10,0,16,26,51ed3a31b8da7cd9e2b1cf6c4023c497d396a400,Squirtle Master Ball Reverse Holo 007
-007,Squirtle,Reverse Holo,3,2,1,3,6,d944017f49b63de48e8361ee7fbc4db9e8f8fff4,Squirtle Reverse Holo 007
+006,Charizard EX,Base,99,21,6,99,130,df351d2518a18677963605ac7ed67fa59a3b1a8d,Charizard EX Base 006
+007,Squirtle,Master Ball Reverse Holo,16,11,0,16,27,51ed3a31b8da7cd9e2b1cf6c4023c497d396a400,Squirtle Master Ball Reverse Holo 007
+007,Squirtle,Reverse Holo,4,2,1,4,7,d944017f49b63de48e8361ee7fbc4db9e8f8fff4,Squirtle Reverse Holo 007
 007,Squirtle,Base,0,2,2,0,5,3152202c2bade797040f3a72eed15ae84c1c523c,Squirtle Base 007
-008,Wartortle,Master Ball Reverse Holo,13,4,2,13,19,2aa1a5290da6a0eb3cc675ff5f9cbbf13eb1e3ea,Wartortle Master Ball Reverse Holo 008
+008,Wartortle,Master Ball Reverse Holo,14,4,2,14,20,2aa1a5290da6a0eb3cc675ff5f9cbbf13eb1e3ea,Wartortle Master Ball Reverse Holo 008
 008,Wartortle,Reverse Holo,1,1,0,1,2,8ec255a9504a9a1b4de463c9ac295d66122985a5,Wartortle Reverse Holo 008
-009,Blastoise EX,Base,31,13,3,31,48,e6b9851bcc50854c447c8525f67df13da37a93b3,Blastoise EX Base 009
+009,Blastoise EX,Base,32,13,3,32,49,e6b9851bcc50854c447c8525f67df13da37a93b3,Blastoise EX Base 009
 010,Caterpie,Master Ball Reverse Holo,3,0,0,3,3,ab377ff1cd7be2ddddad6f5709e90bc39d1e8f11,Caterpie Master Ball Reverse Holo 010
 010,Caterpie,Reverse Holo,1,1,0,1,2,cff0532fbb3c95487483318454ed4313d20a61ca,Caterpie Reverse Holo 010
 011,Metapod,Master Ball Reverse Holo,3,4,0,3,8,624cb449aa050fa19fd1a9d1c7f1a48ac71d9b88,Metapod Master Ball Reverse Holo 011
@@ -41,12 +41,12 @@ card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,detai
 022,Fearow,Master Ball Reverse Holo,3,4,0,3,7,6404e9785d2d07b87893a600cb43f36e0edb48dc,Fearow Master Ball Reverse Holo 022
 023,Ekans,Master Ball Reverse Holo,1,0,1,1,2,e7096482d1f1fdea366559f4915b87cf17027568,Ekans Master Ball Reverse Holo 023
 024,Arbok EX,Base,3,1,2,3,7,1cca57f88f266c8a6ebd86621ed3180e29f9cfaa,Arbok EX Base 024
-025,Pikachu,Master Ball Reverse Holo,34,85,12,34,134,c0b0ea6d05d04541f4e5db643b4841d617adcd19,Pikachu Master Ball Reverse Holo 025
-025,Pikachu,Reverse Holo,27,14,2,27,43,400828cf5ccd50ef5dd8a7671f0cdffd2b4c5cf6,Pikachu Reverse Holo 025
+025,Pikachu,Master Ball Reverse Holo,38,86,13,38,140,c0b0ea6d05d04541f4e5db643b4841d617adcd19,Pikachu Master Ball Reverse Holo 025
+025,Pikachu,Reverse Holo,28,14,2,28,44,400828cf5ccd50ef5dd8a7671f0cdffd2b4c5cf6,Pikachu Reverse Holo 025
 025,Pikachu,Base,3,3,0,3,7,6029518325a381b12651a2542669ecfab52f2c8c,Pikachu Base 025
 026,Raichu,Master Ball Reverse Holo,6,3,0,6,9,faa8768fc215426d6cb2f60b90dd92c7d0dbf79f,Raichu Master Ball Reverse Holo 026
+026,Raichu,Base,2,1,1,2,4,7d72ed83df91e9b891609f2c4bf3868933afccf6,Raichu Base 026
 026,Raichu,Reverse Holo,1,2,0,1,3,168b046833e6b3175042ca98bcf9e11f340e737d,Raichu Reverse Holo 026
-026,Raichu,Base,1,1,1,1,3,7d72ed83df91e9b891609f2c4bf3868933afccf6,Raichu Base 026
 027,Sandshrew,Master Ball Reverse Holo,4,2,1,4,7,3f025bc5a7ae8b03f1af5e585cd49f89d5c9cc2d,Sandshrew Master Ball Reverse Holo 027
 027,Sandshrew,Reverse Holo,2,0,0,2,2,aa854322f1551df74be6cc3c60bfa080f8c46a35,Sandshrew Reverse Holo 027
 028,Sandslash,Master Ball Reverse Holo,2,2,0,2,4,20838e0a538fa1407ba35c2ee8d8ab384283da5c,Sandslash Master Ball Reverse Holo 028
@@ -81,7 +81,7 @@ card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,detai
 052,Meowth,Master Ball Reverse Holo,3,5,0,3,8,09c9c23f2e60eee3912f5e76de4a3fc771845a33,Meowth Master Ball Reverse Holo 052
 052,Meowth,Reverse Holo,0,1,0,0,1,330e6779fb1271f113912b2ec4297ba6922347f4,Meowth Reverse Holo 052
 053,Persian,Master Ball Reverse Holo,2,1,0,2,3,cf38dfac2273e1c439ea2e45e81363a37f55c9ba,Persian Master Ball Reverse Holo 053
-054,Psyduck,Master Ball Reverse Holo,9,7,0,9,16,f0cfe459e600bc06d47f35ecffeaa239b908f4d5,Psyduck Master Ball Reverse Holo 054
+054,Psyduck,Master Ball Reverse Holo,9,8,0,9,17,f0cfe459e600bc06d47f35ecffeaa239b908f4d5,Psyduck Master Ball Reverse Holo 054
 054,Psyduck,Base,0,2,0,0,2,de84449d540cae918a5f452dde439fc5cda09f04,Psyduck Base 054
 054,Psyduck,Reverse Holo,0,1,0,0,1,fd361d201464935f236bcc2688cd4f6012a0cf58,Psyduck Reverse Holo 054
 055,Golduck,Master Ball Reverse Holo,3,0,0,3,4,bf8311951e718661a67d6d44be38eac781a3a992,Golduck Master Ball Reverse Holo  055
@@ -117,7 +117,7 @@ card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,detai
 076,Golem EX,Base,4,0,1,4,5,0ef3814ce7f736147f12c1e2e32b1aea6142f0d0,Golem EX Base 076
 077,Ponyta,Master Ball Reverse Holo,1,2,0,1,3,c99fe64e68ba19946ae82d0979f5b2edc2487c4a,Ponyta Master Ball Reverse Holo 077
 078,Rapidash,Master Ball Reverse Holo,4,2,0,4,6,2fe4ff30316a55d79fa60e48f77ad37303bed4ae,Rapidash Master Ball Reverse Holo 078
-079,Slowpoke,Master Ball Reverse Holo,4,3,0,4,7,6f523a92535691012ea03db4792328f808bb2944,Slowpoke Master Ball Reverse Holo 079
+079,Slowpoke,Master Ball Reverse Holo,4,4,0,4,8,6f523a92535691012ea03db4792328f808bb2944,Slowpoke Master Ball Reverse Holo 079
 079,Slowpoke,Reverse Holo,1,0,0,1,1,cd928c2974ffb6b210aecd1b755a4ee41b9511db,Slowpoke Reverse Holo 079
 080,Slowbro,Master Ball Reverse Holo,1,1,0,1,2,79d1113df0eb12d317b8188a2b457dcd509f4266,Slowbro Master Ball Reverse Holo 080
 080,Slowbro,Reverse Holo,0,1,0,0,1,24704bc800ea137d8600c32c8e99930a8926cc7d,Slowbro Reverse Holo 080
@@ -138,12 +138,13 @@ card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,detai
 091,Cloyster,Master Ball Reverse Holo,0,2,1,0,3,c0c5738e232c41b33edfb3fd70f20547f5a14ad7,Cloyster Master Ball Reverse Holo  091
 091,Cloyster,Reverse Holo,1,0,0,1,1,90a27f035809c21e4c054223f17f516441830b52,Cloyster Reverse Holo 091
 092,Gastly,Master Ball Reverse Holo,5,5,0,5,10,2ff7bf7012f14d02dcb4facaf11764a13127d0ad,Gastly Master Ball Reverse Holo 092
-093,Haunter,Master Ball Reverse Holo,4,9,0,4,13,8c378e57ad89c4deae8fcc118fd344fa6c0c3674,Haunter Master Ball Reverse Holo 093
+093,Haunter,Master Ball Reverse Holo,5,9,0,5,14,8c378e57ad89c4deae8fcc118fd344fa6c0c3674,Haunter Master Ball Reverse Holo 093
 093,Haunter,Reverse Holo,2,0,0,2,2,513f92e8e98a44e28c39aa9c40ff3b1817f16e78,Haunter Reverse Holo 093
-094,Gengar,Master Ball Reverse Holo,86,22,3,86,113,49b297250120d7b401c7fd935761b5a7de7b09bb,Gengar Master Ball Reverse Holo 094
-094,Gengar,Base,22,7,5,22,34,0d74a763cbfe956b3d68ba3a7b7c42f1c2f0411b,Gengar Base 094
-094,Gengar,Reverse Holo,8,4,2,8,14,520912df500e33c3b25e64fcd1112052df43a37f,Gengar Reverse Holo 094
-095,Onix,Master Ball Reverse Holo,5,4,1,5,10,88e18439707e7085efade16120410a477a04ee18,Onix Master Ball Reverse Holo 095
+093,Haunter,Base,1,0,0,1,1,76ba08c5f8534aeea6fdeb39d56ce7a8cc2cb811,Haunter Base 093
+094,Gengar,Master Ball Reverse Holo,96,24,3,96,125,49b297250120d7b401c7fd935761b5a7de7b09bb,Gengar Master Ball Reverse Holo 094
+094,Gengar,Base,26,8,5,26,39,0d74a763cbfe956b3d68ba3a7b7c42f1c2f0411b,Gengar Base 094
+094,Gengar,Reverse Holo,9,4,2,9,15,520912df500e33c3b25e64fcd1112052df43a37f,Gengar Reverse Holo 094
+095,Onix,Master Ball Reverse Holo,5,5,1,5,11,88e18439707e7085efade16120410a477a04ee18,Onix Master Ball Reverse Holo 095
 095,Onix,Reverse Holo,1,0,0,1,1,0f1984dfd54aa223b79c8653b458971c90a637ec,Onix Reverse Holo 095
 096,Drowzee,Master Ball Reverse Holo,2,0,0,2,2,a2084ca52d06ab102651add9fa3259aad5ae67a0,Drowzee Master Ball Reverse Holo 096
 096,Drowzee,Reverse Holo,1,0,0,1,2,38080cdc5db78db928a0ecb3d25150361eafff85,Drowzee Reverse Holo 096
@@ -154,29 +155,30 @@ card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,detai
 099,Kingler,Reverse Holo,0,2,0,0,2,442f4348ab4791885d5d64df8ce88bcb15ad0d63,Kingler Reverse Holo 099
 100,Voltorb,Master Ball Reverse Holo,4,1,1,4,6,f2067d9e9e6ebce867700f91a36fd13ec55e1fb2,Voltorb Master Ball Reverse Holo 100
 101,Electrode,Master Ball Reverse Holo,3,0,0,3,3,1b89c20037c22530d4207d19073d4f22474eaf48,Electrode Master Ball Reverse Holo 101
-101,Electrode,Base,0,0,0,0,1,d6cf16946106b0a9330182ba156990ac900b786a,Electrode Base 101
 101,Electrode,Reverse Holo,1,0,0,1,1,78105af222cb0ac37ca6ba17a4d486bedf7e5ac0,Electrode Reverse Holo 101
+101,Electrode,Base,0,0,0,0,1,d6cf16946106b0a9330182ba156990ac900b786a,Electrode Base 101
 102,Exeggcute,Master Ball Reverse Holo,1,1,0,1,2,fb04ff9fd211d6fa202fc61b7325fcaafdd3767d,Exeggcute Master Ball Reverse Holo 102
 103,Exeggutor,Master Ball Reverse Holo,2,2,0,2,4,103710fe3949c07cf8b2e41cf3dc404006ae00d7,Exeggutor Master Ball Reverse Holo 103
 103,Exeggutor,Base,1,0,0,1,1,51b4fd0e45888c3bc0ec0f57315293941126c010,Exeggutor Base 103
 104,Cubone,Master Ball Reverse Holo,2,1,0,2,3,47e0e2fa2e5fa11ca92898dbdf880bbd40688654,Cubone Master Ball Reverse Holo 104
 104,Cubone,Base,1,0,0,1,1,0be4ec9f238bb1cc637214fffc2ef0bc11aedba9,Cubone Base 104
-105,Marowak,Reverse Holo,1,1,0,1,2,30a8ac440af788344241ea55567e7f4bb65057d8,Marowak Reverse Holo 105
 105,Marowak,Base,1,1,0,1,2,8949432a8ef8315652116a3f077d2dbdc507e4d0,Marowak Base 105
+105,Marowak,Reverse Holo,1,1,0,1,2,30a8ac440af788344241ea55567e7f4bb65057d8,Marowak Reverse Holo 105
 105,Marowak,Master Ball Reverse Holo,1,0,0,1,1,7544173b048f487e433a77b1fc55d1f8b1e3c8f4,Marowak Master Ball Reverse Holo 105
 106,Hitmonlee,Master Ball Reverse Holo,2,1,0,2,3,884ebb2f30be36b81ab66c654192edbdf60a541c,Hitmonlee Master Ball Reverse Holo 106
 106,Hitmonlee,Base,0,1,0,0,1,6143f681dc070eac9d8ab67c39b0b86a045e2ba2,Hitmonlee Base 106
 107,Hitmonchan,Master Ball Reverse Holo,0,2,1,0,3,83cdc0dcfc4c6c88a2472b9fcfa42600f7a27354,Hitmonchan Master Ball Reverse Holo 107
-108,Lickitung,Master Ball Reverse Holo,2,0,0,2,2,148db5f2c0e2e3895af6e7b5fe68264f2c80c372,Lickitung Master Ball Reverse Holo  108
 108,Lickitung,Reverse Holo,2,0,0,2,2,d5ff7cd933a4a31583cc435b07acf9fadcdfe505,Lickitung Reverse Holo 108
+108,Lickitung,Master Ball Reverse Holo,2,0,0,2,2,148db5f2c0e2e3895af6e7b5fe68264f2c80c372,Lickitung Master Ball Reverse Holo  108
 109,Koffing,Master Ball Reverse Holo,7,1,0,7,8,aa466a09840689f8a30fb2a07424b837906f5f92,Koffing Master Ball Reverse Holo 109
+109,Koffing,Reverse Holo,0,1,0,0,1,c78137ebd4f9b57697e918f1e9fb33fd26076cc7,Koffing Reverse Holo 109
 110,Weezing,Master Ball Reverse Holo,4,1,0,4,5,066a47dee2a1ce84fdfd93dafa1cd0c383368da0,Weezing Master Ball Reverse Holo 110
 111,Rhyhorn,Master Ball Reverse Holo,1,2,0,1,3,eb154dc155fd6df31591df212cbf37364acc3c48,Rhyhorn Master Ball Reverse Holo 111
 112,Rhydon,Master Ball Reverse Holo,3,3,0,3,6,e67e0c60009760edb80057c52af03b6d7996c972,Rhydon Master Ball Reverse Holo 112
 113,Chansey,Master Ball Reverse Holo,2,6,0,2,8,5e2638d2560ce965f7325aeec7f6f46017f3a531,Chansey Master Ball Reverse Holo 113
 113,Chansey,Base,0,1,0,0,1,fe9db5b15bdec5c7a1235d1cbe07102c78dc5012,Chansey Base 113
 114,Tangela,Master Ball Reverse Holo,1,1,0,1,2,b5226f598480da5c986704d136a1c7e599d8227d,Tangela Master Ball Reverse Holo 114
-115,Kangaskhan EX,Base,6,1,1,6,8,75c40cc937cd98b7877d11572b512c19b8f301a9,Kangaskhan EX Base 115
+115,Kangaskhan EX,Base,6,2,1,6,9,75c40cc937cd98b7877d11572b512c19b8f301a9,Kangaskhan EX Base 115
 116,Horsea,Master Ball Reverse Holo,1,5,0,1,6,5fe818f9b450e2b7e74176d83d82a4d2f17775f0,Horsea Master Ball Reverse Holo 116
 116,Horsea,Reverse Holo,0,1,0,0,1,323d618d2841d26e3bbaeddcd5888aae71fcf125,Horsea Reverse Holo 116
 117,Seadra,Master Ball Reverse Holo,1,1,0,1,2,8ce9fadbeaddbcd26a9f466ad2b610bda51fa5ed,Seadra Master Ball Reverse Holo 117
@@ -194,14 +196,14 @@ card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,detai
 127,Pinsir,Master Ball Reverse Holo,1,3,0,1,4,3935ab3eb128bba975484af32638fe42670b8a13,Pinsir Master Ball Reverse Holo 127
 127,Pinsir,Reverse Holo,1,0,0,1,1,560a00a99346256161eac6ca9742a4deaf0fc654,Pinsir Reverse Holo 127
 128,Tauros,Master Ball Reverse Holo,2,5,0,2,7,609fcbd5670b9debb4b63aa830c8c9ea48875f94,Tauros Master Ball Reverse Holo 128
-128,Tauros,Reverse Holo,1,0,0,1,1,a524e3b3159ae602f23a71456e5daa29a89f3e62,Tauros Reverse Holo 128
+128,Tauros,Reverse Holo,2,0,0,2,2,a524e3b3159ae602f23a71456e5daa29a89f3e62,Tauros Reverse Holo 128
 129,Magikarp,Master Ball Reverse Holo,9,5,1,9,15,62fd7a628e9d7cf8d344bbe727734287143c3a13,Magikarp Master Ball Reverse Holo 129
 129,Magikarp,Base,1,0,0,1,1,63abde0e4d74f77b1fdce55b571534a520f7666c,Magikarp Base 129
 130,Gyarados,Master Ball Reverse Holo,9,6,1,9,16,53e28018fd46859fb71d0f23b9ca324603298f3f,Gyarados Master Ball Reverse Holo 130
 130,Gyarados-Holo,Base,2,2,1,2,5,252b6d7614848f572b71a2ab05133cee649d5a2d,Gyarados-Holo Base 130
 130,Gyarados,Reverse Holo,2,3,0,2,5,842e2fe04665c6736830ad1aa4d026fc05f10a54,Gyarados Reverse Holo 130
-131,Lapras,Master Ball Reverse Holo,1,4,0,1,5,78dbe57e938f1bd3b35ad8ab54d6d7814e761242,Lapras Master Ball Reverse Holo 131
-132,Ditto,Master Ball Reverse Holo,6,3,0,6,9,75338b329c2555a0337134eef97d9db3fc7dd7fc,Ditto Master Ball Reverse Holo 132
+131,Lapras,Master Ball Reverse Holo,2,4,0,2,6,78dbe57e938f1bd3b35ad8ab54d6d7814e761242,Lapras Master Ball Reverse Holo 131
+132,Ditto,Master Ball Reverse Holo,6,4,0,6,10,75338b329c2555a0337134eef97d9db3fc7dd7fc,Ditto Master Ball Reverse Holo 132
 132,Ditto,Base,3,0,1,3,5,669e802b8ac37dc9400d01b0bfb451e74dbb41b4,Ditto Base 132
 132,Ditto,Reverse Holo,0,1,0,0,1,010d17dae380e7a2e1457de40679ac4c51cc5a5f,Ditto Reverse Holo 132
 133,Eevee,Master Ball Reverse Holo,11,15,4,11,30,cf637b01677ebfb810899b7dc174a6ada98bfa62,Eevee Master Ball Reverse Holo 133
@@ -221,14 +223,14 @@ card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,detai
 138,Omanyte,Master Ball Reverse Holo,2,0,0,2,2,87557a7288e913bac75bddff696a61122a1faacc,Omanyte Master Ball Reverse Holo 138
 139,Omastar,Master Ball Reverse Holo,9,1,0,9,10,1045728ecfdc871caaf06336bce6b303803a8ca2,Omastar Master Ball Reverse Holo 139
 139,Omastar,Base,0,0,1,0,1,a571ad09dfc57b17d03b9f1713769fde53f9d826,Omastar Base 139
-140,Kabuto,Master Ball Reverse Holo,1,0,1,1,2,4c53328317e89cf0427fedfb691a49e05cc72f4e,Kabuto Master Ball Reverse Holo 140
 140,Kabuto,Reverse Holo,1,1,0,1,2,0c0980e0aeb0f625fce683cb5bd5d427e026956b,Kabuto Reverse Holo 140
+140,Kabuto,Master Ball Reverse Holo,1,0,1,1,2,4c53328317e89cf0427fedfb691a49e05cc72f4e,Kabuto Master Ball Reverse Holo 140
 141,Kabutops,Master Ball Reverse Holo,10,0,0,10,10,6c51bde38621b85b7ed85ce442c22d68c7ba5634,Kabutops Master Ball Reverse Holo 141
 141,Kabutops,Reverse Holo,0,1,0,0,1,1c6dd09a2651ea71a19ee6036bfe6c7a8eaf83fd,Kabutops Reverse Holo 141
-142,Aerodactyl,Master Ball Reverse Holo,4,2,0,4,6,71cdac4bab4e82963839788942bf1950370e5992,Aerodactyl Master Ball Reverse Holo 142
+142,Aerodactyl,Master Ball Reverse Holo,5,3,0,5,8,71cdac4bab4e82963839788942bf1950370e5992,Aerodactyl Master Ball Reverse Holo 142
 142,Aerodactyl,Reverse Holo,0,1,1,0,2,cfce4f2bb5567e8b2c6bc5e2aca728f7f7fefa51,Aerodactyl Reverse Holo 142
 143,Snorlax,Master Ball Reverse Holo,17,10,2,17,29,57ddb5cfb4fa45dbbd6eb3a605a9b136bdc68050,Snorlax Master Ball Reverse Holo 143
-143,Snorlax,Reverse Holo,3,3,0,3,6,090eac95316577210e06e9c6da846490519808bd,Snorlax Reverse Holo 143
+143,Snorlax,Reverse Holo,3,4,0,3,7,090eac95316577210e06e9c6da846490519808bd,Snorlax Reverse Holo 143
 143,Snorlax,Base,1,2,0,1,3,9fd553fef1d5f15ceb20d005acaa34c7a16a2775,Snorlax Base 143
 144,Articuno,Master Ball Reverse Holo,3,2,0,3,5,fab695d8b15ccc622f18ddc83830fb543dc7fec9,Articuno Master Ball Reverse Holo 144
 144,Articuno,Base,1,1,0,1,2,d6730912e8de1026c4e25ef5d7b696cd584f6d94,Articuno Base 144
@@ -272,49 +274,49 @@ card_number,name,parallel,g10,g9,g8,card_gems,card_total_grades,gemrate_id,detai
 164,Bill's Transfer,Reverse Holo,2,0,0,2,2,4373cd90ffbd823de3e958cff956c836810d2aef,Bill's Transfer Reverse Holo 164
 165,Cycling Road,Master Ball Reverse Holo,1,1,0,1,2,24d3e09a7190960c8431eb6e524da13358690d08,Cycling Road Master Ball Reverse Holo 165
 165,Cycling Road,Base,0,0,1,0,1,c7cafa2c69d761fa6206e426653c0747f46990dd,Cycling Road Base 165
-166,Bulbasaur,Art Rare,200,36,15,200,257,62ca69d932f2c90ba64ac023a55be0e5d0bc48d4,Bulbasaur Art Rare 166
-167,Ivysaur,Art Rare,203,50,15,203,272,1cacf43da64c7b61dbe1c927c3b57d6c2c77c15e,Ivysaur Art Rare 167
-168,Charmander,Art Rare,256,97,30,256,394,e8587331be32585bf5313527fbf6c033832316c8,Charmander Art Rare 168
-169,Charmeleon,Art Rare,225,64,19,225,314,a80d7da9de98c60d189311519e211fa8cee20a10,Charmeleon Art Rare 169
-170,Squirtle,Art Rare,256,75,18,256,356,ea7ebf43784338ebad7143b2fc37d972df39109d,Squirtle Art Rare 170
-171,Wartortle,Art Rare,187,66,13,187,270,f76484bb3d12b1dec1d6657832e59e475995ef00,Wartortle Art Rare 171
+166,Bulbasaur,Art Rare,205,36,15,205,262,62ca69d932f2c90ba64ac023a55be0e5d0bc48d4,Bulbasaur Art Rare 166
+167,Ivysaur,Art Rare,206,52,15,206,277,1cacf43da64c7b61dbe1c927c3b57d6c2c77c15e,Ivysaur Art Rare 167
+168,Charmander,Art Rare,267,103,32,267,416,e8587331be32585bf5313527fbf6c033832316c8,Charmander Art Rare 168
+169,Charmeleon,Art Rare,235,67,21,235,329,a80d7da9de98c60d189311519e211fa8cee20a10,Charmeleon Art Rare 169
+170,Squirtle,Art Rare,267,80,18,267,372,ea7ebf43784338ebad7143b2fc37d972df39109d,Squirtle Art Rare 170
+171,Wartortle,Art Rare,190,67,15,190,276,f76484bb3d12b1dec1d6657832e59e475995ef00,Wartortle Art Rare 171
 172,Caterpie,Art Rare,26,6,0,26,32,9c3e7b8eba6053aa6877233ce005b99278449efd,Caterpie Art Rare 172
-173,Pikachu,Art Rare,364,73,27,364,480,5c5ba06e747475f191beaf8e8847fb4c8795aadb,Pikachu Art Rare 173
+173,Pikachu,Art Rare,388,79,28,388,511,5c5ba06e747475f191beaf8e8847fb4c8795aadb,Pikachu Art Rare 173
 174,Nidoking,Art Rare,27,11,5,27,45,9b374855313727f1d8020bc604a41ac82fd9a079,Nidoking Art Rare 174
-175,Psyduck,Art Rare,76,29,10,76,119,096a836056b50a5d91a04069172c5ff97db44c4f,Psyduck Art Rare 175
-176,Poliwhirl,Art Rare,52,12,1,52,67,b7f465301e828a53eeb4c0d5d87328df182e8305,Poliwhirl Art Rare 176
-177,Machoke,Art Rare,56,12,2,56,70,19f1f555d76656e3508c1a5fd567f28090cc13b7,Machoke Art Rare 177
+175,Psyduck,Art Rare,81,31,10,81,126,096a836056b50a5d91a04069172c5ff97db44c4f,Psyduck Art Rare 175
+176,Poliwhirl,Art Rare,54,13,1,54,70,b7f465301e828a53eeb4c0d5d87328df182e8305,Poliwhirl Art Rare 176
+177,Machoke,Art Rare,57,12,2,57,71,19f1f555d76656e3508c1a5fd567f28090cc13b7,Machoke Art Rare 177
 178,Tangela,Art Rare,20,4,6,20,30,eba0c9bf83043f226757639460138020098e2be9,Tangela Art Rare 178
-179,Mr. Mime,Art Rare,40,15,3,40,58,9978afa8f30a6fd9984f6dedc22e695b6bdf1ed5,Mr. Mime Art Rare 179
+179,Mr. Mime,Art Rare,41,16,3,41,60,9978afa8f30a6fd9984f6dedc22e695b6bdf1ed5,Mr. Mime Art Rare 179
 180,Omanyte,Art Rare,17,3,6,17,26,b24ed9b6ac6ff1aa22b261cfe9a94de92b483657,Omanyte Art Rare 180
-181,Snorlax,Art Rare,86,32,10,86,132,0dc7b6afec273ff36c9763d22fc9c8f6cf01d59e,Snorlax Art Rare 181
-182,Dragonair,Art Rare,61,7,2,61,70,3cf7f10d4b4e601751a942180f725bb256844e53,Dragonair Art Rare 182
-183,Mewtwo,Art Rare,155,48,4,155,213,15e14b5d2908cd8472fe53b3aa35c764108c375e,Mewtwo Art Rare 183
+181,Snorlax,Art Rare,89,32,10,89,135,0dc7b6afec273ff36c9763d22fc9c8f6cf01d59e,Snorlax Art Rare 181
+182,Dragonair,Art Rare,64,7,2,64,73,3cf7f10d4b4e601751a942180f725bb256844e53,Dragonair Art Rare 182
+183,Mewtwo,Art Rare,162,51,4,162,223,15e14b5d2908cd8472fe53b3aa35c764108c375e,Mewtwo Art Rare 183
 184,Venusaur EX,Super Rare,28,9,2,28,39,82be2e3885fd185a56009b858fed7675162a1342,Venusaur EX Super Rare 184
-185,Charizard EX,Super Rare,109,40,6,109,159,a1bcb51f553a37d91dd0d43f1ae235c6cf857dad,Charizard EX Super Rare 185
+185,Charizard EX,Super Rare,110,40,6,110,160,a1bcb51f553a37d91dd0d43f1ae235c6cf857dad,Charizard EX Super Rare 185
 186,Blastoise EX,Super Rare,32,18,3,32,56,1b2326d1f077cef74ffae9ddd2997515e5b01481,Blastoise EX Super Rare 186
-187,Arbok EX,Super Rare,12,4,1,12,17,096c1b4b8ec29a16fa56cc62a74004205577ce21,Arbok EX Super Rare 187
+187,Arbok EX,Super Rare,13,4,1,13,18,096c1b4b8ec29a16fa56cc62a74004205577ce21,Arbok EX Super Rare 187
 188,Ninetales EX,Super Rare,10,8,0,10,19,0d5d697dcbf605a447f0bc12da5c146986788818,Ninetales EX Super Rare 188
-189,Wigglytuff EX,Super Rare,10,4,0,10,14,aefe5c12aa0e016561eec092868c4f40711c1342,Wigglytuff EX Super Rare 189
+189,Wigglytuff EX,Super Rare,11,4,0,11,15,aefe5c12aa0e016561eec092868c4f40711c1342,Wigglytuff EX Super Rare 189
 190,Alakazam EX,Super Rare,16,8,1,16,25,7b84b245e1a4ab0abf7255e659bcaf3f2b86f34f,Alakazam EX Super Rare 190
 191,Golem EX,Super Rare,8,3,0,8,11,5c212ba0f086049db54ffe5f77a78b73427e9375,Golem EX Super Rare 191
 192,Kangaskhan EX,Super Rare,10,5,1,10,16,b8fc328a7250b290e6f4a4bd64ddfcf9c307215e,Kangaskhan EX Super Rare 192
 193,Jynx EX,Super Rare,7,4,0,7,11,ceeb0ebd32604c07b34eb12528ddfc9a60b7ebd9,Jynx EX Super Rare 193
 194,Zapdos EX,Super Rare,13,9,3,13,26,9036c6e9515ec12e110e32ee2e36b09e630b32e2,Zapdos EX Super Rare 194
-195,Mew EX,Super Rare,38,18,2,38,58,45fd5a076c7a96f294357202d55188a87ed4ad05,Mew EX Super Rare 195
+195,Mew EX,Super Rare,39,18,2,39,59,45fd5a076c7a96f294357202d55188a87ed4ad05,Mew EX Super Rare 195
 196,Daisy's Help,Super Rare,10,6,1,10,18,a39e0278e44ffc47798a918541abc5e86f443c19,Daisy's Help Super Rare 196
 197,Erika's Invitation,Super Rare,93,35,3,93,131,ded5ba109757fb8ce36454af07fea8074898eeb4,Erika's Invitation Super Rare 197
 198,Giovanni's Charisma,Super Rare,8,8,0,8,16,bb867c634582d60bfe01a315d6c9715a257b2adc,Giovanni's Charisma Super Rare 198
 199,Bill's Transfer,Super Rare,12,2,1,12,16,541240690518007afe99a175d37c3110a119a893,Bill's Transfer Super Rare 199
-200,Venusaur EX,Special Art Rare,222,62,10,222,295,0e95d9e0a02b6fb76f23eb3d74b8197cfd1eb7e9,Venusaur EX Special Art Rare 200
-201,Charizard EX,Special Art Rare,540,172,31,540,760,d2a11f32994594fdea6471a252d3636207eadd91,Charizard EX Special Art Rare 201
-202,Blastoise EX,Special Art Rare,234,69,10,234,317,86538265f64d76aa1c9adaea887c291bcb8818a1,Blastoise EX Special Art Rare 202
-203,Alakazam EX,Special Art Rare,94,21,5,94,123,f40dc8d6500cc7ddd9ab2a04fd49e6cbb94de199,Alakazam EX Special Art Rare 203
-204,Zapdos EX,Special Art Rare,153,43,6,153,204,6f87608827fed17259f95c4ce2b61159353ccad5,Zapdos EX Special Art Rare 204
-205,Mew EX,Special Art Rare,289,65,12,289,372,dd9681643169913d2619f6fef62e13409adfacc4,Mew EX Special Art Rare 205
-206,Erika's Invitation,Special Art Rare,131,118,3,131,254,f698a93ce22a6dd76a524c2abc61c1c7747cdd33,Erika's Invitation Special Art Rare 206
+200,Venusaur EX,Special Art Rare,228,64,10,228,303,0e95d9e0a02b6fb76f23eb3d74b8197cfd1eb7e9,Venusaur EX Special Art Rare 200
+201,Charizard EX,Special Art Rare,572,183,33,572,806,d2a11f32994594fdea6471a252d3636207eadd91,Charizard EX Special Art Rare 201
+202,Blastoise EX,Special Art Rare,239,72,10,239,325,86538265f64d76aa1c9adaea887c291bcb8818a1,Blastoise EX Special Art Rare 202
+203,Alakazam EX,Special Art Rare,97,23,5,97,128,f40dc8d6500cc7ddd9ab2a04fd49e6cbb94de199,Alakazam EX Special Art Rare 203
+204,Zapdos EX,Special Art Rare,159,45,6,159,212,6f87608827fed17259f95c4ce2b61159353ccad5,Zapdos EX Special Art Rare 204
+205,Mew EX,Special Art Rare,308,67,12,308,393,dd9681643169913d2619f6fef62e13409adfacc4,Mew EX Special Art Rare 205
+206,Erika's Invitation,Special Art Rare,133,119,4,133,258,f698a93ce22a6dd76a524c2abc61c1c7747cdd33,Erika's Invitation Special Art Rare 206
 207,Giovanni's Charisma,Special Art Rare,24,14,0,24,39,b021187f5d49a1ccd37a676b284030a1406ffd64,Giovanni's Charisma Special Art Rare 207
-208,Mew EX,Ultra Rare,98,16,4,98,119,f8929edad1998256171c2d0e623306ad393b8fdd,Mew EX Ultra Rare 208
+208,Mew EX,Ultra Rare,101,16,4,101,122,f8929edad1998256171c2d0e623306ad393b8fdd,Mew EX Ultra Rare 208
 209,Switch,Ultra Rare,3,11,0,3,15,25165bf02c0699b05b6f274ed56e66f72b7bafed,Switch Ultra Rare 209
 210,Basic Psychic Energy,Ultra Rare,8,5,1,8,14,cdf84a8ee88c85b9e2f64cf2bd9d01ea9f8b5959,Basic Psychic Energy Ultra Rare 210
 78,Rapidash,Reverse Holo,2,0,0,2,2,e6403d6f11a5fca3958937e16e735942bc3663e9,Rapidash Reverse Holo 78
