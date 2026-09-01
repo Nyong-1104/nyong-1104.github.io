@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-09-01T13:53:47+09:00",
+  "ranAt": "2026-09-01T14:35:03+09:00",
   "stats": {
     "asOf": "2026-09-01",
-    "asOfIso": "2026-09-01T13:53:47+09:00",
+    "asOfIso": "2026-09-01T14:35:03+09:00",
     "cardsTotal": 4941,
     "cardsLive": 2443,
     "skippedTierC": 2498,
@@ -15,7 +15,7 @@
       "C": 2626
     },
     "ebayPricesRestored": 2828,
-    "brgPopsRestored": 2359,
+    "brgPopsRestored": 2362,
     "psaPopsRestored": 2240,
     "brg": {
       "brgEnabled": true,
@@ -28,7 +28,7 @@
           "cardsMatched": 2342,
           "cardsNoBrgEntry": 2687,
           "cardsAttempted": 5029,
-          "brgEntriesFetched": 3214,
+          "brgEntriesFetched": 3216,
           "dryRun": false,
           "setMap": [
             {
@@ -680,7 +680,7 @@
       "cardsMatched": 2342,
       "cardsNoBrgEntry": 2687,
       "cardsAttempted": 5029,
-      "brgEntriesFetched": 3214,
+      "brgEntriesFetched": 3216,
       "dryRun": 0,
       "cardsUnmatched": 2687
     },
