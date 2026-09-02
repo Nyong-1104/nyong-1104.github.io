@@ -417,9 +417,11 @@ if(stop)break;
 try{
 if(!name||name.charCodeAt(0)===46||SKIP.has(name.toLowerCase()))continue;
 const p=base?base+'/'+name:name;
-if(ent.kind==='file'){
-if(EXT.test(name)){batch.push({h:ent,rel:p,name:name});found++}}
-else stack.push([ent,p]);
+let sub=typeof ent.entries==='function'?ent:null;
+if(!sub&&!EXT.test(name)){
+try{sub=await dir.getDirectoryHandle(name)}catch(_){}}
+if(sub)stack.push([sub,p]);
+else if(EXT.test(name)){batch.push({h:ent,rel:p,name:name});found++}
 const now=Date.now();
 if(batch.length>=64||now-last>400){last=now;
 self.postMessage({type:'p',found:found});
