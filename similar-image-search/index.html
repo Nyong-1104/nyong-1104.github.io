@@ -392,6 +392,12 @@ const EXT=/\\.(jpe?g|png|bmp|gif|webp|avif)$/i;
 const SKIP=new Set(${JSON.stringify(SKIP)});
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 let stop=false,paused=false;
+function flush(batch){
+if(!batch.length)return[];
+try{self.postMessage({type:'b',files:batch});return[]}
+catch(_){for(const item of batch){
+try{self.postMessage({type:'b',files:[item]})}catch(__){}}
+return[]}}
 self.onmessage=async e=>{
 const cmd=e.data.cmd;
 if(cmd==='abort'){stop=true;paused=false;return}
@@ -401,25 +407,26 @@ if(cmd!=='start')return;
 stop=false;paused=false;
 const stack=[[e.data.handle,'']];
 let batch=[],found=0,last=Date.now();
-try{
 while(stack.length&&!stop){
 const [dir,base]=stack.pop();
 let it;try{it=dir.entries()}catch(_){continue}
+try{
 for await(const [name,ent] of it){
 while(paused&&!stop)await sleep(40);
 if(stop)break;
-if(name.charCodeAt(0)===46||SKIP.has(name.toLowerCase()))continue;
+try{
+if(!name||name.charCodeAt(0)===46||SKIP.has(name.toLowerCase()))continue;
 const p=base?base+'/'+name:name;
 if(ent.kind==='file'){
 if(EXT.test(name)){batch.push({h:ent,rel:p,name:name});found++}}
 else stack.push([ent,p]);
 const now=Date.now();
-if(batch.length>=4096||now-last>300){last=now;
+if(batch.length>=64||now-last>400){last=now;
 self.postMessage({type:'p',found:found});
-if(batch.length){self.postMessage({type:'b',files:batch});batch=[]}}}}
-if(batch.length)self.postMessage({type:'b',files:batch});
-self.postMessage({type:stop?'abort':'end',found:found});
-}catch(err){self.postMessage({type:'err',m:String(err&&err.message||err)})}};
+batch=flush(batch)}}
+catch(_){}}}catch(_){}}
+batch=flush(batch);
+self.postMessage({type:stop?'abort':'end',found:found})};
 `;
 
 function mkWorker(src){
