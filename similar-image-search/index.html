@@ -1,0 +1,563 @@
+<!doctype html>
+<!--
+  SimilarImageSearch
+  Find visually similar or duplicate images in a local folder.
+  All processing runs in your browser. No image is ever uploaded.
+
+  Copyright (c) 2026 cmy3544@gmail.com
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Similar Image Search · nyong.app</title>
+<meta name="description" content="로컬 폴더에서 비슷한 이미지나 중복 사진을 찾아요. 사진은 브라우저 밖으로 나가지 않습니다.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Similar Image Search · nyong.app">
+<meta property="og:description" content="로컬 폴더에서 비슷한 이미지나 중복 사진을 찾아요. 사진은 브라우저 밖으로 나가지 않습니다.">
+<meta property="og:url" content="https://www.nyong.app/similar-image-search/">
+<meta property="og:site_name" content="nyong.app">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="256x256">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" as="style" crossorigin
+href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard Variable','Pretendard',-apple-system,
+BlinkMacSystemFont,system-ui,'Malgun Gothic',sans-serif;background:#ffffff;
+color:#1a1c22;height:100vh;overflow:hidden;display:flex;font-size:13px}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#d4d4dc;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#b4b4c0}
+*{scrollbar-width:thin;scrollbar-color:#d4d4dc transparent}
+aside{width:340px;flex-shrink:0;background:#fafafa;border-right:1px solid #e8e8ee;
+padding:24px;display:flex;flex-direction:column;gap:18px;
+overflow-y:auto;overflow-x:hidden}
+main{flex:1;overflow-y:auto;background:#ffffff;position:relative}
+.inner{padding:0 28px 28px}
+.logo{font-size:52px;font-weight:800;letter-spacing:-2.4px;color:#000000;
+line-height:.95;margin-bottom:2px;cursor:pointer;user-select:none}
+.logo .ln{display:block;width:fit-content}
+.logo .ch{display:inline-block;color:#000000;
+transition:color .85s ease-out,transform .8s ease-out}
+.logo .ch.hit{color:#FF2F00;transform:translateY(-6px);
+transition:color .1s ease-in,transform .16s ease-out}
+.lbl{font-size:14px;color:#71717f;font-weight:500;margin-bottom:8px;display:block}
+#drop{border:1.5px dashed #3a3a46;border-radius:10px;min-height:150px;
+display:flex;align-items:center;justify-content:center;text-align:center;
+cursor:pointer;transition:.15s;background:#000000;padding:14px;overflow:hidden}
+#drop:hover,#drop.on{border-color:#FF2F00;background:#0d0a1a}
+#drop img{max-width:100%;max-height:180px;border-radius:6px;display:block}
+#drop .ph{color:#ffffff;font-size:12px;line-height:1.7}
+.fold{border:2px solid #e2e2ea;background:#ffffff;border-radius:9px;padding:11px 12px;
+cursor:pointer;transition:.15s;display:flex;align-items:center}
+.fold:hover{border-color:#FF2F00;background:#FFF3F0}
+.fold .tx{min-width:0;flex:1}
+.fold .t1{font-size:21px;color:#2a2c36;white-space:nowrap;overflow:hidden;
+text-overflow:ellipsis;font-weight:700;letter-spacing:-.4px;line-height:1.25}
+.fold .t2{font-size:10.5px;color:#a0a0ae;margin-top:1px}
+.row{display:flex;justify-content:space-between;align-items:baseline;
+margin-bottom:8px;margin-top:10px}
+.slbox{position:relative;padding-bottom:16px}
+.tip{position:relative;display:inline-block}
+.tip .bub{position:absolute;left:0;bottom:calc(100% + 9px);z-index:40;
+width:230px;background:#1a1c22;color:#e8e8ee;font-size:11px;font-weight:400;
+line-height:1.65;padding:10px 12px;border-radius:8px;letter-spacing:0;
+opacity:0;visibility:hidden;transform:translateY(4px);
+transition:opacity .16s,transform .16s,visibility .16s;
+box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.tip .bub::after{content:'';position:absolute;top:100%;left:18px;
+border:5px solid transparent;border-top-color:#1a1c22}
+.tip .bub b{color:#FF7A5C;font-weight:600}
+.tip .bub .en2{display:block;margin-top:7px;padding-top:7px;
+border-top:1px solid rgba(255,255,255,.13);
+font-size:10.5px;color:#9a9aa8;line-height:1.55}
+.tip .bub .en2 b{color:#FF7A5C;font-weight:600}
+.tip.down .bub{bottom:auto;top:calc(100% + 9px)}
+.tip.down .bub::after{top:auto;bottom:100%;border-top-color:transparent;
+border-bottom-color:#1a1c22}
+.tip:hover .bub{opacity:1;visibility:visible;transform:translateY(0)}
+.tip .q{display:inline-flex;align-items:center;justify-content:center;
+width:14px;height:14px;border-radius:50%;background:#d8d8e0;color:#ffffff;
+font-size:9px;font-weight:700;margin-left:5px;vertical-align:1px}
+.tip:hover .q{background:#FF2F00}
+.val{position:absolute;bottom:0;color:#FF2F00;font-size:11px;font-weight:700;
+font-variant-numeric:tabular-nums;transform:translateX(-50%);white-space:nowrap;
+pointer-events:none;will-change:transform,left}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;
+border-radius:3px;background:#e2e2ea;cursor:pointer;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+width:15px;height:15px;border-radius:50%;background:#FF2F00;cursor:pointer;
+border:3px solid #fafafa;box-shadow:0 0 0 1px #FF2F00}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;
+background:#FF2F00;cursor:pointer;border:3px solid #fafafa;box-shadow:0 0 0 1px #FF2F00}
+.acts{display:flex;gap:8px}
+.go{flex:0 0 70%;background:#FF2F00;color:#ffffff;border:0;padding:12px;
+border-radius:9px;font-size:25px;font-weight:700;cursor:pointer;
+font-family:inherit;letter-spacing:-.3px}
+.go:hover{background:#CC2600}
+.go:disabled{opacity:.35;cursor:default}
+.go{transition:opacity .22s,background .22s,box-shadow .22s}
+.reset{flex:1;background:#ffffff;border:2px solid #e2e2ea;color:#71717f;
+padding:9px;border-radius:9px;font-size:15px;cursor:pointer;font-family:inherit}
+.reset:hover{border-color:#c4c4d0;color:#3a3a46}
+.bar{height:4px;border-radius:3px;background:#e2e2ea;overflow:hidden;margin-top:9px}
+.bar i{display:block;height:100%;background:#FF2F00;width:0;transition:width .18s}
+.pmsg{font-size:10.5px;color:#a0a0ae;margin-top:6px;white-space:nowrap;
+overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.hist{border-top:1px solid #e8e8ee;padding-top:16px}
+.histhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.histhead .lbl{margin:0}
+.hlist{display:flex;flex-direction:column;gap:5px;max-height:300px;
+overflow-y:auto;padding-right:4px}
+.hitem{display:flex;gap:9px;align-items:center;padding:6px;border-radius:7px;
+cursor:pointer;transition:.12s;background:#ffffff;border:1px solid #eeeef2}
+.hitem:hover{background:#FFF3F0;border-color:#FFC9BC}
+.hitem img{width:34px;height:34px;object-fit:cover;border-radius:5px;
+flex-shrink:0;background:#f2f2f6}
+.hinfo{min-width:0;flex:1}
+.htime{color:#3a3a46;font-size:10.5px;white-space:nowrap;overflow:hidden;
+text-overflow:ellipsis}
+.hres{color:#a0a0ae;font-size:9.5px;font-variant-numeric:tabular-nums}
+.top{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;
+align-items:center;flex-wrap:wrap;gap:12px;min-height:60px;
+padding:14px 28px;margin-bottom:18px;
+background:rgba(255,255,255,.62);
+-webkit-backdrop-filter:blur(18px) saturate(180%);
+backdrop-filter:blur(18px) saturate(180%);
+border-bottom:1px solid rgba(0,0,0,0);transition:border-color .2s,background .2s}
+.top.stuck{border-bottom-color:rgba(0,0,0,.07);background:rgba(255,255,255,.72)}
+@supports not (backdrop-filter:blur(1px)){.top{background:rgba(255,255,255,.96)}}
+.cnt{color:#71717f;font-size:13px}
+.cnt b{color:#1a1c22;font-weight:600}
+.sortbar{display:flex;gap:4px}
+.sortbar button{background:#ffffff;border:1px solid #e2e2ea;color:#71717f;
+padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit}
+.sortbar button:hover{border-color:#c4c4d0}
+.sortbar button.on{background:#FF2F00;border-color:#FF2F00;color:#ffffff;font-weight:600}
+.sortbar button.on:hover{background:#CC2600;border-color:#CC2600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.card{background:#ffffff;border:1px solid #e8e8ee;border-radius:11px;
+overflow:hidden;transition:.15s}
+.card:hover{border-color:#FFB3A0;transform:translateY(-2px);
+box-shadow:0 4px 16px rgba(255,47,0,.12)}
+.thumb{position:relative;background:#f7f7fa;cursor:zoom-in}
+.thumb img{width:100%;height:165px;object-fit:contain;display:block}
+.badge{position:absolute;top:8px;left:8px;background:#ffffffe8;color:#CC2600;
+padding:3px 8px;border-radius:5px;font-size:10px;font-weight:600;
+font-variant-numeric:tabular-nums;border:1px solid #FFD5CB}
+.badge.exact{background:#FF2F00;color:#ffffff;border-color:#FF2F00}
+.meta{padding:11px 12px 12px}
+.nm{font-size:11.5px;line-height:1.45;word-break:break-all;margin-bottom:5px;
+color:#2a2c36;max-height:34px;overflow:hidden}
+.dir{color:#9a9aa8;font-size:10px;word-break:break-all;margin-bottom:6px;
+max-height:26px;overflow:hidden}
+.dim{color:#b0b0bc;font-size:10px;margin-bottom:9px;font-variant-numeric:tabular-nums}
+.btns{display:flex;gap:4px}
+.btns button{flex:1;padding:6px 3px;font-size:9.5px;background:#f4f4f8;
+border:0;border-radius:5px;color:#6a6a78;cursor:pointer;font-family:inherit;
+white-space:nowrap}
+.btns button:hover{background:#FFEAE4;color:#CC2600}
+.foot{margin-top:auto;padding-top:18px;border-top:1px solid #e8e8ee;
+font-size:15px;color:#2a2c36;line-height:1.6;font-weight:700}
+.foot a{color:#2a2c36;text-decoration:none;font-weight:700;display:block}
+.foot a:hover{color:#FF2F00}
+.foot .lic{color:#71717f;font-size:12px;margin-top:5px;line-height:1.5;
+font-weight:600}
+.empty{color:#b8b8c4;position:fixed;top:0;bottom:0;left:340px;right:0;
+display:flex;flex-direction:column;align-items:center;justify-content:center;
+text-align:center;padding:20px;font-size:22px;line-height:1.55;
+font-weight:500;letter-spacing:-.4px;pointer-events:none}
+.empty .en{display:block;margin-top:5px;font-size:16px;font-weight:400;
+color:#cbcbd4;letter-spacing:-.1px;line-height:1.6}
+.en .w{color:#e4e4ea;transition:color .5s}
+.en .w+.w{margin-left:.3em}
+.en .w i{font-style:normal;transition:color .3s}
+.en .w.lit{color:#3f3f4c}
+.en .w.on i{color:#FF2F00}
+.en .w.keep.lit i{color:#FF2F00}
+.en.rest .w{color:#cbcbd4}
+.empty .sm{font-size:13px;font-weight:400;color:#cbcbd4}
+.howto{pointer-events:auto;background:#ffffff;border:1px solid #e2e2ea;
+color:#8a8a98;font-family:inherit;font-size:12px;font-weight:500;
+padding:8px 18px;border-radius:20px;cursor:pointer;margin-bottom:22px;
+letter-spacing:0;transition:.15s}
+.howto:hover{border-color:#FF2F00;color:#FF2F00}
+.howto:disabled{opacity:.4}
+.guide .w{color:#e4e4ea;transition:color .5s}
+.guide .w+.w{margin-left:.32em}
+.guide .w i{font-style:normal;transition:color .3s}
+.guide .w.on i{color:#FF2F00}
+.guide .w.lit{color:#121212}
+.guide .w.keep.lit i{color:#FF2F00}
+.guide.rest .w{color:#b8b8c4}
+#drop.glow{border:1.5px solid #FF2F00;background:#FF2F00}
+#drop.glow .ph{color:#ffffff}
+.fold.glow{border-color:#FF2F00;background:#FF2F00}
+.fold.glow .t1,.fold.glow .t2{color:#ffffff}
+.go.glow{box-shadow:0 0 0 4px #FF2F0059}
+.go:disabled.glow{opacity:1;background:#FF2F00;color:#ffffff}
+#drop,.fold,.go{transition:border-color .5s ease-in-out,background .5s ease-in-out,box-shadow .5s ease-in-out,opacity .5s ease-in-out}
+#drop .ph,.fold .t1,.fold .t2{transition:color .5s ease-in-out}
+.empty b{color:#71717f;font-weight:600}
+#lb{position:fixed;inset:0;background:#1a1c22f2;display:none;align-items:center;
+justify-content:center;z-index:99;cursor:zoom-out;padding:40px;flex-direction:column;gap:14px}
+#lb img{max-width:100%;max-height:calc(100vh - 130px);object-fit:contain;border-radius:6px}
+#lb .cap{color:#c8c8d4;font-size:12px;text-align:center;word-break:break-all;max-width:800px}
+.loader{display:none;position:fixed;top:0;bottom:0;left:340px;right:0;
+align-items:center;justify-content:center;z-index:30;pointer-events:none}
+.ring{width:74px;height:74px;border:5px solid #FFD9D1;border-top-color:#FF2F00;
+border-radius:50%;animation:sp .85s cubic-bezier(.5,.1,.5,.9) infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+html,body,a,button,select,input,.card,.thumb,.hitem,#drop,#lb,*{cursor:none!important}
+#cur{position:fixed;top:0;left:0;width:26px;height:26px;border:1.5px solid #FF2F00;
+border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);
+transition:width .18s,height .18s,background .18s,border-color .18s;will-change:transform}
+#cur.hot{width:40px;height:40px;background:#FF2F001f;border-color:#CC2600}
+#cur.down{width:16px;height:16px;background:#FF2F0059}
+#dot{position:fixed;top:0;left:0;width:4px;height:4px;background:#CC2600;
+border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);
+will-change:transform}
+.rip{position:fixed;border:1.5px solid #FF2F00;border-radius:50%;pointer-events:none;
+z-index:9998;transform:translate(-50%,-50%);animation:rp .65s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes rp{0%{width:12px;height:12px;opacity:.8}
+100%{width:120px;height:120px;opacity:0;border-width:.5px}}
+@media(pointer:coarse){#cur,#dot{display:none}*{cursor:auto!important}}
+</style>
+</head>
+<body>
+<aside>
+<div class="logo" id="lg">Similar<br>Image<br>Search</div>
+<div><span class="lbl tip">Image to find<span class="q">?</span>
+<span class="bub"><b>찾고 싶은 이미지</b>를 넣어주세요.<br>
+캡처한 화면을 붙여넣어도 됩니다.
+<span class="en2">Add <b>the image you want to find</b>.<br>
+A pasted screenshot works too.</span></span></span>
+<div id="drop"><div class="ph">Drop, paste or click<br>to add an image</div></div>
+<input type="file" id="f" accept="image/*" hidden></div>
+<div><span class="lbl tip">Folder to search<span class="q">?</span>
+<span class="bub"><b>폴더 안 하위 폴더까지</b> 모두 찾습니다.<br>
+사진은 내 컴퓨터 밖으로 나가지 않습니다.
+<span class="en2">Searches <b>the folder and every subfolder</b>.<br>
+Your photos never leave your computer.</span></span></span>
+<div class="fold" id="fold"><div class="tx">
+<div class="t1" id="ft1">Choose a folder</div>
+<div class="t2" id="ft2"></div></div></div>
+<input type="file" id="dirin" webkitdirectory directory multiple hidden>
+<div class="bar" id="bar" style="display:none"><i id="bari"></i></div>
+<div class="pmsg" id="pmsg"></div></div>
+<div><div class="row"><span class="lbl tip" style="margin:0">Similarity<span class="q">?</span>
+<span class="bub">추천값은 <b>81%</b>입니다.<br>
+높일수록 거의 똑같은 이미지만 찾고,<br>
+낮출수록 비슷한 이미지까지 넓게 찾습니다.
+<span class="en2"><b>81%</b> is recommended.<br>
+Higher finds near-identical images only,<br>
+lower widens the net to similar ones.</span></span></span></div>
+<div class="slbox"><span class="val" id="tv">81%</span>
+<input type="range" id="th" min="40" max="100" value="81"></div></div>
+<div class="acts"><button class="go" id="go" disabled>Find</button>
+<button class="reset" id="rst">Reset</button></div>
+<div class="hist"><div class="histhead"><span class="lbl tip down">Recent<span class="q">?</span>
+<span class="bub"><b>찾아본 기록</b>입니다.<br>
+같은 조건으로 다시 찾습니다.<br>
+창을 닫으면 사라집니다.
+<span class="en2">Your <b>recent searches</b>.<br>
+Click one to run it again.<br>
+Cleared when you close the window.</span></span></span></div>
+<div class="hlist" id="hl"></div></div>
+<div class="foot"><a href="../index.html">nyong.app</a>
+<a href="mailto:cmy3544@gmail.com">cmy3544@gmail.com</a>
+<div class="lic">MIT License &middot; Free to use with attribution</div></div>
+</aside>
+<main id="mn"><div class="top" id="tp"><div class="cnt" id="st"></div>
+<div class="sortbar" id="sb" style="display:none">
+<button data-s="d" class="on">유사도순</button>
+<button data-s="px">해상도순</button>
+<button data-s="mb">용량순</button></div></div>
+<div class="inner"><div class="grid" id="rs"></div>
+<div class="loader" id="ld"><div class="ring"></div></div>
+<div class="empty" id="em"><button class="howto" id="howto">How it works</button><div class="guide rest" id="gd"><span class="w" data-t="drop"><i>이미지</i>와</span><span class="w" data-t="fold"><i>폴더</i>를</span><span class="w">선택한 뒤</span><span class="w keep" data-t="go"><i>Find</i>를 눌러주세요</span></div><span class="en rest" id="ge"><span class="w"><i>Pick an image</i></span><span class="w"><i>and a folder,</i></span><span class="w">then</span><span class="w keep"><i>hit Find</i> to start</span></span></div></div></main>
+<div id="lb"><img id="lbi"><div class="cap" id="lbc"></div></div>
+<div id="cur"></div><div id="dot"></div>
+<script>
+const $=i=>document.getElementById(i);
+const dp=$('drop'),fi=$('f'),go=$('go'),th=$('th'),tv=$('tv'),st=$('st'),
+rs=$('rs'),em=$('em'),sb=$('sb'),lb=$('lb'),hl=$('hl'),fold=$('fold'),
+dirin=$('dirin'),bar=$('bar'),bari=$('bari'),pmsg=$('pmsg'),ld=$('ld');
+const EXT=/\.(jpe?g|png|bmp|gif|webp|avif)$/i;
+const isMac=/Mac|iPhone|iPad/.test(navigator.userAgent);
+let data=null,files=[],index=null,hits=[],sort='d',hist=[],noLog=false,
+dirHandle=null,rootName='',busy=false,urls=[];
+
+/* ---------- 커서 ---------- */
+(function(){const cur=$('cur'),dot=$('dot');
+let cx=innerWidth/2,cy=innerHeight/2,rx=cx,ry=cy;
+addEventListener('mousemove',e=>{cx=e.clientX;cy=e.clientY;
+dot.style.transform='translate('+cx+'px,'+cy+'px) translate(-50%,-50%)';
+cur.classList.toggle('hot',!!e.target.closest(
+'button,a,.card,.thumb,.hitem,#drop,.fold,input,select'))});
+addEventListener('mousedown',e=>{cur.classList.add('down');
+const r=document.createElement('div');r.className='rip';
+r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';
+document.body.appendChild(r);setTimeout(()=>r.remove(),700)});
+addEventListener('mouseup',()=>cur.classList.remove('down'));
+addEventListener('mouseleave',()=>{cur.style.opacity=dot.style.opacity=0});
+addEventListener('mouseenter',()=>{cur.style.opacity=dot.style.opacity=1});
+(function loop(){rx+=(cx-rx)*.18;ry+=(cy-ry)*.18;
+cur.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';
+requestAnimationFrame(loop)})();})();
+
+/* ---------- 슬라이더 ---------- */
+let vTo=+th.value,vAt=+th.value,vV=0,vWake=0;
+function vPos(){const p=(vAt-40)/60,w=th.offsetWidth||280;
+const x=Math.max(16,Math.min(w-16,10.5+p*(w-21)));
+tv.style.left=x+'px';tv.textContent=Math.round(vAt)+'%'}
+function vLoop(){if(performance.now()>=vWake){const k=.22,dmp=.72;
+vV=(vV+(vTo-vAt)*k)*dmp;vAt+=vV;
+if(vAt>100){vAt=100;if(vV>0)vV=0}
+if(vAt<40){vAt=40;if(vV<0)vV=0}
+if(Math.abs(vTo-vAt)<.02&&Math.abs(vV)<.02){vAt=vTo;vV=0}
+vPos()}requestAnimationFrame(vLoop)}
+th.oninput=()=>{vTo=+th.value;vWake=performance.now()+300};
+addEventListener('resize',vPos);vPos();vLoop();
+
+/* ---------- pHash (32x32 DCT, imagehash 호환) ---------- */
+const N=32,K=8,cosT=[],cM=[];
+for(let u=0;u<N;u++){cosT[u]=[];
+for(let x=0;x<N;x++)cosT[u][x]=Math.cos((2*x+1)*u*Math.PI/(2*N))}
+const hc=document.createElement('canvas');hc.width=hc.height=N;
+const hx=hc.getContext('2d',{willReadFrequently:true});
+function phash(src){
+hx.fillStyle='#fff';hx.fillRect(0,0,N,N);hx.drawImage(src,0,0,N,N);
+const d=hx.getImageData(0,0,N,N).data,g=new Float64Array(N*N);
+for(let i=0,j=0;i<d.length;i+=4,j++)
+g[j]=.299*d[i]+.587*d[i+1]+.114*d[i+2];
+const rowT=new Float64Array(N*N);
+for(let y=0;y<N;y++)for(let u=0;u<K;u++){let s=0;
+for(let x=0;x<N;x++)s+=g[y*N+x]*cosT[u][x];rowT[y*K+u]=s}
+const dct=new Float64Array(K*K);
+for(let u=0;u<K;u++)for(let v=0;v<K;v++){let s=0;
+for(let y=0;y<N;y++)s+=rowT[y*K+v]*cosT[u][y];dct[u*K+v]=s}
+const srt=Array.from(dct).sort((a,b)=>a-b),
+med=(srt[31]+srt[32])/2;
+let hi=0n;for(let i=0;i<64;i++)hi=(hi<<1n)|(dct[i]>med?1n:0n);
+return hi}
+function ham(a,b){let x=a^b,c=0;while(x){x&=x-1n;c++}return c}
+
+/* ---------- 이미지 입력 ---------- */
+const PH='<div class="ph">Drop, paste or click<br>to add an image</div>';
+const EMPTY='<button class="howto" id="howto">How it works</button><div class="guide rest" id="gd"><span class="w" data-t="drop"><i>이미지</i>와</span><span class="w" data-t="fold"><i>폴더</i>를</span><span class="w">선택한 뒤</span><span class="w keep" data-t="go"><i>Find</i>를 눌러주세요</span></div><span class="en rest" id="ge"><span class="w"><i>Pick an image</i></span><span class="w"><i>and a folder,</i></span><span class="w">then</span><span class="w keep"><i>hit Find</i> to start</span></span>';
+function load(f){const r=new FileReader();r.onload=e=>{
+const im=new Image();im.onload=()=>{const c=document.createElement('canvas');
+const s=Math.min(1,512/Math.max(im.width,im.height));
+c.width=im.width*s;c.height=im.height*s;
+c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+data=c.toDataURL('image/jpeg',.9);
+dp.innerHTML='<img src="'+data+'">';ready()};
+im.src=e.target.result};r.readAsDataURL(f)}
+dp.onclick=()=>fi.click();
+fi.onchange=e=>e.target.files[0]&&load(e.target.files[0]);
+dp.ondragover=e=>{e.preventDefault();dp.classList.add('on')};
+dp.ondragleave=()=>dp.classList.remove('on');
+dp.ondrop=e=>{e.preventDefault();dp.classList.remove('on');
+e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])};
+document.onpaste=e=>{for(const it of e.clipboardData.items)
+if(it.type.startsWith('image'))load(it.getAsFile())};
+function ready(){go.disabled=!(data&&files.length&&!busy)}
+
+/* ---------- 폴더 선택 ---------- */
+const canFS=typeof window.showDirectoryPicker==='function';
+fold.onclick=async()=>{if(busy)return;
+if(canFS){try{const h=await showDirectoryPicker();dirHandle=h;rootName=h.name;
+$('ft1').textContent=h.name;$('ft2').textContent='Reading...';
+files=[];await walk(h,'');afterPick()}catch(e){}}
+else dirin.click()};
+async function walk(dir,base){
+for await(const [name,ent] of dir.entries()){
+if(name.startsWith('.')||name==='@eaDir')continue;
+const p=base?base+'/'+name:name;
+if(ent.kind==='file'){if(EXT.test(name))files.push({h:ent,rel:p,name:name})}
+else if(ent.kind==='directory')await walk(ent,p)}}
+dirin.onchange=e=>{const fl=[...e.target.files].filter(f=>EXT.test(f.name));
+files=fl.map(f=>({f:f,rel:f.webkitRelativePath||f.name,name:f.name}));
+rootName=(fl[0]&&fl[0].webkitRelativePath||'').split('/')[0]||'선택한 폴더';
+$('ft1').textContent=rootName;afterPick()};
+function afterPick(){index=null;
+$('ft2').textContent=files.length.toLocaleString()+' images found · click to change';
+ready()}
+
+/* ---------- 인덱싱 + 검색 ---------- */
+async function getFile(o){return o.f?o.f:await o.h.getFile()}
+async function build(){
+index=[];bar.style.display='block';
+const t0=performance.now();let done=0,fail=0;
+for(const o of files){
+try{const file=await getFile(o);
+let bm=await createImageBitmap(file),w=bm.width,ht=bm.height;
+try{const sm=await createImageBitmap(bm,{resizeWidth:32,resizeHeight:32,
+resizeQuality:'high'});bm.close();bm=sm}catch(_){}
+const h=phash(bm);bm.close();
+index.push({h:h,rel:o.rel,name:o.name,w:w,ht:ht,sz:file.size,src:o})}
+catch(e){fail++}
+done++;
+if(done%12===0||done===files.length){
+const p=done/files.length,el=(performance.now()-t0)/1000,
+sp=done/el,eta=(files.length-done)/(sp||1);
+bari.style.width=(p*100)+'%';
+pmsg.textContent=done.toLocaleString()+' / '+files.length.toLocaleString()+
+' ('+(p*100).toFixed(1)+'%) · '+sp.toFixed(0)+'장/초 · 남은 '+
+(eta<60?eta.toFixed(0)+'초':(eta/60).toFixed(1)+'분');
+await new Promise(r=>setTimeout(r,0))}}
+const el=((performance.now()-t0)/1000);
+pmsg.textContent='인덱싱 완료 · '+index.length.toLocaleString()+'장 · '+
+(el<60?el.toFixed(1)+'초':(el/60).toFixed(1)+'분')+
+(fail?' · 실패 '+fail+'장':'');
+bar.style.display='none'}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+function copy(b){navigator.clipboard.writeText(b.dataset.p);
+const o=b.textContent;b.textContent='복사됨';setTimeout(()=>b.textContent=o,1100)}
+function zoom(i){const h=hits[i];$('lbi').src=h.url;
+$('lbc').textContent=h.rel;lb.style.display='flex'}
+lb.onclick=()=>lb.style.display='none';
+function clearAll(){data=null;hits=[];dp.innerHTML=PH;rs.innerHTML='';
+sb.style.display='none';ld.style.display='none';em.style.display='flex';
+em.innerHTML=EMPTY;bindTour();st.textContent='';
+urls.forEach(u=>URL.revokeObjectURL(u));urls=[];ready()}
+document.onkeydown=e=>{if(e.key!=='Escape')return;
+if(lb.style.display==='flex'){lb.style.display='none';return}clearAll()};
+$('rst').onclick=()=>{clearAll();th.value=81;vTo=81;fi.value=''};
+
+function drawHist(){hl.innerHTML=hist.map((h,i)=>
+'<div class="hitem" onclick="rerun('+i+')"><img src="'+h.img+'">'+
+'<div class="hinfo"><div class="htime">'+h.time+'</div>'+
+'<div class="hres">'+h.found+'건 · 유사도 '+h.th+'%</div></div></div>').join('')}
+function rerun(i){const h=hist[i];data=h.img;th.value=h.th;vTo=h.th;
+dp.innerHTML='<img src="'+h.img+'">';ready();noLog=true;go.click()}
+
+function draw(){const a=[...hits];
+if(sort==='d')a.sort((x,y)=>x.d-y.d);
+if(sort==='px')a.sort((x,y)=>y.w*y.ht-x.w*x.ht);
+if(sort==='mb')a.sort((x,y)=>y.sz-x.sz);
+rs.innerHTML=a.map(h=>{const i=hits.indexOf(h);
+const folder=h.rel.includes('/')?h.rel.slice(0,h.rel.lastIndexOf('/')):'(root)';
+return '<div class="card"><div class="thumb" onclick="zoom('+i+')">'+
+'<img src="'+h.url+'" loading="lazy">'+
+'<div class="badge'+(h.d===0?' exact':'')+'">'+h.s+'%</div></div>'+
+'<div class="meta"><div class="nm">'+esc(h.name)+'</div>'+
+'<div class="dir">'+esc(folder)+'</div>'+
+'<div class="dim">'+h.w+'×'+h.ht+' · '+(h.sz/1048576).toFixed(1)+'MB</div>'+
+'<div class="btns">'+
+(isMac
+?'<button onclick="copy(this)" data-p="'+esc(folder.replace(/\//g,'/'))+'">Mac 폴더</button>'+
+ '<button onclick="copy(this)" data-p="'+esc(folder.replace(/\//g,'\\'))+'">Win 폴더</button>'
+:'<button onclick="copy(this)" data-p="'+esc(folder.replace(/\//g,'\\'))+'">Win 폴더</button>'+
+ '<button onclick="copy(this)" data-p="'+esc(folder.replace(/\//g,'/'))+'">Mac 폴더</button>')+
+'<button onclick="dl('+i+')">받기</button></div></div></div>'}).join('')}
+function dl(i){const h=hits[i],a=document.createElement('a');
+a.href=h.url;a.download=h.name;a.click()}
+sb.onclick=e=>{if(e.target.tagName!=='BUTTON')return;
+[...sb.children].forEach(b=>b.classList.remove('on'));
+e.target.classList.add('on');sort=e.target.dataset.s;draw()};
+
+go.onclick=async()=>{if(!data||!files.length||busy)return;
+const img=data,pct=Math.round(vTo),log=!noLog;noLog=false;
+busy=true;go.disabled=true;em.style.display='none';rs.innerHTML='';
+[$('drop'),fold,go].forEach(el=>el.classList.remove('glow'));
+sb.style.display='none';st.textContent='';ld.style.display='flex';
+urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
+try{
+if(!index)await build();
+await new Promise(r=>setTimeout(r,20));
+const im=new Image();
+await new Promise(r=>{im.onload=r;im.src=img});
+const t=phash(im),lim=Math.round((100-pct)/100*64);
+hits=[];
+for(const e of index){const d=ham(t,e.h);
+if(d<=lim)hits.push({d:d,s:Math.round((64-d)/64*100),rel:e.rel,name:e.name,
+w:e.w,ht:e.ht,sz:e.sz,src:e.src})}
+hits.sort((a,b)=>a.d-b.d);
+const total=hits.length;
+hits=hits.slice(0,80);
+for(const h of hits){h.url=URL.createObjectURL(await getFile(h.src));
+urls.push(h.url)}
+if(log){const now=new Date();
+hist.unshift({img:img,th:pct,found:total,
+time:now.getHours().toString().padStart(2,'0')+':'+
+now.getMinutes().toString().padStart(2,'0')+':'+
+now.getSeconds().toString().padStart(2,'0')});
+if(hist.length>12)hist.pop();drawHist()}
+if(!total){em.style.display='flex';
+em.innerHTML='결과가 없습니다<span class="en">No matches. Try lowering the similarity.</span>';
+st.innerHTML='<b>'+index.length.toLocaleString()+'</b>장 검색 · 0건'}
+else{st.innerHTML='<b>'+index.length.toLocaleString()+'</b>장 중 <b>'+
+total.toLocaleString()+'</b>건'+(total>hits.length?
+' <span style="color:#a0a0ae">(상위 '+hits.length+'건)</span>':'');
+sb.style.display='flex';draw()}
+}catch(e){st.textContent='오류: '+e.message}
+ld.style.display='none';busy=false;ready()};
+
+(function(){const lg=$('lg');
+lg.innerHTML=['Similar','Image','Search'].map(w=>'<span class="ln">'+
+[...w].map(c=>'<span class="ch">'+c+'</span>').join('')+'</span>').join('');
+const lns=[...lg.querySelectorAll('.ln')],busyLn=new Set();
+lg.onclick=e=>{const ln=e.target.closest('.ln');
+if(!ln||busyLn.has(ln))return;busyLn.add(ln);
+const chs=[...ln.querySelectorAll('.ch')];
+chs.forEach((c,i)=>{setTimeout(()=>{c.classList.add('hit');
+setTimeout(()=>c.classList.remove('hit'),150)},i*55)});
+setTimeout(()=>busyLn.delete(ln),chs.length*55+900)}})();
+let tourOn=false;
+const nap=ms=>new Promise(r=>setTimeout(r,ms));
+function bindTour(){const b=$('howto');if(b)b.onclick=tour}
+async function tour(){
+if(tourOn||busy)return;tourOn=true;
+const gd=$('gd'),ge=$('ge'),ws=[...gd.querySelectorAll('.w')],
+es=[...ge.querySelectorAll('.w')],btn=$('howto');
+const T={drop:$('drop'),fold:fold,go:go};
+btn.disabled=true;gd.classList.remove('rest');ge.classList.remove('rest');
+ws.concat(es).forEach(w=>w.classList.remove('lit','on'));
+Object.values(T).forEach(el=>el.classList.remove('glow'));
+for(let i=0;i<ws.length;i++){
+const w=ws[i],ew=es[i],t=w.dataset.t;
+w.classList.add('lit');if(ew)ew.classList.add('lit');
+if(t){w.classList.add('on');if(ew)ew.classList.add('on')}
+await nap(560);
+if(t&&T[t]){for(let b=0;b<2;b++){
+T[t].classList.add('glow');await nap(620);
+T[t].classList.remove('glow');await nap(480)}
+await nap(200)}
+else await nap(520);
+w.classList.remove('on');if(ew)ew.classList.remove('on')}
+await nap(1300);
+gd.classList.add('rest');ge.classList.add('rest');
+ws.concat(es).forEach(w=>w.classList.remove('lit','on'));
+btn.disabled=false;tourOn=false}
+bindTour();
+const mn=$('mn'),tp=$('tp');
+mn.addEventListener('scroll',()=>tp.classList.toggle('stuck',mn.scrollTop>4),
+{passive:true});
+if(!canFS)$('ft2').textContent='Reselect required each time';
+</script>
+</body>
+</html>

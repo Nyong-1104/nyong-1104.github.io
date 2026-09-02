@@ -224,7 +224,7 @@ function initCardDrag() {
       return slot;
     }
 
-    // 2x2: pick nearest slot center
+    // Multi-row (mobile 2-col): pick nearest slot center
     let best = 0;
     let bestDist = Infinity;
     for (let i = 0; i < count; i++) {
@@ -350,6 +350,7 @@ initCard('card1', 'front1', 'back1', 'open1');
 initCard('card2', 'front2', 'back2', 'open2');
 initCard('card3', 'front3', 'back3', 'open3');
 initCard('card4', 'front4', 'back4', 'open4');
+initCard('card5', 'front5', 'back5', 'open5');
 initCardDrag();
  
 document.body.addEventListener('click', e => {
