@@ -65,12 +65,12 @@ transition:color .1s ease-in,transform .16s ease-out}
 .lbl{font-size:14px;color:#71717f;font-weight:500;margin-bottom:8px;display:block}
 #drop{border:1.5px dashed #3a3a46;border-radius:10px;min-height:150px;
 display:flex;align-items:center;justify-content:center;text-align:center;
-cursor:pointer;transition:.15s;background:#000000;padding:14px;overflow:hidden}
+cursor:pointer;background:#000000;padding:14px;overflow:hidden}
 #drop:hover,#drop.on{border-color:#FF2F00;background:#0d0a1a}
 #drop img{max-width:100%;max-height:180px;border-radius:6px;display:block}
 #drop .ph{color:#ffffff;font-size:12px;line-height:1.7}
 .fold{border:2px solid #e2e2ea;background:#ffffff;border-radius:9px;padding:11px 12px;
-cursor:pointer;transition:.15s;display:flex;align-items:center}
+cursor:pointer;display:flex;align-items:center}
 .fold:hover{border-color:#FF2F00;background:#FFF3F0}
 .fold .tx{min-width:0;flex:1}
 .fold .t1{font-size:21px;color:#2a2c36;white-space:nowrap;overflow:hidden;
@@ -117,12 +117,11 @@ border-radius:9px;font-size:25px;font-weight:700;cursor:pointer;
 font-family:inherit;letter-spacing:-.3px}
 .go:hover{background:#CC2600}
 .go:disabled{opacity:.35;cursor:default}
-.go{transition:opacity .22s,background .22s,box-shadow .22s}
 .reset{flex:1;background:#ffffff;border:2px solid #e2e2ea;color:#71717f;
 padding:9px;border-radius:9px;font-size:15px;cursor:pointer;font-family:inherit}
 .reset:hover{border-color:#c4c4d0;color:#3a3a46}
 .bar{height:4px;border-radius:3px;background:#e2e2ea;overflow:hidden;margin-top:9px}
-.bar i{display:block;height:100%;background:#FF2F00;width:0;transition:width .18s}
+.bar i{display:block;height:100%;background:#FF2F00;width:0}
 .pmsg{font-size:10.5px;color:#a0a0ae;margin-top:6px;white-space:nowrap;
 overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
 .hist{border-top:1px solid #e8e8ee;padding-top:16px}
@@ -197,7 +196,6 @@ color:#cbcbd4;letter-spacing:-.1px;line-height:1.6}
 .en .w.on i{color:#FF2F00}
 .en .w.keep.lit i{color:#FF2F00}
 .en.rest .w{color:#cbcbd4}
-.empty .sm{font-size:13px;font-weight:400;color:#cbcbd4}
 .howto{pointer-events:auto;background:#ffffff;border:1px solid #e2e2ea;
 color:#8a8a98;font-family:inherit;font-size:12px;font-weight:500;
 padding:8px 18px;border-radius:20px;cursor:pointer;margin-bottom:22px;
@@ -217,9 +215,9 @@ letter-spacing:0;transition:.15s}
 .fold.glow .t1,.fold.glow .t2{color:#ffffff}
 .go.glow{box-shadow:0 0 0 4px #FF2F0059}
 .go:disabled.glow{opacity:1;background:#FF2F00;color:#ffffff}
-#drop,.fold,.go{transition:border-color .5s ease-in-out,background .5s ease-in-out,box-shadow .5s ease-in-out,opacity .5s ease-in-out}
+#drop,.fold,.go{transition:border-color .5s ease-in-out,background .5s ease-in-out,
+box-shadow .5s ease-in-out,opacity .5s ease-in-out}
 #drop .ph,.fold .t1,.fold .t2{transition:color .5s ease-in-out}
-.empty b{color:#71717f;font-weight:600}
 #lb{position:fixed;inset:0;background:#1a1c22f2;display:none;align-items:center;
 justify-content:center;z-index:99;cursor:zoom-out;padding:40px;flex-direction:column;gap:14px}
 #lb img{max-width:100%;max-height:calc(100vh - 130px);object-fit:contain;border-radius:6px}
@@ -295,7 +293,7 @@ Cleared when you close the window.</span></span></span></div>
 <button data-s="mb">용량순</button></div></div>
 <div class="inner"><div class="grid" id="rs"></div>
 <div class="loader" id="ld"><div class="ring"></div></div>
-<div class="empty" id="em"><button class="howto" id="howto">How it works</button><div class="guide rest" id="gd"><span class="w" data-t="drop"><i>이미지</i>와</span><span class="w" data-t="fold"><i>폴더</i>를</span><span class="w">선택한 뒤</span><span class="w keep" data-t="go"><i>Find</i>를 눌러주세요</span></div><span class="en rest" id="ge"><span class="w"><i>Pick an image</i></span><span class="w"><i>and a folder,</i></span><span class="w">then</span><span class="w keep"><i>hit Find</i> to start</span></span></div></div></main>
+<div class="empty" id="em"></div></div></main>
 <div id="lb"><img id="lbi"><div class="cap" id="lbc"></div></div>
 <div id="cur"></div><div id="dot"></div>
 <script>
@@ -305,26 +303,152 @@ rs=$('rs'),em=$('em'),sb=$('sb'),lb=$('lb'),hl=$('hl'),fold=$('fold'),
 dirin=$('dirin'),bar=$('bar'),bari=$('bari'),pmsg=$('pmsg'),ld=$('ld');
 const EXT=/\.(jpe?g|png|bmp|gif|webp|avif)$/i;
 const isMac=/Mac|iPhone|iPad/.test(navigator.userAgent);
-let data=null,files=[],index=null,hits=[],sort='d',hist=[],noLog=false,
-dirHandle=null,rootName='',busy=false,urls=[],abort=false;
-const SKIP=new Set(['@eadir','#recycle','$recycle.bin','system volume information',
-'temp','tmp','_백업','백업','__macosx','found.000']);
+const SKIP=['@eadir','#recycle','$recycle.bin','system volume information',
+'temp','tmp','_백업','백업','__macosx','found.000','node_modules'];
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-let walkWorker=null,walkSettle=null;
+
+let data=null,files=[],meta=null,H=null,hits=[],sort='d',hist=[],
+noLog=false,busy=false,urls=[],abort=false,walker=null,pool=[],walkFin=null;
+
+const PH='<div class="ph">Drop, paste or click<br>to add an image</div>';
+const EMPTY='<button class="howto" id="howto">How it works</button>'+
+'<div class="guide rest" id="gd">'+
+'<span class="w" data-t="drop"><i>이미지</i>와</span>'+
+'<span class="w" data-t="fold"><i>폴더</i>를</span>'+
+'<span class="w">선택한 뒤</span>'+
+'<span class="w keep" data-t="go"><i>Find</i>를 눌러주세요</span></div>'+
+'<span class="en rest" id="ge">'+
+'<span class="w"><i>Pick an image</i></span>'+
+'<span class="w"><i>and a folder,</i></span>'+
+'<span class="w">then</span>'+
+'<span class="w keep"><i>hit Find</i> to start</span></span>';
+em.innerHTML=EMPTY;
+
+/* ================= 워커 소스 ================= */
+const DCT_SRC=`
+const N=32,K=8,cosT=[];
+for(let u=0;u<N;u++){cosT[u]=new Float64Array(N);
+for(let x=0;x<N;x++)cosT[u][x]=Math.cos((2*x+1)*u*Math.PI/(2*N))}
+function hashPixels(d){
+const g=new Float64Array(N*N);
+for(let i=0,j=0;i<d.length;i+=4,j++)g[j]=.299*d[i]+.587*d[i+1]+.114*d[i+2];
+const rowT=new Float64Array(N*K);
+for(let y=0;y<N;y++)for(let u=0;u<K;u++){let s=0;const c=cosT[u];
+for(let x=0;x<N;x++)s+=g[y*N+x]*c[x];rowT[y*K+u]=s}
+const dct=new Float64Array(64);
+for(let u=0;u<K;u++){const c=cosT[u];
+for(let v=0;v<K;v++){let s=0;
+for(let y=0;y<N;y++)s+=rowT[y*K+v]*c[y];dct[u*K+v]=s}}
+const srt=Array.prototype.slice.call(dct).sort((a,b)=>a-b);
+const med=(srt[31]+srt[32])/2;
+let hi=0,lo=0;
+for(let i=0;i<32;i++)hi=(hi<<1)|(dct[i]>med?1:0);
+for(let i=32;i<64;i++)lo=(lo<<1)|(dct[i]>med?1:0);
+return[hi>>>0,lo>>>0]}
+`;
+
+const HASH_WORKER=DCT_SRC+`
+let cv=null,cx=null;
+function ctx(){if(!cx){cv=new OffscreenCanvas(N,N);
+cx=cv.getContext('2d',{willReadFrequently:true})}return cx}
+async function one(o){
+const file=o.f?o.f:await o.h.getFile();
+let bm;
+try{bm=await createImageBitmap(file,{resizeWidth:N,resizeHeight:N,
+resizeQuality:'low'})}catch(_){bm=await createImageBitmap(file)}
+const c=ctx();
+c.fillStyle='#fff';c.fillRect(0,0,N,N);
+c.drawImage(bm,0,0,N,N);bm.close();
+const px=c.getImageData(0,0,N,N).data;
+const hl=hashPixels(px);
+return{hi:hl[0],lo:hl[1],size:file.size}}
+self.onmessage=async e=>{
+const m=e.data;
+if(m.cmd!=='job')return;
+const out=[];
+for(const it of m.items){
+try{const r=await one(it.o);out.push({i:it.i,hi:r.hi,lo:r.lo,size:r.size})}
+catch(_){out.push({i:it.i,bad:1})}}
+self.postMessage({type:'done',out:out})};
+`;
+
+const WALK_WORKER=`
+const EXT=/\\.(jpe?g|png|bmp|gif|webp|avif)$/i;
+const SKIP=new Set(${JSON.stringify(SKIP)});
+let stop=false;
+self.onmessage=async e=>{
+if(e.data.cmd==='abort'){stop=true;return}
+if(e.data.cmd!=='start')return;
+stop=false;
+const stack=[[e.data.handle,'']];
+let batch=[],found=0,last=Date.now();
+try{
+while(stack.length&&!stop){
+const [dir,base]=stack.pop();
+let it;try{it=dir.entries()}catch(_){continue}
+for await(const [name,ent] of it){
+if(stop)break;
+if(name.charCodeAt(0)===46||SKIP.has(name.toLowerCase()))continue;
+const p=base?base+'/'+name:name;
+if(ent.kind==='file'){
+if(EXT.test(name)){batch.push({h:ent,rel:p,name:name});found++}}
+else stack.push([ent,p]);
+const now=Date.now();
+if(now-last>250){last=now;
+self.postMessage({type:'p',found:found});
+if(batch.length>2000){self.postMessage({type:'b',files:batch});batch=[]}}}}
+if(batch.length)self.postMessage({type:'b',files:batch});
+self.postMessage({type:stop?'abort':'end',found:found});
+}catch(err){self.postMessage({type:'err',m:String(err&&err.message||err)})}};
+`;
+
+function mkWorker(src){
+const u=URL.createObjectURL(new Blob([src],{type:'text/javascript'}));
+const w=new Worker(u);w._u=u;return w}
+function killWorker(w){if(!w)return;
+try{w.terminate()}catch(_){}
+try{URL.revokeObjectURL(w._u)}catch(_){}}
+function killPool(){pool.forEach(killWorker);pool=[]}
 function stopWalk(){
 abort=true;
-if(walkWorker){try{walkWorker.terminate()}catch(_){}
-walkWorker=null}
-if(walkSettle){const d=walkSettle;walkSettle=null;d()}}
+if(walker){try{walker.postMessage({cmd:'abort'})}catch(_){}
+killWorker(walker);walker=null}
+if(walkFin){const f=walkFin;walkFin=null;f()}}
 
-/* ---------- 커서 ---------- */
+/* ================= 메인 스레드용 pHash (질의 이미지 전용) ================= */
+const N=32,K=8,cosT=[];
+for(let u=0;u<N;u++){cosT[u]=new Float64Array(N);
+for(let x=0;x<N;x++)cosT[u][x]=Math.cos((2*x+1)*u*Math.PI/(2*N))}
+const hc=document.createElement('canvas');hc.width=hc.height=N;
+const hx=hc.getContext('2d',{willReadFrequently:true});
+function phash(src){
+hx.fillStyle='#fff';hx.fillRect(0,0,N,N);hx.drawImage(src,0,0,N,N);
+const d=hx.getImageData(0,0,N,N).data,g=new Float64Array(N*N);
+for(let i=0,j=0;i<d.length;i+=4,j++)g[j]=.299*d[i]+.587*d[i+1]+.114*d[i+2];
+const rowT=new Float64Array(N*K);
+for(let y=0;y<N;y++)for(let u=0;u<K;u++){let s=0;const c=cosT[u];
+for(let x=0;x<N;x++)s+=g[y*N+x]*c[x];rowT[y*K+u]=s}
+const dct=new Float64Array(64);
+for(let u=0;u<K;u++){const c=cosT[u];
+for(let v=0;v<K;v++){let s=0;
+for(let y=0;y<N;y++)s+=rowT[y*K+v]*c[y];dct[u*K+v]=s}}
+const srt=Array.prototype.slice.call(dct).sort((a,b)=>a-b);
+const med=(srt[31]+srt[32])/2;
+let hi=0,lo=0;
+for(let i=0;i<32;i++)hi=(hi<<1)|(dct[i]>med?1:0);
+for(let i=32;i<64;i++)lo=(lo<<1)|(dct[i]>med?1:0);
+return[hi>>>0,lo>>>0]}
+function pc(x){x=x-((x>>1)&0x55555555);
+x=(x&0x33333333)+((x>>2)&0x33333333);
+x=(x+(x>>4))&0x0f0f0f0f;return(x*0x01010101)>>24}
+
+/* ================= 커서 ================= */
 (function(){const cur=$('cur'),dot=$('dot');
 let cx=innerWidth/2,cy=innerHeight/2,rx=cx,ry=cy;
 addEventListener('mousemove',e=>{cx=e.clientX;cy=e.clientY;
-if(busy)return;
 dot.style.transform='translate('+cx+'px,'+cy+'px) translate(-50%,-50%)';
 cur.classList.toggle('hot',!!e.target.closest(
-'button,a,.card,.thumb,.hitem,#drop,.fold,input,select'))});
+'button,a,.card,.thumb,.hitem,#drop,.fold,input,select,.ln'))});
 addEventListener('mousedown',e=>{cur.classList.add('down');
 const r=document.createElement('div');r.className='rip';
 r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';
@@ -332,50 +456,38 @@ document.body.appendChild(r);setTimeout(()=>r.remove(),700)});
 addEventListener('mouseup',()=>cur.classList.remove('down'));
 addEventListener('mouseleave',()=>{cur.style.opacity=dot.style.opacity=0});
 addEventListener('mouseenter',()=>{cur.style.opacity=dot.style.opacity=1});
-(function loop(){if(!busy){rx+=(cx-rx)*.18;ry+=(cy-ry)*.18;
-cur.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)'}
+(function loop(){rx+=(cx-rx)*.18;ry+=(cy-ry)*.18;
+cur.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';
 requestAnimationFrame(loop)})();})();
 
-/* ---------- 슬라이더 ---------- */
+/* ================= 로고 ================= */
+(function(){const lg=$('lg');
+lg.innerHTML=['Similar','Image','Search'].map(w=>'<span class="ln">'+
+[...w].map(c=>'<span class="ch">'+c+'</span>').join('')+'</span>').join('');
+const busyLn=new Set();
+lg.onclick=e=>{const ln=e.target.closest('.ln');
+if(!ln||busyLn.has(ln))return;busyLn.add(ln);
+const chs=[...ln.querySelectorAll('.ch')];
+chs.forEach((c,i)=>{setTimeout(()=>{c.classList.add('hit');
+setTimeout(()=>c.classList.remove('hit'),150)},i*55)});
+setTimeout(()=>busyLn.delete(ln),chs.length*55+900)}})();
+
+/* ================= 슬라이더 ================= */
 let vTo=+th.value,vAt=+th.value,vV=0,vWake=0,vOn=false;
 function vPos(){const p=(vAt-40)/60,w=th.offsetWidth||280;
 const x=Math.max(16,Math.min(w-16,10.5+p*(w-21)));
 tv.style.left=x+'px';tv.textContent=Math.round(vAt)+'%'}
-function vLoop(){vOn=true;if(performance.now()>=vWake){const k=.22,dmp=.72;
+function vLoop(){vOn=true;
+if(performance.now()>=vWake){const k=.22,dmp=.72;
 vV=(vV+(vTo-vAt)*k)*dmp;vAt+=vV;
 if(vAt>100){vAt=100;if(vV>0)vV=0}
 if(vAt<40){vAt=40;if(vV<0)vV=0}
-if(Math.abs(vTo-vAt)<.02&&Math.abs(vV)<.02){vAt=vTo;vV=0;vPos();vOn=false;return}
-vPos()}requestAnimationFrame(vLoop)}
+if(Math.abs(vTo-vAt)<.02&&Math.abs(vV)<.02){vAt=vTo;vV=0;vPos();vOn=false;return}}
+vPos();requestAnimationFrame(vLoop)}
 th.oninput=()=>{vTo=+th.value;vWake=performance.now()+300;if(!vOn)vLoop()};
 addEventListener('resize',vPos);vPos();
 
-/* ---------- pHash (32x32 DCT, imagehash 호환) ---------- */
-const N=32,K=8,cosT=[],cM=[];
-for(let u=0;u<N;u++){cosT[u]=[];
-for(let x=0;x<N;x++)cosT[u][x]=Math.cos((2*x+1)*u*Math.PI/(2*N))}
-const hc=document.createElement('canvas');hc.width=hc.height=N;
-const hx=hc.getContext('2d',{willReadFrequently:true});
-function phash(src){
-hx.fillStyle='#fff';hx.fillRect(0,0,N,N);hx.drawImage(src,0,0,N,N);
-const d=hx.getImageData(0,0,N,N).data,g=new Float64Array(N*N);
-for(let i=0,j=0;i<d.length;i+=4,j++)
-g[j]=.299*d[i]+.587*d[i+1]+.114*d[i+2];
-const rowT=new Float64Array(N*N);
-for(let y=0;y<N;y++)for(let u=0;u<K;u++){let s=0;
-for(let x=0;x<N;x++)s+=g[y*N+x]*cosT[u][x];rowT[y*K+u]=s}
-const dct=new Float64Array(K*K);
-for(let u=0;u<K;u++)for(let v=0;v<K;v++){let s=0;
-for(let y=0;y<N;y++)s+=rowT[y*K+v]*cosT[u][y];dct[u*K+v]=s}
-const srt=Array.from(dct).sort((a,b)=>a-b),
-med=(srt[31]+srt[32])/2;
-let hi=0n;for(let i=0;i<64;i++)hi=(hi<<1n)|(dct[i]>med?1n:0n);
-return hi}
-function ham(a,b){let x=a^b,c=0;while(x){x&=x-1n;c++}return c}
-
-/* ---------- 이미지 입력 ---------- */
-const PH='<div class="ph">Drop, paste or click<br>to add an image</div>';
-const EMPTY='<button class="howto" id="howto">How it works</button><div class="guide rest" id="gd"><span class="w" data-t="drop"><i>이미지</i>와</span><span class="w" data-t="fold"><i>폴더</i>를</span><span class="w">선택한 뒤</span><span class="w keep" data-t="go"><i>Find</i>를 눌러주세요</span></div><span class="en rest" id="ge"><span class="w"><i>Pick an image</i></span><span class="w"><i>and a folder,</i></span><span class="w">then</span><span class="w keep"><i>hit Find</i> to start</span></span>';
+/* ================= 이미지 입력 ================= */
 function load(f){const r=new FileReader();r.onload=e=>{
 const im=new Image();im.onload=()=>{const c=document.createElement('canvas');
 const s=Math.min(1,512/Math.max(im.width,im.height));
@@ -394,144 +506,89 @@ document.onpaste=e=>{for(const it of e.clipboardData.items)
 if(it.type.startsWith('image'))load(it.getAsFile())};
 function ready(){go.disabled=!(data&&files.length&&!busy)}
 
-/* ---------- 폴더 선택 ---------- */
+/* ================= 폴더 선택 ================= */
 const canFS=typeof window.showDirectoryPicker==='function';
 fold.onclick=async()=>{if(busy)return;
-if(canFS){try{const h=await showDirectoryPicker();dirHandle=h;rootName=h.name;
+if(!canFS){dirin.click();return}
+let h;try{h=await showDirectoryPicker()}catch(_){return}
 $('ft1').textContent=h.name;$('ft2').textContent='Reading...';
-abort=false;busy=true;go.disabled=true;files=[];index=null;
-try{await walk(h);
-if(abort){if(files.length)afterPick();else $('ft2').textContent=''}
-else afterPick()}
-finally{stopWalk();abort=false;busy=false;ready()}}catch(e){}}
-else dirin.click()};
-function walkWorkerSrc(){return `
-const EXT=/\\.(jpe?g|png|bmp|gif|webp|avif)$/i;
-const SKIP=new Set(${JSON.stringify([...SKIP])});
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-let stop=false;
-self.onmessage=async e=>{
-if(e.data.cmd==='abort'){stop=true;return}
-if(e.data.cmd!=='start')return;
-stop=false;
-const root=e.data.handle;
-const stack=[[root,'',[root]]];
-let n=0,found=0,batch=[],t0=performance.now();
-try{
-while(stack.length&&!stop){
-const [dir,base,anc]=stack.pop();
-let entries;try{entries=dir.entries()}catch(_){continue}
-for await(const [name,ent] of entries){
-if(stop)break;
-if(name.startsWith('.')||SKIP.has(name.toLowerCase()))continue;
-const p=base?base+'/'+name:name;
-if(ent.kind==='file'){if(EXT.test(name)){batch.push({h:ent,rel:p,name});found++}}
-else if(ent.kind==='directory'){
-let loop=false;
-for(const a of anc){try{if(await ent.isSameEntry(a)){loop=true;break}}catch(_){}}
-if(!loop)stack.push([ent,p,anc.concat(ent)])}
-n++;
-if(n%10===0){
-if(batch.length){self.postMessage({type:'batch',files:batch});batch=[]}
-self.postMessage({type:'progress',found});
-const elapsed=performance.now()-t0;
-await sleep(elapsed>40?90:40);
-t0=performance.now()}}
-}
-if(batch.length)self.postMessage({type:'batch',files:batch});
-self.postMessage({type:stop?'aborted':'done'});
-}catch(err){self.postMessage({type:'error',message:String(err&&err.message||err)})}
-};`}
-async function walkMain(root){
-const stack=[[root,'',[root]]];let n=0,t0=performance.now();
-while(stack.length){
-if(abort)return;
-const [dir,base,anc]=stack.pop();
-let entries;try{entries=dir.entries()}catch(_){continue}
-for await(const [name,ent] of entries){
-if(abort)return;
-if(name.startsWith('.')||SKIP.has(name.toLowerCase()))continue;
-const p=base?base+'/'+name:name;
-if(ent.kind==='file'){if(EXT.test(name))files.push({h:ent,rel:p,name:name})}
-else if(ent.kind==='directory'){
-let loop=false;
-for(const a of anc){try{if(await ent.isSameEntry(a)){loop=true;break}}catch(_){}}
-if(!loop)stack.push([ent,p,anc.concat(ent)])}
-if(++n%10===0){$('ft2').textContent='Reading... '+
-files.length.toLocaleString()+' images';
-const elapsed=performance.now()-t0;
-await sleep(elapsed>40?90:40);t0=performance.now()}}}}
-function walk(root){
-return new Promise((resolve,reject)=>{
-let url,settled=false;
-const done=()=>{if(settled)return;settled=true;walkSettle=null;
-if(walkWorker){try{walkWorker.terminate()}catch(_){}walkWorker=null}
-if(url)URL.revokeObjectURL(url);resolve()}
-walkSettle=done;
-try{url=URL.createObjectURL(new Blob([walkWorkerSrc()],{type:'text/javascript'}));
-walkWorker=new Worker(url)}catch(e){walkSettle=null;walkMain(root).then(resolve,reject);return}
-walkWorker.onmessage=e=>{
-const m=e.data;
-if(m.type==='batch'&&m.files)files.push(...m.files);
-if(m.type==='progress')$('ft2').textContent='Reading... '+
-(m.found!=null?m.found:files.length).toLocaleString()+' images';
-if(m.type==='done'||m.type==='aborted'||m.type==='error')done()};
-walkWorker.onerror=()=>{
-if(walkWorker){try{walkWorker.terminate()}catch(_){}}
-walkWorker=null;if(url)URL.revokeObjectURL(url);walkSettle=null;
-walkMain(root).then(resolve,reject)};
-try{walkWorker.postMessage({cmd:'start',handle:root})}
-catch(e){
-if(walkWorker){try{walkWorker.terminate()}catch(_){}}
-walkWorker=null;if(url)URL.revokeObjectURL(url);walkSettle=null;
-walkMain(root).then(resolve,reject)}})
-}
+files=[];meta=null;H=null;abort=false;busy=true;ready();
+try{await walk(h)}finally{
+if(walker){killWorker(walker);walker=null}
+walkFin=null;busy=false;afterPick()}};
+
+function walk(root){return new Promise(res=>{
+let ended=false;
+const fin=()=>{if(ended)return;ended=true;walkFin=null;res()};
+walkFin=fin;
+let w;try{w=mkWorker(WALK_WORKER)}catch(_){return fin()}
+walker=w;
+w.onmessage=e=>{const m=e.data;
+if(m.type==='b')files.push(...m.files);
+else if(m.type==='p')
+$('ft2').textContent='Reading... '+m.found.toLocaleString()+' images';
+else fin()};
+w.onerror=fin;
+try{w.postMessage({cmd:'start',handle:root})}catch(_){fin()}})}
+
 dirin.onchange=e=>{const fl=[...e.target.files].filter(f=>EXT.test(f.name));
 files=fl.map(f=>({f:f,rel:f.webkitRelativePath||f.name,name:f.name}));
-rootName=(fl[0]&&fl[0].webkitRelativePath||'').split('/')[0]||'선택한 폴더';
-$('ft1').textContent=rootName;afterPick()};
-function afterPick(){index=null;
+$('ft1').textContent=(fl[0]&&fl[0].webkitRelativePath||'').split('/')[0]||'Folder';
+meta=null;H=null;afterPick()};
+
+function afterPick(){
 $('ft2').textContent=files.length.toLocaleString()+' images found · click to change';
 ready()}
 
-/* ---------- 인덱싱 + 검색 ---------- */
-async function getFile(o){return o.f?o.f:await o.h.getFile()}
-async function thumb32(file){
-try{return await createImageBitmap(file,{resizeWidth:32,resizeHeight:32,
-resizeQuality:'low'})}catch(_){}
-const bm=await createImageBitmap(file);
-try{const sm=await createImageBitmap(bm,{resizeWidth:32,resizeHeight:32,
-resizeQuality:'low'});bm.close();return sm}catch(_){return bm}}
-function prog(done,fail,t0){
-const p=done/files.length,el=(performance.now()-t0)/1000,
-sp=done/(el||.001),eta=(files.length-done)/(sp||1);
-bari.style.width=(p*100)+'%';
-pmsg.textContent=done.toLocaleString()+' / '+files.length.toLocaleString()+
+/* ================= 인덱싱 (워커 풀) ================= */
+function build(){return new Promise((res,rej)=>{
+const n=files.length;
+H=new Uint32Array(n*2);
+meta=new Array(n);
+const bad=new Uint8Array(n),size=new Float64Array(n);
+const NW=Math.max(2,Math.min(8,(navigator.hardwareConcurrency||4)));
+const CH=Math.max(4,Math.min(24,Math.ceil(n/(NW*40))));
+let next=0,done=0,fail=0,alive=0;
+const t0=performance.now();let lastUI=0;
+const ui=(force)=>{const now=performance.now();
+if(!force&&now-lastUI<200)return;lastUI=now;
+const p=done/n,el=(now-t0)/1000,sp=done/(el||.001),
+eta=(n-done)/(sp||1);
+bari.style.width=(p*100).toFixed(1)+'%';
+pmsg.textContent=done.toLocaleString()+' / '+n.toLocaleString()+
 ' ('+(p*100).toFixed(1)+'%) · '+sp.toFixed(0)+'장/초 · 남은 '+
-(eta<60?eta.toFixed(0)+'초':(eta/60).toFixed(1)+'분')}
-async function build(){
-index=[];bar.style.display='block';
-const t0=performance.now();let done=0,fail=0,BATCH=2;
-for(let i=0;i<files.length;i+=BATCH){
-if(abort)return;
-const slice=files.slice(i,i+BATCH);
-const bitmaps=await Promise.all(slice.map(async o=>{
-try{const file=await getFile(o);return{o,file,bm:await thumb32(file)}}
-catch(_){return{fail:true}}}));
-for(const it of bitmaps){
-if(it.fail){fail++;done++;continue}
-try{const h=phash(it.bm);it.bm.close();
-index.push({h:h,rel:it.o.rel,name:it.o.name,sz:it.file.size,src:it.o})}
-catch(_){fail++;try{it.bm.close()}catch(_){}}
-done++}
-prog(done,fail,t0);await sleep(40)}
-if(abort)return;
-const el=((performance.now()-t0)/1000);
-pmsg.textContent='인덱싱 완료 · '+index.length.toLocaleString()+'장 · '+
+(eta<60?eta.toFixed(0)+'초':(eta/60).toFixed(1)+'분')};
+const finish=()=>{
+killPool();
+if(abort)return res(false);
+const el=(performance.now()-t0)/1000;
+for(let i=0;i<n;i++)meta[i]={rel:files[i].rel,name:files[i].name,
+src:files[i],sz:size[i],bad:bad[i]};
+pmsg.textContent='인덱싱 완료 · '+(n-fail).toLocaleString()+'장 · '+
 (el<60?el.toFixed(1)+'초':(el/60).toFixed(1)+'분')+
-(fail?' · 실패 '+fail+'장':'');
-bar.style.display='none'}
+(fail?' · 실패 '+fail.toLocaleString()+'장':'');
+bar.style.display='none';res(true)};
+const feed=w=>{
+if(abort||next>=n){if(--alive<=0)finish();return}
+const items=[];
+for(let k=0;k<CH&&next<n;k++,next++)items.push({i:next,o:files[next]});
+w.postMessage({cmd:'job',items:items})};
+bar.style.display='block';bari.style.width='0%';
+pmsg.textContent='0 / '+n.toLocaleString()+' (0.0%)';
+if(!n)return res(true);
+for(let i=0;i<NW;i++){
+let w;try{w=mkWorker(HASH_WORKER)}catch(e){if(!pool.length)return rej(e);break}
+pool.push(w);alive++;
+w.onmessage=e=>{const m=e.data;
+if(m.type==='done'){
+for(const r of m.out){done++;
+if(r.bad){fail++;bad[r.i]=1;continue}
+H[r.i*2]=r.hi;H[r.i*2+1]=r.lo;size[r.i]=r.size}
+ui();feed(w)}};
+w.onerror=()=>{if(--alive<=0)finish()};
+feed(w)}})}
 
+/* ================= 결과 ================= */
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
 function copy(b){navigator.clipboard.writeText(b.dataset.p);
 const o=b.textContent;b.textContent='복사됨';setTimeout(()=>b.textContent=o,1100)}
@@ -544,34 +601,35 @@ em.innerHTML=EMPTY;bindTour();st.textContent='';
 urls.forEach(u=>URL.revokeObjectURL(u));urls=[];ready()}
 document.onkeydown=e=>{if(e.key!=='Escape')return;
 if(lb.style.display==='flex'){lb.style.display='none';return}
-abort=true;stopWalk();clearAll()};
-$('rst').onclick=()=>{abort=true;stopWalk();clearAll();th.value=81;vTo=81;fi.value=''};
+abort=true;stopWalk();killPool();clearAll()};
+$('rst').onclick=()=>{abort=true;stopWalk();killPool();clearAll();
+th.value=81;vTo=81;vAt=81;vPos();fi.value=''};
 
 function drawHist(){hl.innerHTML=hist.map((h,i)=>
 '<div class="hitem" onclick="rerun('+i+')"><img src="'+h.img+'">'+
 '<div class="hinfo"><div class="htime">'+h.time+'</div>'+
 '<div class="hres">'+h.found+'건 · 유사도 '+h.th+'%</div></div></div>').join('')}
-function rerun(i){const h=hist[i];data=h.img;th.value=h.th;vTo=h.th;
+function rerun(i){const h=hist[i];data=h.img;th.value=h.th;vTo=h.th;vAt=h.th;vPos();
 dp.innerHTML='<img src="'+h.img+'">';ready();noLog=true;go.click()}
 
 function draw(){const a=[...hits];
 if(sort==='d')a.sort((x,y)=>x.d-y.d);
-if(sort==='px')a.sort((x,y)=>y.w*y.ht-x.w*x.ht);
+if(sort==='px')a.sort((x,y)=>(y.w*y.ht)-(x.w*x.ht));
 if(sort==='mb')a.sort((x,y)=>y.sz-x.sz);
 rs.innerHTML=a.map(h=>{const i=hits.indexOf(h);
-const folder=h.rel.includes('/')?h.rel.slice(0,h.rel.lastIndexOf('/')):'(root)';
+const fd=h.rel.includes('/')?h.rel.slice(0,h.rel.lastIndexOf('/')):'(root)';
+const win=fd.split('/').join(String.fromCharCode(92));
 return '<div class="card"><div class="thumb" onclick="zoom('+i+')">'+
 '<img src="'+h.url+'" loading="lazy">'+
 '<div class="badge'+(h.d===0?' exact':'')+'">'+h.s+'%</div></div>'+
 '<div class="meta"><div class="nm">'+esc(h.name)+'</div>'+
-'<div class="dir">'+esc(folder)+'</div>'+
-'<div class="dim">'+(h.w||0)+'×'+(h.ht||0)+' · '+(h.sz/1048576).toFixed(1)+'MB</div>'+
-'<div class="btns">'+
-(isMac
-?'<button onclick="copy(this)" data-p="'+esc(folder.replace(/\//g,'/'))+'">Mac 폴더</button>'+
- '<button onclick="copy(this)" data-p="'+esc(folder.replace(/\//g,'\\'))+'">Win 폴더</button>'
-:'<button onclick="copy(this)" data-p="'+esc(folder.replace(/\//g,'\\'))+'">Win 폴더</button>'+
- '<button onclick="copy(this)" data-p="'+esc(folder.replace(/\//g,'/'))+'">Mac 폴더</button>')+
+'<div class="dir">'+esc(fd)+'</div>'+
+'<div class="dim">'+(h.w||0)+'×'+(h.ht||0)+' · '+
+(h.sz/1048576).toFixed(1)+'MB</div><div class="btns">'+(isMac
+?'<button onclick="copy(this)" data-p="'+esc(fd)+'">Mac 폴더</button>'+
+ '<button onclick="copy(this)" data-p="'+esc(win)+'">Win 폴더</button>'
+:'<button onclick="copy(this)" data-p="'+esc(win)+'">Win 폴더</button>'+
+ '<button onclick="copy(this)" data-p="'+esc(fd)+'">Mac 폴더</button>')+
 '<button onclick="dl('+i+')">받기</button></div></div></div>'}).join('')}
 function dl(i){const h=hits[i],a=document.createElement('a');
 a.href=h.url;a.download=h.name;a.click()}
@@ -582,34 +640,33 @@ e.target.classList.add('on');sort=e.target.dataset.s;draw()};
 go.onclick=async()=>{if(!data||!files.length||busy)return;
 const img=data,pct=Math.round(vTo),log=!noLog;noLog=false;
 abort=false;busy=true;go.disabled=true;em.style.display='none';rs.innerHTML='';
-[$('drop'),fold,go].forEach(el=>el.classList.remove('glow'));
+[dp,fold,go].forEach(el=>el.classList.remove('glow'));
 sb.style.display='none';st.textContent='';ld.style.display='flex';
 urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
 try{
-if(!index)await build();
-if(abort){index=null;return}
-await sleep(0);
+if(!H){const ok=await build();if(!ok||abort){H=null;return}}
 const im=new Image();
-await new Promise(r=>{im.onload=r;im.src=img});
-const t=phash(im),lim=Math.round((100-pct)/100*64);
-hits=[];
-for(let i=0;i<index.length;i++){
-const e=index[i],d=ham(t,e.h);
-if(d<=lim)hits.push({d:d,s:Math.round((64-d)/64*100),rel:e.rel,name:e.name,
-sz:e.sz,src:e.src});
-if(i%8000===7999){await sleep(20);if(abort)return}}
+await new Promise(r=>{im.onload=r;im.onerror=r;im.src=img});
+const t=phash(im),thi=t[0],tlo=t[1];
+const lim=Math.round((100-pct)/100*64);
+const n=meta.length;hits=[];
+for(let i=0;i<n;i++){
+if(meta[i].bad)continue;
+const d=pc(H[i*2]^thi)+pc(H[i*2+1]^tlo);
+if(d<=lim)hits.push({d:d,s:Math.round((64-d)/64*100),i:i,
+rel:meta[i].rel,name:meta[i].name,sz:meta[i].sz,src:meta[i].src})}
 hits.sort((a,b)=>a.d-b.d);
 const total=hits.length;
 hits=hits.slice(0,80);
-for(let i=0;i<hits.length;i+=8){
+for(let i=0;i<hits.length;i+=10){
 if(abort)return;
-const batch=hits.slice(i,i+8);
-await Promise.all(batch.map(async h=>{
-const file=await getFile(h.src);
-h.url=URL.createObjectURL(file);h.sz=file.size;urls.push(h.url);
+await Promise.all(hits.slice(i,i+10).map(async h=>{
+try{const f=h.src.f?h.src.f:await h.src.h.getFile();
+h.url=URL.createObjectURL(f);h.sz=f.size;urls.push(h.url);
 await new Promise(r=>{const im2=new Image();
 im2.onload=()=>{h.w=im2.naturalWidth;h.ht=im2.naturalHeight;r()};
-im2.onerror=()=>{h.w=0;h.ht=0;r()};im2.src=h.url})}))}
+im2.onerror=()=>{h.w=0;h.ht=0;r()};im2.src=h.url})}
+catch(_){h.url='';h.w=0;h.ht=0}}))}
 if(abort)return;
 if(log){const now=new Date();
 hist.unshift({img:img,th:pct,found:total,
@@ -619,24 +676,15 @@ now.getSeconds().toString().padStart(2,'0')});
 if(hist.length>12)hist.pop();drawHist()}
 if(!total){em.style.display='flex';
 em.innerHTML='결과가 없습니다<span class="en">No matches. Try lowering the similarity.</span>';
-st.innerHTML='<b>'+index.length.toLocaleString()+'</b>장 검색 · 0건'}
-else{st.innerHTML='<b>'+index.length.toLocaleString()+'</b>장 중 <b>'+
+st.innerHTML='<b>'+n.toLocaleString()+'</b>장 검색 · 0건'}
+else{st.innerHTML='<b>'+n.toLocaleString()+'</b>장 중 <b>'+
 total.toLocaleString()+'</b>건'+(total>hits.length?
 ' <span style="color:#a0a0ae">(상위 '+hits.length+'건)</span>':'');
 sb.style.display='flex';draw()}
-}catch(e){if(!abort)st.textContent='오류: '+e.message}
+}catch(e){if(!abort)st.textContent='오류: '+(e&&e.message||e)}
 ld.style.display='none';busy=false;ready()};
 
-(function(){const lg=$('lg');
-lg.innerHTML=['Similar','Image','Search'].map(w=>'<span class="ln">'+
-[...w].map(c=>'<span class="ch">'+c+'</span>').join('')+'</span>').join('');
-const lns=[...lg.querySelectorAll('.ln')],busyLn=new Set();
-lg.onclick=e=>{const ln=e.target.closest('.ln');
-if(!ln||busyLn.has(ln))return;busyLn.add(ln);
-const chs=[...ln.querySelectorAll('.ch')];
-chs.forEach((c,i)=>{setTimeout(()=>{c.classList.add('hit');
-setTimeout(()=>c.classList.remove('hit'),150)},i*55)});
-setTimeout(()=>busyLn.delete(ln),chs.length*55+900)}})();
+/* ================= 사용법 투어 ================= */
 let tourOn=false;
 const nap=ms=>new Promise(r=>setTimeout(r,ms));
 function bindTour(){const b=$('howto');if(b)b.onclick=tour}
@@ -644,7 +692,7 @@ async function tour(){
 if(tourOn||busy)return;tourOn=true;
 const gd=$('gd'),ge=$('ge'),ws=[...gd.querySelectorAll('.w')],
 es=[...ge.querySelectorAll('.w')],btn=$('howto');
-const T={drop:$('drop'),fold:fold,go:go};
+const T={drop:dp,fold:fold,go:go};
 btn.disabled=true;gd.classList.remove('rest');ge.classList.remove('rest');
 ws.concat(es).forEach(w=>w.classList.remove('lit','on'));
 Object.values(T).forEach(el=>el.classList.remove('glow'));
@@ -664,10 +712,12 @@ gd.classList.add('rest');ge.classList.add('rest');
 ws.concat(es).forEach(w=>w.classList.remove('lit','on'));
 btn.disabled=false;tourOn=false}
 bindTour();
+
 const mn=$('mn'),tp=$('tp');
 mn.addEventListener('scroll',()=>tp.classList.toggle('stuck',mn.scrollTop>4),
 {passive:true});
 if(!canFS)$('ft2').textContent='Reselect required each time';
+addEventListener('beforeunload',()=>{killPool();stopWalk()});
 </script>
 </body>
 </html>
