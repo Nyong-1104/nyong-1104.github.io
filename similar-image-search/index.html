@@ -352,14 +352,17 @@ return[hi>>>0,lo>>>0]}
 `;
 
 const HASH_WORKER=DCT_SRC+`
-let cv=null,cx=null;
+let cv=null,cx=null,paused=false,stop=false;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function ctx(){if(!cx){cv=new OffscreenCanvas(N,N);
 cx=cv.getContext('2d',{willReadFrequently:true})}return cx}
 async function one(o){
 const file=o.f?o.f:await o.h.getFile();
 let bm;
 try{bm=await createImageBitmap(file,{resizeWidth:N,resizeHeight:N,
-resizeQuality:'low'})}catch(_){bm=await createImageBitmap(file)}
+resizeQuality:'pixelated'})}
+catch(_){bm=await createImageBitmap(file,{resizeWidth:N,resizeHeight:N,
+resizeQuality:'low'})}
 const c=ctx();
 c.fillStyle='#fff';c.fillRect(0,0,N,N);
 c.drawImage(bm,0,0,N,N);bm.close();
@@ -368,11 +371,18 @@ const hl=hashPixels(px);
 return{hi:hl[0],lo:hl[1],size:file.size}}
 self.onmessage=async e=>{
 const m=e.data;
+if(m.cmd==='pause'){paused=true;return}
+if(m.cmd==='resume'){paused=false;return}
+if(m.cmd==='abort'){stop=true;paused=false;return}
 if(m.cmd!=='job')return;
+stop=false;
 const out=[];
 for(const it of m.items){
+while(paused&&!stop)await sleep(40);
+if(stop)break;
 try{const r=await one(it.o);out.push({i:it.i,hi:r.hi,lo:r.lo,size:r.size})}
-catch(_){out.push({i:it.i,bad:1})}}
+catch(_){out.push({i:it.i,bad:1})}
+await sleep(6)}
 self.postMessage({type:'done',out:out})};
 `;
 
@@ -389,7 +399,7 @@ if(cmd==='resume'){paused=false;return}
 if(cmd!=='start')return;
 stop=false;paused=false;
 const stack=[[e.data.handle,'']];
-let batch=[],found=0,last=Date.now();
+let batch=[],found=0,seen=0,last=Date.now();
 try{
 while(stack.length&&!stop){
 const [dir,base]=stack.pop();
@@ -402,8 +412,9 @@ const p=base?base+'/'+name:name;
 if(ent.kind==='file'){
 if(EXT.test(name)){batch.push({h:ent,rel:p,name:name});found++}}
 else stack.push([ent,p]);
+if(++seen%24===0)await sleep(8);
 const now=Date.now();
-if(now-last>250){last=now;
+if(batch.length>=32||now-last>400){last=now;
 self.postMessage({type:'p',found:found});
 if(batch.length){self.postMessage({type:'b',files:batch});batch=[]}}}}
 if(batch.length)self.postMessage({type:'b',files:batch});
@@ -524,13 +535,17 @@ go.classList.toggle('is-pause',pause);
 if(pause){go.innerHTML='<span class="go-pause"></span><span class="go-pause"></span>';
 go.setAttribute('aria-label','Pause')}
 else{go.textContent=mode==='refind'?'Refind':'Find';go.removeAttribute('aria-label')}}
+function pausePool(cmd){
+pool.forEach(w=>{try{w.postMessage({cmd:cmd})}catch(_){}})}
 function pauseJob(){
 if(goMode!=='pause')return;paused=true;
 if(walker)try{walker.postMessage({cmd:'pause'})}catch(_){}
+pausePool('pause');
 ld.style.display='none';setGo('refind')}
 function resumeJob(){
 if(goMode!=='refind')return;paused=false;
 if(walker)try{walker.postMessage({cmd:'resume'})}catch(_){}
+pausePool('resume');
 ld.style.display='flex';setGo('pause')}
 async function waitPause(){
 while(paused&&!abort)await sleep(40);
@@ -571,8 +586,8 @@ function build(){return new Promise((res,rej)=>{
 const n=files.length;
 H=new Uint32Array(n*2);
 bad=new Uint8Array(n);sizes=new Float64Array(n);
-const NW=Math.max(2,Math.min(8,(navigator.hardwareConcurrency||4)));
-const CH=Math.max(4,Math.min(24,Math.ceil(n/(NW*40))));
+const NW=(navigator.hardwareConcurrency||4)>=12?2:1;
+const CH=1;
 let next=0,done=0,fail=0,alive=0;
 const t0=performance.now();let lastUI=0;
 const ui=(force)=>{const now=performance.now();
@@ -595,6 +610,7 @@ const feed=w=>{
 const step=async()=>{
 if(await waitPause()){if(--alive<=0)finish();return}
 if(abort||next>=n){if(--alive<=0)finish();return}
+await sleep(4);
 const items=[];
 for(let k=0;k<CH&&next<n;k++,next++)items.push({i:next,o:files[next]});
 w.postMessage({cmd:'job',items:items})};
@@ -712,7 +728,7 @@ let j=hits.length;while(j>0&&hits[j-1].d>d)j--;
 hits.splice(j,0,{d:d,s:Math.round((64-d)/64*100),
 rel:files[i].rel,name:files[i].name,sz:sizes[i],src:files[i]});
 if(hits.length>TOP)hits.pop()}}
-if((i&16383)===16383){if(await waitPause())return}}
+if((i&4095)===4095){await sleep(0);if(await waitPause())return}}
 for(let i=0;i<hits.length;i++){
 if(await waitPause())return;
 try{const src=hits[i].src,f=src.f?src.f:await src.h.getFile();
