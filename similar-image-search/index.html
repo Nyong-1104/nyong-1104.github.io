@@ -472,12 +472,8 @@ x=(x+(x>>4))&0x0f0f0f0f;return(x*0x01010101)>>24}
 
 /* ================= 커서 ================= */
 (function(){const cur=$('cur'),dot=$('dot');
-let cx=innerWidth/2,cy=innerHeight/2,rx=cx,ry=cy;
-addEventListener('mousemove',e=>{cx=e.clientX;cy=e.clientY;
-dot.style.transform='translate('+cx+'px,'+cy+'px) translate(-50%,-50%)';
-if(goMode==='pause')return;
-cur.classList.toggle('hot',!!e.target.closest(
-'button,a,.card,.thumb,.hitem,#drop,.fold,input,select,.ln'))});
+let cx=innerWidth/2,cy=innerHeight/2,rx=cx,ry=cy,ht=null;
+addEventListener('mousemove',e=>{cx=e.clientX;cy=e.clientY;ht=e.target},{passive:true});
 addEventListener('mousedown',e=>{cur.classList.add('down');
 const r=document.createElement('div');r.className='rip';
 r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';
@@ -486,7 +482,10 @@ addEventListener('mouseup',()=>cur.classList.remove('down'));
 addEventListener('mouseleave',()=>{cur.style.opacity=dot.style.opacity=0});
 addEventListener('mouseenter',()=>{cur.style.opacity=dot.style.opacity=1});
 (function loop(){rx+=(cx-rx)*.18;ry+=(cy-ry)*.18;
+dot.style.transform='translate('+cx+'px,'+cy+'px) translate(-50%,-50%)';
 cur.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';
+if(goMode!=='pause'&&ht){cur.classList.toggle('hot',!!ht.closest(
+'button,a,.card,.thumb,.hitem,#drop,.fold,input,select,.ln'));ht=null}
 requestAnimationFrame(loop)})();})();
 
 /* ================= 로고 ================= */
@@ -518,14 +517,38 @@ vTo=+th.value;vWake=performance.now()+300;if(!vOn)vLoop()};
 addEventListener('resize',vPos);vPos();
 
 /* ================= 이미지 입력 ================= */
-function load(f){qBlob=f;const r=new FileReader();r.onload=e=>{
-const im=new Image();im.onload=()=>{const c=document.createElement('canvas');
-const s=Math.min(1,512/Math.max(im.width,im.height));
-c.width=im.width*s;c.height=im.height*s;
-c.getContext('2d').drawImage(im,0,0,c.width,c.height);
-data=c.toDataURL('image/jpeg',.9);
-dp.innerHTML='<img src="'+data+'">';ready()};
-im.src=e.target.result};r.readAsDataURL(f)}
+async function peekWH(file){
+try{const buf=await file.slice(0,131072).arrayBuffer();
+const u=new Uint8Array(buf),dv=new DataView(buf);
+if(u[0]===0xFF&&u[1]===0xD8){let i=2;
+while(i+8<u.length){if(u[i]!==0xFF)break;const m=u[i+1];
+if(m===0xD8){i+=2;continue}if(m===0xD9||m===0xDA)break;
+if((m&0xF0)===0xC0&&m!==0xC4&&m!==0xC8&&m!==0xCC)
+return{w:(u[i+7]<<8)|u[i+8],h:(u[i+5]<<8)|u[i+6]};
+const len=(u[i+2]<<8)|u[i+3];if(len<2)break;i+=2+len}return null}
+if(u[0]===0x89&&u[1]===0x50)return{w:dv.getUint32(16),h:dv.getUint32(20)};
+if(u[0]===0x47&&u[1]===0x49)return{w:dv.getUint16(6,true),h:dv.getUint16(8,true)};
+if(u[0]===0x42&&u[1]===0x4D)return{w:dv.getInt32(18,true),h:Math.abs(dv.getInt32(22,true))};
+if(u[8]===0x57&&u[9]===0x45&&u[10]===0x42&&u[11]===0x50&&u[12]===0x56&&u[15]===0x58)
+return{w:1+u[24]+(u[25]<<8)+((u[26]&15)<<16),h:1+u[27]+(u[28]<<8)+((u[29]&15)<<16)}}
+catch(_){}return null}
+let loadSeq=0;
+async function load(f){if(!f)return;const seq=++loadSeq;qBlob=f;
+const sz=await peekWH(f);if(seq!==loadSeq)return;
+const opt={resizeQuality:'low'};
+if(sz&&sz.w&&sz.h){const s=Math.min(1,512/Math.max(sz.w,sz.h));
+opt.resizeWidth=Math.max(1,Math.round(sz.w*s));
+opt.resizeHeight=Math.max(1,Math.round(sz.h*s))}
+else{opt.resizeWidth=512;opt.resizeHeight=512}
+let bm;
+try{bm=await createImageBitmap(f,opt)}
+catch(_){try{bm=await createImageBitmap(f,{resizeWidth:opt.resizeWidth,
+resizeHeight:opt.resizeHeight})}catch(__){bm=await createImageBitmap(f)}}
+if(seq!==loadSeq){try{bm.close()}catch(_){}return}
+const c=document.createElement('canvas');c.width=bm.width;c.height=bm.height;
+c.getContext('2d').drawImage(bm,0,0);bm.close();
+data=c.toDataURL('image/jpeg',.85);
+dp.innerHTML='<img src="'+data+'">';ready()}
 dp.onclick=()=>{if(busy)return;fi.click()};
 fi.onchange=e=>{if(busy)return;e.target.files[0]&&load(e.target.files[0])};
 dp.ondragover=e=>{e.preventDefault();if(busy)return;dp.classList.add('on')};
@@ -588,10 +611,14 @@ else fin()};
 w.onerror=fin;
 try{w.postMessage({cmd:'start',handle:root})}catch(_){fin()}})}
 
-dirin.onchange=e=>{const fl=[...e.target.files].filter(f=>EXT.test(f.name));
-files=fl.map(f=>({f:f,rel:f.webkitRelativePath||f.name,name:f.name}));
-dirHandle=null;listed=true;H=null;bad=null;sizes=null;
-$('ft1').textContent=(fl[0]&&fl[0].webkitRelativePath||'').split('/')[0]||'Folder';
+dirin.onchange=async e=>{const raw=e.target.files,n=raw.length;
+files=[];dirHandle=null;listed=false;H=null;bad=null;sizes=null;
+$('ft2').textContent='Reading...';
+for(let i=0;i<n;i++){const f=raw[i];
+if(EXT.test(f.name))files.push({f:f,rel:f.webkitRelativePath||f.name,name:f.name});
+if((i&2047)===2047)await sleep(0)}
+listed=true;
+$('ft1').textContent=(files[0]&&files[0].rel||'').split('/')[0]||'Folder';
 $('ft2').textContent=files.length.toLocaleString()+' images · click to change';
 ready()};
 
