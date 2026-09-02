@@ -117,6 +117,9 @@ border-radius:9px;font-size:25px;font-weight:700;cursor:pointer;
 font-family:inherit;letter-spacing:-.3px}
 .go:hover{background:#CC2600}
 .go:disabled{opacity:.35;cursor:default}
+.go.is-pause{display:inline-flex;align-items:center;justify-content:center;
+gap:6px;font-size:0;letter-spacing:0}
+.go-pause{width:6px;height:22px;background:#fff;border-radius:1px}
 .reset{flex:1;background:#ffffff;border:2px solid #e2e2ea;color:#71717f;
 padding:9px;border-radius:9px;font-size:15px;cursor:pointer;font-family:inherit}
 .reset:hover{border-color:#c4c4d0;color:#3a3a46}
@@ -308,7 +311,8 @@ const SKIP=['@eadir','#recycle','$recycle.bin','system volume information',
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 let data=null,files=[],H=null,bad=null,sizes=null,hits=[],sort='d',hist=[],
-noLog=false,busy=false,urls=[],abort=false,walker=null,pool=[],walkFin=null;
+noLog=false,busy=false,urls=[],abort=false,paused=false,listed=false,
+dirHandle=null,walker=null,pool=[],walkFin=null,goMode='find';
 
 const PH='<div class="ph">Drop, paste or click<br>to add an image</div>';
 const EMPTY='<button class="howto" id="howto">How it works</button>'+
@@ -375,11 +379,15 @@ self.postMessage({type:'done',out:out})};
 const WALK_WORKER=`
 const EXT=/\\.(jpe?g|png|bmp|gif|webp|avif)$/i;
 const SKIP=new Set(${JSON.stringify(SKIP)});
-let stop=false;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let stop=false,paused=false;
 self.onmessage=async e=>{
-if(e.data.cmd==='abort'){stop=true;return}
-if(e.data.cmd!=='start')return;
-stop=false;
+const cmd=e.data.cmd;
+if(cmd==='abort'){stop=true;paused=false;return}
+if(cmd==='pause'){paused=true;return}
+if(cmd==='resume'){paused=false;return}
+if(cmd!=='start')return;
+stop=false;paused=false;
 const stack=[[e.data.handle,'']];
 let batch=[],found=0,last=Date.now();
 try{
@@ -387,6 +395,7 @@ while(stack.length&&!stop){
 const [dir,base]=stack.pop();
 let it;try{it=dir.entries()}catch(_){continue}
 for await(const [name,ent] of it){
+while(paused&&!stop)await sleep(40);
 if(stop)break;
 if(name.charCodeAt(0)===46||SKIP.has(name.toLowerCase()))continue;
 const p=base?base+'/'+name:name;
@@ -446,7 +455,7 @@ x=(x+(x>>4))&0x0f0f0f0f;return(x*0x01010101)>>24}
 (function(){const cur=$('cur'),dot=$('dot');
 let cx=innerWidth/2,cy=innerHeight/2,rx=cx,ry=cy;
 addEventListener('mousemove',e=>{cx=e.clientX;cy=e.clientY;
-if(busy)return;
+if(goMode==='pause')return;
 dot.style.transform='translate('+cx+'px,'+cy+'px) translate(-50%,-50%)';
 cur.classList.toggle('hot',!!e.target.closest(
 'button,a,.card,.thumb,.hitem,#drop,.fold,input,select,.ln'))});
@@ -457,7 +466,7 @@ document.body.appendChild(r);setTimeout(()=>r.remove(),700)});
 addEventListener('mouseup',()=>cur.classList.remove('down'));
 addEventListener('mouseleave',()=>{cur.style.opacity=dot.style.opacity=0});
 addEventListener('mouseenter',()=>{cur.style.opacity=dot.style.opacity=1});
-(function loop(){if(!busy){rx+=(cx-rx)*.18;ry+=(cy-ry)*.18;
+(function loop(){if(goMode!=='pause'){rx+=(cx-rx)*.18;ry+=(cy-ry)*.18;
 cur.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)'}
 requestAnimationFrame(loop)})();})();
 
@@ -505,18 +514,36 @@ dp.ondrop=e=>{e.preventDefault();dp.classList.remove('on');
 e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])};
 document.onpaste=e=>{for(const it of e.clipboardData.items)
 if(it.type.startsWith('image'))load(it.getAsFile())};
-function ready(){go.disabled=!(data&&files.length&&!busy)}
+function ready(){
+if(goMode==='pause'||goMode==='refind'){go.disabled=false;return}
+go.disabled=!(data&&(dirHandle||files.length))}
+function setGo(mode){
+goMode=mode;go.disabled=false;
+const pause=mode==='pause';
+go.classList.toggle('is-pause',pause);
+if(pause){go.innerHTML='<span class="go-pause"></span><span class="go-pause"></span>';
+go.setAttribute('aria-label','Pause')}
+else{go.textContent=mode==='refind'?'Refind':'Find';go.removeAttribute('aria-label')}}
+function pauseJob(){
+if(goMode!=='pause')return;paused=true;
+if(walker)try{walker.postMessage({cmd:'pause'})}catch(_){}
+ld.style.display='none';setGo('refind')}
+function resumeJob(){
+if(goMode!=='refind')return;paused=false;
+if(walker)try{walker.postMessage({cmd:'resume'})}catch(_){}
+ld.style.display='flex';setGo('pause')}
+async function waitPause(){
+while(paused&&!abort)await sleep(40);
+return abort}
 
 /* ================= 폴더 선택 ================= */
 const canFS=typeof window.showDirectoryPicker==='function';
-fold.onclick=async()=>{if(busy)return;
+fold.onclick=async()=>{if(busy||goMode==='refind')return;
 if(!canFS){dirin.click();return}
 let h;try{h=await showDirectoryPicker()}catch(_){return}
-$('ft1').textContent=h.name;$('ft2').textContent='Reading...';
-files=[];H=null;bad=null;sizes=null;abort=false;busy=true;ready();
-try{await walk(h)}finally{
-if(walker){killWorker(walker);walker=null}
-walkFin=null;busy=false;afterPick()}};
+dirHandle=h;listed=false;files=[];H=null;bad=null;sizes=null;
+$('ft1').textContent=h.name;
+$('ft2').textContent='Ready · click Find';ready()};
 
 function walk(root){return new Promise(res=>{
 let ended=false;
@@ -534,12 +561,10 @@ try{w.postMessage({cmd:'start',handle:root})}catch(_){fin()}})}
 
 dirin.onchange=e=>{const fl=[...e.target.files].filter(f=>EXT.test(f.name));
 files=fl.map(f=>({f:f,rel:f.webkitRelativePath||f.name,name:f.name}));
+dirHandle=null;listed=true;H=null;bad=null;sizes=null;
 $('ft1').textContent=(fl[0]&&fl[0].webkitRelativePath||'').split('/')[0]||'Folder';
-H=null;bad=null;sizes=null;afterPick()};
-
-function afterPick(){
-$('ft2').textContent=files.length.toLocaleString()+' images found · click to change';
-ready()}
+$('ft2').textContent=files.length.toLocaleString()+' images · click to change';
+ready()};
 
 /* ================= 인덱싱 (워커 풀) ================= */
 function build(){return new Promise((res,rej)=>{
@@ -567,10 +592,13 @@ pmsg.textContent='인덱싱 완료 · '+(n-fail).toLocaleString()+'장 · '+
 (fail?' · 실패 '+fail.toLocaleString()+'장':'');
 bar.style.display='none';res(true)};
 const feed=w=>{
+const step=async()=>{
+if(await waitPause()){if(--alive<=0)finish();return}
 if(abort||next>=n){if(--alive<=0)finish();return}
 const items=[];
 for(let k=0;k<CH&&next<n;k++,next++)items.push({i:next,o:files[next]});
 w.postMessage({cmd:'job',items:items})};
+step()};
 bar.style.display='block';bari.style.width='0%';
 pmsg.textContent='0 / '+n.toLocaleString()+' (0.0%)';
 if(!n)return res(true);
@@ -593,15 +621,19 @@ const o=b.textContent;b.textContent='복사됨';setTimeout(()=>b.textContent=o,1
 function zoom(i){const h=hits[i];$('lbi').src=h.url;
 $('lbc').textContent=h.rel;lb.style.display='flex'}
 lb.onclick=()=>lb.style.display='none';
+function haltJob(){
+abort=true;paused=false;stopWalk();killPool();
+busy=false;ld.style.display='none';setGo('find')}
 function clearAll(){data=null;hits=[];dp.innerHTML=PH;rs.innerHTML='';
 sb.style.display='none';ld.style.display='none';em.style.display='flex';
 em.innerHTML=EMPTY;bindTour();st.textContent='';
 urls.forEach(u=>URL.revokeObjectURL(u));urls=[];ready()}
 document.onkeydown=e=>{if(e.key!=='Escape')return;
 if(lb.style.display==='flex'){lb.style.display='none';return}
-abort=true;stopWalk();killPool();clearAll()};
-$('rst').onclick=()=>{abort=true;stopWalk();killPool();clearAll();
-th.value=81;vTo=81;vAt=81;vPos();fi.value=''};
+haltJob();clearAll()};
+$('rst').onclick=()=>{haltJob();files=[];listed=false;H=null;bad=null;sizes=null;
+if(dirHandle)$('ft2').textContent='Ready · click Find';
+clearAll();th.value=81;vTo=81;vAt=81;vPos();fi.value=''};
 
 function drawHist(){hl.innerHTML=hist.map((h,i)=>
 '<div class="hitem" onclick="rerun('+i+')"><img src="'+h.img+'">'+
@@ -641,14 +673,29 @@ sb.onclick=e=>{if(e.target.tagName!=='BUTTON')return;
 [...sb.children].forEach(b=>b.classList.remove('on'));
 e.target.classList.add('on');sort=e.target.dataset.s;draw()};
 
-go.onclick=async()=>{if(!data||!files.length||busy)return;
+go.onclick=()=>{
+if(goMode==='pause'){pauseJob();return}
+if(goMode==='refind'){resumeJob();return}
+startJob()};
+async function startJob(){
+if(!data||!(dirHandle||files.length)||busy)return;
 const img=data,pct=Math.round(vTo),log=!noLog;noLog=false;
-abort=false;busy=true;go.disabled=true;em.style.display='none';rs.innerHTML='';
+paused=false;abort=false;busy=true;setGo('pause');
+em.style.display='none';rs.innerHTML='';
 [dp,fold,go].forEach(el=>el.classList.remove('glow'));
 sb.style.display='none';st.textContent='';ld.style.display='flex';
 urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
 try{
-if(!H){const ok=await build();if(!ok||abort){H=null;return}}
+if(dirHandle&&!listed){
+$('ft2').textContent='Reading...';
+await walk(dirHandle);
+if(abort)return;
+if(await waitPause())return;
+listed=true;
+$('ft2').textContent=files.length.toLocaleString()+' images found · click to change'}
+if(!files.length){st.textContent='이미지가 없습니다';return}
+if(!H){const ok=await build();if(!ok||abort){if(!paused)H=null;return}}
+if(await waitPause())return;
 const im=new Image();
 await new Promise(r=>{im.onload=r;im.onerror=r;im.src=img});
 const t=phash(im),thi=t[0],tlo=t[1];
@@ -664,9 +711,9 @@ let j=hits.length;while(j>0&&hits[j-1].d>d)j--;
 hits.splice(j,0,{d:d,s:Math.round((64-d)/64*100),
 rel:files[i].rel,name:files[i].name,sz:sizes[i],src:files[i]});
 if(hits.length>TOP)hits.pop()}}
-if((i&16383)===16383){await sleep(0);if(abort)return}}
+if((i&16383)===16383){if(await waitPause())return}}
 for(let i=0;i<hits.length;i++){
-if(abort)return;
+if(await waitPause())return;
 try{const src=hits[i].src,f=src.f?src.f:await src.h.getFile();
 hits[i].url=URL.createObjectURL(f);hits[i].sz=f.size;urls.push(hits[i].url)}
 catch(_){hits[i].url=''}}
@@ -685,7 +732,10 @@ total.toLocaleString()+'</b>건'+(total>hits.length?
 ' <span style="color:#a0a0ae">(상위 '+hits.length+'건)</span>':'');
 sb.style.display='flex';draw()}
 }catch(e){if(!abort)st.textContent='오류: '+(e&&e.message||e)}
-finally{ld.style.display='none';busy=false;ready()}};
+finally{
+ld.style.display='none';
+if(paused&&!abort)return;
+busy=false;setGo('find');ready()}};
 
 /* ================= 사용법 투어 ================= */
 let tourOn=false;
