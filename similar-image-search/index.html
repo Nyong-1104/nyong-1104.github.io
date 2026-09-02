@@ -309,8 +309,13 @@ let data=null,files=[],index=null,hits=[],sort='d',hist=[],noLog=false,
 dirHandle=null,rootName='',busy=false,urls=[],abort=false;
 const SKIP=new Set(['@eadir','#recycle','$recycle.bin','system volume information',
 'temp','tmp','_백업','백업','__macosx','found.000']);
-const yieldUI=()=>(typeof scheduler!=='undefined'&&scheduler.yield)
-?scheduler.yield():new Promise(r=>setTimeout(r,0));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let walkWorker=null,walkSettle=null;
+function stopWalk(){
+abort=true;
+if(walkWorker){try{walkWorker.terminate()}catch(_){}
+walkWorker=null}
+if(walkSettle){const d=walkSettle;walkSettle=null;d()}}
 
 /* ---------- 커서 ---------- */
 (function(){const cur=$('cur'),dot=$('dot');
@@ -395,24 +400,92 @@ fold.onclick=async()=>{if(busy)return;
 if(canFS){try{const h=await showDirectoryPicker();dirHandle=h;rootName=h.name;
 $('ft1').textContent=h.name;$('ft2').textContent='Reading...';
 abort=false;busy=true;go.disabled=true;files=[];index=null;
-try{await walk(h,'');
+try{await walk(h);
 if(abort){if(files.length)afterPick();else $('ft2').textContent=''}
 else afterPick()}
-finally{busy=false;ready()}}catch(e){}}
+finally{stopWalk();abort=false;busy=false;ready()}}catch(e){}}
 else dirin.click()};
-async function walk(root,base0){
-const stack=[[root,base0]];let n=0;
+function walkWorkerSrc(){return `
+const EXT=/\\.(jpe?g|png|bmp|gif|webp|avif)$/i;
+const SKIP=new Set(${JSON.stringify([...SKIP])});
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let stop=false;
+self.onmessage=async e=>{
+if(e.data.cmd==='abort'){stop=true;return}
+if(e.data.cmd!=='start')return;
+stop=false;
+const root=e.data.handle;
+const stack=[[root,'',[root]]];
+let n=0,found=0,batch=[],t0=performance.now();
+try{
+while(stack.length&&!stop){
+const [dir,base,anc]=stack.pop();
+let entries;try{entries=dir.entries()}catch(_){continue}
+for await(const [name,ent] of entries){
+if(stop)break;
+if(name.startsWith('.')||SKIP.has(name.toLowerCase()))continue;
+const p=base?base+'/'+name:name;
+if(ent.kind==='file'){if(EXT.test(name)){batch.push({h:ent,rel:p,name});found++}}
+else if(ent.kind==='directory'){
+let loop=false;
+for(const a of anc){try{if(await ent.isSameEntry(a)){loop=true;break}}catch(_){}}
+if(!loop)stack.push([ent,p,anc.concat(ent)])}
+n++;
+if(n%10===0){
+if(batch.length){self.postMessage({type:'batch',files:batch});batch=[]}
+self.postMessage({type:'progress',found});
+const elapsed=performance.now()-t0;
+await sleep(elapsed>40?90:40);
+t0=performance.now()}}
+}
+if(batch.length)self.postMessage({type:'batch',files:batch});
+self.postMessage({type:stop?'aborted':'done'});
+}catch(err){self.postMessage({type:'error',message:String(err&&err.message||err)})}
+};`}
+async function walkMain(root){
+const stack=[[root,'',[root]]];let n=0,t0=performance.now();
 while(stack.length){
 if(abort)return;
-const [dir,base]=stack.pop();
-for await(const [name,ent] of dir.entries()){
+const [dir,base,anc]=stack.pop();
+let entries;try{entries=dir.entries()}catch(_){continue}
+for await(const [name,ent] of entries){
 if(abort)return;
 if(name.startsWith('.')||SKIP.has(name.toLowerCase()))continue;
 const p=base?base+'/'+name:name;
 if(ent.kind==='file'){if(EXT.test(name))files.push({h:ent,rel:p,name:name})}
-else if(ent.kind==='directory')stack.push([ent,p]);
-if(++n%40===0){$('ft2').textContent='Reading... '+
-files.length.toLocaleString()+' images';await yieldUI()}}}}
+else if(ent.kind==='directory'){
+let loop=false;
+for(const a of anc){try{if(await ent.isSameEntry(a)){loop=true;break}}catch(_){}}
+if(!loop)stack.push([ent,p,anc.concat(ent)])}
+if(++n%10===0){$('ft2').textContent='Reading... '+
+files.length.toLocaleString()+' images';
+const elapsed=performance.now()-t0;
+await sleep(elapsed>40?90:40);t0=performance.now()}}}}
+function walk(root){
+return new Promise((resolve,reject)=>{
+let url,settled=false;
+const done=()=>{if(settled)return;settled=true;walkSettle=null;
+if(walkWorker){try{walkWorker.terminate()}catch(_){}walkWorker=null}
+if(url)URL.revokeObjectURL(url);resolve()}
+walkSettle=done;
+try{url=URL.createObjectURL(new Blob([walkWorkerSrc()],{type:'text/javascript'}));
+walkWorker=new Worker(url)}catch(e){walkSettle=null;walkMain(root).then(resolve,reject);return}
+walkWorker.onmessage=e=>{
+const m=e.data;
+if(m.type==='batch'&&m.files)files.push(...m.files);
+if(m.type==='progress')$('ft2').textContent='Reading... '+
+(m.found!=null?m.found:files.length).toLocaleString()+' images';
+if(m.type==='done'||m.type==='aborted'||m.type==='error')done()};
+walkWorker.onerror=()=>{
+if(walkWorker){try{walkWorker.terminate()}catch(_){}}
+walkWorker=null;if(url)URL.revokeObjectURL(url);walkSettle=null;
+walkMain(root).then(resolve,reject)};
+try{walkWorker.postMessage({cmd:'start',handle:root})}
+catch(e){
+if(walkWorker){try{walkWorker.terminate()}catch(_){}}
+walkWorker=null;if(url)URL.revokeObjectURL(url);walkSettle=null;
+walkMain(root).then(resolve,reject)}})
+}
 dirin.onchange=e=>{const fl=[...e.target.files].filter(f=>EXT.test(f.name));
 files=fl.map(f=>({f:f,rel:f.webkitRelativePath||f.name,name:f.name}));
 rootName=(fl[0]&&fl[0].webkitRelativePath||'').split('/')[0]||'선택한 폴더';
@@ -438,7 +511,7 @@ pmsg.textContent=done.toLocaleString()+' / '+files.length.toLocaleString()+
 (eta<60?eta.toFixed(0)+'초':(eta/60).toFixed(1)+'분')}
 async function build(){
 index=[];bar.style.display='block';
-const t0=performance.now();let done=0,fail=0,BATCH=6;
+const t0=performance.now();let done=0,fail=0,BATCH=2;
 for(let i=0;i<files.length;i+=BATCH){
 if(abort)return;
 const slice=files.slice(i,i+BATCH);
@@ -451,7 +524,7 @@ try{const h=phash(it.bm);it.bm.close();
 index.push({h:h,rel:it.o.rel,name:it.o.name,sz:it.file.size,src:it.o})}
 catch(_){fail++;try{it.bm.close()}catch(_){}}
 done++}
-prog(done,fail,t0);await yieldUI()}
+prog(done,fail,t0);await sleep(40)}
 if(abort)return;
 const el=((performance.now()-t0)/1000);
 pmsg.textContent='인덱싱 완료 · '+index.length.toLocaleString()+'장 · '+
@@ -471,8 +544,8 @@ em.innerHTML=EMPTY;bindTour();st.textContent='';
 urls.forEach(u=>URL.revokeObjectURL(u));urls=[];ready()}
 document.onkeydown=e=>{if(e.key!=='Escape')return;
 if(lb.style.display==='flex'){lb.style.display='none';return}
-abort=true;clearAll()};
-$('rst').onclick=()=>{abort=true;clearAll();th.value=81;vTo=81;fi.value=''};
+abort=true;stopWalk();clearAll()};
+$('rst').onclick=()=>{abort=true;stopWalk();clearAll();th.value=81;vTo=81;fi.value=''};
 
 function drawHist(){hl.innerHTML=hist.map((h,i)=>
 '<div class="hitem" onclick="rerun('+i+')"><img src="'+h.img+'">'+
@@ -515,7 +588,7 @@ urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
 try{
 if(!index)await build();
 if(abort){index=null;return}
-await yieldUI();
+await sleep(0);
 const im=new Image();
 await new Promise(r=>{im.onload=r;im.src=img});
 const t=phash(im),lim=Math.round((100-pct)/100*64);
@@ -524,7 +597,7 @@ for(let i=0;i<index.length;i++){
 const e=index[i],d=ham(t,e.h);
 if(d<=lim)hits.push({d:d,s:Math.round((64-d)/64*100),rel:e.rel,name:e.name,
 sz:e.sz,src:e.src});
-if(i%8000===7999){await yieldUI();if(abort)return}}
+if(i%8000===7999){await sleep(20);if(abort)return}}
 hits.sort((a,b)=>a.d-b.d);
 const total=hits.length;
 hits=hits.slice(0,80);
