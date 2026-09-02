@@ -72,6 +72,8 @@ cursor:pointer;background:#000000;padding:14px;overflow:hidden}
 .fold{border:2px solid #e2e2ea;background:#ffffff;border-radius:9px;padding:11px 12px;
 cursor:pointer;display:flex;align-items:center}
 .fold:hover{border-color:#FF2F00;background:#FFF3F0}
+.lockable{transition:opacity .2s,filter .2s}
+body.locked .lockable{opacity:.42;pointer-events:none;filter:saturate(.35)}
 .fold .tx{min-width:0;flex:1}
 .fold .t1{font-size:21px;color:#2a2c36;white-space:nowrap;overflow:hidden;
 text-overflow:ellipsis;font-weight:700;letter-spacing:-.4px;line-height:1.25}
@@ -254,14 +256,14 @@ z-index:9998;transform:translate(-50%,-50%);animation:rp .65s cubic-bezier(.2,.7
 캡처한 화면을 붙여넣어도 됩니다.
 <span class="en2">Add <b>the image you want to find</b>.<br>
 A pasted screenshot works too.</span></span></span>
-<div id="drop"><div class="ph">Drop, paste or click<br>to add an image</div></div>
+<div id="drop" class="lockable"><div class="ph">Drop, paste or click<br>to add an image</div></div>
 <input type="file" id="f" accept="image/*" hidden></div>
 <div><span class="lbl tip">Folder to search<span class="q">?</span>
 <span class="bub"><b>폴더 안 하위 폴더까지</b> 모두 찾습니다.<br>
 사진은 내 컴퓨터 밖으로 나가지 않습니다.
 <span class="en2">Searches <b>the folder and every subfolder</b>.<br>
 Your photos never leave your computer.</span></span></span>
-<div class="fold" id="fold"><div class="tx">
+<div class="fold lockable" id="fold"><div class="tx">
 <div class="t1" id="ft1">Choose a folder</div>
 <div class="t2" id="ft2"></div></div></div>
 <input type="file" id="dirin" webkitdirectory directory multiple hidden>
@@ -274,7 +276,7 @@ Your photos never leave your computer.</span></span></span>
 <span class="en2"><b>81%</b> is recommended.<br>
 Higher finds near-identical images only,<br>
 lower widens the net to similar ones.</span></span></span></div>
-<div class="slbox"><span class="val" id="tv">81%</span>
+<div class="slbox lockable"><span class="val" id="tv">81%</span>
 <input type="range" id="th" min="40" max="100" value="81"></div></div>
 <div class="acts"><button class="go" id="go" disabled>Find</button>
 <button class="reset" id="rst">Reset</button></div>
@@ -285,7 +287,7 @@ lower widens the net to similar ones.</span></span></span></div>
 <span class="en2">Your <b>recent searches</b>.<br>
 Click one to run it again.<br>
 Cleared when you close the window.</span></span></span></div>
-<div class="hlist" id="hl"></div></div>
+<div class="hlist lockable" id="hl"></div></div>
 <div class="foot"><a href="mailto:cmy3544@gmail.com">cmy3544@gmail.com</a>
 <div class="lic">MIT License &middot; Free to use with attribution</div></div>
 </aside>
@@ -311,7 +313,7 @@ const SKIP=['@eadir','#recycle','$recycle.bin','system volume information',
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 let data=null,files=[],H=null,bad=null,sizes=null,hits=[],sort='d',hist=[],
-noLog=false,busy=false,urls=[],abort=false,paused=false,listed=false,
+noLog=false,busy=false,urls=[],abort=false,paused=false,listed=false,qBlob=null,
 dirHandle=null,walker=null,pool=[],walkFin=null,goMode='find';
 
 const PH='<div class="ph">Drop, paste or click<br>to add an image</div>';
@@ -360,9 +362,9 @@ async function one(o){
 const file=o.f?o.f:await o.h.getFile();
 let bm;
 try{bm=await createImageBitmap(file,{resizeWidth:N,resizeHeight:N,
-resizeQuality:'pixelated'})}
-catch(_){bm=await createImageBitmap(file,{resizeWidth:N,resizeHeight:N,
-resizeQuality:'low'})}
+resizeQuality:'high'})}
+catch(_){try{bm=await createImageBitmap(file,{resizeWidth:N,resizeHeight:N})}
+catch(__){bm=await createImageBitmap(file)}}
 const c=ctx();
 c.fillStyle='#fff';c.fillRect(0,0,N,N);
 c.drawImage(bm,0,0,N,N);bm.close();
@@ -381,8 +383,7 @@ for(const it of m.items){
 while(paused&&!stop)await sleep(40);
 if(stop)break;
 try{const r=await one(it.o);out.push({i:it.i,hi:r.hi,lo:r.lo,size:r.size})}
-catch(_){out.push({i:it.i,bad:1})}
-await sleep(6)}
+catch(_){out.push({i:it.i,bad:1})}}
 self.postMessage({type:'done',out:out})};
 `;
 
@@ -399,7 +400,7 @@ if(cmd==='resume'){paused=false;return}
 if(cmd!=='start')return;
 stop=false;paused=false;
 const stack=[[e.data.handle,'']];
-let batch=[],found=0,seen=0,last=Date.now();
+let batch=[],found=0,last=Date.now();
 try{
 while(stack.length&&!stop){
 const [dir,base]=stack.pop();
@@ -412,9 +413,8 @@ const p=base?base+'/'+name:name;
 if(ent.kind==='file'){
 if(EXT.test(name)){batch.push({h:ent,rel:p,name:name});found++}}
 else stack.push([ent,p]);
-if(++seen%24===0)await sleep(8);
 const now=Date.now();
-if(batch.length>=32||now-last>400){last=now;
+if(batch.length>=4096||now-last>300){last=now;
 self.postMessage({type:'p',found:found});
 if(batch.length){self.postMessage({type:'b',files:batch});batch=[]}}}}
 if(batch.length)self.postMessage({type:'b',files:batch});
@@ -441,9 +441,8 @@ for(let u=0;u<N;u++){cosT[u]=new Float64Array(N);
 for(let x=0;x<N;x++)cosT[u][x]=Math.cos((2*x+1)*u*Math.PI/(2*N))}
 const hc=document.createElement('canvas');hc.width=hc.height=N;
 const hx=hc.getContext('2d',{willReadFrequently:true});
-function phash(src){
-hx.fillStyle='#fff';hx.fillRect(0,0,N,N);hx.drawImage(src,0,0,N,N);
-const d=hx.getImageData(0,0,N,N).data,g=new Float64Array(N*N);
+function hashPx(d){
+const g=new Float64Array(N*N);
 for(let i=0,j=0;i<d.length;i+=4,j++)g[j]=.299*d[i]+.587*d[i+1]+.114*d[i+2];
 const rowT=new Float64Array(N*K);
 for(let y=0;y<N;y++)for(let u=0;u<K;u++){let s=0;const c=cosT[u];
@@ -458,6 +457,15 @@ let hi=0,lo=0;
 for(let i=0;i<32;i++)hi=(hi<<1)|(dct[i]>med?1:0);
 for(let i=32;i<64;i++)lo=(lo<<1)|(dct[i]>med?1:0);
 return[hi>>>0,lo>>>0]}
+async function qhash(blob){
+let bm;
+try{bm=await createImageBitmap(blob,{resizeWidth:N,resizeHeight:N,
+resizeQuality:'high'})}
+catch(_){try{bm=await createImageBitmap(blob,{resizeWidth:N,resizeHeight:N})}
+catch(__){bm=await createImageBitmap(blob)}}
+hx.fillStyle='#fff';hx.fillRect(0,0,N,N);
+hx.drawImage(bm,0,0,N,N);bm.close();
+return hashPx(hx.getImageData(0,0,N,N).data)}
 function pc(x){x=x-((x>>1)&0x55555555);
 x=(x&0x33333333)+((x>>2)&0x33333333);
 x=(x+(x>>4))&0x0f0f0f0f;return(x*0x01010101)>>24}
@@ -505,11 +513,12 @@ if(vAt>100){vAt=100;if(vV>0)vV=0}
 if(vAt<40){vAt=40;if(vV<0)vV=0}
 if(Math.abs(vTo-vAt)<.02&&Math.abs(vV)<.02){vAt=vTo;vV=0;vPos();vOn=false;return}}
 vPos();requestAnimationFrame(vLoop)}
-th.oninput=()=>{vTo=+th.value;vWake=performance.now()+300;if(!vOn)vLoop()};
+th.oninput=()=>{if(busy){th.value=vTo;return}
+vTo=+th.value;vWake=performance.now()+300;if(!vOn)vLoop()};
 addEventListener('resize',vPos);vPos();
 
 /* ================= 이미지 입력 ================= */
-function load(f){const r=new FileReader();r.onload=e=>{
+function load(f){qBlob=f;const r=new FileReader();r.onload=e=>{
 const im=new Image();im.onload=()=>{const c=document.createElement('canvas');
 const s=Math.min(1,512/Math.max(im.width,im.height));
 c.width=im.width*s;c.height=im.height*s;
@@ -517,17 +526,22 @@ c.getContext('2d').drawImage(im,0,0,c.width,c.height);
 data=c.toDataURL('image/jpeg',.9);
 dp.innerHTML='<img src="'+data+'">';ready()};
 im.src=e.target.result};r.readAsDataURL(f)}
-dp.onclick=()=>fi.click();
-fi.onchange=e=>e.target.files[0]&&load(e.target.files[0]);
-dp.ondragover=e=>{e.preventDefault();dp.classList.add('on')};
+dp.onclick=()=>{if(busy)return;fi.click()};
+fi.onchange=e=>{if(busy)return;e.target.files[0]&&load(e.target.files[0])};
+dp.ondragover=e=>{e.preventDefault();if(busy)return;dp.classList.add('on')};
 dp.ondragleave=()=>dp.classList.remove('on');
 dp.ondrop=e=>{e.preventDefault();dp.classList.remove('on');
-e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])};
-document.onpaste=e=>{for(const it of e.clipboardData.items)
+if(busy)return;e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])};
+addEventListener('dragover',e=>e.preventDefault());
+addEventListener('drop',e=>e.preventDefault());
+document.onpaste=e=>{if(busy)return;
+for(const it of e.clipboardData.items)
 if(it.type.startsWith('image'))load(it.getAsFile())};
 function ready(){
 if(goMode==='pause'||goMode==='refind'){go.disabled=false;return}
-go.disabled=!(data&&(dirHandle||files.length))}
+go.disabled=!(data&&qBlob&&(dirHandle||files.length))}
+function setLock(on){document.body.classList.toggle('locked',!!on);
+th.disabled=!!on;fi.disabled=!!on;dirin.disabled=!!on}
 function setGo(mode){
 goMode=mode;go.disabled=false;
 const pause=mode==='pause';
@@ -586,8 +600,9 @@ function build(){return new Promise((res,rej)=>{
 const n=files.length;
 H=new Uint32Array(n*2);
 bad=new Uint8Array(n);sizes=new Float64Array(n);
-const NW=(navigator.hardwareConcurrency||4)>=12?2:1;
-const CH=1;
+const hcNum=navigator.hardwareConcurrency||4;
+const NW=Math.max(2,Math.min(4,hcNum-2));
+const CH=Math.max(6,Math.min(24,Math.ceil(n/(NW*60))));
 let next=0,done=0,fail=0,alive=0;
 const t0=performance.now();let lastUI=0;
 const ui=(force)=>{const now=performance.now();
@@ -610,7 +625,6 @@ const feed=w=>{
 const step=async()=>{
 if(await waitPause()){if(--alive<=0)finish();return}
 if(abort||next>=n){if(--alive<=0)finish();return}
-await sleep(4);
 const items=[];
 for(let k=0;k<CH&&next<n;k++,next++)items.push({i:next,o:files[next]});
 w.postMessage({cmd:'job',items:items})};
@@ -638,9 +652,9 @@ function zoom(i){const h=hits[i];$('lbi').src=h.url;
 $('lbc').textContent=h.rel;lb.style.display='flex'}
 lb.onclick=()=>lb.style.display='none';
 function haltJob(){
-abort=true;paused=false;stopWalk();killPool();
-busy=false;ld.style.display='none';setGo('find')}
-function clearAll(){data=null;hits=[];dp.innerHTML=PH;rs.innerHTML='';
+abort=true;paused=false;stopWalk();killPool();busy=false;setLock(false);
+ld.style.display='none';setGo('find')}
+function clearAll(){data=null;qBlob=null;hits=[];dp.innerHTML=PH;rs.innerHTML='';
 sb.style.display='none';ld.style.display='none';em.style.display='flex';
 em.innerHTML=EMPTY;bindTour();st.textContent='';
 urls.forEach(u=>URL.revokeObjectURL(u));urls=[];ready()}
@@ -655,7 +669,7 @@ function drawHist(){hl.innerHTML=hist.map((h,i)=>
 '<div class="hitem" onclick="rerun('+i+')"><img src="'+h.img+'">'+
 '<div class="hinfo"><div class="htime">'+h.time+'</div>'+
 '<div class="hres">'+h.found+'건 · 유사도 '+h.th+'%</div></div></div>').join('')}
-function rerun(i){const h=hist[i];data=h.img;th.value=h.th;vTo=h.th;vAt=h.th;vPos();
+function rerun(i){if(busy)return;const h=hist[i];data=h.img;qBlob=h.blob;th.value=h.th;vTo=h.th;vAt=h.th;vPos();
 dp.innerHTML='<img src="'+h.img+'">';ready();noLog=true;go.click()}
 
 function dimOf(img,i){
@@ -694,9 +708,9 @@ if(goMode==='pause'){pauseJob();return}
 if(goMode==='refind'){resumeJob();return}
 startJob()};
 async function startJob(){
-if(!data||!(dirHandle||files.length)||busy)return;
+if(!data||!qBlob||!(dirHandle||files.length)||busy)return;
 const img=data,pct=Math.round(vTo),log=!noLog;noLog=false;
-paused=false;abort=false;busy=true;setGo('pause');
+paused=false;abort=false;busy=true;setGo('pause');setLock(true);
 em.style.display='none';rs.innerHTML='';
 [dp,fold,go].forEach(el=>el.classList.remove('glow'));
 sb.style.display='none';st.textContent='';ld.style.display='flex';
@@ -713,9 +727,7 @@ $('ft2').textContent=files.length.toLocaleString()+' images found · click to ch
 if(!files.length){st.textContent='이미지가 없습니다';return}
 if(!H){const ok=await build();if(!ok||abort){if(!paused)H=null;return}}
 if(await waitPause())return;
-const im=new Image();
-await new Promise(r=>{im.onload=r;im.onerror=r;im.src=img});
-const t=phash(im),thi=t[0],tlo=t[1];
+const t=await qhash(qBlob),thi=t[0],tlo=t[1];
 const lim=Math.round((100-pct)/100*64);
 const n=files.length,TOP=80;hits=[];
 let total=0;
@@ -729,14 +741,16 @@ hits.splice(j,0,{d:d,s:Math.round((64-d)/64*100),
 rel:files[i].rel,name:files[i].name,sz:sizes[i],src:files[i]});
 if(hits.length>TOP)hits.pop()}}
 if((i&4095)===4095){await sleep(0);if(await waitPause())return}}
-for(let i=0;i<hits.length;i++){
+for(let i=0;i<hits.length;i+=8){
 if(await waitPause())return;
-try{const src=hits[i].src,f=src.f?src.f:await src.h.getFile();
-hits[i].url=URL.createObjectURL(f);hits[i].sz=f.size;urls.push(hits[i].url)}
-catch(_){hits[i].url=''}}
+if(abort)return;
+await Promise.all(hits.slice(i,i+8).map(async h=>{
+try{const f=h.src.f?h.src.f:await h.src.h.getFile();
+h.url=URL.createObjectURL(f);h.sz=f.size;urls.push(h.url)}
+catch(_){h.url=''}}))}
 if(abort)return;
 if(log){const now=new Date();
-hist.unshift({img:img,th:pct,found:total,
+hist.unshift({img:img,blob:qBlob,th:pct,found:total,
 time:now.getHours().toString().padStart(2,'0')+':'+
 now.getMinutes().toString().padStart(2,'0')+':'+
 now.getSeconds().toString().padStart(2,'0')});
@@ -752,7 +766,7 @@ sb.style.display='flex';draw()}
 finally{
 ld.style.display='none';
 if(paused&&!abort)return;
-busy=false;setGo('find');ready()}};
+busy=false;setLock(false);setGo('find');ready()}};
 
 /* ================= 사용법 투어 ================= */
 let tourOn=false;
