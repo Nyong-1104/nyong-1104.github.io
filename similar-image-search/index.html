@@ -180,7 +180,7 @@ white-space:nowrap}
 .btns button:hover{background:#FFEAE4;color:#CC2600}
 .foot{margin-top:auto;padding-top:18px;border-top:1px solid #e8e8ee;
 font-size:15px;color:#2a2c36;line-height:1.6;font-weight:700}
-.foot a{color:#2a2c36;text-decoration:none;font-weight:700;display:block}
+.foot a{color:#2a2c36;text-decoration:none;font-weight:700}
 .foot a:hover{color:#FF2F00}
 .foot .lic{color:#71717f;font-size:12px;margin-top:5px;line-height:1.5;
 font-weight:600}
@@ -285,8 +285,7 @@ lower widens the net to similar ones.</span></span></span></div>
 Click one to run it again.<br>
 Cleared when you close the window.</span></span></span></div>
 <div class="hlist" id="hl"></div></div>
-<div class="foot"><a href="../index.html">nyong.app</a>
-<a href="mailto:cmy3544@gmail.com">cmy3544@gmail.com</a>
+<div class="foot"><a href="mailto:cmy3544@gmail.com">cmy3544@gmail.com</a>
 <div class="lic">MIT License &middot; Free to use with attribution</div></div>
 </aside>
 <main id="mn"><div class="top" id="tp"><div class="cnt" id="st"></div>
@@ -307,12 +306,17 @@ dirin=$('dirin'),bar=$('bar'),bari=$('bari'),pmsg=$('pmsg'),ld=$('ld');
 const EXT=/\.(jpe?g|png|bmp|gif|webp|avif)$/i;
 const isMac=/Mac|iPhone|iPad/.test(navigator.userAgent);
 let data=null,files=[],index=null,hits=[],sort='d',hist=[],noLog=false,
-dirHandle=null,rootName='',busy=false,urls=[];
+dirHandle=null,rootName='',busy=false,urls=[],abort=false;
+const SKIP=new Set(['@eadir','#recycle','$recycle.bin','system volume information',
+'temp','tmp','_백업','백업','__macosx','found.000']);
+const yieldUI=()=>(typeof scheduler!=='undefined'&&scheduler.yield)
+?scheduler.yield():new Promise(r=>setTimeout(r,0));
 
 /* ---------- 커서 ---------- */
 (function(){const cur=$('cur'),dot=$('dot');
 let cx=innerWidth/2,cy=innerHeight/2,rx=cx,ry=cy;
 addEventListener('mousemove',e=>{cx=e.clientX;cy=e.clientY;
+if(busy)return;
 dot.style.transform='translate('+cx+'px,'+cy+'px) translate(-50%,-50%)';
 cur.classList.toggle('hot',!!e.target.closest(
 'button,a,.card,.thumb,.hitem,#drop,.fold,input,select'))});
@@ -323,23 +327,23 @@ document.body.appendChild(r);setTimeout(()=>r.remove(),700)});
 addEventListener('mouseup',()=>cur.classList.remove('down'));
 addEventListener('mouseleave',()=>{cur.style.opacity=dot.style.opacity=0});
 addEventListener('mouseenter',()=>{cur.style.opacity=dot.style.opacity=1});
-(function loop(){rx+=(cx-rx)*.18;ry+=(cy-ry)*.18;
-cur.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';
+(function loop(){if(!busy){rx+=(cx-rx)*.18;ry+=(cy-ry)*.18;
+cur.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)'}
 requestAnimationFrame(loop)})();})();
 
 /* ---------- 슬라이더 ---------- */
-let vTo=+th.value,vAt=+th.value,vV=0,vWake=0;
+let vTo=+th.value,vAt=+th.value,vV=0,vWake=0,vOn=false;
 function vPos(){const p=(vAt-40)/60,w=th.offsetWidth||280;
 const x=Math.max(16,Math.min(w-16,10.5+p*(w-21)));
 tv.style.left=x+'px';tv.textContent=Math.round(vAt)+'%'}
-function vLoop(){if(performance.now()>=vWake){const k=.22,dmp=.72;
+function vLoop(){vOn=true;if(performance.now()>=vWake){const k=.22,dmp=.72;
 vV=(vV+(vTo-vAt)*k)*dmp;vAt+=vV;
 if(vAt>100){vAt=100;if(vV>0)vV=0}
 if(vAt<40){vAt=40;if(vV<0)vV=0}
-if(Math.abs(vTo-vAt)<.02&&Math.abs(vV)<.02){vAt=vTo;vV=0}
+if(Math.abs(vTo-vAt)<.02&&Math.abs(vV)<.02){vAt=vTo;vV=0;vPos();vOn=false;return}
 vPos()}requestAnimationFrame(vLoop)}
-th.oninput=()=>{vTo=+th.value;vWake=performance.now()+300};
-addEventListener('resize',vPos);vPos();vLoop();
+th.oninput=()=>{vTo=+th.value;vWake=performance.now()+300;if(!vOn)vLoop()};
+addEventListener('resize',vPos);vPos();
 
 /* ---------- pHash (32x32 DCT, imagehash 호환) ---------- */
 const N=32,K=8,cosT=[],cM=[];
@@ -390,14 +394,25 @@ const canFS=typeof window.showDirectoryPicker==='function';
 fold.onclick=async()=>{if(busy)return;
 if(canFS){try{const h=await showDirectoryPicker();dirHandle=h;rootName=h.name;
 $('ft1').textContent=h.name;$('ft2').textContent='Reading...';
-files=[];await walk(h,'');afterPick()}catch(e){}}
+abort=false;busy=true;go.disabled=true;files=[];index=null;
+try{await walk(h,'');
+if(abort){if(files.length)afterPick();else $('ft2').textContent=''}
+else afterPick()}
+finally{busy=false;ready()}}catch(e){}}
 else dirin.click()};
-async function walk(dir,base){
+async function walk(root,base0){
+const stack=[[root,base0]];let n=0;
+while(stack.length){
+if(abort)return;
+const [dir,base]=stack.pop();
 for await(const [name,ent] of dir.entries()){
-if(name.startsWith('.')||name==='@eaDir')continue;
+if(abort)return;
+if(name.startsWith('.')||SKIP.has(name.toLowerCase()))continue;
 const p=base?base+'/'+name:name;
 if(ent.kind==='file'){if(EXT.test(name))files.push({h:ent,rel:p,name:name})}
-else if(ent.kind==='directory')await walk(ent,p)}}
+else if(ent.kind==='directory')stack.push([ent,p]);
+if(++n%40===0){$('ft2').textContent='Reading... '+
+files.length.toLocaleString()+' images';await yieldUI()}}}}
 dirin.onchange=e=>{const fl=[...e.target.files].filter(f=>EXT.test(f.name));
 files=fl.map(f=>({f:f,rel:f.webkitRelativePath||f.name,name:f.name}));
 rootName=(fl[0]&&fl[0].webkitRelativePath||'').split('/')[0]||'선택한 폴더';
@@ -408,26 +423,36 @@ ready()}
 
 /* ---------- 인덱싱 + 검색 ---------- */
 async function getFile(o){return o.f?o.f:await o.h.getFile()}
-async function build(){
-index=[];bar.style.display='block';
-const t0=performance.now();let done=0,fail=0;
-for(const o of files){
-try{const file=await getFile(o);
-let bm=await createImageBitmap(file),w=bm.width,ht=bm.height;
+async function thumb32(file){
+try{return await createImageBitmap(file,{resizeWidth:32,resizeHeight:32,
+resizeQuality:'low'})}catch(_){}
+const bm=await createImageBitmap(file);
 try{const sm=await createImageBitmap(bm,{resizeWidth:32,resizeHeight:32,
-resizeQuality:'high'});bm.close();bm=sm}catch(_){}
-const h=phash(bm);bm.close();
-index.push({h:h,rel:o.rel,name:o.name,w:w,ht:ht,sz:file.size,src:o})}
-catch(e){fail++}
-done++;
-if(done%12===0||done===files.length){
+resizeQuality:'low'});bm.close();return sm}catch(_){return bm}}
+function prog(done,fail,t0){
 const p=done/files.length,el=(performance.now()-t0)/1000,
-sp=done/el,eta=(files.length-done)/(sp||1);
+sp=done/(el||.001),eta=(files.length-done)/(sp||1);
 bari.style.width=(p*100)+'%';
 pmsg.textContent=done.toLocaleString()+' / '+files.length.toLocaleString()+
 ' ('+(p*100).toFixed(1)+'%) · '+sp.toFixed(0)+'장/초 · 남은 '+
-(eta<60?eta.toFixed(0)+'초':(eta/60).toFixed(1)+'분');
-await new Promise(r=>setTimeout(r,0))}}
+(eta<60?eta.toFixed(0)+'초':(eta/60).toFixed(1)+'분')}
+async function build(){
+index=[];bar.style.display='block';
+const t0=performance.now();let done=0,fail=0,BATCH=6;
+for(let i=0;i<files.length;i+=BATCH){
+if(abort)return;
+const slice=files.slice(i,i+BATCH);
+const bitmaps=await Promise.all(slice.map(async o=>{
+try{const file=await getFile(o);return{o,file,bm:await thumb32(file)}}
+catch(_){return{fail:true}}}));
+for(const it of bitmaps){
+if(it.fail){fail++;done++;continue}
+try{const h=phash(it.bm);it.bm.close();
+index.push({h:h,rel:it.o.rel,name:it.o.name,sz:it.file.size,src:it.o})}
+catch(_){fail++;try{it.bm.close()}catch(_){}}
+done++}
+prog(done,fail,t0);await yieldUI()}
+if(abort)return;
 const el=((performance.now()-t0)/1000);
 pmsg.textContent='인덱싱 완료 · '+index.length.toLocaleString()+'장 · '+
 (el<60?el.toFixed(1)+'초':(el/60).toFixed(1)+'분')+
@@ -445,8 +470,9 @@ sb.style.display='none';ld.style.display='none';em.style.display='flex';
 em.innerHTML=EMPTY;bindTour();st.textContent='';
 urls.forEach(u=>URL.revokeObjectURL(u));urls=[];ready()}
 document.onkeydown=e=>{if(e.key!=='Escape')return;
-if(lb.style.display==='flex'){lb.style.display='none';return}clearAll()};
-$('rst').onclick=()=>{clearAll();th.value=81;vTo=81;fi.value=''};
+if(lb.style.display==='flex'){lb.style.display='none';return}
+abort=true;clearAll()};
+$('rst').onclick=()=>{abort=true;clearAll();th.value=81;vTo=81;fi.value=''};
 
 function drawHist(){hl.innerHTML=hist.map((h,i)=>
 '<div class="hitem" onclick="rerun('+i+')"><img src="'+h.img+'">'+
@@ -466,7 +492,7 @@ return '<div class="card"><div class="thumb" onclick="zoom('+i+')">'+
 '<div class="badge'+(h.d===0?' exact':'')+'">'+h.s+'%</div></div>'+
 '<div class="meta"><div class="nm">'+esc(h.name)+'</div>'+
 '<div class="dir">'+esc(folder)+'</div>'+
-'<div class="dim">'+h.w+'×'+h.ht+' · '+(h.sz/1048576).toFixed(1)+'MB</div>'+
+'<div class="dim">'+(h.w||0)+'×'+(h.ht||0)+' · '+(h.sz/1048576).toFixed(1)+'MB</div>'+
 '<div class="btns">'+
 (isMac
 ?'<button onclick="copy(this)" data-p="'+esc(folder.replace(/\//g,'/'))+'">Mac 폴더</button>'+
@@ -482,25 +508,36 @@ e.target.classList.add('on');sort=e.target.dataset.s;draw()};
 
 go.onclick=async()=>{if(!data||!files.length||busy)return;
 const img=data,pct=Math.round(vTo),log=!noLog;noLog=false;
-busy=true;go.disabled=true;em.style.display='none';rs.innerHTML='';
+abort=false;busy=true;go.disabled=true;em.style.display='none';rs.innerHTML='';
 [$('drop'),fold,go].forEach(el=>el.classList.remove('glow'));
 sb.style.display='none';st.textContent='';ld.style.display='flex';
 urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
 try{
 if(!index)await build();
-await new Promise(r=>setTimeout(r,20));
+if(abort){index=null;return}
+await yieldUI();
 const im=new Image();
 await new Promise(r=>{im.onload=r;im.src=img});
 const t=phash(im),lim=Math.round((100-pct)/100*64);
 hits=[];
-for(const e of index){const d=ham(t,e.h);
+for(let i=0;i<index.length;i++){
+const e=index[i],d=ham(t,e.h);
 if(d<=lim)hits.push({d:d,s:Math.round((64-d)/64*100),rel:e.rel,name:e.name,
-w:e.w,ht:e.ht,sz:e.sz,src:e.src})}
+sz:e.sz,src:e.src});
+if(i%8000===7999){await yieldUI();if(abort)return}}
 hits.sort((a,b)=>a.d-b.d);
 const total=hits.length;
 hits=hits.slice(0,80);
-for(const h of hits){h.url=URL.createObjectURL(await getFile(h.src));
-urls.push(h.url)}
+for(let i=0;i<hits.length;i+=8){
+if(abort)return;
+const batch=hits.slice(i,i+8);
+await Promise.all(batch.map(async h=>{
+const file=await getFile(h.src);
+h.url=URL.createObjectURL(file);h.sz=file.size;urls.push(h.url);
+await new Promise(r=>{const im2=new Image();
+im2.onload=()=>{h.w=im2.naturalWidth;h.ht=im2.naturalHeight;r()};
+im2.onerror=()=>{h.w=0;h.ht=0;r()};im2.src=h.url})}))}
+if(abort)return;
 if(log){const now=new Date();
 hist.unshift({img:img,th:pct,found:total,
 time:now.getHours().toString().padStart(2,'0')+':'+
@@ -514,7 +551,7 @@ else{st.innerHTML='<b>'+index.length.toLocaleString()+'</b>장 중 <b>'+
 total.toLocaleString()+'</b>건'+(total>hits.length?
 ' <span style="color:#a0a0ae">(상위 '+hits.length+'건)</span>':'');
 sb.style.display='flex';draw()}
-}catch(e){st.textContent='오류: '+e.message}
+}catch(e){if(!abort)st.textContent='오류: '+e.message}
 ld.style.display='none';busy=false;ready()};
 
 (function(){const lg=$('lg');
