@@ -135,7 +135,7 @@ overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
 .hlist{display:flex;flex-direction:column;gap:5px;max-height:300px;
 overflow-y:auto;padding-right:4px}
 .hitem{display:flex;gap:9px;align-items:center;padding:6px;border-radius:7px;
-cursor:pointer;transition:.12s;background:#ffffff;border:1px solid #eeeef2}
+cursor:pointer;transition:.12s;background:#ffffff;border:2px solid #eeeef2}
 .hitem:hover{background:#FFF3F0;border-color:#FFC9BC}
 .hitem img{width:34px;height:34px;object-fit:cover;border-radius:5px;
 flex-shrink:0;background:#f2f2f6}
@@ -143,6 +143,14 @@ flex-shrink:0;background:#f2f2f6}
 .htime{color:#3a3a46;font-size:10.5px;white-space:nowrap;overflow:hidden;
 text-overflow:ellipsis}
 .hres{color:#a0a0ae;font-size:9.5px;font-variant-numeric:tabular-nums}
+.hdel{flex-shrink:0;width:16px;height:16px;border-radius:50%;border:0;
+background:#d8d8e0;color:#ffffff;cursor:pointer;padding:0;margin-right:5px;
+position:relative;transition:.15s;font-size:0;line-height:0}
+.hdel::before,.hdel::after{content:'';position:absolute;top:50%;left:50%;
+width:7px;height:1.5px;background:#ffffff;border-radius:1px}
+.hdel::before{transform:translate(-50%,-50%) rotate(45deg)}
+.hdel::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.hdel:hover{background:#FF2F00}
 .top{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;
 align-items:center;flex-wrap:wrap;gap:12px;min-height:60px;
 padding:14px 28px;margin-bottom:18px;
@@ -155,17 +163,18 @@ border-bottom:1px solid rgba(0,0,0,0);transition:border-color .2s,background .2s
 .cnt{color:#71717f;font-size:13px}
 .cnt b{color:#1a1c22;font-weight:600}
 .sortbar{display:flex;gap:4px}
-.sortbar button{background:#ffffff;border:1px solid #e2e2ea;color:#71717f;
-padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit}
-.sortbar button:hover{border-color:#c4c4d0}
-.sortbar button.on{background:#FF2F00;border-color:#FF2F00;color:#ffffff;font-weight:600}
-.sortbar button.on:hover{background:#CC2600;border-color:#CC2600}
+.sortbar button{background:#ededed;border:0;color:#71717f;
+padding:7px 15px;border-radius:999px;font-size:12px;cursor:pointer;
+font-family:inherit;transition:.15s}
+.sortbar button:hover{background:#e0e0e0;color:#3a3a46}
+.sortbar button.on{background:#FF2F00;color:#ffffff;font-weight:600}
+.sortbar button.on:hover{background:#CC2600;color:#ffffff}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
-.card{background:#ffffff;border:1px solid #e8e8ee;border-radius:11px;
+.card{background:#ededed;border:2px solid #ededed;border-radius:18px;
 overflow:hidden;transition:.15s}
 .card:hover{border-color:#FFB3A0;transform:translateY(-2px);
 box-shadow:0 4px 16px rgba(255,47,0,.12)}
-.thumb{position:relative;background:#f7f7fa;cursor:zoom-in}
+.thumb{position:relative;background:#ffffff;cursor:zoom-in}
 .thumb img{width:100%;height:165px;object-fit:contain;display:block}
 .badge{position:absolute;top:8px;left:8px;background:#ffffffe8;color:#CC2600;
 padding:3px 8px;border-radius:5px;font-size:10px;font-weight:600;
@@ -177,17 +186,31 @@ color:#2a2c36;max-height:34px;overflow:hidden}
 .dir{color:#9a9aa8;font-size:10px;word-break:break-all;margin-bottom:6px;
 max-height:26px;overflow:hidden}
 .dim{color:#b0b0bc;font-size:10px;margin-bottom:9px;font-variant-numeric:tabular-nums}
-.btns{display:flex;gap:4px}
-.btns button{flex:1;padding:6px 3px;font-size:9.5px;background:#f4f4f8;
-border:0;border-radius:5px;color:#6a6a78;cursor:pointer;font-family:inherit;
-white-space:nowrap}
-.btns button:hover{background:#FFEAE4;color:#CC2600}
+.btns{display:flex;gap:6px}
+.btns button{flex:1;padding:9px 6px;font-size:20px;font-weight:700;
+border:0;border-radius:999px;cursor:pointer;font-family:inherit;
+white-space:nowrap;letter-spacing:-.3px;transition:.15s}
+.btns .bp,.btns .bs{background:#ffffff;color:#2a2c36}
+.card:hover .btns .bp,.card:hover .btns .bs{background:#FF2F00;color:#ffffff}
+.btns .bp:hover,.btns .bs:hover{background:#CC2600;color:#ffffff}
+.btns button.done,.card:hover .btns button.done,
+.btns button.done:hover{background:#000000;color:#ffffff}
 .foot{margin-top:auto;padding-top:18px;border-top:1px solid #e8e8ee;
 font-size:15px;color:#2a2c36;line-height:1.6;font-weight:700}
 .foot a{color:#2a2c36;text-decoration:none;font-weight:700}
 .foot a:hover{color:#FF2F00}
 .foot .lic{color:#71717f;font-size:12px;margin-top:5px;line-height:1.5;
 font-weight:600}
+#toast{position:fixed;left:calc(50% + 170px);bottom:38px;z-index:120;
+transform:translate(-50%,14px);background:#000000;color:#ffffff;
+padding:13px 26px;border-radius:999px;font-size:13px;font-weight:600;
+letter-spacing:-.1px;white-space:nowrap;pointer-events:none;text-align:center;
+opacity:0;transition:opacity .22s ease,transform .22s cubic-bezier(.2,.8,.3,1);
+box-shadow:0 8px 26px rgba(0,0,0,.22)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast .sub{display:block;margin-top:3px;font-size:11.5px;font-weight:500;
+color:#b9b9c4;letter-spacing:0;text-align:center}
+#toast .sub b{color:#FF2F00;font-weight:700}
 .empty{color:#b8b8c4;position:fixed;top:0;bottom:0;left:340px;right:0;
 display:flex;flex-direction:column;align-items:center;justify-content:center;
 text-align:center;padding:20px;font-size:22px;line-height:1.55;
@@ -290,18 +313,19 @@ lower widens the net to similar ones.</span></span></span></div>
 Click one to run it again.<br>
 Cleared when you close the window.</span></span></span></div>
 <div class="hlist lockable" id="hl"></div></div>
-<div class="foot"><a href="mailto:cmy3544@gmail.com">cmy3544@gmail.com</a>
+<div class="foot"><a href="#" onclick="copyMail(event)">cmy3544@gmail.com</a>
 <div class="lic">MIT License &middot; Free to use with attribution</div></div>
 </aside>
 <main id="mn"><div class="top" id="tp"><div class="cnt" id="st"></div>
 <div class="sortbar" id="sb" style="display:none">
-<button data-s="d" class="on">유사도순</button>
-<button data-s="px">해상도순</button>
-<button data-s="mb">용량순</button></div></div>
+<button data-s="d" class="on">Similarity</button>
+<button data-s="px">Resolution</button>
+<button data-s="mb">Size</button></div></div>
 <div class="inner"><div class="grid" id="rs"></div>
 <div class="loader" id="ld"><div class="ring"></div></div>
 <div class="empty" id="em"></div></div></main>
 <div id="lb"><img id="lbi"><div class="cap" id="lbc"></div></div>
+<div id="toast"></div>
 <div id="cur"></div><div id="dot"></div>
 <script>
 const $=i=>document.getElementById(i);
@@ -649,15 +673,15 @@ const p=done/n,el=(now-t0)/1000,sp=done/(el||.001),
 eta=(n-done)/(sp||1);
 bari.style.width=(p*100).toFixed(1)+'%';
 pmsg.textContent=done.toLocaleString()+' / '+n.toLocaleString()+
-' ('+(p*100).toFixed(1)+'%) · '+sp.toFixed(0)+'장/초 · 남은 '+
-(eta<60?eta.toFixed(0)+'초':(eta/60).toFixed(1)+'분')};
+' ('+(p*100).toFixed(1)+'%) · '+sp.toFixed(0)+'/s · '+
+(eta<60?eta.toFixed(0)+'s':(eta/60).toFixed(1)+'m')+' left'};
 const finish=()=>{
 killPool();
 if(abort)return res(false);
 const el=(performance.now()-t0)/1000;
-pmsg.textContent='인덱싱 완료 · '+(n-fail).toLocaleString()+'장 · '+
-(el<60?el.toFixed(1)+'초':(el/60).toFixed(1)+'분')+
-(fail?' · 실패 '+fail.toLocaleString()+'장':'');
+pmsg.textContent='Indexed '+(n-fail).toLocaleString()+' images in '+
+(el<60?el.toFixed(1)+'s':(el/60).toFixed(1)+'m')+
+(fail?' · '+fail.toLocaleString()+' failed':'');
 bar.style.display='none';res(true)};
 const feed=w=>{
 const step=async()=>{
@@ -684,8 +708,36 @@ feed(w)}})}
 
 /* ================= 결과 ================= */
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
-function copy(b){navigator.clipboard.writeText(b.dataset.p);
-const o=b.textContent;b.textContent='복사됨';setTimeout(()=>b.textContent=o,1100)}
+function copyText(t){
+if(navigator.clipboard&&window.isSecureContext)
+return navigator.clipboard.writeText(t);
+return new Promise((res,rej)=>{
+const ta=document.createElement('textarea');
+ta.value=t;ta.setAttribute('readonly','');
+ta.style.position='fixed';ta.style.left='-9999px';ta.style.top='0';
+document.body.appendChild(ta);
+ta.focus();ta.select();ta.setSelectionRange(0,ta.value.length);
+let ok=false;try{ok=document.execCommand('copy')}catch(_){}
+document.body.removeChild(ta);ok?res():rej(new Error('copy failed'))})}
+let toastT=null;
+function toast(msg,sub){const t=$('toast');
+t.innerHTML=esc(msg)+(sub?'<span class="sub">'+sub+'</span>':'');
+t.classList.add('on');clearTimeout(toastT);
+toastT=setTimeout(()=>t.classList.remove('on'),sub?2600:1900)}
+function flash(b,txt,ms){const o=b.dataset.o||b.textContent;b.dataset.o=o;
+clearTimeout(+b.dataset.t||0);
+b.textContent=txt;b.classList.add('done');
+b.dataset.t=setTimeout(()=>{b.textContent=o;b.classList.remove('done')},ms)}
+function copy(b){
+copyText(b.dataset.p).then(()=>{flash(b,'Copied',1300);
+toast('Copied · path is relative to the folder you chose',
+'<b>선택한 폴더를 시작점 기준</b>으로 경로가 복사됩니다.')})
+.catch(()=>{flash(b,'Failed',1600);
+toast('Could not copy the path','경로를 복사하지 못했습니다')})}
+function copyMail(e){e.preventDefault();
+copyText('cmy3544@gmail.com')
+.then(()=>toast('Email address copied','이메일 주소가 복사되었습니다'))
+.catch(()=>toast('Could not copy the email','이메일을 복사하지 못했습니다'))}
 function zoom(i){const h=hits[i];$('lbi').src=h.url;
 $('lbc').textContent=h.rel;lb.style.display='flex'}
 lb.onclick=()=>lb.style.display='none';
@@ -706,7 +758,13 @@ clearAll();th.value=81;vTo=81;vAt=81;vPos();fi.value=''};
 function drawHist(){hl.innerHTML=hist.map((h,i)=>
 '<div class="hitem" onclick="rerun('+i+')"><img src="'+h.img+'">'+
 '<div class="hinfo"><div class="htime">'+h.time+'</div>'+
-'<div class="hres">'+h.found+'건 · 유사도 '+h.th+'%</div></div></div>').join('')}
+'<div class="hres">'+h.found.toLocaleString()+' found · '+h.th+'%</div></div>'+
+'<button class="hdel" title="Remove" onclick="delHist(event,'+i+')"></button>'+
+'</div>').join('')}
+function delHist(e,i){e.stopPropagation();
+if(busy)return;
+hist.splice(i,1);drawHist();
+toast('Removed from recent searches','최근 검색에서 삭제되었습니다')}
 function rerun(i){if(busy)return;const h=hist[i];data=h.img;qBlob=h.blob;th.value=h.th;vTo=h.th;vAt=h.th;vPos();
 dp.innerHTML='<img src="'+h.img+'">';ready();noLog=true;go.click()}
 
@@ -729,14 +787,14 @@ return '<div class="card"><div class="thumb" onclick="zoom('+i+')">'+
 '<div class="meta"><div class="nm">'+esc(h.name)+'</div>'+
 '<div class="dir">'+esc(fd)+'</div>'+
 '<div class="dim">'+(h.w||'–')+' × '+(h.ht||'–')+' · '+
-(h.sz/1048576).toFixed(1)+'MB</div><div class="btns">'+(isMac
-?'<button onclick="copy(this)" data-p="'+esc(fd)+'">Mac 폴더</button>'+
- '<button onclick="copy(this)" data-p="'+esc(win)+'">Win 폴더</button>'
-:'<button onclick="copy(this)" data-p="'+esc(win)+'">Win 폴더</button>'+
- '<button onclick="copy(this)" data-p="'+esc(fd)+'">Mac 폴더</button>')+
-'<button onclick="dl('+i+')">받기</button></div></div></div>'}).join('')}
-function dl(i){const h=hits[i],a=document.createElement('a');
-a.href=h.url;a.download=h.name;a.click()}
+(h.sz/1048576).toFixed(1)+'MB</div><div class="btns">'+'<button class="bp" onclick="copy(this)" title="'+esc(isMac?fd:win)+
+'" data-p="'+esc(isMac?fd:win)+'">Path</button>'+
+'<button class="bs" onclick="dl(this,'+i+')">Save</button>'+
+'</div></div></div>'}).join('')}
+function dl(b,i){const h=hits[i];
+flash(b,'Saved',1300);toast('Image saved to your downloads','이미지를 저장했습니다');
+const a=document.createElement('a');a.href=h.url;a.download=h.name;
+document.body.appendChild(a);a.click();a.remove()}
 sb.onclick=e=>{if(e.target.tagName!=='BUTTON')return;
 [...sb.children].forEach(b=>b.classList.remove('on'));
 e.target.classList.add('on');sort=e.target.dataset.s;draw()};
@@ -762,7 +820,7 @@ if(abort)return;
 if(await waitPause())return;
 listed=true;
 $('ft2').textContent=files.length.toLocaleString()+' images found · click to change'}
-if(!files.length){st.textContent='이미지가 없습니다';return}
+if(!files.length){st.textContent='No images in this folder';return}
 if(!H){const ok=await build();if(!ok||abort){if(!paused)H=null;return}}
 if(await waitPause())return;
 const t=await qhash(qBlob),thi=t[0],tlo=t[1];
@@ -795,12 +853,12 @@ now.getSeconds().toString().padStart(2,'0')});
 if(hist.length>12)hist.pop();drawHist()}
 if(!total){em.style.display='flex';
 em.innerHTML='결과가 없습니다<span class="en">No matches. Try lowering the similarity.</span>';
-st.innerHTML='<b>'+n.toLocaleString()+'</b>장 검색 · 0건'}
-else{st.innerHTML='<b>'+n.toLocaleString()+'</b>장 중 <b>'+
-total.toLocaleString()+'</b>건'+(total>hits.length?
-' <span style="color:#a0a0ae">(상위 '+hits.length+'건)</span>':'');
+st.innerHTML='No similar images found'}
+else{st.innerHTML='Found <b>'+total.toLocaleString()+'</b> similar image'+
+(total>1?'s':'')+(total>hits.length?
+' <span style="color:#a0a0ae">(top '+hits.length+' shown)</span>':'');
 sb.style.display='flex';draw()}
-}catch(e){if(!abort)st.textContent='오류: '+(e&&e.message||e)}
+}catch(e){if(!abort)st.textContent='Error: '+(e&&e.message||e)}
 finally{
 ld.style.display='none';
 if(paused&&!abort)return;
