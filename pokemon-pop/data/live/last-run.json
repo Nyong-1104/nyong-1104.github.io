@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-09-04T14:01:27+09:00",
+  "ranAt": "2026-09-04T18:29:23+09:00",
   "stats": {
     "asOf": "2026-09-04",
-    "asOfIso": "2026-09-04T14:01:27+09:00",
+    "asOfIso": "2026-09-04T18:29:23+09:00",
     "cardsTotal": 4941,
     "cardsLive": 2443,
     "skippedTierC": 2498,
@@ -28,7 +28,7 @@
           "cardsMatched": 2363,
           "cardsNoBrgEntry": 2666,
           "cardsAttempted": 5029,
-          "brgEntriesFetched": 3243,
+          "brgEntriesFetched": 3249,
           "dryRun": false,
           "setMap": [
             {
@@ -680,7 +680,7 @@
       "cardsMatched": 2363,
       "cardsNoBrgEntry": 2666,
       "cardsAttempted": 5029,
-      "brgEntriesFetched": 3243,
+      "brgEntriesFetched": 3249,
       "dryRun": 0,
       "cardsUnmatched": 2666
     },
@@ -690,15 +690,15 @@
         "all": {
           "ebayEnabled": true,
           "jobsPlanned": 50,
-          "jobsOk": 2,
-          "jobsEmpty": 48,
+          "jobsOk": 1,
+          "jobsEmpty": 49,
           "jobsFailed": 0,
           "dryRun": false
         }
       },
       "jobsPlanned": 50,
-      "jobsOk": 2,
-      "jobsEmpty": 48,
+      "jobsOk": 1,
+      "jobsEmpty": 49,
       "jobsFailed": 0
     },
     "liveSource": "eBay+seed+BRG"
