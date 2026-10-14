@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-10-14T12:53:07+09:00",
+  "ranAt": "2026-10-14T18:21:15+09:00",
   "stats": {
     "asOf": "2026-10-14",
-    "asOfIso": "2026-10-14T12:53:07+09:00",
+    "asOfIso": "2026-10-14T18:21:15+09:00",
     "cardsTotal": 4941,
     "cardsLive": 2443,
     "skippedTierC": 2498,
@@ -14,7 +14,7 @@
       "B": 980,
       "C": 2626
     },
-    "ebayPricesRestored": 2839,
+    "ebayPricesRestored": 2840,
     "brgPopsRestored": 2453,
     "psaPopsRestored": 2240,
     "brg": {
@@ -25,10 +25,10 @@
           "setsResolved": 102,
           "setsMissing": 1,
           "setsUnavailable": 4,
-          "cardsMatched": 2432,
-          "cardsNoBrgEntry": 2597,
+          "cardsMatched": 2433,
+          "cardsNoBrgEntry": 2596,
           "cardsAttempted": 5029,
-          "brgEntriesFetched": 3423,
+          "brgEntriesFetched": 3426,
           "dryRun": false,
           "setMap": [
             {
@@ -670,19 +670,19 @@
             }
           ],
           "errors": [],
-          "matchRate": 0.4836,
-          "cardsUnmatched": 2597
+          "matchRate": 0.4838,
+          "cardsUnmatched": 2596
         }
       },
       "setsResolved": 102,
       "setsMissing": 1,
       "setsUnavailable": 4,
-      "cardsMatched": 2432,
-      "cardsNoBrgEntry": 2597,
+      "cardsMatched": 2433,
+      "cardsNoBrgEntry": 2596,
       "cardsAttempted": 5029,
-      "brgEntriesFetched": 3423,
+      "brgEntriesFetched": 3426,
       "dryRun": 0,
-      "cardsUnmatched": 2597
+      "cardsUnmatched": 2596
     },
     "ebay": {
       "ebayEnabled": true,
@@ -690,15 +690,15 @@
         "all": {
           "ebayEnabled": true,
           "jobsPlanned": 50,
-          "jobsOk": 3,
-          "jobsEmpty": 47,
+          "jobsOk": 2,
+          "jobsEmpty": 48,
           "jobsFailed": 0,
           "dryRun": false
         }
       },
       "jobsPlanned": 50,
-      "jobsOk": 3,
-      "jobsEmpty": 47,
+      "jobsOk": 2,
+      "jobsEmpty": 48,
       "jobsFailed": 0
     },
     "liveSource": "eBay+seed+BRG"
