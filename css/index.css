@@ -5,6 +5,7 @@
   --purple: #bc96fe;
   --green:  #51cf01;
   --red:    #f54025;
+  --blue:   #3d8bff;
   --black:  #000;
   --white:  #fff;
   --border: 4px;
@@ -43,7 +44,7 @@ body {
   width: min(360px, 78vw);
   height: 5px;
   margin: 16px auto 14px;
-  background: linear-gradient(90deg, var(--yellow), var(--purple), var(--green), var(--red));
+  background: linear-gradient(90deg, var(--yellow), var(--purple), var(--green), var(--red), var(--blue));
   border: 2px solid var(--black);
 }
 
@@ -59,7 +60,7 @@ body {
 .stage {
   position: relative;
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   min-height: min(320px, 62vw);
   margin: 0 auto;
 }
@@ -180,6 +181,7 @@ body {
 .card--purple .card-front { background: var(--purple); }
 .card--yellow .card-front { background: var(--yellow); }
 .card--red .card-front    { background: var(--red); }
+.card--blue .card-front   { background: var(--blue); }
 
 .card--green .card-heading  { color: var(--black); }
 .card--purple .card-heading { color: var(--white); }
@@ -289,6 +291,10 @@ body {
 
 .poster-tilt-box--pop {
   clip-path: polygon(3% 5%, 99% 3%, 95% 94%, -4% 92%);
+}
+
+.poster-tilt-box--gif {
+  clip-path: polygon(5% 3%, 97% 6%, 98% 92%, -5% 97%);
 }
 
 .poster-tilt-text {
@@ -473,7 +479,8 @@ body {
   .poster-tilt-box--cal,
   .poster-tilt-box--stretch,
   .poster-tilt-box--webd,
-  .poster-tilt-box--pop {
+  .poster-tilt-box--pop,
+  .poster-tilt-box--gif {
     clip-path: polygon(4% 3%, 97% 1%, 98% 96%, 2% 98%);
   }
 

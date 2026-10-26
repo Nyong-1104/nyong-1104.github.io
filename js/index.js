@@ -147,8 +147,12 @@ function initCardDrag() {
     return MOBILE_MQ.matches;
   }
 
+  // Desktop: one row when every card fits, otherwise wrap into as many columns as fit
   function cols() {
-    return isMobile() ? 2 : count;
+    if (isMobile()) return 2;
+    const gap = Math.min(22, stage.clientWidth * 0.03);
+    const fit = Math.floor((stage.clientWidth + gap) / (getCardW() + gap));
+    return Math.max(1, Math.min(count, fit));
   }
 
   function getGap() {
@@ -174,11 +178,15 @@ function initCardDrag() {
     const totalW = colCount * cardW + (colCount - 1) * gap;
     const startX = Math.max(0, (stage.clientWidth - totalW) / 2);
 
+    const lastRowStart = Math.floor((count - 1) / colCount) * colCount;
+    const lastRowShift = (colCount - (count - lastRowStart)) * (cardW + gap) / 2;
+
     return Array.from({ length: count }, (_, i) => {
       const col = i % colCount;
       const row = Math.floor(i / colCount);
+      // Center a partly filled last row
       return {
-        x: startX + col * (cardW + gap),
+        x: startX + col * (cardW + gap) + (i >= lastRowStart ? lastRowShift : 0),
         y: row * (cardH + gap)
       };
     });
@@ -215,7 +223,7 @@ function initCardDrag() {
     const cardH = getCardH();
     const colCount = cols();
 
-    if (colCount === 1 || !isMobile()) {
+    if (colCount === count) {
       let slot = 0;
       for (let i = 0; i < count - 1; i++) {
         const boundary = (slots[i].x + cardW + slots[i + 1].x) / 2;
@@ -224,7 +232,7 @@ function initCardDrag() {
       return slot;
     }
 
-    // 2x2: pick nearest slot center
+    // Grid (mobile 2 columns, or wrapped desktop rows): pick nearest slot center
     let best = 0;
     let bestDist = Infinity;
     for (let i = 0; i < count; i++) {
@@ -350,6 +358,7 @@ initCard('card1', 'front1', 'back1', 'open1');
 initCard('card2', 'front2', 'back2', 'open2');
 initCard('card3', 'front3', 'back3', 'open3');
 initCard('card4', 'front4', 'back4', 'open4');
+initCard('card5', 'front5', 'back5', 'open5');
 initCardDrag();
  
 document.body.addEventListener('click', e => {
