@@ -61,10 +61,11 @@ main{flex:1;min-width:0;position:relative;background:var(--main)}
 .drop:hover{transform:scale(.99)}
 .drop.over{background:var(--o)}
 .drop.over small{color:rgba(255,255,255,.85)}
-.go{width:100%;background:var(--o);color:#fff;border:0;border-radius:12px;padding:12px;font-size:25px;font-weight:700;letter-spacing:-.6px;transition:background .15s}
-.go:hover{background:var(--oh)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.go{width:100%;background:var(--sel);color:var(--o);border:2px solid #ffd3c4;border-radius:12px;padding:9px 8px;font-size:16px;font-weight:700;letter-spacing:-.3px;transition:background .15s,color .15s,border-color .15s}
+.go:hover{background:var(--o);border-color:var(--o);color:#fff}
 .go:disabled{opacity:.45;cursor:default}
-.reset{width:100%;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px;font-size:15px;font-weight:600;color:var(--ink);margin-top:-6px;transition:border-color .15s}
+.reset{width:100%;background:#fff;border:2px solid var(--line);border-radius:12px;padding:9px 8px;font-size:16px;font-weight:600;color:var(--ink);transition:border-color .15s}
 .reset:hover{border-color:#c9c9d3}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#fff;border:2px solid var(--line);border-radius:9px;padding:6px 10px;min-height:34px;
   font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;transition:border-color .15s,color .15s}
@@ -103,7 +104,9 @@ select.in{cursor:pointer}
 .sec h3 .i{width:16px;height:16px;color:var(--o)}
 .kbd-list{display:grid;grid-template-columns:1fr auto;gap:5px 10px;font-size:11.5px;color:var(--mute2)}
 .kbd-list kbd{font-family:inherit;font-size:11.5px;color:var(--ink);font-weight:600}
-.foot{margin-top:auto;padding-top:14px;display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--mute)}
+.side-bottom{margin-top:auto;position:sticky;bottom:calc(-18px - env(safe-area-inset-bottom,0px));z-index:5;background:var(--side);border-top:1px solid var(--line2);margin-left:-24px;margin-right:-24px;margin-bottom:calc(-18px - env(safe-area-inset-bottom,0px));
+  padding:12px 24px calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px}
+.foot{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--mute)}
 .foot a,.foot button{color:var(--mute);text-decoration:none;border:0;background:none;padding:0;font-size:11.5px;text-align:left;width:max-content}
 .foot a:hover,.foot button:hover{color:var(--o)}
 
@@ -183,6 +186,8 @@ select.in{cursor:pointer}
 .h[data-h="w"]{left:0;top:50%;cursor:ew-resize}.h[data-h="e"]{left:100%;top:50%;cursor:ew-resize}
 .box.ratio .h[data-h="n"],.box.ratio .h[data-h="s"],.box.ratio .h[data-h="w"],.box.ratio .h[data-h="e"]{display:none}
 .lempty-stage{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--mute2);line-height:1.75;pointer-events:none;font-size:13px}
+#editEmpty{cursor:pointer;pointer-events:auto;z-index:2;padding-top:var(--top)}
+.stage-inner.empty{visibility:hidden}
 .lempty-stage b{color:#000;font-size:20px;font-weight:800;letter-spacing:-.5px;display:block;margin-bottom:8px}
 .dock{flex:none;background:#fff;border-top:1px solid var(--line2);position:relative;z-index:6}
 .player{height:56px;display:flex;align-items:center;gap:4px;padding:0 16px}
@@ -306,6 +311,7 @@ select.in{cursor:pointer}
 @media (max-width:980px){
   .side{width:280px;padding-left:18px;padding-right:18px}
   .logo{font-size:44px}
+  .side-bottom{margin-left:-18px;margin-right:-18px;padding-left:18px;padding-right:18px}
   .work{grid-template-columns:200px minmax(0,1fr)}
 }
 @media (max-width:760px){
@@ -314,7 +320,7 @@ select.in{cursor:pointer}
   .side{width:auto;overflow:visible;border-right:0;border-bottom:1px solid var(--line2);
     padding:22px max(16px,env(safe-area-inset-right,0px)) 18px max(16px,env(safe-area-inset-left,0px))}
   .logo{font-size:42px}
-  .foot{margin-top:6px}
+  .side-bottom{position:static;margin:6px 0 0;padding:12px 0 0}
   main{height:auto;display:flex;flex-direction:column}
   .top{position:sticky;top:env(safe-area-inset-top,0px);height:auto;min-height:var(--top);flex-wrap:wrap;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));row-gap:6px}
   .cnt{flex-basis:100%}
@@ -359,13 +365,17 @@ select.in{cursor:pointer}
     </div>
     <p class="lbl" id="dzLbl">File to edit</p>
     <button class="drop" id="dz" type="button"><span id="dzT">Drop video · GIF · image</span><small id="dzS">끌어다 놓거나 눌러서 고르세요</small></button>
-    <button class="go" id="btnSave" type="button">Save</button>
-    <button class="reset" id="btnReset" type="button">Reset</button>
     <div class="panel" id="panel"></div>
-    <div class="foot">
-      <a href="mailto:cmy3544@gmail.com" id="mail">cmy3544@gmail.com</a>
-      <span>© 2026 nyong.app · MIT License</span>
-      <button type="button" id="licBtn">Open source licenses</button>
+    <div class="side-bottom">
+      <div class="actions">
+        <button class="go" id="btnSave" type="button">Save</button>
+        <button class="reset" id="btnReset" type="button">Reset</button>
+      </div>
+      <div class="foot">
+        <a href="mailto:cmy3544@gmail.com" id="mail">cmy3544@gmail.com</a>
+        <span>© 2026 nyong.app · MIT License</span>
+        <button type="button" id="licBtn">Open source licenses</button>
+      </div>
     </div>
   </aside>
 
@@ -419,6 +429,7 @@ select.in{cursor:pointer}
 
       <section class="center">
         <div class="stagewrap">
+        <div class="lempty-stage" id="editEmpty" hidden><div><b>Drop video · GIF · image</b>영상(MP4·WebM·MOV), GIF, 이미지를 이 화면에 끌어다 놓거나 눌러서 고르세요.<br>여러 장의 이미지를 한 번에 넣으면 순서대로 프레임이 돼요.</div></div>
         <div class="stage" id="stage">
           <div class="stage-inner" id="stageInner">
             <canvas id="cv" width="10" height="10"></canvas>
@@ -715,7 +726,7 @@ document.addEventListener('pointerdown',hideBub,true);
 
 /* ---------- state ---------- */
 const S={frames:[],W0:0,H0:0,tf:{rot:0,fh:false,fv:false,crop:null,outW:0,outH:0},
-  sel:new Set(),cur:0,anchor:0,name:'motion',isSample:true,mode:'edit',playing:false,clip:[],undo:[],redo:[],
+  sel:new Set(),cur:0,anchor:0,name:'motion',isSample:false,mode:'edit',playing:false,clip:[],undo:[],redo:[],
   starts:[],total:0,crop:{active:false,rect:null,ratio:'free'},view:{z:1,fit:true},
   clips:[],linked:{vol:1,mute:false,solo:false,fadeIn:0,fadeOut:0},aSel:null};
 const LINKED_DEF=()=>({vol:1,mute:false,solo:false,fadeIn:0,fadeOut:0});
@@ -1016,6 +1027,7 @@ function setCanvas(w,h){if(cv.width!==w)cv.width=w;if(cv.height!==h)cv.height=h}
 async function renderStage(){
   if(S.mode==='layer')return renderLayerStage();
   const tok=++stageTok;const fr=S.frames[S.cur];
+  const empty=!fr;$('#editEmpty').hidden=!empty;inner.classList.toggle('empty',empty);
   if(!fr){setCanvas(10,10);cx.clearRect(0,0,10,10);layoutStage();return}
   let bmp;try{bmp=await getBmp(fr)}catch(e){return}
   if(tok!==stageTok)return;
@@ -1041,7 +1053,7 @@ stageEl.addEventListener('wheel',e=>{if(!(e.ctrlKey||e.metaKey))return;e.prevent
 
 function updateInfo(){
   if(S.mode==='layer'){$('#info').innerHTML=`${L.layers.length} layers <span class="m">· ${L.W}×${L.H} · ${(compDur()/1000).toFixed(2)}s</span>`;return}
-  const n=S.frames.length;if(!n){$('#info').textContent='';return}
+  const n=S.frames.length;if(!n){$('#info').innerHTML='<span class="m">No frames · 파일을 불러오세요</span>';return}
   const[W,H]=outSize();
   $('#info').innerHTML=`${S.isSample?'<span class="tag">Sample</span>':''}${n} frames <span class="m">· ${(S.total/1000).toFixed(2)}s · ${W}×${H}</span>`;
 }
@@ -1095,6 +1107,7 @@ function renderPanel(){
   if(S.mode==='layer')return renderLayerPanel();
   const p=$('#panel');const[W,H]=outSize();const[RW,RH]=rotSize();
   if(document.activeElement&&p.contains(document.activeElement)&&document.activeElement.matches('input,select'))return softPanel();
+  if(!S.frames.length){p.innerHTML=audioPanelHTML();bindAudioPanel();return}
   const s=selIdx();const selDur=s.reduce((a,i)=>a+S.frames[i].delay,0);
   if(S.crop.active){
     const r=S.crop.rect;
@@ -1217,7 +1230,7 @@ async function drawComp(ctx,t,scale=1){
 }
 let lTok=0;
 async function renderLayerStage(){
-  if(S.mode!=='layer')return;const tok=++lTok;
+  if(S.mode!=='layer')return;const tok=++lTok;$('#editEmpty').hidden=true;inner.classList.remove('empty');
   setCanvas(L.W,L.H);
   try{await drawComp(cx,L.t)}catch(e){console.warn(e)}
   if(tok!==lTok)return;
@@ -1317,7 +1330,6 @@ $('#lAddImg').onclick=()=>openFile('layer','image/*,.png,.jpg,.jpeg,.webp');
 $('#lAddAnim').onclick=()=>openFile('layer','video/*,.gif,.mp4,.mov,.webm,.m4v,.webp,.png');
 $('#lFromEdit').onclick=async()=>{
   if(!S.frames.length)return toast('Edit에 프레임이 없어요');
-  if(S.isSample){const r=await dialog({title:'Use the sample?',body:'<p class="note">Edit에는 지금 예시 움짤만 있어요. 그대로 레이어로 가져올 수도 있어요.</p>',buttons:[{t:'Cancel',act:'cancel'},{t:'Bring in',act:'ok',primary:true}]});if(r.act!=='ok')return}
   const[W,H]=outSize();const n=S.frames.length;const rc=outCtx(W,H);const job=busyStart('Moving to layers',n);const frames=[];
   try{for(let i=0;i<n;i++){if(job.cancel)throw new Cancel();await renderOut(rc,S.frames,i,W,H,{});const al=hasAlpha(rc.x.getImageData(0,0,W,H).data);
     const blob=await toBlob(rc.c,al?'image/png':'image/jpeg',.95);const nf=mkFrame(blob,S.frames[i].delay,W,H,al,makeThumb(rc.c,W,H,al));if(S.frames[i].au)nf.au={...S.frames[i].au};frames.push(nf);busyStep(job,i+1);if(i%3===0)await tick()}}
@@ -1862,6 +1874,7 @@ function addToEditor(items){
 }
 const dz=$('#dz');
 dz.onclick=()=>openFile(S.mode==='layer'?'layer':'edit');
+$('#editEmpty').onclick=()=>openFile('edit');
 $$('[data-tool]').forEach(b=>b.onclick=()=>{
   if(S.mode!=='edit')return;const t=b.dataset.tool;
   if(t==='time')return dlgTime();
@@ -1898,7 +1911,7 @@ $('#btnUndo').onclick=undo;$('#btnRedo').onclick=redo;
 $('#btnSave').onclick=()=>{if(S.mode==='layer'){if(!L.layers.length)return toast('레이어를 먼저 추가하세요');return compToFrames()}openSave(false)};
 $('#btnReset').onclick=async()=>{
   const isL=S.mode==='layer';
-  if(isL?!L.layers.length:(S.isSample&&!S.clips.length))return toast('비울 내용이 없어요');
+  if(isL?!L.layers.length:(!S.frames.length&&!S.clips.length))return toast('비울 내용이 없어요');
   const what=isL?`레이어 ${L.layers.length}개`:`프레임 ${S.frames.length}개${S.clips.length?`와 오디오 레이어 ${S.clips.length}개`:''}`;
   const r=await dialog({title:'Reset',body:`<p class="note">${isL?'레이어 틀':'편집 중인 움짤'}을 비우고 처음 상태로 돌아가요.</p>
     <label class="chk"><input type="checkbox" id="rsOk">${what}가 모두 지워지는 걸 확인했어요</label>`,
@@ -1906,7 +1919,7 @@ $('#btnReset').onclick=async()=>{
     onMount:d=>{$('#rsOk',d).onchange=e=>{d.querySelector('[data-act="ok"]').disabled=!e.target.checked}}});
   if(r.act!=='ok')return;
   if(isL){lPush();L.layers=[];L.sel=null;L.sized=false;L.dur=null;L.W=1080;L.H=1080;L.t=0;lChanged();toast('Reset · 실행 취소로 되돌릴 수 있어요')}
-  else{commit(()=>{S.frames=sampleFrames.slice();S.W0=540;S.H0=540;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name='sample';S.isSample=true;S.clips=[];S.linked=LINKED_DEF();S.aSel=null;setSel([0],0)},'Reset · 실행 취소로 되돌릴 수 있어요');S.view.fit=true;layoutStage()}
+  else{commit(()=>{S.frames=[];S.W0=0;S.H0=0;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name='motion';S.isSample=false;S.clips=[];S.linked=LINKED_DEF();S.aSel=null;S.sel=new Set();S.cur=0},'Reset · 실행 취소로 되돌릴 수 있어요');S.view.fit=true;layoutStage()}
 };
 
 /* ---------- How it works tour ---------- */
@@ -2008,33 +2021,8 @@ addEventListener('keydown',e=>{
   if(e.key==='ArrowUp'||e.key==='ArrowDown'){return go(()=>{const i=clamp(S.cur+(e.key==='ArrowUp'?-1:1),0,S.frames.length-1);if(e.shiftKey){S.cur=i;const a=Math.min(S.anchor,i),b=Math.max(S.anchor,i);S.sel=new Set(Array.from({length:b-a+1},(_,k)=>a+k));stopPlay();ensureVisible(i);renderList();renderStage();updatePlayer();renderPanel()}else goFrame(i)})}
 });
 
-/* =========================================================
-   Sample animation (shown until the first file is opened)
-   ========================================================= */
-let sampleFrames=[];
-async function makeSample(){
-  const W=540,H=540,N=24;const c=mkCanvas(W,H),x=c.getContext('2d');const frames=[];const F="'Pretendard Variable','Pretendard',system-ui,sans-serif";
-  for(let k=0;k<N;k++){
-    const t=k/N;x.fillStyle='#ffffff';x.fillRect(0,0,W,H);
-    x.save();x.translate(W/2,H/2-36);
-    for(let d=0;d<14;d++){const a=d/14*Math.PI*2+t*Math.PI*2;const r=128;const s=7+6*(0.5+0.5*Math.cos(a-t*Math.PI*2*2));
-      x.beginPath();x.arc(Math.cos(a)*r,Math.sin(a)*r,s,0,Math.PI*2);x.fillStyle=d===0?'#FF2F00':'#000000';x.globalAlpha=d===0?1:.12+.5*(0.5+0.5*Math.sin(a*2+t*6.28));x.fill()}
-    x.globalAlpha=1;const p=1+0.08*Math.sin(t*Math.PI*2);x.scale(p,p);
-    x.beginPath();x.arc(0,0,58,0,Math.PI*2);x.fillStyle='#FF2F00';x.fill();
-    x.fillStyle='#ffffff';x.font=`800 44px ${F}`;x.textAlign='center';x.textBaseline='middle';x.fillText(String(k+1).padStart(2,'0'),0,3);
-    x.restore();
-    x.fillStyle='#000';x.font=`800 30px ${F}`;x.textAlign='center';x.textBaseline='alphabetic';x.fillText('Sample · 24 frames',W/2,H-96);
-    x.fillStyle='#9a9aa8';x.font=`500 17px ${F}`;x.fillText('영상·GIF·이미지를 끌어다 놓으세요',W/2,H-62);
-    const blob=await toBlob(c,'image/jpeg',.92);frames.push(mkFrame(blob,80,W,H,false,makeThumb(c,W,H,false)));
-  }
-  sampleFrames=frames;
-  S.frames=frames.slice();S.W0=W;S.H0=H;S.name='sample';S.isSample=true;S.sel=new Set([0]);S.cur=0;changed();
-}
-
-(async()=>{
-  try{await Promise.race([Promise.all([document.fonts?.ready,document.fonts?.load("800 30px 'Pretendard Variable'",'Sample 24 frames 01'),document.fonts?.load("500 17px 'Pretendard Variable'",'영상·GIF·이미지를 끌어다 놓으세요')]),sleep(1500)])}catch(e){}
-  await makeSample();
-})();
+/* ---------- start empty ---------- */
+changed();
 </script>
 </body>
 </html>
