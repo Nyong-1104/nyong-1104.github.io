@@ -1,0 +1,903 @@
+<!doctype html>
+<!--
+  SimilarImageSearch
+  Find visually similar or duplicate images in a local folder.
+  All processing runs in your browser. No image is ever uploaded.
+
+  Copyright (c) 2026 cmy3544@gmail.com
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Similar Image Search · nyong.app</title>
+<meta name="description" content="로컬 폴더에서 비슷한 이미지나 중복 사진을 찾아요. 사진은 브라우저 밖으로 나가지 않습니다.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Similar Image Search · nyong.app">
+<meta property="og:description" content="로컬 폴더에서 비슷한 이미지나 중복 사진을 찾아요. 사진은 브라우저 밖으로 나가지 않습니다.">
+<meta property="og:url" content="https://www.nyong.app/similar-image-search/">
+<meta property="og:site_name" content="nyong.app">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="256x256">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" as="style" crossorigin
+href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard Variable','Pretendard',-apple-system,
+BlinkMacSystemFont,system-ui,'Malgun Gothic',sans-serif;background:#ffffff;
+color:#1a1c22;height:100vh;overflow:hidden;display:flex;font-size:13px}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#d4d4dc;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#b4b4c0}
+*{scrollbar-width:thin;scrollbar-color:#d4d4dc transparent}
+aside{width:340px;flex-shrink:0;background:#fafafa;border-right:1px solid #e8e8ee;
+padding:24px;display:flex;flex-direction:column;gap:18px;
+overflow-y:auto;overflow-x:hidden}
+main{flex:1;overflow-y:auto;background:#ffffff;position:relative}
+.inner{padding:0 28px 28px}
+.logo{font-size:52px;font-weight:800;letter-spacing:-2.4px;color:#000000;
+line-height:.95;margin-bottom:2px;cursor:pointer;user-select:none}
+.logo .ln{display:block;width:fit-content}
+.logo .ch{display:inline-block;color:#000000;
+transition:color .85s ease-out,transform .8s ease-out}
+.logo .ch.hit{color:#FF2F00;transform:translateY(-6px);
+transition:color .1s ease-in,transform .16s ease-out}
+.lbl{font-size:14px;color:#71717f;font-weight:500;margin-bottom:8px;display:block}
+#drop{border:1.5px dashed #3a3a46;border-radius:10px;min-height:150px;
+display:flex;align-items:center;justify-content:center;text-align:center;
+cursor:pointer;background:#000000;padding:14px;overflow:hidden}
+#drop:hover,#drop.on{border-color:#FF2F00;background:#0d0a1a}
+#drop img{max-width:100%;max-height:180px;border-radius:6px;display:block}
+#drop .ph{color:#ffffff;font-size:12px;line-height:1.7}
+.fold{border:2px solid #e2e2ea;background:#ffffff;border-radius:9px;padding:11px 12px;
+cursor:pointer;display:flex;align-items:center}
+.fold:hover{border-color:#FF2F00;background:#FFF3F0}
+.lockable{transition:opacity .2s,filter .2s}
+body.locked .lockable{opacity:.42;pointer-events:none;filter:saturate(.35)}
+.fold .tx{min-width:0;flex:1}
+.fold .t1{font-size:21px;color:#2a2c36;white-space:nowrap;overflow:hidden;
+text-overflow:ellipsis;font-weight:700;letter-spacing:-.4px;line-height:1.25}
+.fold .t2{font-size:10.5px;color:#a0a0ae;margin-top:1px}
+.row{display:flex;justify-content:space-between;align-items:baseline;
+margin-bottom:8px;margin-top:10px}
+.slbox{position:relative;padding-bottom:16px}
+.tip{position:relative;display:inline-block}
+.tip .bub{position:absolute;left:0;bottom:calc(100% + 9px);z-index:40;
+width:230px;background:#1a1c22;color:#e8e8ee;font-size:11px;font-weight:400;
+line-height:1.65;padding:10px 12px;border-radius:8px;letter-spacing:0;
+opacity:0;visibility:hidden;transform:translateY(4px);
+transition:opacity .16s,transform .16s,visibility .16s;
+box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.tip .bub::after{content:'';position:absolute;top:100%;left:18px;
+border:5px solid transparent;border-top-color:#1a1c22}
+.tip .bub b{color:#FF7A5C;font-weight:600}
+.tip .bub .en2{display:block;margin-top:7px;padding-top:7px;
+border-top:1px solid rgba(255,255,255,.13);
+font-size:10.5px;color:#9a9aa8;line-height:1.55}
+.tip .bub .en2 b{color:#FF7A5C;font-weight:600}
+.tip.down .bub{bottom:auto;top:calc(100% + 9px)}
+.tip.down .bub::after{top:auto;bottom:100%;border-top-color:transparent;
+border-bottom-color:#1a1c22}
+.tip:hover .bub{opacity:1;visibility:visible;transform:translateY(0)}
+.tip .q{display:inline-flex;align-items:center;justify-content:center;
+width:14px;height:14px;border-radius:50%;background:#d8d8e0;color:#ffffff;
+font-size:9px;font-weight:700;margin-left:5px;vertical-align:1px}
+.tip:hover .q{background:#FF2F00}
+.val{position:absolute;bottom:0;color:#FF2F00;font-size:11px;font-weight:700;
+font-variant-numeric:tabular-nums;transform:translateX(-50%);white-space:nowrap;
+pointer-events:none;will-change:transform,left}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;
+border-radius:3px;background:#e2e2ea;cursor:pointer;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+width:15px;height:15px;border-radius:50%;background:#FF2F00;cursor:pointer;
+border:3px solid #fafafa;box-shadow:0 0 0 1px #FF2F00}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;
+background:#FF2F00;cursor:pointer;border:3px solid #fafafa;box-shadow:0 0 0 1px #FF2F00}
+.acts{display:flex;gap:8px}
+.go{flex:0 0 70%;background:#FF2F00;color:#ffffff;border:0;padding:12px;
+border-radius:9px;font-size:25px;font-weight:700;cursor:pointer;
+font-family:inherit;letter-spacing:-.3px}
+.go:hover{background:#CC2600}
+.go:disabled{opacity:.35;cursor:default}
+.go.is-pause{display:inline-flex;align-items:center;justify-content:center;
+gap:6px;font-size:0;letter-spacing:0}
+.go-pause{width:6px;height:22px;background:#fff;border-radius:1px}
+.reset{flex:1;background:#ffffff;border:2px solid #e2e2ea;color:#71717f;
+padding:9px;border-radius:9px;font-size:15px;cursor:pointer;font-family:inherit}
+.reset:hover{border-color:#c4c4d0;color:#3a3a46}
+.bar{height:4px;border-radius:3px;background:#e2e2ea;overflow:hidden;margin-top:9px}
+.bar i{display:block;height:100%;background:#FF2F00;width:0}
+.pmsg{font-size:10.5px;color:#a0a0ae;margin-top:6px;white-space:nowrap;
+overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.hist{border-top:1px solid #e8e8ee;padding-top:16px}
+.histhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.histhead .lbl{margin:0}
+.hlist{display:flex;flex-direction:column;gap:5px;max-height:300px;
+overflow-y:auto;padding-right:4px}
+.hitem{display:flex;gap:9px;align-items:center;padding:6px;border-radius:7px;
+cursor:pointer;transition:.12s;background:#ffffff;border:2px solid #eeeef2}
+.hitem:hover{background:#FFF3F0;border-color:#FFC9BC}
+.hitem img{width:34px;height:34px;object-fit:cover;border-radius:5px;
+flex-shrink:0;background:#f2f2f6}
+.hinfo{min-width:0;flex:1}
+.htime{color:#3a3a46;font-size:10.5px;white-space:nowrap;overflow:hidden;
+text-overflow:ellipsis}
+.hres{color:#a0a0ae;font-size:9.5px;font-variant-numeric:tabular-nums}
+.hdel{flex-shrink:0;width:16px;height:16px;border-radius:50%;border:0;
+background:#d8d8e0;color:#ffffff;cursor:pointer;padding:0;margin-right:5px;
+position:relative;transition:.15s;font-size:0;line-height:0}
+.hdel::before,.hdel::after{content:'';position:absolute;top:50%;left:50%;
+width:7px;height:1.5px;background:#ffffff;border-radius:1px}
+.hdel::before{transform:translate(-50%,-50%) rotate(45deg)}
+.hdel::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.hdel:hover{background:#FF2F00}
+.top{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;
+align-items:center;flex-wrap:wrap;gap:12px;min-height:60px;
+padding:14px 28px;margin-bottom:18px;
+background:rgba(255,255,255,.62);
+-webkit-backdrop-filter:blur(18px) saturate(180%);
+backdrop-filter:blur(18px) saturate(180%);
+border-bottom:1px solid rgba(0,0,0,0);transition:border-color .2s,background .2s}
+.top.stuck{border-bottom-color:rgba(0,0,0,.07);background:rgba(255,255,255,.72)}
+@supports not (backdrop-filter:blur(1px)){.top{background:rgba(255,255,255,.96)}}
+.cnt{color:#71717f;font-size:13px}
+.cnt b{color:#1a1c22;font-weight:600}
+.sortbar{display:flex;gap:4px}
+.sortbar button{background:#ededed;border:0;color:#71717f;
+padding:7px 15px;border-radius:999px;font-size:12px;cursor:pointer;
+font-family:inherit;transition:.15s}
+.sortbar button:hover{background:#e0e0e0;color:#3a3a46}
+.sortbar button.on{background:#FF2F00;color:#ffffff;font-weight:600}
+.sortbar button.on:hover{background:#CC2600;color:#ffffff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.card{background:#ededed;border:2px solid #ededed;border-radius:18px;
+overflow:hidden;transition:.15s}
+.card:hover{border-color:#FFB3A0;transform:translateY(-2px);
+box-shadow:0 4px 16px rgba(255,47,0,.12)}
+.thumb{position:relative;background:#ffffff;cursor:zoom-in}
+.thumb img{width:100%;height:165px;object-fit:contain;display:block}
+.badge{position:absolute;top:8px;left:8px;background:#ffffffe8;color:#CC2600;
+padding:3px 8px;border-radius:5px;font-size:10px;font-weight:600;
+font-variant-numeric:tabular-nums;border:1px solid #FFD5CB}
+.badge.exact{background:#FF2F00;color:#ffffff;border-color:#FF2F00}
+.meta{padding:11px 12px 12px}
+.nm{font-size:11.5px;line-height:1.45;word-break:break-all;margin-bottom:5px;
+color:#2a2c36;max-height:34px;overflow:hidden}
+.dir{color:#9a9aa8;font-size:10px;word-break:break-all;margin-bottom:6px;
+max-height:26px;overflow:hidden}
+.dim{color:#b0b0bc;font-size:10px;margin-bottom:9px;font-variant-numeric:tabular-nums}
+.btns{display:flex;gap:6px}
+.btns button{flex:1;padding:9px 6px;font-size:20px;font-weight:700;
+border:0;border-radius:999px;cursor:pointer;font-family:inherit;
+white-space:nowrap;letter-spacing:-.3px;transition:.15s}
+.btns .bp,.btns .bs{background:#ffffff;color:#2a2c36}
+.card:hover .btns .bp,.card:hover .btns .bs{background:#FF2F00;color:#ffffff}
+.btns .bp:hover,.btns .bs:hover{background:#CC2600;color:#ffffff}
+.btns button.done,.card:hover .btns button.done,
+.btns button.done:hover{background:#000000;color:#ffffff}
+.foot{margin-top:auto;padding-top:18px;border-top:1px solid #e8e8ee;
+font-size:15px;color:#2a2c36;line-height:1.6;font-weight:700}
+.foot a{color:#2a2c36;text-decoration:none;font-weight:700}
+.foot a:hover{color:#FF2F00}
+.foot .lic{color:#71717f;font-size:12px;margin-top:5px;line-height:1.5;
+font-weight:600}
+#toast{position:fixed;left:calc(50% + 170px);bottom:38px;z-index:120;
+transform:translate(-50%,14px);background:#000000;color:#ffffff;
+padding:13px 26px;border-radius:999px;font-size:13px;font-weight:600;
+letter-spacing:-.1px;white-space:nowrap;pointer-events:none;text-align:center;
+opacity:0;transition:opacity .22s ease,transform .22s cubic-bezier(.2,.8,.3,1);
+box-shadow:0 8px 26px rgba(0,0,0,.22)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast .sub{display:block;margin-top:3px;font-size:11.5px;font-weight:500;
+color:#b9b9c4;letter-spacing:0;text-align:center}
+#toast .sub b{color:#FF2F00;font-weight:700}
+.empty{color:#b8b8c4;position:fixed;top:0;bottom:0;left:340px;right:0;
+display:flex;flex-direction:column;align-items:center;justify-content:center;
+text-align:center;padding:20px;font-size:22px;line-height:1.55;
+font-weight:500;letter-spacing:-.4px;pointer-events:none}
+.empty .en{display:block;margin-top:5px;font-size:16px;font-weight:400;
+color:#cbcbd4;letter-spacing:-.1px;line-height:1.6}
+.en .w{color:#e4e4ea;transition:color .5s}
+.en .w+.w{margin-left:.3em}
+.en .w i{font-style:normal;transition:color .3s}
+.en .w.lit{color:#3f3f4c}
+.en .w.on i{color:#FF2F00}
+.en .w.keep.lit i{color:#FF2F00}
+.en.rest .w{color:#cbcbd4}
+.howto{pointer-events:auto;background:#ffffff;border:1px solid #e2e2ea;
+color:#8a8a98;font-family:inherit;font-size:12px;font-weight:500;
+padding:8px 18px;border-radius:20px;cursor:pointer;margin-bottom:22px;
+letter-spacing:0;transition:.15s}
+.howto:hover{border-color:#FF2F00;color:#FF2F00}
+.howto:disabled{opacity:.4}
+.guide .w{color:#e4e4ea;transition:color .5s}
+.guide .w+.w{margin-left:.32em}
+.guide .w i{font-style:normal;transition:color .3s}
+.guide .w.on i{color:#FF2F00}
+.guide .w.lit{color:#121212}
+.guide .w.keep.lit i{color:#FF2F00}
+.guide.rest .w{color:#b8b8c4}
+#drop.glow{border:1.5px solid #FF2F00;background:#FF2F00}
+#drop.glow .ph{color:#ffffff}
+.fold.glow{border-color:#FF2F00;background:#FF2F00}
+.fold.glow .t1,.fold.glow .t2{color:#ffffff}
+.go.glow{box-shadow:0 0 0 4px #FF2F0059}
+.go:disabled.glow{opacity:1;background:#FF2F00;color:#ffffff}
+#drop,.fold,.go{transition:border-color .5s ease-in-out,background .5s ease-in-out,
+box-shadow .5s ease-in-out,opacity .5s ease-in-out}
+#drop .ph,.fold .t1,.fold .t2{transition:color .5s ease-in-out}
+#lb{position:fixed;inset:0;background:#1a1c22f2;display:none;align-items:center;
+justify-content:center;z-index:99;cursor:zoom-out;padding:40px;flex-direction:column;gap:14px}
+#lb img{max-width:100%;max-height:calc(100vh - 130px);object-fit:contain;border-radius:6px}
+#lb .cap{color:#c8c8d4;font-size:12px;text-align:center;word-break:break-all;max-width:800px}
+.loader{display:none;position:fixed;top:0;bottom:0;left:340px;right:0;
+align-items:center;justify-content:center;z-index:30;pointer-events:none}
+.ring{width:74px;height:74px;border:5px solid #FFD9D1;border-top-color:#FF2F00;
+border-radius:50%;animation:sp .85s cubic-bezier(.5,.1,.5,.9) infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+html,body,a,button,select,input,.card,.thumb,.hitem,#drop,#lb,*{cursor:none!important}
+#cur{position:fixed;top:0;left:0;width:26px;height:26px;border:1.5px solid #FF2F00;
+border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);
+transition:width .18s,height .18s,background .18s,border-color .18s;will-change:transform}
+#cur.hot{width:40px;height:40px;background:#FF2F001f;border-color:#CC2600}
+#cur.down{width:16px;height:16px;background:#FF2F0059}
+#dot{position:fixed;top:0;left:0;width:4px;height:4px;background:#CC2600;
+border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);
+will-change:transform}
+.rip{position:fixed;border:1.5px solid #FF2F00;border-radius:50%;pointer-events:none;
+z-index:9998;transform:translate(-50%,-50%);animation:rp .65s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes rp{0%{width:12px;height:12px;opacity:.8}
+100%{width:120px;height:120px;opacity:0;border-width:.5px}}
+@media(pointer:coarse){#cur,#dot{display:none}*{cursor:auto!important}}
+</style>
+</head>
+<body>
+<aside>
+<div class="logo" id="lg">Similar<br>Image<br>Search</div>
+<div><span class="lbl tip">Image to find<span class="q">?</span>
+<span class="bub"><b>찾고 싶은 이미지</b>를 넣어주세요.<br>
+캡처한 화면을 붙여넣어도 됩니다.
+<span class="en2">Add <b>the image you want to find</b>.<br>
+A pasted screenshot works too.</span></span></span>
+<div id="drop" class="lockable"><div class="ph">Drop, paste or click<br>to add an image</div></div>
+<input type="file" id="f" accept="image/*" hidden></div>
+<div><span class="lbl tip">Folder to search<span class="q">?</span>
+<span class="bub"><b>폴더 안 하위 폴더까지</b> 모두 찾습니다.<br>
+사진은 내 컴퓨터 밖으로 나가지 않습니다.
+<span class="en2">Searches <b>the folder and every subfolder</b>.<br>
+Your photos never leave your computer.</span>
+<span class="en2">'<b>~</b>' 로 시작하는 폴더명은 읽지 못합니다.<br>
+Folders starting with <b>~</b> cannot be read.</span></span></span>
+<div class="fold lockable" id="fold"><div class="tx">
+<div class="t1" id="ft1">Choose a folder</div>
+<div class="t2" id="ft2"></div></div></div>
+<input type="file" id="dirin" webkitdirectory directory multiple hidden>
+<div class="bar" id="bar" style="display:none"><i id="bari"></i></div>
+<div class="pmsg" id="pmsg"></div></div>
+<div><div class="row"><span class="lbl tip" style="margin:0">Similarity<span class="q">?</span>
+<span class="bub">추천값은 <b>81%</b>입니다.<br>
+높일수록 거의 똑같은 이미지만 찾고,<br>
+낮출수록 비슷한 이미지까지 넓게 찾습니다.
+<span class="en2"><b>81%</b> is recommended.<br>
+Higher finds near-identical images only,<br>
+lower widens the net to similar ones.</span></span></span></div>
+<div class="slbox lockable"><span class="val" id="tv">81%</span>
+<input type="range" id="th" min="40" max="100" value="81"></div></div>
+<div class="acts"><button class="go" id="go" disabled>Find</button>
+<button class="reset" id="rst">Reset</button></div>
+<div class="hist"><div class="histhead"><span class="lbl tip down">Recent<span class="q">?</span>
+<span class="bub"><b>찾아본 기록</b>입니다.<br>
+같은 조건으로 다시 찾습니다.<br>
+창을 닫으면 사라집니다.
+<span class="en2">Your <b>recent searches</b>.<br>
+Click one to run it again.<br>
+Cleared when you close the window.</span></span></span></div>
+<div class="hlist lockable" id="hl"></div></div>
+<div class="foot"><a href="#" onclick="copyMail(event)">cmy3544@gmail.com</a>
+<div class="lic">MIT License &middot; Free to use with attribution</div></div>
+</aside>
+<main id="mn"><div class="top" id="tp"><div class="cnt" id="st"></div>
+<div class="sortbar" id="sb" style="display:none">
+<button data-s="d" class="on">Similarity</button>
+<button data-s="px">Resolution</button>
+<button data-s="mb">Size</button></div></div>
+<div class="inner"><div class="grid" id="rs"></div>
+<div class="loader" id="ld"><div class="ring"></div></div>
+<div class="empty" id="em"></div></div></main>
+<div id="lb"><img id="lbi"><div class="cap" id="lbc"></div></div>
+<div id="toast"></div>
+<div id="cur"></div><div id="dot"></div>
+<script>
+const $=i=>document.getElementById(i);
+const dp=$('drop'),fi=$('f'),go=$('go'),th=$('th'),tv=$('tv'),st=$('st'),
+rs=$('rs'),em=$('em'),sb=$('sb'),lb=$('lb'),hl=$('hl'),fold=$('fold'),
+dirin=$('dirin'),bar=$('bar'),bari=$('bari'),pmsg=$('pmsg'),ld=$('ld');
+const EXT=/\.(jpe?g|png|bmp|gif|webp|avif)$/i;
+const isMac=/Mac|iPhone|iPad/.test(navigator.userAgent);
+const SKIP=['@eadir','#recycle','$recycle.bin','system volume information',
+'temp','tmp','_백업','백업','__macosx','found.000','node_modules'];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+let data=null,files=[],H=null,bad=null,sizes=null,hits=[],sort='d',hist=[],
+noLog=false,busy=false,urls=[],abort=false,paused=false,listed=false,qBlob=null,
+dirHandle=null,walker=null,pool=[],walkFin=null,goMode='find';
+
+const PH='<div class="ph">Drop, paste or click<br>to add an image</div>';
+const EMPTY='<button class="howto" id="howto">How it works</button>'+
+'<div class="guide rest" id="gd">'+
+'<span class="w" data-t="drop"><i>이미지</i>와</span>'+
+'<span class="w" data-t="fold"><i>폴더</i>를</span>'+
+'<span class="w">선택한 뒤</span>'+
+'<span class="w keep" data-t="go"><i>Find</i>를 눌러주세요</span></div>'+
+'<span class="en rest" id="ge">'+
+'<span class="w"><i>Pick an image</i></span>'+
+'<span class="w"><i>and a folder,</i></span>'+
+'<span class="w">then</span>'+
+'<span class="w keep"><i>hit Find</i> to start</span></span>';
+em.innerHTML=EMPTY;
+
+/* ================= 워커 소스 ================= */
+const DCT_SRC=`
+const N=32,K=8,cosT=[];
+for(let u=0;u<N;u++){cosT[u]=new Float64Array(N);
+for(let x=0;x<N;x++)cosT[u][x]=Math.cos((2*x+1)*u*Math.PI/(2*N))}
+function hashPixels(d){
+const g=new Float64Array(N*N);
+for(let i=0,j=0;i<d.length;i+=4,j++)g[j]=.299*d[i]+.587*d[i+1]+.114*d[i+2];
+const rowT=new Float64Array(N*K);
+for(let y=0;y<N;y++)for(let u=0;u<K;u++){let s=0;const c=cosT[u];
+for(let x=0;x<N;x++)s+=g[y*N+x]*c[x];rowT[y*K+u]=s}
+const dct=new Float64Array(64);
+for(let u=0;u<K;u++){const c=cosT[u];
+for(let v=0;v<K;v++){let s=0;
+for(let y=0;y<N;y++)s+=rowT[y*K+v]*c[y];dct[u*K+v]=s}}
+const srt=Array.prototype.slice.call(dct).sort((a,b)=>a-b);
+const med=(srt[31]+srt[32])/2;
+let hi=0,lo=0;
+for(let i=0;i<32;i++)hi=(hi<<1)|(dct[i]>med?1:0);
+for(let i=32;i<64;i++)lo=(lo<<1)|(dct[i]>med?1:0);
+return[hi>>>0,lo>>>0]}
+`;
+
+const HASH_WORKER=DCT_SRC+`
+let cv=null,cx=null,paused=false,stop=false;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function ctx(){if(!cx){cv=new OffscreenCanvas(N,N);
+cx=cv.getContext('2d',{willReadFrequently:true})}return cx}
+async function one(o){
+const file=o.f?o.f:await o.h.getFile();
+let bm;
+try{bm=await createImageBitmap(file,{resizeWidth:N,resizeHeight:N,
+resizeQuality:'high'})}
+catch(_){try{bm=await createImageBitmap(file,{resizeWidth:N,resizeHeight:N})}
+catch(__){bm=await createImageBitmap(file)}}
+const c=ctx();
+c.fillStyle='#fff';c.fillRect(0,0,N,N);
+c.drawImage(bm,0,0,N,N);bm.close();
+const px=c.getImageData(0,0,N,N).data;
+const hl=hashPixels(px);
+return{hi:hl[0],lo:hl[1],size:file.size}}
+self.onmessage=async e=>{
+const m=e.data;
+if(m.cmd==='pause'){paused=true;return}
+if(m.cmd==='resume'){paused=false;return}
+if(m.cmd==='abort'){stop=true;paused=false;return}
+if(m.cmd!=='job')return;
+stop=false;
+const out=[];
+for(const it of m.items){
+while(paused&&!stop)await sleep(40);
+if(stop)break;
+try{const r=await one(it.o);out.push({i:it.i,hi:r.hi,lo:r.lo,size:r.size})}
+catch(_){out.push({i:it.i,bad:1})}}
+self.postMessage({type:'done',out:out})};
+`;
+
+const WALK_WORKER=`
+const EXT=/\\.(jpe?g|png|bmp|gif|webp|avif)$/i;
+const SKIP=new Set(${JSON.stringify(SKIP)});
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let stop=false,paused=false;
+function flush(batch){
+if(!batch.length)return[];
+try{self.postMessage({type:'b',files:batch});return[]}
+catch(_){for(const item of batch){
+try{self.postMessage({type:'b',files:[item]})}catch(__){}}
+return[]}}
+self.onmessage=async e=>{
+const cmd=e.data.cmd;
+if(cmd==='abort'){stop=true;paused=false;return}
+if(cmd==='pause'){paused=true;return}
+if(cmd==='resume'){paused=false;return}
+if(cmd!=='start')return;
+stop=false;paused=false;
+const stack=[[e.data.handle,'']];
+let batch=[],found=0,last=Date.now();
+while(stack.length&&!stop){
+const [dir,base]=stack.pop();
+let it;try{it=dir.entries()}catch(_){continue}
+try{
+for await(const [name,ent] of it){
+while(paused&&!stop)await sleep(40);
+if(stop)break;
+try{
+if(!name||name.charCodeAt(0)===46||SKIP.has(name.toLowerCase()))continue;
+const p=base?base+'/'+name:name;
+let sub=typeof ent.entries==='function'?ent:null;
+if(!sub&&!EXT.test(name)){
+try{sub=await dir.getDirectoryHandle(name)}catch(_){}}
+if(sub)stack.push([sub,p]);
+else if(EXT.test(name)){batch.push({h:ent,rel:p,name:name});found++}
+const now=Date.now();
+if(batch.length>=64||now-last>400){last=now;
+self.postMessage({type:'p',found:found});
+batch=flush(batch)}}
+catch(_){}}}catch(_){}}
+batch=flush(batch);
+self.postMessage({type:stop?'abort':'end',found:found})};
+`;
+
+function mkWorker(src){
+const u=URL.createObjectURL(new Blob([src],{type:'text/javascript'}));
+const w=new Worker(u);w._u=u;return w}
+function killWorker(w){if(!w)return;
+try{w.terminate()}catch(_){}
+try{URL.revokeObjectURL(w._u)}catch(_){}}
+function killPool(){pool.forEach(killWorker);pool=[]}
+function stopWalk(){
+abort=true;
+if(walker){try{walker.postMessage({cmd:'abort'})}catch(_){}
+killWorker(walker);walker=null}
+if(walkFin){const f=walkFin;walkFin=null;f()}}
+
+/* ================= 메인 스레드용 pHash (질의 이미지 전용) ================= */
+const N=32,K=8,cosT=[];
+for(let u=0;u<N;u++){cosT[u]=new Float64Array(N);
+for(let x=0;x<N;x++)cosT[u][x]=Math.cos((2*x+1)*u*Math.PI/(2*N))}
+const hc=document.createElement('canvas');hc.width=hc.height=N;
+const hx=hc.getContext('2d',{willReadFrequently:true});
+function hashPx(d){
+const g=new Float64Array(N*N);
+for(let i=0,j=0;i<d.length;i+=4,j++)g[j]=.299*d[i]+.587*d[i+1]+.114*d[i+2];
+const rowT=new Float64Array(N*K);
+for(let y=0;y<N;y++)for(let u=0;u<K;u++){let s=0;const c=cosT[u];
+for(let x=0;x<N;x++)s+=g[y*N+x]*c[x];rowT[y*K+u]=s}
+const dct=new Float64Array(64);
+for(let u=0;u<K;u++){const c=cosT[u];
+for(let v=0;v<K;v++){let s=0;
+for(let y=0;y<N;y++)s+=rowT[y*K+v]*c[y];dct[u*K+v]=s}}
+const srt=Array.prototype.slice.call(dct).sort((a,b)=>a-b);
+const med=(srt[31]+srt[32])/2;
+let hi=0,lo=0;
+for(let i=0;i<32;i++)hi=(hi<<1)|(dct[i]>med?1:0);
+for(let i=32;i<64;i++)lo=(lo<<1)|(dct[i]>med?1:0);
+return[hi>>>0,lo>>>0]}
+async function qhash(blob){
+let bm;
+try{bm=await createImageBitmap(blob,{resizeWidth:N,resizeHeight:N,
+resizeQuality:'high'})}
+catch(_){try{bm=await createImageBitmap(blob,{resizeWidth:N,resizeHeight:N})}
+catch(__){bm=await createImageBitmap(blob)}}
+hx.fillStyle='#fff';hx.fillRect(0,0,N,N);
+hx.drawImage(bm,0,0,N,N);bm.close();
+return hashPx(hx.getImageData(0,0,N,N).data)}
+function pc(x){x=x-((x>>1)&0x55555555);
+x=(x&0x33333333)+((x>>2)&0x33333333);
+x=(x+(x>>4))&0x0f0f0f0f;return(x*0x01010101)>>24}
+
+/* ================= 커서 ================= */
+(function(){const cur=$('cur'),dot=$('dot');
+let cx=innerWidth/2,cy=innerHeight/2,rx=cx,ry=cy,ht=null;
+addEventListener('mousemove',e=>{cx=e.clientX;cy=e.clientY;ht=e.target},{passive:true});
+addEventListener('mousedown',e=>{cur.classList.add('down');
+const r=document.createElement('div');r.className='rip';
+r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';
+document.body.appendChild(r);setTimeout(()=>r.remove(),700)});
+addEventListener('mouseup',()=>cur.classList.remove('down'));
+addEventListener('mouseleave',()=>{cur.style.opacity=dot.style.opacity=0});
+addEventListener('mouseenter',()=>{cur.style.opacity=dot.style.opacity=1});
+(function loop(){rx+=(cx-rx)*.18;ry+=(cy-ry)*.18;
+dot.style.transform='translate('+cx+'px,'+cy+'px) translate(-50%,-50%)';
+cur.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';
+if(goMode!=='pause'&&ht){cur.classList.toggle('hot',!!ht.closest(
+'button,a,.card,.thumb,.hitem,#drop,.fold,input,select,.ln'));ht=null}
+requestAnimationFrame(loop)})();})();
+
+/* ================= 로고 ================= */
+(function(){const lg=$('lg');
+lg.innerHTML=['Similar','Image','Search'].map(w=>'<span class="ln">'+
+[...w].map(c=>'<span class="ch">'+c+'</span>').join('')+'</span>').join('');
+const busyLn=new Set();
+lg.onclick=e=>{const ln=e.target.closest('.ln');
+if(!ln||busyLn.has(ln))return;busyLn.add(ln);
+const chs=[...ln.querySelectorAll('.ch')];
+chs.forEach((c,i)=>{setTimeout(()=>{c.classList.add('hit');
+setTimeout(()=>c.classList.remove('hit'),150)},i*55)});
+setTimeout(()=>busyLn.delete(ln),chs.length*55+900)}})();
+
+/* ================= 슬라이더 ================= */
+let vTo=+th.value,vAt=+th.value,vV=0,vWake=0,vOn=false;
+function vPos(){const p=(vAt-40)/60,w=th.offsetWidth||280;
+const x=Math.max(16,Math.min(w-16,10.5+p*(w-21)));
+tv.style.left=x+'px';tv.textContent=Math.round(vAt)+'%'}
+function vLoop(){vOn=true;
+if(performance.now()>=vWake){const k=.22,dmp=.72;
+vV=(vV+(vTo-vAt)*k)*dmp;vAt+=vV;
+if(vAt>100){vAt=100;if(vV>0)vV=0}
+if(vAt<40){vAt=40;if(vV<0)vV=0}
+if(Math.abs(vTo-vAt)<.02&&Math.abs(vV)<.02){vAt=vTo;vV=0;vPos();vOn=false;return}}
+vPos();requestAnimationFrame(vLoop)}
+th.oninput=()=>{if(busy){th.value=vTo;return}
+vTo=+th.value;vWake=performance.now()+300;if(!vOn)vLoop()};
+addEventListener('resize',vPos);vPos();
+
+/* ================= 이미지 입력 ================= */
+async function peekWH(file){
+try{const buf=await file.slice(0,131072).arrayBuffer();
+const u=new Uint8Array(buf),dv=new DataView(buf);
+if(u[0]===0xFF&&u[1]===0xD8){let i=2;
+while(i+8<u.length){if(u[i]!==0xFF)break;const m=u[i+1];
+if(m===0xD8){i+=2;continue}if(m===0xD9||m===0xDA)break;
+if((m&0xF0)===0xC0&&m!==0xC4&&m!==0xC8&&m!==0xCC)
+return{w:(u[i+7]<<8)|u[i+8],h:(u[i+5]<<8)|u[i+6]};
+const len=(u[i+2]<<8)|u[i+3];if(len<2)break;i+=2+len}return null}
+if(u[0]===0x89&&u[1]===0x50)return{w:dv.getUint32(16),h:dv.getUint32(20)};
+if(u[0]===0x47&&u[1]===0x49)return{w:dv.getUint16(6,true),h:dv.getUint16(8,true)};
+if(u[0]===0x42&&u[1]===0x4D)return{w:dv.getInt32(18,true),h:Math.abs(dv.getInt32(22,true))};
+if(u[8]===0x57&&u[9]===0x45&&u[10]===0x42&&u[11]===0x50&&u[12]===0x56&&u[15]===0x58)
+return{w:1+u[24]+(u[25]<<8)+((u[26]&15)<<16),h:1+u[27]+(u[28]<<8)+((u[29]&15)<<16)}}
+catch(_){}return null}
+let loadSeq=0;
+async function load(f){if(!f)return;const seq=++loadSeq;qBlob=f;
+const sz=await peekWH(f);if(seq!==loadSeq)return;
+const opt={resizeQuality:'low'};
+if(sz&&sz.w&&sz.h){const s=Math.min(1,512/Math.max(sz.w,sz.h));
+opt.resizeWidth=Math.max(1,Math.round(sz.w*s));
+opt.resizeHeight=Math.max(1,Math.round(sz.h*s))}
+else{opt.resizeWidth=512;opt.resizeHeight=512}
+let bm;
+try{bm=await createImageBitmap(f,opt)}
+catch(_){try{bm=await createImageBitmap(f,{resizeWidth:opt.resizeWidth,
+resizeHeight:opt.resizeHeight})}catch(__){bm=await createImageBitmap(f)}}
+if(seq!==loadSeq){try{bm.close()}catch(_){}return}
+const c=document.createElement('canvas');c.width=bm.width;c.height=bm.height;
+c.getContext('2d').drawImage(bm,0,0);bm.close();
+data=c.toDataURL('image/jpeg',.85);
+dp.innerHTML='<img src="'+data+'">';ready()}
+dp.onclick=()=>{if(busy)return;fi.click()};
+fi.onchange=e=>{if(busy)return;e.target.files[0]&&load(e.target.files[0])};
+dp.ondragover=e=>{e.preventDefault();if(busy)return;dp.classList.add('on')};
+dp.ondragleave=()=>dp.classList.remove('on');
+dp.ondrop=e=>{e.preventDefault();dp.classList.remove('on');
+if(busy)return;e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])};
+addEventListener('dragover',e=>e.preventDefault());
+addEventListener('drop',e=>e.preventDefault());
+document.onpaste=e=>{if(busy)return;
+for(const it of e.clipboardData.items)
+if(it.type.startsWith('image'))load(it.getAsFile())};
+function ready(){
+if(goMode==='pause'||goMode==='refind'){go.disabled=false;return}
+go.disabled=!(data&&qBlob&&(dirHandle||files.length))}
+function setLock(on){document.body.classList.toggle('locked',!!on);
+th.disabled=!!on;fi.disabled=!!on;dirin.disabled=!!on}
+function setGo(mode){
+goMode=mode;go.disabled=false;
+const pause=mode==='pause';
+go.classList.toggle('is-pause',pause);
+if(pause){go.innerHTML='<span class="go-pause"></span><span class="go-pause"></span>';
+go.setAttribute('aria-label','Pause')}
+else{go.textContent=mode==='refind'?'Refind':'Find';go.removeAttribute('aria-label')}}
+function pausePool(cmd){
+pool.forEach(w=>{try{w.postMessage({cmd:cmd})}catch(_){}})}
+function pauseJob(){
+if(goMode!=='pause')return;paused=true;
+if(walker)try{walker.postMessage({cmd:'pause'})}catch(_){}
+pausePool('pause');
+ld.style.display='none';setGo('refind')}
+function resumeJob(){
+if(goMode!=='refind')return;paused=false;
+if(walker)try{walker.postMessage({cmd:'resume'})}catch(_){}
+pausePool('resume');
+ld.style.display='flex';setGo('pause')}
+async function waitPause(){
+while(paused&&!abort)await sleep(40);
+return abort}
+
+/* ================= 폴더 선택 ================= */
+const canFS=typeof window.showDirectoryPicker==='function';
+fold.onclick=async()=>{if(busy||goMode==='refind')return;
+if(!canFS){dirin.click();return}
+let h;try{h=await showDirectoryPicker()}catch(_){return}
+dirHandle=h;listed=false;files=[];H=null;bad=null;sizes=null;
+$('ft1').textContent=h.name;
+$('ft2').textContent='Ready · click Find';ready()};
+
+function walk(root){return new Promise(res=>{
+let ended=false;
+const fin=()=>{if(ended)return;ended=true;walkFin=null;res()};
+walkFin=fin;
+let w;try{w=mkWorker(WALK_WORKER)}catch(_){return fin()}
+walker=w;
+w.onmessage=e=>{const m=e.data;
+if(m.type==='b'){const a=m.files;for(let i=0;i<a.length;i++)files.push(a[i])}
+else if(m.type==='p')
+$('ft2').textContent='Reading... '+m.found.toLocaleString()+' images';
+else fin()};
+w.onerror=fin;
+try{w.postMessage({cmd:'start',handle:root})}catch(_){fin()}})}
+
+dirin.onchange=async e=>{const raw=e.target.files,n=raw.length;
+files=[];dirHandle=null;listed=false;H=null;bad=null;sizes=null;
+$('ft2').textContent='Reading...';
+for(let i=0;i<n;i++){const f=raw[i];
+if(EXT.test(f.name))files.push({f:f,rel:f.webkitRelativePath||f.name,name:f.name});
+if((i&2047)===2047)await sleep(0)}
+listed=true;
+$('ft1').textContent=(files[0]&&files[0].rel||'').split('/')[0]||'Folder';
+$('ft2').textContent=files.length.toLocaleString()+' images · click to change';
+ready()};
+
+/* ================= 인덱싱 (워커 풀) ================= */
+function build(){return new Promise((res,rej)=>{
+const n=files.length;
+H=new Uint32Array(n*2);
+bad=new Uint8Array(n);sizes=new Float64Array(n);
+const hcNum=navigator.hardwareConcurrency||4;
+const NW=Math.max(2,Math.min(4,hcNum-2));
+const CH=Math.max(6,Math.min(24,Math.ceil(n/(NW*60))));
+let next=0,done=0,fail=0,alive=0;
+const t0=performance.now();let lastUI=0;
+const ui=(force)=>{const now=performance.now();
+if(!force&&now-lastUI<200)return;lastUI=now;
+const p=done/n,el=(now-t0)/1000,sp=done/(el||.001),
+eta=(n-done)/(sp||1);
+bari.style.width=(p*100).toFixed(1)+'%';
+pmsg.textContent=done.toLocaleString()+' / '+n.toLocaleString()+
+' ('+(p*100).toFixed(1)+'%) · '+sp.toFixed(0)+'/s · '+
+(eta<60?eta.toFixed(0)+'s':(eta/60).toFixed(1)+'m')+' left'};
+const finish=()=>{
+killPool();
+if(abort)return res(false);
+const el=(performance.now()-t0)/1000;
+pmsg.textContent='Indexed '+(n-fail).toLocaleString()+' images in '+
+(el<60?el.toFixed(1)+'s':(el/60).toFixed(1)+'m')+
+(fail?' · '+fail.toLocaleString()+' failed':'');
+bar.style.display='none';res(true)};
+const feed=w=>{
+const step=async()=>{
+if(await waitPause()){if(--alive<=0)finish();return}
+if(abort||next>=n){if(--alive<=0)finish();return}
+const items=[];
+for(let k=0;k<CH&&next<n;k++,next++)items.push({i:next,o:files[next]});
+w.postMessage({cmd:'job',items:items})};
+step()};
+bar.style.display='block';bari.style.width='0%';
+pmsg.textContent='0 / '+n.toLocaleString()+' (0.0%)';
+if(!n)return res(true);
+for(let i=0;i<NW;i++){
+let w;try{w=mkWorker(HASH_WORKER)}catch(e){if(!pool.length)return rej(e);break}
+pool.push(w);alive++;
+w.onmessage=e=>{const m=e.data;
+if(m.type==='done'){
+for(const r of m.out){done++;
+if(r.bad){fail++;bad[r.i]=1;continue}
+H[r.i*2]=r.hi;H[r.i*2+1]=r.lo;sizes[r.i]=r.size}
+ui();feed(w)}};
+w.onerror=()=>{if(--alive<=0)finish()};
+feed(w)}})}
+
+/* ================= 결과 ================= */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+function copyText(t){
+if(navigator.clipboard&&window.isSecureContext)
+return navigator.clipboard.writeText(t);
+return new Promise((res,rej)=>{
+const ta=document.createElement('textarea');
+ta.value=t;ta.setAttribute('readonly','');
+ta.style.position='fixed';ta.style.left='-9999px';ta.style.top='0';
+document.body.appendChild(ta);
+ta.focus();ta.select();ta.setSelectionRange(0,ta.value.length);
+let ok=false;try{ok=document.execCommand('copy')}catch(_){}
+document.body.removeChild(ta);ok?res():rej(new Error('copy failed'))})}
+let toastT=null;
+function toast(msg,sub){const t=$('toast');
+t.innerHTML=esc(msg)+(sub?'<span class="sub">'+sub+'</span>':'');
+t.classList.add('on');clearTimeout(toastT);
+toastT=setTimeout(()=>t.classList.remove('on'),sub?2600:1900)}
+function flash(b,txt,ms){const o=b.dataset.o||b.textContent;b.dataset.o=o;
+clearTimeout(+b.dataset.t||0);
+b.textContent=txt;b.classList.add('done');
+b.dataset.t=setTimeout(()=>{b.textContent=o;b.classList.remove('done')},ms)}
+function copy(b){
+copyText(b.dataset.p).then(()=>{flash(b,'Copied',1300);
+toast('Copied · path is relative to the folder you chose',
+'<b>선택한 폴더를 시작점 기준</b>으로 경로가 복사됩니다.')})
+.catch(()=>{flash(b,'Failed',1600);
+toast('Could not copy the path','경로를 복사하지 못했습니다')})}
+function copyMail(e){e.preventDefault();
+copyText('cmy3544@gmail.com')
+.then(()=>toast('Email address copied','이메일 주소가 복사되었습니다'))
+.catch(()=>toast('Could not copy the email','이메일을 복사하지 못했습니다'))}
+function zoom(i){const h=hits[i];$('lbi').src=h.url;
+$('lbc').textContent=h.rel;lb.style.display='flex'}
+lb.onclick=()=>lb.style.display='none';
+function haltJob(){
+abort=true;paused=false;stopWalk();killPool();busy=false;setLock(false);
+ld.style.display='none';setGo('find')}
+function clearAll(){data=null;qBlob=null;hits=[];dp.innerHTML=PH;rs.innerHTML='';
+sb.style.display='none';ld.style.display='none';em.style.display='flex';
+em.innerHTML=EMPTY;bindTour();st.textContent='';
+urls.forEach(u=>URL.revokeObjectURL(u));urls=[];ready()}
+document.onkeydown=e=>{if(e.key!=='Escape')return;
+if(lb.style.display==='flex'){lb.style.display='none';return}
+haltJob();clearAll()};
+$('rst').onclick=()=>{haltJob();files=[];listed=false;H=null;bad=null;sizes=null;
+if(dirHandle)$('ft2').textContent='Ready · click Find';
+clearAll();th.value=81;vTo=81;vAt=81;vPos();fi.value=''};
+
+function drawHist(){hl.innerHTML=hist.map((h,i)=>
+'<div class="hitem" onclick="rerun('+i+')"><img src="'+h.img+'">'+
+'<div class="hinfo"><div class="htime">'+h.time+'</div>'+
+'<div class="hres">'+h.found.toLocaleString()+' found · '+h.th+'%</div></div>'+
+'<button class="hdel" title="Remove" onclick="delHist(event,'+i+')"></button>'+
+'</div>').join('')}
+function delHist(e,i){e.stopPropagation();
+if(busy)return;
+hist.splice(i,1);drawHist();
+toast('Removed from recent searches','최근 검색에서 삭제되었습니다')}
+function rerun(i){if(busy)return;const h=hist[i];data=h.img;qBlob=h.blob;th.value=h.th;vTo=h.th;vAt=h.th;vPos();
+dp.innerHTML='<img src="'+h.img+'">';ready();noLog=true;go.click()}
+
+function dimOf(img,i){
+const h=hits[i];if(!h)return;
+h.w=img.naturalWidth;h.ht=img.naturalHeight;
+const el=img.closest('.card');if(!el)return;
+const d=el.querySelector('.dim');
+if(d)d.textContent=h.w+'×'+h.ht+' · '+(h.sz/1048576).toFixed(1)+'MB'}
+function draw(){const a=[...hits];
+if(sort==='d')a.sort((x,y)=>x.d-y.d);
+if(sort==='px')a.sort((x,y)=>(y.w||0)*(y.ht||0)-(x.w||0)*(x.ht||0));
+if(sort==='mb')a.sort((x,y)=>y.sz-x.sz);
+rs.innerHTML=a.map(h=>{const i=hits.indexOf(h);
+const fd=h.rel.includes('/')?h.rel.slice(0,h.rel.lastIndexOf('/')):'(root)';
+const win=fd.split('/').join(String.fromCharCode(92));
+return '<div class="card"><div class="thumb" onclick="zoom('+i+')">'+
+'<img src="'+h.url+'" loading="lazy" onload="dimOf(this,'+i+')">'+
+'<div class="badge'+(h.d===0?' exact':'')+'">'+h.s+'%</div></div>'+
+'<div class="meta"><div class="nm">'+esc(h.name)+'</div>'+
+'<div class="dir">'+esc(fd)+'</div>'+
+'<div class="dim">'+(h.w||'–')+' × '+(h.ht||'–')+' · '+
+(h.sz/1048576).toFixed(1)+'MB</div><div class="btns">'+'<button class="bp" onclick="copy(this)" title="'+esc(isMac?fd:win)+
+'" data-p="'+esc(isMac?fd:win)+'">Path</button>'+
+'<button class="bs" onclick="dl(this,'+i+')">Save</button>'+
+'</div></div></div>'}).join('')}
+function dl(b,i){const h=hits[i];
+flash(b,'Saved',1300);toast('Image saved to your downloads','이미지를 저장했습니다');
+const a=document.createElement('a');a.href=h.url;a.download=h.name;
+document.body.appendChild(a);a.click();a.remove()}
+sb.onclick=e=>{if(e.target.tagName!=='BUTTON')return;
+[...sb.children].forEach(b=>b.classList.remove('on'));
+e.target.classList.add('on');sort=e.target.dataset.s;draw()};
+
+go.onclick=()=>{
+if(goMode==='pause'){pauseJob();return}
+if(goMode==='refind'){resumeJob();return}
+startJob()};
+async function startJob(){
+if(!data||!qBlob||!(dirHandle||files.length)||busy)return;
+const img=data,pct=Math.round(vTo),log=!noLog;noLog=false;
+paused=false;abort=false;busy=true;setGo('pause');setLock(true);
+em.style.display='none';rs.innerHTML='';
+[dp,fold,go].forEach(el=>el.classList.remove('glow'));
+sb.style.display='none';st.textContent='';ld.style.display='flex';
+urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
+await sleep(0);
+try{
+if(dirHandle&&!listed){
+$('ft2').textContent='Reading...';
+await walk(dirHandle);
+if(abort)return;
+if(await waitPause())return;
+listed=true;
+$('ft2').textContent=files.length.toLocaleString()+' images found · click to change'}
+if(!files.length){st.textContent='No images in this folder';return}
+if(!H){const ok=await build();if(!ok||abort){if(!paused)H=null;return}}
+if(await waitPause())return;
+const t=await qhash(qBlob),thi=t[0],tlo=t[1];
+const lim=Math.round((100-pct)/100*64);
+const n=files.length,TOP=80;hits=[];
+let total=0;
+for(let i=0;i<n;i++){
+if(bad[i])continue;
+const d=pc(H[i*2]^thi)+pc(H[i*2+1]^tlo);
+if(d<=lim){total++;
+if(hits.length<TOP||d<hits[hits.length-1].d){
+let j=hits.length;while(j>0&&hits[j-1].d>d)j--;
+hits.splice(j,0,{d:d,s:Math.round((64-d)/64*100),
+rel:files[i].rel,name:files[i].name,sz:sizes[i],src:files[i]});
+if(hits.length>TOP)hits.pop()}}
+if((i&4095)===4095){await sleep(0);if(await waitPause())return}}
+for(let i=0;i<hits.length;i+=8){
+if(await waitPause())return;
+if(abort)return;
+await Promise.all(hits.slice(i,i+8).map(async h=>{
+try{const f=h.src.f?h.src.f:await h.src.h.getFile();
+h.url=URL.createObjectURL(f);h.sz=f.size;urls.push(h.url)}
+catch(_){h.url=''}}))}
+if(abort)return;
+if(log){const now=new Date();
+hist.unshift({img:img,blob:qBlob,th:pct,found:total,
+time:now.getHours().toString().padStart(2,'0')+':'+
+now.getMinutes().toString().padStart(2,'0')+':'+
+now.getSeconds().toString().padStart(2,'0')});
+if(hist.length>12)hist.pop();drawHist()}
+if(!total){em.style.display='flex';
+em.innerHTML='결과가 없습니다<span class="en">No matches. Try lowering the similarity.</span>';
+st.innerHTML='No similar images found'}
+else{st.innerHTML='Found <b>'+total.toLocaleString()+'</b> similar image'+
+(total>1?'s':'')+(total>hits.length?
+' <span style="color:#a0a0ae">(top '+hits.length+' shown)</span>':'');
+sb.style.display='flex';draw()}
+}catch(e){if(!abort)st.textContent='Error: '+(e&&e.message||e)}
+finally{
+ld.style.display='none';
+if(paused&&!abort)return;
+busy=false;setLock(false);setGo('find');ready()}};
+
+/* ================= 사용법 투어 ================= */
+let tourOn=false;
+const nap=ms=>new Promise(r=>setTimeout(r,ms));
+function bindTour(){const b=$('howto');if(b)b.onclick=tour}
+async function tour(){
+if(tourOn||busy)return;tourOn=true;
+const gd=$('gd'),ge=$('ge'),ws=[...gd.querySelectorAll('.w')],
+es=[...ge.querySelectorAll('.w')],btn=$('howto');
+const T={drop:dp,fold:fold,go:go};
+btn.disabled=true;gd.classList.remove('rest');ge.classList.remove('rest');
+ws.concat(es).forEach(w=>w.classList.remove('lit','on'));
+Object.values(T).forEach(el=>el.classList.remove('glow'));
+for(let i=0;i<ws.length;i++){
+const w=ws[i],ew=es[i],t=w.dataset.t;
+w.classList.add('lit');if(ew)ew.classList.add('lit');
+if(t){w.classList.add('on');if(ew)ew.classList.add('on')}
+await nap(560);
+if(t&&T[t]){for(let b=0;b<2;b++){
+T[t].classList.add('glow');await nap(620);
+T[t].classList.remove('glow');await nap(480)}
+await nap(200)}
+else await nap(520);
+w.classList.remove('on');if(ew)ew.classList.remove('on')}
+await nap(1300);
+gd.classList.add('rest');ge.classList.add('rest');
+ws.concat(es).forEach(w=>w.classList.remove('lit','on'));
+btn.disabled=false;tourOn=false}
+bindTour();
+
+const mn=$('mn'),tp=$('tp');
+mn.addEventListener('scroll',()=>tp.classList.toggle('stuck',mn.scrollTop>4),
+{passive:true});
+if(!canFS)$('ft2').textContent='Reselect required each time';
+addEventListener('beforeunload',()=>{killPool();stopWalk()});
+</script>
+</body>
+</html>

@@ -5,7 +5,8 @@
   --purple: #bc96fe;
   --green:  #51cf01;
   --red:    #f54025;
-  --blue:   #3d8bff;
+  --cyan:   #2ad4ff;
+  --pink:   #ff6eb4;
   --black:  #000;
   --white:  #fff;
   --border: 4px;
@@ -32,35 +33,18 @@ body {
 }
 
 .site-title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Covered By Your Grace', cursive;
   font-size: clamp(2.8rem, 12vw, 4.5rem);
   font-weight: 400;
-  letter-spacing: 0.06em;
-  color: var(--white);
-  line-height: 0.95;
-}
-
-.hero-line {
-  width: min(360px, 78vw);
-  height: 5px;
-  margin: 16px auto 14px;
-  background: linear-gradient(90deg, var(--yellow), var(--purple), var(--green), var(--red), var(--blue));
-  border: 2px solid var(--black);
-}
-
-.site-tagline {
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(0.85rem, 2.5vw, 1rem);
-  font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--white);
-  font-style: italic;
+  line-height: 0.95;
 }
 
 .stage {
   position: relative;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
   min-height: min(320px, 62vw);
   margin: 0 auto;
 }
@@ -68,7 +52,7 @@ body {
 .card-drag {
   position: absolute;
   top: 0;
-  width: min(220px, 42vw);
+  width: min(200px, 17vw);
   touch-action: none;
   cursor: grab;
   user-select: none;
@@ -98,8 +82,8 @@ body {
 
 .card-wrap {
   position: relative;
-  width: min(220px, 42vw);
-  height: min(300px, 58vw);
+  width: min(200px, 17vw);
+  height: min(273px, 23.2vw);
   perspective: 1200px;
   flex-shrink: 0;
   container-type: inline-size;
@@ -181,7 +165,8 @@ body {
 .card--purple .card-front { background: var(--purple); }
 .card--yellow .card-front { background: var(--yellow); }
 .card--red .card-front    { background: var(--red); }
-.card--blue .card-front   { background: var(--blue); }
+.card--cyan .card-front   { background: var(--cyan); }
+.card--pink .card-front   { background: var(--pink); }
 
 .card--green .card-heading  { color: var(--black); }
 .card--purple .card-heading { color: var(--white); }
@@ -291,6 +276,10 @@ body {
 
 .poster-tilt-box--pop {
   clip-path: polygon(3% 5%, 99% 3%, 95% 94%, -4% 92%);
+}
+
+.poster-tilt-box--imgsearch {
+  clip-path: polygon(5% 3%, 99% 6%, 96% 92%, -5% 97%);
 }
 
 .poster-tilt-box--gif {
@@ -480,6 +469,7 @@ body {
   .poster-tilt-box--stretch,
   .poster-tilt-box--webd,
   .poster-tilt-box--pop,
+  .poster-tilt-box--imgsearch,
   .poster-tilt-box--gif {
     clip-path: polygon(4% 3%, 97% 1%, 98% 96%, 2% 98%);
   }

@@ -32,6 +32,19 @@ function initCard(wrapId, frontId, backId, openId) {
     wrap.style.transform = '';
   }
 
+  // Keep an expanded card inside the viewport (the rightmost card would grow past the edge)
+  const dragEl = wrap.closest('.card-drag');
+  function nudgeIntoView() {
+    if (!dragEl) return;
+    dragEl.style.translate = '';
+    const r = dragEl.getBoundingClientRect();
+    const over = r.right - (document.documentElement.clientWidth - 12);
+    if (over > 0) dragEl.style.translate = `${-Math.min(over, r.left - 12)}px 0`;
+  }
+  function clearNudge() {
+    if (dragEl) dragEl.style.translate = '';
+  }
+
   function clearFaceTimer() {
     if (faceTimer) {
       clearTimeout(faceTimer);
@@ -50,6 +63,7 @@ function initCard(wrapId, frontId, backId, openId) {
     clearTilt();
     clearFaceTimer();
     wrap.classList.remove('flipped', 'expanded');
+    clearNudge();
     // Keep front suppressed until unflip passes midpoint
     faceTimer = window.setTimeout(() => {
       if (!flipped) suppressFront(false);
@@ -96,6 +110,7 @@ function initCard(wrapId, frontId, backId, openId) {
     clearTilt();
     clearFaceTimer();
     wrap.classList.add('flipped', 'expanded');
+    nudgeIntoView();
     faceTimer = window.setTimeout(() => {
       if (flipped) suppressFront(true);
       faceTimer = 0;
@@ -110,6 +125,7 @@ function initCard(wrapId, frontId, backId, openId) {
     clearTilt();
     clearFaceTimer();
     wrap.classList.remove('flipped', 'expanded');
+    clearNudge();
     faceTimer = window.setTimeout(() => {
       if (!flipped) suppressFront(false);
       faceTimer = 0;
@@ -139,7 +155,7 @@ function initCardDrag() {
   const stage = document.getElementById('stage');
   const drags = [...document.querySelectorAll('.card-drag')];
   const count = drags.length;
-  const EASE = 'left 0.52s cubic-bezier(0.45, 0, 0.55, 1), top 0.52s cubic-bezier(0.45, 0, 0.55, 1)';
+  const EASE = 'left 0.52s cubic-bezier(0.45, 0, 0.55, 1), top 0.52s cubic-bezier(0.45, 0, 0.55, 1), translate 0.45s cubic-bezier(0.23, 1, 0.32, 1)';
   const MOBILE_MQ = window.matchMedia('(max-width: 720px)');
   let order = readOrder(count) || drags.map((_, i) => i);
 
@@ -147,12 +163,13 @@ function initCardDrag() {
     return MOBILE_MQ.matches;
   }
 
-  // Desktop: one row when every card fits, otherwise wrap into as many columns as fit
+  // Desktop: one row when every card fits; otherwise balanced rows (e.g. 6 cards -> 3 + 3)
   function cols() {
     if (isMobile()) return 2;
     const gap = Math.min(22, stage.clientWidth * 0.03);
-    const fit = Math.floor((stage.clientWidth + gap) / (getCardW() + gap));
-    return Math.max(1, Math.min(count, fit));
+    const fit = Math.max(1, Math.floor((stage.clientWidth + gap) / (getCardW() + gap)));
+    if (fit >= count) return count;
+    return Math.ceil(count / Math.ceil(count / fit));
   }
 
   function getGap() {
@@ -232,7 +249,7 @@ function initCardDrag() {
       return slot;
     }
 
-    // Grid (mobile 2 columns, or wrapped desktop rows): pick nearest slot center
+    // Multi-row (mobile 2-col or wrapped desktop): pick nearest slot center
     let best = 0;
     let bestDist = Infinity;
     for (let i = 0; i < count; i++) {
@@ -359,6 +376,7 @@ initCard('card2', 'front2', 'back2', 'open2');
 initCard('card3', 'front3', 'back3', 'open3');
 initCard('card4', 'front4', 'back4', 'open4');
 initCard('card5', 'front5', 'back5', 'open5');
+initCard('card6', 'front6', 'back6', 'open6');
 initCardDrag();
  
 document.body.addEventListener('click', e => {
