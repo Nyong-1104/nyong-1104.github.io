@@ -41,6 +41,7 @@ main{flex:1;min-width:0;position:relative;background:var(--main)}
 /* ---------- logo ---------- */
 .logo{font-size:52px;font-weight:800;letter-spacing:-2.4px;line-height:.94;color:#000;user-select:none;-webkit-user-select:none;margin:0}
 .logo .ln{display:block;cursor:pointer;width:max-content}
+.logo .ln:nth-child(3){margin-top:4px}
 .logo .ch{display:inline-block;color:#000;transition:color .85s ease-out,transform .8s ease-out}
 .logo .ch.hit{color:var(--o);transform:translateY(-6px);transition:color .1s ease-in,transform .16s ease-out}
 .subline{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:-4px}
@@ -388,7 +389,7 @@ select.in{cursor:pointer}
 <div class="app" id="app" data-mode="edit">
   <aside class="side" id="side">
     <h1 class="logo" id="lg" aria-label="Moving Image Studio">Moving<br>Image<br>Studio</h1>
-    <div class="subline"><span>움짤 편집 · GIF 변환</span><button class="how" id="howBtn" type="button">How it works</button></div>
+    <div class="subline"><span></span><button class="how" id="howBtn" type="button">How it works</button></div>
     <div class="sortbar" id="modes" role="tablist">
       <button type="button" id="tabEdit" class="on" role="tab" data-tip="Edit|프레임 편집">Edit</button>
       <button type="button" id="tabLayer" role="tab" data-tip="Layer|틀 이미지와 움짤 합성">Layer</button>
@@ -447,7 +448,7 @@ select.in{cursor:pointer}
           </div>
         </div>
         <div class="pane-layer">
-          <div class="lhead"><span>Layers</span><span>위쪽이 앞</span></div>
+          <div class="lhead"><span>Layers</span></div>
           <div class="llist" id="llist"></div>
           <div class="lfoot">
             <button class="btn" id="lAddImg" type="button">+ Image</button>
@@ -1007,7 +1008,7 @@ function changed(){
   S.sel=new Set([...S.sel].filter(i=>i<n));if(!S.sel.size&&n)S.sel.add(S.cur);
   ensureTracks();if(S.aSel&&S.aSel!=='linked'&&!S.clips.some(c=>c.id===S.aSel))S.aSel=null;if(S.aSel==='linked'&&!hasLinked())S.aSel=null;
   A.multi=new Set([...A.multi].filter(id=>S.clips.some(c=>c.id===id)));if(S.aTrack&&!S.tracks.some(t=>t.id===S.aTrack))S.aTrack=null;
-  renderList();renderStage();updateInfo();renderPanel();updatePlayer();renderTimeline();
+  renderList();renderStage();updateInfo();renderPanel();updatePlayer();renderTimeline();syncDrop();
 }
 const selIdx=()=>[...S.sel].filter(i=>i<S.frames.length).sort((a,b)=>a-b);
 const allIdx=()=>S.frames.map((_,i)=>i);
@@ -1105,7 +1106,7 @@ listEl.addEventListener('contextmenu',e=>{e.preventDefault();if(!S.frames.length
 function menuDef(){
   const s=()=>needSel(),n=S.sel.size;
   const left=[
-    {h:'시간 · 속도',items:[{t:'시간 설정…',k:'mod+F',f:()=>dlgTime()},{t:'하나로 합치기',k:IS_MAC?'ctrl+Q':'mod+Q',f:()=>{const x=s();x&&OPS.merge(x)}},
+    {h:'시간 · 속도',items:[{t:'시간 설정…',k:'mod+F',f:()=>dlgTime()},
       {t:'재생 속도 10% 빠르게',k:'mod+K',f:()=>{const x=s();x&&OPS.speed(x,0.9)}},{t:'재생 속도 10% 느리게',k:'mod+J',f:()=>{const x=s();x&&OPS.speed(x,1/0.9)}}]},
     {h:'순서',items:[{t:'역순으로 뒤집기',f:()=>{const x=s();x&&(x.length>1?OPS.reverse(x):toast('2프레임 이상 선택하세요'))}},{t:'뒤에 역재생 붙이기 (왕복)',f:()=>{const x=s();x&&OPS.yoyo(x)}}]},
     {h:'이동 · 복사',items:[{t:'맨 앞으로 이동',k:'alt+PgUp',f:()=>{const x=s();x&&OPS.moveTo(x,'front')}},{t:'맨 앞에 복사',k:'alt+shift+PgUp',f:()=>{const x=s();x&&OPS.copyTo(x,'front')}},
@@ -1116,7 +1117,7 @@ function menuDef(){
     {h:'편집',items:[{t:'복사',k:'mod+C',f:()=>{const x=s();x&&OPS.copy(x)}},{t:'잘라내기',k:'mod+X',f:()=>{const x=s();x&&OPS.cut(x)}},
       {t:'위에 붙여넣기',k:'mod+V',f:()=>OPS.paste(false),dis:!S.clip.length},{t:'아래에 붙여넣기',k:'mod+shift+V',f:()=>OPS.paste(true),dis:!S.clip.length}]},
     {h:'삭제',items:[{t:'삭제',k:'Del',f:()=>{const x=s();x&&OPS.remove(x)}},
-      {t:'짝 · 홀 · N번째만 삭제',sub:[{t:'짝수 번째 삭제',f:()=>deleteParity('even')},{t:'홀수 번째 삭제',f:()=>deleteParity('odd')},{t:'N번째마다 삭제…',f:()=>deleteParity('nth')}]},
+      {t:'짝 · 홀 · N번째만 삭제',sub:[{t:'짝수 번째 삭제',f:()=>deleteParity('even')},{t:'홀수 번째 삭제',f:()=>deleteParity('odd')},{t:'N번째마다 삭제…',k:IS_MAC?'alt+⌫':'alt+Del',f:()=>deleteParity('nth')}]},
       {t:'선택 안 한 프레임 삭제',f:()=>{const set=S.sel;OPS.remove(allIdx().filter(i=>!set.has(i)))}}]},
     {h:'내보내기',items:[{t:'PNG로 내보내기',k:'mod+shift+E',f:()=>exportSelPNG()},{t:'이 프레임만 저장…',k:'mod+shift+S',f:()=>openSave(true)}]},
     {h:'전체 프레임',items:[{t:'모두 선택',k:'mod+A',f:()=>selAll()},
@@ -1284,7 +1285,7 @@ function renderPanel(){
   </div>
   <div class="sec"><h3>${icon('<path d="M6 2v16h16M2 6h16v16"/>')}Crop</h3>
     ${S.tf.crop?`<div class="kv"><span>적용된 영역</span><b>${S.tf.crop.w}×${S.tf.crop.h}</b></div>`:''}
-    <div class="row-btns"><button type="button" class="btn" id="crStart">${S.tf.crop?'영역 다시 정하기':'자르기 시작'}</button>${S.tf.crop?'<button type="button" class="btn" id="crClear">자르기 해제</button>':''}</div>
+    <div class="row-btns"><button type="button" class="btn" id="crStart">${S.tf.crop?'영역 다시 정하기':'Video Crop'}</button>${S.tf.crop?'<button type="button" class="btn" id="crClear">자르기 해제</button>':''}</div>
   </div>
   <div class="sec"><h3>${icon('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/>')}Selected frames</h3>
     <div class="kv"><span>선택</span><b id="pSelN">${s.length}개</b></div>
@@ -2393,10 +2394,11 @@ addEventListener('dragleave',()=>{dragN=Math.max(0,dragN-1);if(!dragN){$('#drop'
 addEventListener('dragover',e=>{if(hasFiles(e))e.preventDefault()});
 addEventListener('drop',e=>{e.preventDefault();dragN=0;$('#drop').hidden=true;dz.classList.remove('over');const f=e.dataTransfer?.files;if(f&&f.length)handleFiles([...f],S.mode==='layer'?'layer':'edit')});
 
+function syncDrop(){const hide=S.mode==='edit'&&S.frames.length>0;$('#dzLbl').hidden=hide;$('#dz').style.display=hide?'none':''}
 function setMode(m){
   stopPlay();S.crop.active=false;hideBub();
   S.mode=m;$('#app').dataset.mode=m;$('#tabEdit').classList.toggle('on',m==='edit');$('#tabLayer').classList.toggle('on',m==='layer');
-  $('#dzLbl').textContent=m==='layer'?'Layer to add':'File to edit';
+  $('#dzLbl').textContent=m==='layer'?'Layer to add':'File to edit';syncDrop();
   $('#dzT').textContent=m==='layer'?'Drop frame image · GIF':'Drop video · GIF · image';
   $('#btnSave').textContent=m==='layer'?'Make frames':'Save';
   $('#layerEmpty').hidden=m!=='layer'||L.layers.length>0;$('#layerBox').hidden=true;cropBox.hidden=true;
@@ -2412,7 +2414,7 @@ $('#btnReset').onclick=async()=>{
   const isL=S.mode==='layer';
   if(isL?!L.layers.length:(!S.frames.length&&!S.clips.length))return toast('비울 내용이 없어요');
   const what=isL?`레이어 ${L.layers.length}개`:`프레임 ${S.frames.length}개${S.clips.length?`와 오디오 레이어 ${S.clips.length}개`:''}`;
-  const r=await dialog({title:'Reset',body:`<p class="note">${isL?'레이어 틀':'편집 중인 움짤'}을 비우고 처음 상태로 돌아가요.</p>
+  const r=await dialog({title:'Reset',body:`<p class="note">현재 작업을 중단하고 빈 페이지로 돌아가요.</p>
     <label class="chk"><input type="checkbox" id="rsOk">${what}가 모두 지워지는 걸 확인했어요</label>`,
     buttons:[{t:'Cancel',act:'cancel'},{t:'Reset',act:'ok',primary:true,dis:true}],
     onMount:d=>{$('#rsOk',d).onchange=e=>{d.querySelector('[data-act="ok"]').disabled=!e.target.checked}}});
@@ -2422,9 +2424,9 @@ $('#btnReset').onclick=async()=>{
 };
 
 /* ---------- How it works tour ---------- */
-const TOUR=[
+const TOUR_ALL=[
   {el:'#dz',t:'Drop a file',d:'영상(MP4·WebM·MOV), GIF, 이미지를 끌어다 놓거나 눌러서 고르세요. 영상은 구간과 초당 프레임을 정해서 불러와요.'},
-  {el:'#left',t:'Edit frames',d:'프레임을 고르고 오른쪽 클릭하면 복사·이동·삭제·합치기·짝/홀 선택 메뉴가 나와요. Shift·'+(IS_MAC?'⌘':'Ctrl')+' 클릭으로 여러 개를 고를 수 있어요.'},
+  {el:'#left',t:'Edit frames',d:'프레임을 고르고 오른쪽 클릭하면 복사·이동·삭제·짝/홀 선택 메뉴가 나와요. Shift·'+(IS_MAC?'⌘':'Ctrl')+' 클릭으로 여러 개를 고를 수 있어요.'},
   {el:'#tools',t:'Quick tools',d:'시간 설정, 속도 ±10%, 역재생, 왕복, 프레임 줄이기를 한 번에. 아이콘에 마우스를 올리면 설명이 떠요.'},
   {el:'#panel',t:'Size · Crop',d:'크기 조절, 회전·반전, 자르기를 여기서 해요.'},
   {el:'#tl',t:'Audio',d:'영상 소리는 Frame audio로 들어와서 프레임과 같이 잘려요. + Audio로 음악을, + Track으로 빈 트랙을 올리고 막대를 오른쪽 클릭하면 잘라내기·복사·붙여넣기·나누기·끝까지 반복 메뉴가 나와요. 노란 선을 위아래로 끌면 볼륨이 바뀌어요. MP4·WebM으로 저장하면 소리가 같이 들어가요.'},
@@ -2432,7 +2434,7 @@ const TOUR=[
   {el:'#btnSave',t:'Save',d:'GIF·WebP·MP4·WebM·APNG로 저장해요. 예상 용량을 보면서 화질과 크기를 조절하고, 최대 용량에 맞춰 자동으로 줄일 수도 있어요.'},
 ];
 function runTour(){
-  setMode('edit');let i=0;const hole=document.createElement('div');hole.className='tour-hole';const card=document.createElement('div');card.className='tour-card';
+  setMode('edit');let i=0;const TOUR=TOUR_ALL.filter(s=>{const el=$(s.el);return el&&el.offsetParent!==null});const hole=document.createElement('div');hole.className='tour-hole';const card=document.createElement('div');card.className='tour-card';
   document.body.append(hole,card);
   const end=()=>{hole.remove();card.remove();removeEventListener('resize',place);removeEventListener('keydown',key,true)};
   const place=()=>{const s=TOUR[i];const el=$(s.el);el.scrollIntoView({block:'nearest'});const r=el.getBoundingClientRect();const pad=6;
@@ -2501,13 +2503,13 @@ addEventListener('keydown',e=>{
   const s=()=>needSel();
   if(mod&&e.shiftKey&&c==='KeyE')return go(exportSelPNG);
   if(mod&&c==='KeyF')return go(dlgTime);
-  if(c==='KeyQ'&&(IS_MAC?e.ctrlKey&&!e.metaKey:e.ctrlKey))return go(()=>{const x=s();x&&OPS.merge(x)});
   if(mod&&c==='KeyK')return go(()=>{const x=s();x&&OPS.speed(x,0.9)});
   if(mod&&c==='KeyJ')return go(()=>{const x=s();x&&OPS.speed(x,1/0.9)});
   if(e.altKey&&e.key==='PageUp')return go(()=>{const x=s();x&&(e.shiftKey?OPS.copyTo(x,'front'):OPS.moveTo(x,'front'))});
   if(e.altKey&&e.key==='PageDown')return go(()=>{const x=s();x&&(e.shiftKey?OPS.copyTo(x,'back'):OPS.moveTo(x,'back'))});
   if(e.altKey&&e.key==='ArrowUp')return go(()=>{const x=s();x&&OPS.moveUp(x)});
   if(e.altKey&&e.key==='ArrowDown')return go(()=>{const x=s();x&&OPS.moveDown(x)});
+  if(e.altKey&&!mod&&(e.key==='Delete'||(IS_MAC&&e.key==='Backspace')))return go(()=>deleteParity('nth'));
   if(e.key==='Delete'||(IS_MAC&&e.key==='Backspace'))return go(()=>{const x=s();x&&OPS.remove(x)});
   if(mod&&c==='BracketLeft')return go(()=>OPS.remove(allIdx().filter(i=>i<S.cur)));
   if(mod&&c==='BracketRight')return go(()=>OPS.remove(allIdx().filter(i=>i>S.cur)));
