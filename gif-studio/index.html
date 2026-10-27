@@ -131,6 +131,12 @@ select.in{cursor:pointer}
 .zoom{min-width:52px;height:30px;border:0;background:none;border-radius:8px;font-weight:700;font-size:12.5px}
 .zoom:hover{color:var(--o)}
 .app[data-mode="layer"] .ftools{display:none}
+.atools{display:none}
+.app[data-mode="edit"][data-focus="audio"] .ftools{display:none!important}
+.app[data-mode="edit"][data-focus="audio"] .atools{display:contents}
+.tb:disabled{opacity:.3;cursor:default}
+.qh{margin-left:auto;width:17px;height:17px;border-radius:50%;border:1.5px solid #d4d4dc;background:#fff;color:var(--mute2);font-size:10.5px;font-weight:800;display:grid;place-items:center;padding:0;cursor:help;flex:none;line-height:1}
+.qh:hover{border-color:var(--o);color:var(--o)}
 
 /* ---------- work area ---------- */
 .work{position:absolute;inset:0;display:grid;grid-template-columns:232px minmax(0,1fr)}
@@ -201,7 +207,12 @@ select.in{cursor:pointer}
 .player .time{font-size:12.5px;font-weight:600;color:var(--mute2);white-space:nowrap}
 
 /* ---------- audio timeline ---------- */
-.tl{border-top:1px solid var(--line2)}
+.tl{border-top:1px solid var(--line2);position:relative;--row:36px}
+.tl-grip{position:absolute;left:0;right:0;top:-6px;height:12px;cursor:ns-resize;z-index:4;touch-action:none}
+.tl-grip::after{content:"";position:absolute;left:50%;top:4px;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:#dcdce3;transition:background .15s,width .15s,margin .15s}
+.tl-grip:hover::after,.tl-grip.on::after{background:var(--o);width:56px;margin-left:-28px}
+.app[data-mode="edit"][data-focus="frame"] .tl-body{filter:grayscale(1);opacity:.55}
+.app[data-mode="edit"][data-focus="frame"] .tl-body:hover{opacity:.8}
 .app[data-mode="layer"] .tl{display:none}
 .tl-bar{height:40px;display:flex;align-items:center;gap:6px;padding:0 12px 0 14px}
 .tl-tog{border:0;background:none;padding:4px 6px 4px 2px;font-weight:800;font-size:13px;letter-spacing:-.2px;display:inline-flex;align-items:center;gap:4px;border-radius:7px}
@@ -212,11 +223,11 @@ select.in{cursor:pointer}
 .tl-bar .sp{flex:1}
 .tl-bar .btn{min-height:30px;padding:4px 10px}
 .tb.muted{color:var(--o)}
-.tl-body{display:grid;grid-template-columns:190px minmax(0,1fr);max-height:196px;overflow-y:auto;border-top:1px solid var(--line2)}
+.tl-body{display:grid;grid-template-columns:190px minmax(0,1fr);max-height:min(58vh,calc(24px + var(--row) * 4.6));overflow-y:auto;border-top:1px solid var(--line2);transition:filter .2s,opacity .2s}
 .tl.closed .tl-body{display:none}
 .tl-heads{border-right:1px solid var(--line2);background:var(--side);min-width:0}
 .th-ruler{height:24px;border-bottom:1px solid var(--line2);font-size:11px;color:var(--mute);display:flex;align-items:center;padding:0 10px;font-weight:700}
-.th{height:36px;display:flex;align-items:center;gap:4px;padding:0 6px 0 8px;border-bottom:1px solid var(--line2);cursor:pointer;min-width:0}
+.th{height:var(--row);display:flex;align-items:center;gap:4px;padding:0 6px 0 8px;border-bottom:1px solid var(--line2);cursor:pointer;min-width:0}
 .th:hover{background:#f3f3f6}
 .th.on{background:var(--sel)}
 .th .ic{width:15px;height:15px;color:var(--mute2);flex:none}
@@ -311,7 +322,7 @@ select.in{cursor:pointer}
 .drophint{position:fixed;inset:0;z-index:70;background:rgba(255,47,0,.08);border:3px dashed var(--o);display:grid;place-items:center;pointer-events:none;color:var(--o);font-size:28px;font-weight:800;letter-spacing:-.8px}
 
 /* tooltip bubble */
-.bub{position:fixed;z-index:95;pointer-events:none;background:#000;color:#fff;border-radius:9px;padding:7px 10px;font-size:12px;line-height:1.35;max-width:240px;
+.bub{position:fixed;z-index:95;pointer-events:none;background:#000;color:#fff;border-radius:9px;padding:7px 10px;font-size:12px;line-height:1.45;max-width:300px;
   box-shadow:0 8px 24px rgba(0,0,0,.18);opacity:0;transform:translateY(-2px);transition:opacity .12s,transform .12s}
 .bub.on{opacity:1;transform:none}
 .bub b{display:block;font-weight:700}
@@ -426,6 +437,19 @@ select.in{cursor:pointer}
         <button class="tb" data-tool="menu" type="button" data-tip="More|프레임 메뉴 전체 (오른쪽 클릭)"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/></svg></button>
         <span class="vsep"></span>
         </span>
+        <span class="atools">
+        <button class="tb" data-atool="cut" type="button"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.6 8.6L20 19M8.6 15.4L20 5"/></svg></button>
+        <button class="tb" data-atool="copy" type="button"><svg class="i" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg></button>
+        <button class="tb" data-atool="paste" type="button"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2.8h6V4M9 11h6M9 15h4"/></svg></button>
+        <button class="tb" data-atool="dup" type="button"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="9" width="12" height="11" rx="2"/><path d="M9 9V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4"/></svg></button>
+        <button class="tb" data-atool="split" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v18"/><rect x="3" y="8" width="6" height="8" rx="1.5"/><rect x="15" y="8" width="6" height="8" rx="1.5"/></svg></button>
+        <button class="tb" data-atool="trimIn" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M7 4v16M7 4h3M7 20h3"/><rect x="12" y="8" width="9" height="8" rx="1.5"/></svg></button>
+        <button class="tb" data-atool="trimOut" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M17 4v16M17 4h-3M17 20h-3"/><rect x="3" y="8" width="9" height="8" rx="1.5"/></svg></button>
+        <button class="tb" data-atool="loop" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></svg></button>
+        <button class="tb" data-atool="del" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg></button>
+        <button class="tb" data-atool="add" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+        <span class="vsep"></span>
+        </span>
         <button class="tb" id="btnUndo" type="button" data-tip="Undo|실행 취소"><svg class="i" viewBox="0 0 24 24"><path d="M9 6L4 11l5 5"/><path d="M4 11h10a5 5 0 0 1 0 10h-3"/></svg></button>
         <button class="tb" id="btnRedo" type="button" data-tip="Redo|다시 실행"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l5 5-5 5"/><path d="M20 11H10a5 5 0 0 0 0 10h3"/></svg></button>
         <span class="vsep"></span>
@@ -480,7 +504,7 @@ select.in{cursor:pointer}
           <input type="range" id="seek" min="0" max="0" value="0" aria-label="재생 위치">
           <span class="time" id="ptime">0.00s / 0.00s</span>
         </div>
-        <div class="tl closed" id="tl">
+        <div class="tl closed" id="tl"><div class="tl-grip" id="tlGrip" data-tip="Track height|위아래로 끌어 트랙 높이 조절 · 더블클릭하면 원래대로"></div>
           <div class="tl-bar">
             <button class="tl-tog" id="tlTog" type="button" aria-expanded="false"><svg class="i" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>Audio</button>
             <span class="tl-sum" id="tlSum"></span><span class="sp"></span>
@@ -996,8 +1020,8 @@ async function importVideo(f){
 /* =========================================================
    Editor state ops
    ========================================================= */
-function snap(){return{frames:S.frames.slice(),tf:JSON.parse(JSON.stringify(S.tf)),W0:S.W0,H0:S.H0,sel:[...S.sel],cur:S.cur,name:S.name,isSample:S.isSample,clips:S.clips.map(c=>({...c})),tracks:(S.tracks||[]).map(t=>({...t})),linked:{...S.linked},aSel:S.aSel,aTrack:S.aTrack}}
-function restore(s){S.frames=s.frames;S.tf=s.tf;S.W0=s.W0;S.H0=s.H0;S.sel=new Set(s.sel);S.cur=s.cur;S.name=s.name;S.isSample=s.isSample;S.clips=s.clips;S.tracks=s.tracks||[];S.linked=s.linked;S.aSel=s.aSel;S.aTrack=s.aTrack||null}
+function snap(){return{frames:S.frames.slice(),tf:JSON.parse(JSON.stringify(S.tf)),W0:S.W0,H0:S.H0,sel:[...S.sel],cur:S.cur,name:S.name,isSample:S.isSample,clips:S.clips.map(c=>({...c})),tracks:(S.tracks||[]).map(t=>({...t})),linked:{...S.linked},aSel:S.aSel,aTrack:S.aTrack,linkOff:!!S.linkOff,linkedBak:S.linkedBak?{...S.linkedBak}:null}}
+function restore(s){S.frames=s.frames;S.tf=s.tf;S.W0=s.W0;S.H0=s.H0;S.sel=new Set(s.sel);S.cur=s.cur;S.name=s.name;S.isSample=s.isSample;S.clips=s.clips;S.tracks=s.tracks||[];S.linked=s.linked;S.aSel=s.aSel;S.aTrack=s.aTrack||null;S.linkOff=!!s.linkOff;S.linkedBak=s.linkedBak||null}
 function commit(fn,msg){stopPlay();S.undo.push(snap());if(S.undo.length>80)S.undo.shift();S.redo=[];fn();changed();if(msg)toast(msg)}
 function undo(){if(S.mode==='layer')return lUndo();if(!S.undo.length)return toast('되돌릴 작업이 없어요');stopPlay();S.redo.push(snap());restore(S.undo.pop());S.crop.active=false;changed();toast('Undo')}
 function redo(){if(S.mode==='layer')return lRedo();if(!S.redo.length)return;stopPlay();S.undo.push(snap());restore(S.redo.pop());S.crop.active=false;changed();toast('Redo')}
@@ -1096,7 +1120,7 @@ function clickRow(i,e){
   else{S.sel=new Set([i]);S.anchor=i}
   S.cur=i;renderList();renderStage();updatePlayer();renderPanel();
 }
-listEl.addEventListener('pointerdown',e=>{const r=e.target.closest('.row');if(!r)return;if(e.button===2&&S.sel.has(+r.dataset.i))return;stopPlay();if(S.aSel){S.aSel=null;renderTimeline()}clickRow(+r.dataset.i,e);listEl.focus({preventScroll:true})});
+listEl.addEventListener('pointerdown',e=>{const r=e.target.closest('.row');if(!r)return;if(e.button===2&&S.sel.has(+r.dataset.i))return;stopPlay();if(S.aSel||S.aTrack){clearAudioSel();renderTimeline()}clickRow(+r.dataset.i,e);listEl.focus({preventScroll:true})});
 listEl.addEventListener('dblclick',e=>{if(e.target.closest('.row'))dlgTime()});
 listEl.addEventListener('contextmenu',e=>{e.preventDefault();if(!S.frames.length)return;openMenu(e.clientX,e.clientY)});
 
@@ -1196,6 +1220,8 @@ stageEl.addEventListener('wheel',e=>{if(!(e.ctrlKey||e.metaKey))return;e.prevent
 
 function updateInfo(){
   if(S.mode==='layer'){$('#info').innerHTML=`${L.layers.length} layers <span class="m">· ${L.W}×${L.H} · ${(compDur()/1000).toFixed(2)}s</span>`;return}
+  if(audioFocus()){const c=selClip(),n=selClips().length,t=S.aTrack&&S.tracks.find(x=>x.id===S.aTrack);
+    $('#info').innerHTML=`Audio <span class="m">· ${S.aSel==='linked'?'Frame audio':n>1?`${n}개 선택`:c?esc(c.name):t?esc(t.name):''}</span>`;return}
   const n=S.frames.length;if(!n){$('#info').innerHTML='<span class="m">No frames · 파일을 불러오세요</span>';return}
   const[W,H]=outSize();
   $('#info').innerHTML=`${S.isSample?'<span class="tag">Sample</span>':''}${n} frames <span class="m">· ${(S.total/1000).toFixed(2)}s · ${W}×${H}</span>`;
@@ -1246,11 +1272,18 @@ $('#seek').oninput=e=>{if(S.mode==='layer'){stopPlay();L.t=+e.target.value;rende
    Side panel (edit mode)
    ========================================================= */
 let rz={keep:true};
+const audioFocus=()=>S.mode==='edit'&&!!(S.aSel||S.aTrack);
+/* clicking frames edits frames, clicking the audio bar edits audio: panel, toolbar and timeline follow */
+function syncFocus(){const f=audioFocus()?'audio':'frame';const app=$('#app');if(app.dataset.focus!==f){app.dataset.focus=f;hideBub();updateInfo()}
+  if(f==='audio'){const n=selClips().length,c=selClip();const dis={cut:!n,copy:!n,paste:!A.cb.length,dup:!n,split:!n,trimIn:!c,trimOut:!c,loop:!n,del:!n,add:false};
+    $$('[data-atool]').forEach(b=>{b.disabled=!!dis[b.dataset.atool]});const lb=$('[data-atool="loop"]');lb.classList.toggle('muted',!!n&&selClips().every(x=>x.loop))}}
 function renderPanel(){
   if(S.mode==='layer')return renderLayerPanel();
   const p=$('#panel');const[W,H]=outSize();const[RW,RH]=rotSize();
   if(document.activeElement&&p.contains(document.activeElement)&&document.activeElement.matches('input,select'))return softPanel();
-  if(!S.frames.length){p.innerHTML=audioPanelHTML();bindAudioPanel();return}
+  syncFocus();
+  if(audioFocus()){p.innerHTML=audioPanelHTML();bindAudioPanel();return}
+  if(!S.frames.length){p.innerHTML='';return}
   const s=selIdx();const selDur=s.reduce((a,i)=>a+S.frames[i].delay,0);
   if(S.crop.active){
     const r=S.crop.rect;
@@ -1268,7 +1301,7 @@ function renderPanel(){
     $('#crApply').onclick=applyCrop;
     return;
   }
-  p.innerHTML=audioPanelHTML()+`
+  p.innerHTML=`
   <div class="sec"><h3>${icon('<path d="M4 14v6h6M20 10V4h-6M4 20l7-7M20 4l-7 7"/>')}Size · Rotate</h3>
     <div class="grid2"><label class="fld"><span>너비 (px)</span><input class="in" id="rzW" type="number" min="1" value="${W}"></label><label class="fld"><span>높이 (px)</span><input class="in" id="rzH" type="number" min="1" value="${H}"></label></div>
     <label class="chk"><input type="checkbox" id="rzKeep" ${rz.keep?'checked':''}>비율 유지</label>
@@ -1311,7 +1344,6 @@ function renderPanel(){
   const pg=$('#pGain');if(pg){springRange(pg);let pushed=false;pg.onpointerdown=()=>{S.undo.push(snap());S.redo=[];pushed=true};
     pg.oninput=e=>{if(!pushed){S.undo.push(snap());S.redo=[];pushed=true}const v=+e.target.value/100;const set=new Set(selIdx());S.frames=S.frames.map((f,i)=>set.has(i)&&f.au?cloneF(f,{au:{...f.au,gain:v}}):f);renderTimeline()};
     pg.onchange=()=>{pushed=false;toast(`선택한 ${selIdx().length}프레임의 소리를 ${pg.value}%로 맞췄어요`)}}
-  bindAudioPanel();
 }
 function softPanel(){const s=selIdx();const n=$('#pSelN');if(n){n.textContent=s.length+'개';$('#pSelD').textContent=fmtS(s.reduce((a,i)=>a+S.frames[i].delay,0))}}
 function rotate(d){commit(()=>{
@@ -1502,7 +1534,7 @@ async function compToFrames(){
   busyEnd();
   const name=L.layers.find(l=>l.anim)?.name||L.layers[0].name;
   commit(()=>{
-    if(mode==='replace'||!S.frames.length||S.isSample){S.frames=out;S.W0=L.W;S.H0=L.H;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name=name+'-frame';S.isSample=false;S.clips=[];S.tracks=[];S.linked=LINKED_DEF();S.aSel=null;S.aTrack=null;setSel([0],0)}
+    if(mode==='replace'||!S.frames.length||S.isSample){S.frames=out;S.W0=L.W;S.H0=L.H;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name=name+'-frame';S.isSample=false;S.clips=[];S.tracks=[];S.linkOff=false;S.linkedBak=null;S.linked=LINKED_DEF();S.aSel=null;S.aTrack=null;setSel([0],0)}
     else{const at=S.frames.length;S.frames.push(...out);setSel([at],at)}
   });
   setMode('edit');toast(`프레임 ${out.length}개를 만들었어요`);
@@ -1542,7 +1574,8 @@ function addSource(name,buf){const id='a'+(ASID++);AS.set(id,{id,name,buf,dur:bu
 async function decodeAudioFile(file){try{const ab=await file.arrayBuffer();const oc=new OfflineAudioContext(2,1,SR);const buf=await oc.decodeAudioData(ab);return buf&&buf.length>SR*0.02?buf:null}catch(e){return null}}
 function revBuf(s){if(s.rev)return s.rev;const b=s.buf;const r=new AudioBuffer({length:b.length,numberOfChannels:b.numberOfChannels,sampleRate:b.sampleRate});
   for(let c=0;c<b.numberOfChannels;c++)r.copyToChannel(b.getChannelData(c).slice().reverse(),c);s.rev=r;return r}
-const hasLinked=(frames=S.frames)=>frames.some(f=>f.au);
+const hasLinked=(frames=S.frames)=>!S.linkOff&&frames.some(f=>f.au);
+const canRelink=()=>!!S.linkOff&&S.frames.some(f=>f.au);
 const hasAudio=()=>hasLinked()||S.clips.length>0;
 const srcLen=c=>c.out-c.in;
 /* a looping clip (background music) can run longer than its source */
@@ -1589,6 +1622,7 @@ async function buildMix(frames,{clips=true,raw=false,keepGain=false}={}){
   return await oc.startRendering();
 }
 function mixKey(){return S.frames.map(f=>f.au?`${f.delay}:${f.au.src}:${f.au.t0}:${f.au.len}:${f.au.rev?1:0}:${f.au.gain??1}`:f.delay).join('|')+'#'+JSON.stringify(S.clips)+JSON.stringify(S.tracks)+JSON.stringify(S.linked)}
+async function getMix(){const k=mixKey();if(A.mixKey===k)return A.mix;const m=await buildMix(S.frames);A.mixKey=k;A.mix=m;return m}
 function ensureAC(){if(!A.ac){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;A.ac=new C();A.gain=A.ac.createGain();A.gain.connect(A.ac.destination)}A.gain.gain.value=A.mute?0:1;return A.ac}
 function stopAudio(){if(A.src){try{A.src.stop()}catch(e){}try{A.src.disconnect()}catch(e){}A.src=null}}
 const AUDIO_CODEC={mp4:{enc:'mp4a.40.2',mux:'aac'},webm:{enc:'opus',mux:'A_OPUS'}};
@@ -1624,9 +1658,10 @@ async function unlinkAudio(){
   if(!hasLinked())return;stopPlay();busyStart('Unlinking audio',0);let buf=null;try{buf=await buildMix(S.frames,{clips:false,raw:true,keepGain:true})}catch(e){console.warn(e)}busyEnd();
   if(!buf)return toast('분리할 소리가 없어요');
   const src=addSource('Frame audio',buf);
-  commit(()=>{ensureTracks();const tr=TRACK_DEF('Frame audio');Object.assign(tr,{mute:S.linked.mute,solo:S.linked.solo});S.tracks.unshift(tr);
-    const c=newClip(src,'Frame audio',buf.duration*1000,tr.id);Object.assign(c,{vol:S.linked.vol,fadeIn:S.linked.fadeIn,fadeOut:S.linked.fadeOut});S.clips.unshift(c);
-    S.frames=S.frames.map(f=>f.au?cloneF(f,{au:null}):f);S.linked=LINKED_DEF();S.aSel=c.id;S.aTrack=tr.id;A.multi=new Set([c.id])},'소리를 분리했어요 · 이제 따로 옮기고 자를 수 있어요');
+  commit(()=>{ensureTracks();const tr=TRACK_DEF('Frame audio');Object.assign(tr,{mute:S.linked.mute,solo:S.linked.solo,fromLink:true});S.tracks.unshift(tr);
+    const c=newClip(src,'Frame audio',buf.duration*1000,tr.id);Object.assign(c,{vol:S.linked.vol,fadeIn:S.linked.fadeIn,fadeOut:S.linked.fadeOut,fromLink:true});S.clips.unshift(c);
+    /* frames keep their sound underneath, so Relink can bring it back after any frame edits */
+    S.linkedBak={...S.linked};S.linkOff=true;S.linked=LINKED_DEF();S.aSel=c.id;S.aTrack=tr.id;A.multi=new Set([c.id])},'소리를 분리했어요 · 이제 따로 옮기고 자를 수 있어요');
 }
 const playT=()=>S.playing?A.playT:(S.starts[S.cur]||0);
 const selClip=()=>S.aSel&&S.aSel!=='linked'?S.clips.find(c=>c.id===S.aSel):null;
@@ -1681,6 +1716,12 @@ function clipTrim(c,side,T){const s=c.start,e=c.start+clipLen(c);if(!(T>s&&T<e))
 function clipAlign(c,side,T){commit(()=>{c.start=Math.round(side==='in'?T:T-clipLen(c))})}
 function clipDelete(list){if(!Array.isArray(list))list=[list];if(!list.length)return;const ids=new Set(list.map(c=>c.id));
   commit(()=>{S.clips=S.clips.filter(x=>!ids.has(x.id));const t=S.aTrack;clearAudioSel();S.aTrack=t},list.length>1?`오디오 ${list.length}개를 삭제했어요`:'오디오를 삭제했어요')}
+function relinkAudio(){
+  if(!canRelink())return toast('다시 연결할 프레임 소리가 없어요');
+  commit(()=>{S.clips=S.clips.filter(c=>!c.fromLink);S.tracks=S.tracks.filter(t=>!(t.fromLink&&!clipsOn(t.id).length));
+    S.linkOff=false;S.linked={...LINKED_DEF(),...(S.linkedBak||{})};S.linkedBak=null;A.multi=new Set();S.aTrack=null;S.aSel='linked'},
+    '프레임 소리를 다시 연결했어요 · 분리한 뒤의 오디오 작업은 초기화됐어요');
+}
 function clipLoop(list,on){if(!list.length)return;
   commit(()=>{for(const c of list){if(on){c.loop=true;c.phase=0;c.loopLen=Math.max(srcLen(c),S.total-c.start>20?S.total-c.start:srcLen(c))}else{c.loop=false;c.loopLen=0;c.phase=0}}},
     on?'프레임 끝까지 반복해서 깔아요 · 오른쪽 끝을 끌어 길이를 바꿀 수 있어요':'반복을 껐어요')}
@@ -1691,7 +1732,7 @@ function deleteTrack(id){const t=S.tracks.find(x=>x.id===id);if(!t)return;const 
 /* =========================================================
    Audio timeline (After Effects style)
    ========================================================= */
-const RUL=24,ROW=36,TPAD=12;
+const RUL=24,TPAD=12,ROW0=36;let ROW=ROW0;try{ROW=clamp(Math.round(+localStorage.getItem('mis.trackH')||ROW0),ROW0,ROW0*5)}catch(e){}
 const tlCv=$('#tlCv'),tlx=tlCv.getContext('2d'),tlArea=$('#tlArea'),tlHeads=$('#tlHeads');
 let tlStatic=null,tlGeom=null;
 const ICO_LINK='<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',ICO_WAVE='<path d="M3 12h2M7 8v8M11 5v14M15 9v6M19 7v10M21 12h0"/>';
@@ -1701,7 +1742,7 @@ const volY=(y,v)=>y+6+(ROW-12)*(1-clamp(v,0,2)/2);
 const isSelC=c=>A.multi.has(c.id)||S.aSel===c.id;
 function setMuteIcon(){$('#aMuteIco').innerHTML=A.mute?'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/>':'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>';$('#aMute').classList.toggle('muted',A.mute)}
 function renderTimeline(){
-  if(S.mode!=='edit')return;
+  if(S.mode!=='edit')return;syncFocus();
   const tr=tracks();
   if(tr.length&&!A.auto){A.auto=true;openTimeline()}
   const nc=S.clips.length;
@@ -1710,10 +1751,12 @@ function renderTimeline(){
   tlHeads.innerHTML=`<div class="th-ruler" id="thT">${fmtS(playT())}</div>`+(tr.length?tr.map(t=>{const o=t.kind==='linked'?S.linked:t.t;const nm=t.kind==='linked'?'Frame audio':t.t.name;
     const on=t.kind==='linked'?S.aSel==='linked':curTrack===t.id;
     return`<div class="th${on?' on':''}" data-id="${t.id}">${icon(t.kind==='linked'?ICO_LINK:ICO_WAVE).replace('class="i"','class="i ic"')}<span class="nm" title="${esc(nm)}">${esc(nm)}</span>`+
+      (t.kind==='track'&&t.t.fromLink&&canRelink()?`<button type="button" class="tg ul" data-a="relink" data-tip="Relink|프레임에 다시 연결 · 분리 후 오디오 작업은 초기화"><svg class="i" viewBox="0 0 24 24" style="width:13px;height:13px">${ICO_LINK}</svg></button>`:'')+
       (t.kind==='linked'?`<button type="button" class="tg ul" data-a="unlink" data-tip="Unlink|소리를 프레임에서 분리해 따로 편집"><svg class="i" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M9 15l-1.5 1.5a3.5 3.5 0 0 1-5-5L5 9M15 9l1.5-1.5a3.5 3.5 0 0 1 5 5L19 15M8 4v3M4 8h3M16 20v-3M20 16h-3"/></svg></button>`:'')+
       `<button type="button" class="tg m${o.mute?' on':''}" data-a="mute" data-tip="Mute|이 트랙 음소거">M</button><button type="button" class="tg s${o.solo?' on':''}" data-a="solo" data-tip="Solo|이 트랙만 듣기">S</button></div>`}).join('')
     :'<div class="th empty">No tracks</div>');
-  const w=Math.max(120,tlArea.clientWidth),h=RUL+Math.max(1,tr.length+(A.newTrack?1:0))*ROW,dpr=Math.min(2,devicePixelRatio||1);
+  $('#tl').style.setProperty('--row',ROW+'px');
+  const w=Math.max(120,tlArea.clientWidth),h=RUL+Math.max(1,tr.length+(A.newTrack?1:0))*ROW,dpr=Math.min(3,devicePixelRatio||1);
   if(tlCv.width!==Math.round(w*dpr)||tlCv.height!==Math.round(h*dpr)){tlCv.width=Math.round(w*dpr);tlCv.height=Math.round(h*dpr)}tlCv.style.height=h+'px';
   if(!tlStatic)tlStatic=document.createElement('canvas');tlStatic.width=tlCv.width;tlStatic.height=tlCv.height;
   const ext=tlExtent(),k=(w-TPAD*2)/ext,X=t=>TPAD+t*k;tlGeom={w,h,k,X,ext,dpr,tr};
@@ -1765,13 +1808,21 @@ function drawPlayhead(){
   const th=$('#thT');if(th)th.textContent=fmtS(T);
 }
 new ResizeObserver(()=>renderTimeline()).observe(tlArea);
+/* drag the line above the audio bar to make tracks taller (1x - 5x) */
+(()=>{const gp=$('#tlGrip');
+  gp.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();hideBub();if(!A.open){A.open=true;A.auto=true;openTimeline()}
+    const y0=e.clientY,r0=ROW;gp.classList.add('on');
+    const mv=ev=>{const nr=clamp(Math.round(r0-(ev.clientY-y0)),ROW0,ROW0*5);if(nr!==ROW){ROW=nr;renderTimeline()}};
+    const up=()=>{gp.classList.remove('on');removeEventListener('pointermove',mv);removeEventListener('pointerup',up);try{localStorage.setItem('mis.trackH',ROW)}catch(err){}};
+    addEventListener('pointermove',mv);addEventListener('pointerup',up)});
+  gp.addEventListener('dblclick',()=>{ROW=ROW0;try{localStorage.setItem('mis.trackH',ROW)}catch(err){}renderTimeline()});})();
 $('#tlTog').onclick=()=>{A.open=!A.open;A.auto=true;$('#tl').classList.toggle('closed',!A.open);$('#tlTog').setAttribute('aria-expanded',String(A.open));if(A.open)renderTimeline()};
 $('#aMute').onclick=()=>{A.mute=!A.mute;if(A.gain)A.gain.gain.value=A.mute?0:1;setMuteIcon();toast(A.mute?'미리보기 소리를 껐어요 (저장에는 영향 없어요)':'미리보기 소리를 켰어요')};
 setMuteIcon();
 $('#aAdd').onclick=()=>openFile('audio','audio/*,video/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.opus,.mp4,.mov,.webm');
 $('#aTrackAdd').onclick=()=>addTrack();
 tlHeads.addEventListener('click',e=>{const row=e.target.closest('.th[data-id]');if(!row)return;const id=row.dataset.id;const b=e.target.closest('[data-a]');
-  if(b){const a=b.dataset.a;if(a==='unlink')return unlinkAudio();const o=trackObj(id);if(!o)return;commit(()=>{o[a]=!o[a]});return}
+  if(b){const a=b.dataset.a;if(a==='unlink')return unlinkAudio();if(a==='relink')return relinkAudio();const o=trackObj(id);if(!o)return;commit(()=>{o[a]=!o[a]});return}
   if(id==='linked'){A.multi=new Set();S.aSel='linked';S.aTrack=null}else{A.multi=new Set();S.aSel=null;S.aTrack=id}renderTimeline();renderPanel()});
 tlHeads.addEventListener('contextmenu',e=>{const row=e.target.closest('.th[data-id]');if(!row||row.dataset.id==='linked')return;e.preventDefault();A.multi=new Set();S.aSel=null;S.aTrack=row.dataset.id;renderTimeline();renderPanel();openMenu(e.clientX,e.clientY,audioMenuDef())});
 function seekTime(t){const i=frameAt(clamp(t,0,Math.max(0,S.total-1)));S.cur=i;ensureVisible(i);renderList();renderStage();updatePlayer();renderPanel()}
@@ -1846,40 +1897,33 @@ function audioMenuDef(){
 
 /* ---------- side panel: selected audio ---------- */
 const secS=ms=>(ms/1000).toFixed(2);
+const qh=(t,d)=>`<button type="button" class="qh" data-tip="${esc(t)}|${esc(d)}" aria-label="도움말">?</button>`;
 function audioPanelHTML(){
-  if(S.aSel==='linked'){const o=S.linked;return`<div class="sec"><h3>${icon(ICO_LINK)}Frame audio</h3>
-    <p class="note">영상에서 가져온 소리예요. 프레임을 지우거나 옮기고 뒤집으면 소리도 같이 따라가요. 일부 구간만 크게·작게 하려면 프레임을 고른 뒤 아래 <b>Selected frames</b>의 소리 볼륨을 쓰세요.</p>
+  if(S.aSel==='linked'){const o=S.linked;return`<div class="sec"><h3>${icon(ICO_LINK)}Frame audio${qh('Frame audio','영상에서 가져온 소리예요. 프레임을 지우거나 옮기고 뒤집으면 소리도 같이 따라가요. 일부 구간만 크게·작게 하려면 프레임을 고른 뒤 Selected frames의 소리 볼륨을 쓰세요. Unlink하면 따로 편집할 수 있고, Relink로 다시 연결할 수 있어요.')}</h3>
     <div class="fld"><span>전체 볼륨</span><div class="srange"><input type="range" id="auVol" min="0" max="200" value="${Math.round(o.vol*100)}"></div></div>
     <div class="grid2"><label class="fld"><span>페이드 인 (초)</span><input class="in" id="auFi" type="number" min="0" step="0.1" value="${secS(o.fadeIn)}"></label><label class="fld"><span>페이드 아웃 (초)</span><input class="in" id="auFo" type="number" min="0" step="0.1" value="${secS(o.fadeOut)}"></label></div>
-    <button type="button" class="primary" id="auUnlink">Unlink · 소리 분리</button>
-    <p class="note">분리하면 소리가 오디오 트랙이 돼서 프레임과 따로 옮기고 자르고 붙여넣을 수 있어요.</p></div>`}
+    <button type="button" class="primary" id="auUnlink">Unlink · 소리 분리</button></div>`}
+  const relink=canRelink()?`<button type="button" class="btn" id="auRelink">Relink · 프레임에 다시 연결</button>`:'';
+  const keys=`잘라내기 ${kb('mod')}X · 복사 ${kb('mod')}C · 붙여넣기 ${kb('mod')}V · 복제 ${kb('mod')}D · 나누기 ${kb('mod+shift')}D · 앞/뒤 자르기 ${kb('alt')}[ / ${kb('alt')}] · 삭제 Del. 자르기·나누기는 재생 위치(주황 선) 기준이에요. 막대를 위아래로 끌면 다른 트랙으로 옮겨져요. 위쪽 아이콘이나 오른쪽 클릭 메뉴로도 할 수 있어요.`;
   const list=selClips();
   if(!list.length){const t=S.aTrack&&S.tracks.find(x=>x.id===S.aTrack);if(!t)return'';const n=clipsOn(t.id).length;
-    return`<div class="sec"><h3>${icon(ICO_WAVE)}Audio track</h3>
+    return`<div class="sec"><h3>${icon(ICO_WAVE)}Audio track${qh('Audio track','배경음은 한 트랙에 깔고, 효과음은 다른 트랙에 올리면 정리하기 쉬워요. 트랙 볼륨은 이 트랙의 모든 소리에 곱해져요. '+keys)}</h3>
     <label class="fld"><span>트랙 이름</span><input class="in" id="atName" type="text" value="${esc(t.name)}"></label>
-    <div class="fld"><span>트랙 볼륨 <span style="color:var(--mute)">· 이 트랙의 모든 소리에 곱해져요</span></span><div class="srange"><input type="range" id="auVol" min="0" max="200" value="${Math.round(t.vol*100)}"></div></div>
+    <div class="fld"><span>트랙 볼륨</span><div class="srange"><input type="range" id="auVol" min="0" max="200" value="${Math.round(t.vol*100)}"></div></div>
     <div class="kv"><span>오디오</span><b>${n}개</b></div>
-    <div class="grid2"><button type="button" class="btn" id="atAdd">+ 이 트랙에 불러오기</button><button type="button" class="btn" id="atPaste"${A.cb.length?'':' disabled'}>재생 위치에 붙여넣기</button></div>
-    <button type="button" class="btn" id="atDel">트랙 삭제</button>
-    <p class="note">배경음은 한 트랙에 깔고, 효과음은 다른 트랙에 올리면 정리하기 쉬워요. 막대를 위아래로 끌어 트랙을 옮길 수 있어요.</p></div>`}
+    ${t.fromLink?relink:''}
+    <button type="button" class="btn" id="atDel">트랙 삭제</button></div>`}
   const c=list.length===1?list[0]:null,p=selClip()||list[0];const allLoop=list.every(x=>x.loop);
-  const s=c&&AS.get(c.src);
-  return`<div class="sec"><h3>${icon(ICO_WAVE)}${c?'Audio clip':`Audio clips · ${list.length}개`}</h3>
-    ${c?`<div class="kv"><span title="${esc(c.name)}">${esc(c.name)}</span><b>${fmtS(clipLen(c))}</b></div>`:`<p class="note">${list.length}개를 골랐어요. 볼륨·반복·자르기가 모두에 같이 적용돼요. ${kb('shift')} 클릭으로 더하거나 뺄 수 있어요.</p>`}
-    <div class="fld"><span>볼륨 <span style="color:var(--mute)">· 막대 위 노란 선을 위아래로 끌어도 돼요</span></span><div class="srange"><input type="range" id="auVol" min="0" max="200" value="${Math.round(p.vol*100)}"></div></div>
-    <div class="opt"><span>끝까지 반복 (배경음)<small>짧은 음악을 프레임 끝까지 이어서 깔아요</small></span><input type="checkbox" class="sw" id="acLoop" ${allLoop?'checked':''}></div>
-    ${c?`<div class="grid2"><label class="fld"><span>시작 위치 (초)</span><input class="in" id="acStart" type="number" step="0.01" value="${secS(c.start)}"></label><label class="fld"><span>${c.loop?'반복 길이 (초)':'원본 길이'}</span>${c.loop?`<input class="in" id="acLoopLen" type="number" min="0.02" step="0.01" value="${secS(clipLen(c))}">`:`<input class="in" type="text" value="${fmtS(s?s.dur:0)}" disabled>`}</label>
-    <label class="fld"><span>원본 In (초)</span><input class="in" id="acIn" type="number" min="0" step="0.01" value="${secS(c.in)}"></label><label class="fld"><span>원본 Out (초)</span><input class="in" id="acOut" type="number" min="0" step="0.01" value="${secS(c.out)}"></label></div>
+  return`<div class="sec"><h3>${icon(ICO_WAVE)}${c?'Audio clip':`Audio clips · ${list.length}개`}${qh('Audio clip',(c?'':'여러 개를 고르면 볼륨·반복이 모두에 같이 적용돼요. ')+'볼륨은 막대 위 노란 선을 위아래로 끌어도 바뀌어요. '+keys)}</h3>
+    ${c?`<div class="kv"><span title="${esc(c.name)}">${esc(c.name)}</span><b>${fmtS(clipLen(c))}</b></div>`:''}
+    <div class="fld"><span>볼륨</span><div class="srange"><input type="range" id="auVol" min="0" max="200" value="${Math.round(p.vol*100)}"></div></div>
+    <div class="opt"><span>끝까지 반복 (배경음)</span><input type="checkbox" class="sw" id="acLoop" ${allLoop?'checked':''}></div>
+    ${c?`<div class="grid2"><label class="fld"><span>시작 위치 (초)</span><input class="in" id="acStart" type="number" step="0.01" value="${secS(c.start)}"></label>${c.loop?`<label class="fld"><span>반복 길이 (초)</span><input class="in" id="acLoopLen" type="number" min="0.02" step="0.01" value="${secS(clipLen(c))}"></label>`:'<span></span>'}</div>
     <div class="grid2"><label class="fld"><span>페이드 인 (초)</span><input class="in" id="auFi" type="number" min="0" step="0.1" value="${secS(c.fadeIn)}"></label><label class="fld"><span>페이드 아웃 (초)</span><input class="in" id="auFo" type="number" min="0" step="0.1" value="${secS(c.fadeOut)}"></label></div>`:''}
-    <div class="grid4 abtn">
-      <button type="button" class="btn" id="acCut" data-tip="Cut|${kb('mod')}X">잘라내기</button><button type="button" class="btn" id="acCopy" data-tip="Copy|${kb('mod')}C">복사</button>
-      <button type="button" class="btn" id="acPaste" data-tip="Paste at playhead|${kb('mod')}V"${A.cb.length?'':' disabled'}>붙여넣기</button><button type="button" class="btn" id="acDup" data-tip="Duplicate|${kb('mod')}D">복제</button>
-      <button type="button" class="btn" id="acTrimIn" data-tip="Trim in|${kb('alt')}["${c?'':' disabled'}>앞 자르기</button><button type="button" class="btn" id="acTrimOut" data-tip="Trim out|${kb('alt')}]"${c?'':' disabled'}>뒤 자르기</button>
-      <button type="button" class="btn" id="acSplit" data-tip="Split|${kb('mod+shift')}D">나누기</button><button type="button" class="btn" id="acDel" data-tip="Delete|Del">삭제</button></div>
-    <p class="note">자르기·나누기는 재생 위치(주황 선) 기준이에요. 막대를 끌어 옮기고, 양 끝을 끌어 길이를 바꾸고, 위아래로 끌어 다른 트랙으로 옮길 수 있어요. 오른쪽 클릭하면 메뉴가 나와요.</p></div>`;
+    ${list.some(x=>x.fromLink)?relink:''}</div>`;
 }
 function bindAudioPanel(){
-  const vol=$('#auVol');
+  const vol=$('#auVol');const rl=$('#auRelink');if(rl)rl.onclick=relinkAudio;
   if(S.aSel==='linked'){const o=S.linked;if(vol){springRange(vol);vol.onpointerdown=()=>{S.undo.push(snap());S.redo=[]};vol.oninput=e=>{o.vol=+e.target.value/100;renderTimeline()}}
     const num=(id,fn)=>{const el=$('#'+id);if(el)el.onchange=e=>{const v=+e.target.value;if(!isFinite(v))return;commit(()=>fn(v))}};
     num('auFi',v=>o.fadeIn=Math.max(0,Math.round(v*1000)));num('auFo',v=>o.fadeOut=Math.max(0,Math.round(v*1000)));$('#auUnlink').onclick=unlinkAudio;return}
@@ -1887,20 +1931,13 @@ function bindAudioPanel(){
   if(!list.length){const t=S.aTrack&&S.tracks.find(x=>x.id===S.aTrack);if(!t)return;
     if(vol){springRange(vol);vol.onpointerdown=()=>{S.undo.push(snap());S.redo=[]};vol.oninput=e=>{t.vol=+e.target.value/100;renderTimeline()}}
     $('#atName').onchange=e=>{const v=e.target.value.trim();if(v)commit(()=>{t.name=v})};
-    $('#atAdd').onclick=()=>openFile('audio','audio/*,video/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.opus,.mp4,.mov,.webm');
-    $('#atPaste').onclick=()=>clipPaste();$('#atDel').onclick=()=>deleteTrack(t.id);return}
+    $('#atDel').onclick=()=>deleteTrack(t.id);return}
   if(vol){springRange(vol);vol.onpointerdown=()=>{S.undo.push(snap());S.redo=[]};vol.oninput=e=>{const v=+e.target.value/100;selClips().forEach(c=>c.vol=v);renderTimeline()}}
   $('#acLoop').onchange=e=>clipLoop(selClips(),e.target.checked);
   const c=list.length===1?list[0]:null;
-  if(c){const s=AS.get(c.src);const num=(id,fn)=>{const el=$('#'+id);if(el)el.onchange=e=>{const v=+e.target.value;if(!isFinite(v))return;commit(()=>fn(v))}};
+  if(c){const num=(id,fn)=>{const el=$('#'+id);if(el)el.onchange=e=>{const v=+e.target.value;if(!isFinite(v))return;commit(()=>fn(v))}};
     num('auFi',v=>c.fadeIn=Math.max(0,Math.round(v*1000)));num('auFo',v=>c.fadeOut=Math.max(0,Math.round(v*1000)));
-    num('acStart',v=>c.start=Math.max(0,Math.round(v*1000)));
-    num('acIn',v=>{c.in=clamp(Math.round(v*1000),0,c.out-20)});
-    num('acOut',v=>{c.out=clamp(Math.round(v*1000),c.in+20,Math.round(s?s.dur:c.out))});
-    num('acLoopLen',v=>{c.loopLen=Math.max(20,Math.round(v*1000))})}
-  $('#acCut').onclick=()=>clipCopy(selClips(),true);$('#acCopy').onclick=()=>clipCopy(selClips());$('#acPaste').onclick=()=>clipPaste();$('#acDup').onclick=()=>clipDuplicate(selClips());
-  $('#acTrimIn').onclick=()=>c&&clipTrim(c,'in',playT());$('#acTrimOut').onclick=()=>c&&clipTrim(c,'out',playT());
-  $('#acSplit').onclick=()=>clipSplit(selClips(),playT());$('#acDel').onclick=()=>clipDelete(selClips());
+    num('acStart',v=>c.start=Math.max(0,Math.round(v*1000)));num('acLoopLen',v=>{c.loopLen=Math.max(20,Math.round(v*1000))})}
 }
 
 /* =========================================================
@@ -2375,6 +2412,14 @@ function addToEditor(items){
 const dz=$('#dz');
 dz.onclick=()=>openFile(S.mode==='layer'?'layer':'edit');
 $('#editEmpty').onclick=()=>openFile('edit');
+(()=>{const tips={cut:['Cut','잘라내기','mod+X'],copy:['Copy','복사','mod+C'],paste:['Paste','재생 위치에 붙여넣기','mod+V'],dup:['Duplicate','바로 뒤에 복제','mod+D'],
+    split:['Split','재생 위치에서 나누기','mod+shift+D'],trimIn:['Trim in','재생 위치 앞부분 잘라내기','alt+['],trimOut:['Trim out','재생 위치 뒷부분 잘라내기','alt+]'],
+    loop:['Loop to end','끝까지 반복 (배경음) 켜기·끄기',''],del:['Delete','선택한 오디오 삭제','Del'],add:['Add audio','오디오 파일 불러오기','']};
+  $$('[data-atool]').forEach(b=>{const t=tips[b.dataset.atool];b.dataset.tip=`${t[0]}|${t[1]}${t[2]?' · '+kb(t[2]):''}`;b.setAttribute('aria-label',t[1]);
+    b.onclick=()=>{const k=b.dataset.atool,L=selClips(),c=selClip();
+      if(k==='cut')clipCopy(L,true);else if(k==='copy')clipCopy(L);else if(k==='paste')clipPaste();else if(k==='dup')clipDuplicate(L);else if(k==='split')clipSplit(L,playT());
+      else if(k==='trimIn'){c&&clipTrim(c,'in',playT())}else if(k==='trimOut'){c&&clipTrim(c,'out',playT())}else if(k==='loop')clipLoop(L,!L.every(x=>x.loop));
+      else if(k==='del')clipDelete(L);else if(k==='add')openFile('audio','audio/*,video/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.opus,.mp4,.mov,.webm')}})})();
 $$('[data-tool]').forEach(b=>b.onclick=()=>{
   if(S.mode!=='edit')return;const t=b.dataset.tool;
   if(t==='time')return dlgTime();
@@ -2420,7 +2465,7 @@ $('#btnReset').onclick=async()=>{
     onMount:d=>{$('#rsOk',d).onchange=e=>{d.querySelector('[data-act="ok"]').disabled=!e.target.checked}}});
   if(r.act!=='ok')return;
   if(isL){lPush();L.layers=[];L.sel=null;L.sized=false;L.dur=null;L.W=1080;L.H=1080;L.t=0;lChanged();toast('Reset · 실행 취소로 되돌릴 수 있어요')}
-  else{commit(()=>{S.frames=[];S.W0=0;S.H0=0;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name='motion';S.isSample=false;S.clips=[];S.tracks=[];S.linked=LINKED_DEF();S.aSel=null;S.aTrack=null;S.sel=new Set();S.cur=0},'Reset · 실행 취소로 되돌릴 수 있어요');S.view.fit=true;layoutStage()}
+  else{commit(()=>{S.frames=[];S.W0=0;S.H0=0;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name='motion';S.isSample=false;S.clips=[];S.tracks=[];S.linkOff=false;S.linkedBak=null;S.linked=LINKED_DEF();S.aSel=null;S.aTrack=null;S.sel=new Set();S.cur=0},'Reset · 실행 취소로 되돌릴 수 있어요');S.view.fit=true;layoutStage()}
 };
 
 /* ---------- How it works tour ---------- */
