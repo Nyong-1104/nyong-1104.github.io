@@ -254,10 +254,21 @@ select.in{cursor:pointer}
 .dlg-foot .btn{min-height:40px;padding:8px 16px;font-size:14px}
 .dlg-foot .primary{min-height:40px;padding:8px 22px;font-size:15px}
 .save-grid{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:18px;min-height:0}
-.pv{background:var(--stage);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;min-height:300px}
-.pv-inner{background-color:#fff;background-image:conic-gradient(var(--chk) 25%,transparent 0 50%,var(--chk) 0 75%,transparent 0);background-size:14px 14px;line-height:0;max-width:100%}
-.pv-inner canvas{max-width:100%;height:auto}
-.pv .t{font-size:12px;color:var(--mute2);font-weight:600}
+.pv{background:var(--stage);border-radius:14px;display:flex;flex-direction:column;gap:8px;padding:12px;min-height:300px;min-width:0}
+.pv-view{position:relative;flex:1;min-height:280px;height:52vh;max-height:560px;overflow:hidden;display:flex;border-radius:10px;user-select:none;-webkit-user-select:none}
+.pv-view.z1{overflow:auto;cursor:grab}
+.pv-view.z1.drag{cursor:grabbing}
+.pv-inner{margin:auto;flex:none;background-color:#fff;background-image:conic-gradient(var(--chk) 25%,transparent 0 50%,var(--chk) 0 75%,transparent 0);background-size:14px 14px;line-height:0;box-shadow:0 4px 18px rgba(20,20,30,.08)}
+.pv-inner canvas{display:block}
+.pv-view.z1 canvas{image-rendering:pixelated}
+.pv-busy{position:absolute;left:10px;top:10px;z-index:2;background:rgba(0,0,0,.72);color:#fff;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;pointer-events:none}
+.pv-bar{display:flex;align-items:center;gap:6px;min-width:0}
+.pv-bar input[type=range]{flex:1;min-width:60px;accent-color:var(--o);cursor:pointer}
+.pv-bar .t{font-size:12px;color:var(--mute2);font-weight:600;white-space:nowrap}
+.sortbar.mini{flex-wrap:nowrap}
+.sortbar.mini button{flex:none;padding:4px 10px;font-size:11.5px}
+.pv-note{font-size:11.5px;color:var(--mute2);line-height:1.5;min-height:17px}
+.pv-note b{color:var(--o);font-weight:700}
 .card2{background:var(--side);border:1px solid var(--line2);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
 .opt{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:500}
 .opt small{display:block;color:var(--mute);font-size:11px;font-weight:400}
@@ -336,6 +347,7 @@ select.in{cursor:pointer}
   .list{--pad:34px}
   .pane-layer{padding-top:0}
   .save-grid{grid-template-columns:minmax(0,1fr)}
+  .pv-view{height:42vh;min-height:220px}
   .player{padding:0 max(10px,env(safe-area-inset-right,0px)) 0 max(10px,env(safe-area-inset-left,0px));gap:0}
   .player .tb{width:30px}
   .player input[type=range]{min-width:40px;margin:0 8px}
@@ -1221,10 +1233,10 @@ function mkLayer(item){const fr=item.frames;let t=0;const starts=fr.map(f=>{cons
 function compDur(){if(L.dur)return L.dur;const ds=L.layers.filter(l=>l.anim).map(l=>l.dur);return ds.length?Math.max(...ds):2000}
 function layerFrameAt(ly,t){if(!ly.anim)return ly.frames[0];const tt=((t%ly.dur)+ly.dur)%ly.dur;let lo=0,hi=ly.starts.length-1;while(lo<hi){const m=(lo+hi+1)>>1;if(ly.starts[m]<=tt)lo=m;else hi=m-1}return ly.frames[lo]}
 async function drawComp(ctx,t,scale=1){
-  ctx.setTransform(scale,0,0,scale,0,0);ctx.clearRect(0,0,L.W,L.H);
-  if(L.bg!=='transparent'){ctx.fillStyle=L.bg;ctx.fillRect(0,0,L.W,L.H)}
   const vis=L.layers.filter(l=>l.visible).reverse();
   const bmps=await Promise.all(vis.map(l=>getBmp(layerFrameAt(l,t))));
+  ctx.setTransform(scale,0,0,scale,0,0);ctx.clearRect(0,0,L.W,L.H);
+  if(L.bg!=='transparent'){ctx.fillStyle=L.bg;ctx.fillRect(0,0,L.W,L.H)}
   ctx.imageSmoothingQuality='high';
   vis.forEach((l,k)=>{ctx.globalAlpha=l.opacity;ctx.drawImage(bmps[k],l.x,l.y,l.w,l.h)});ctx.globalAlpha=1;ctx.setTransform(1,0,0,1,0,0);
 }
@@ -1607,43 +1619,55 @@ function bindAudioPanel(){
    ========================================================= */
 function outCtx(W,H){const c=mkCanvas(W,H);return{c,x:c.getContext('2d',{willReadFrequently:true})}}
 async function renderOut(rc,frames,i,W,H,o){
+  const b=await getBmp(frames[i]);
   const x=rc.x;x.setTransform(1,0,0,1,0,0);x.globalCompositeOperation='source-over';x.clearRect(0,0,W,H);
   if(o.opaque){x.fillStyle='#ffffff';x.fillRect(0,0,W,H)}
-  const b=await getBmp(frames[i]);x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';applyTransform(x,W,H,false);drawContain(x,b);x.setTransform(1,0,0,1,0,0);
+  x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';applyTransform(x,W,H,false);drawContain(x,b);x.setTransform(1,0,0,1,0,0);
   if(o.bar&&o._total){const end=(o._starts[i]+frames[i].delay)/o._total;const bh=Math.max(2,Math.round(Math.min(W,H)*0.012));x.fillStyle=o.barColor||'#FF2F00';x.fillRect(0,o.barPos==='top'?0:H-bh,Math.round(W*end),bh)}
 }
 const qColors=(q,red)=>clamp(Math.round((16+240*Math.pow(q/100,1.5))*(red?0.75:1)),4,256);
 const vBitrate=(W,H,fps,q,red)=>clamp(Math.round(W*H*Math.max(1,fps)*(0.02+0.16*Math.pow(q/100,2))*(red?0.6:1)),150000,40000000);
 function prepFrames(frames,o){let t=0;o._starts=frames.map(f=>{const s=t;t+=f.delay;return s});o._total=t}
+/* one GIF frame exactly as the encoder writes it; st carries the previous-frame state */
+function gifStep(G,st,px,W,H,o){
+  const n=W*H,colors=qColors(o.q,o.reduce),thr=o.reduce?36:10;let pal,idx,ti=-1,dispose;
+  if(st.anyAlpha){
+    let m=0;for(let p=0;p<n;p++)if(px[p*4+3]>=128)m++;
+    const cp=new Uint8Array(Math.max(1,m)*4);let q=0;for(let p=0;p<n;p++)if(px[p*4+3]>=128){cp[q]=px[p*4];cp[q+1]=px[p*4+1];cp[q+2]=px[p*4+2];cp[q+3]=255;q+=4}
+    pal=m?G.quantize(cp,colors-1):[[0,0,0]];idx=mapPixels(px,W,H,pal,o.dither,null);ti=pal.length;pal.push([0,0,0]);
+    for(let p=0;p<n;p++)if(px[p*4+3]<128)idx[p]=ti;dispose=2;
+  }else if(!st.prev){
+    pal=G.quantize(px,colors);idx=mapPixels(px,W,H,pal,o.dither,null);const prev=st.prev=new Uint8Array(n*3);
+    for(let p=0;p<n;p++){prev[p*3]=px[p*4];prev[p*3+1]=px[p*4+1];prev[p*3+2]=px[p*4+2]}dispose=1;
+  }else{
+    const prev=st.prev,mask=new Uint8Array(n);let ch=0;
+    for(let p=0;p<n;p++){const j=p*4,k=p*3;const d=Math.abs(px[j]-prev[k])+Math.abs(px[j+1]-prev[k+1])+Math.abs(px[j+2]-prev[k+2]);if(d<=thr)mask[p]=1;else ch++}
+    if(!ch){pal=[[0,0,0],[0,0,0]];idx=new Uint8Array(n);ti=0}
+    else{const cp=new Uint8Array(ch*4);let q=0;for(let p=0;p<n;p++)if(!mask[p]){cp[q]=px[p*4];cp[q+1]=px[p*4+1];cp[q+2]=px[p*4+2];cp[q+3]=255;q+=4}
+      pal=G.quantize(cp,colors-1);idx=mapPixels(px,W,H,pal,o.dither,mask);ti=pal.length;pal.push([0,0,0]);
+      for(let p=0;p<n;p++){if(mask[p])idx[p]=ti;else{prev[p*3]=px[p*4];prev[p*3+1]=px[p*4+1];prev[p*3+2]=px[p*4+2]}}}
+    dispose=1;
+  }
+  return{pal,idx,ti,dispose};
+}
+/* what a GIF viewer shows after this frame (keeps unchanged pixels from earlier frames) */
+function gifPaint(st,r,W,H){
+  const n=W*H;if(!st.disp||st.disp.length!==n*4)st.disp=new Uint8ClampedArray(n*4);const d=st.disp,{pal,idx,ti,dispose}=r;
+  for(let p=0,j=0;p<n;p++,j+=4){const k=idx[p];if(k===ti){if(dispose===2)d[j+3]=0;continue}const c=pal[k];d[j]=c[0];d[j+1]=c[1];d[j+2]=c[2];d[j+3]=255}
+  return d;
+}
 async function encodeGIF(frames,W,H,o,job){
   const G=await getGifenc();
   const enc=G.GIFEncoder();const rc=outCtx(W,H);prepFrames(frames,o);
-  const anyAlpha=frames.some(f=>f.alpha||aspectOff(f));const colors=qColors(o.q,o.reduce);const thr=o.reduce?36:10;
+  const st={anyAlpha:frames.some(f=>f.alpha||aspectOff(f)),prev:null};
   const repeat=o.loop==='inf'?0:(+o.loopN<=1?-1:(+o.loopN)-1);
-  let acc=0,prevCs=0,prev=null;const n=W*H;
+  let acc=0,prevCs=0;
   for(let i=0;i<frames.length;i++){
     if(job&&job.cancel)throw new Cancel();
     await renderOut(rc,frames,i,W,H,o);const px=rc.x.getImageData(0,0,W,H).data;
     acc+=frames[i].delay;let cs=Math.round(acc/10)-prevCs;if(cs<2)cs=2;prevCs+=cs;
-    let pal,idx,ti=-1,dispose;
-    if(anyAlpha){
-      let m=0;for(let p=0;p<n;p++)if(px[p*4+3]>=128)m++;
-      const cp=new Uint8Array(Math.max(1,m)*4);let q=0;for(let p=0;p<n;p++)if(px[p*4+3]>=128){cp[q]=px[p*4];cp[q+1]=px[p*4+1];cp[q+2]=px[p*4+2];cp[q+3]=255;q+=4}
-      pal=m?G.quantize(cp,colors-1):[[0,0,0]];idx=mapPixels(px,W,H,pal,o.dither,null);ti=pal.length;pal.push([0,0,0]);
-      for(let p=0;p<n;p++)if(px[p*4+3]<128)idx[p]=ti;dispose=2;
-    }else if(!prev){
-      pal=G.quantize(px,colors);idx=mapPixels(px,W,H,pal,o.dither,null);prev=new Uint8Array(n*3);
-      for(let p=0;p<n;p++){prev[p*3]=px[p*4];prev[p*3+1]=px[p*4+1];prev[p*3+2]=px[p*4+2]}dispose=1;
-    }else{
-      const mask=new Uint8Array(n);let ch=0;
-      for(let p=0;p<n;p++){const j=p*4,k=p*3;const d=Math.abs(px[j]-prev[k])+Math.abs(px[j+1]-prev[k+1])+Math.abs(px[j+2]-prev[k+2]);if(d<=thr)mask[p]=1;else ch++}
-      if(!ch){pal=[[0,0,0],[0,0,0]];idx=new Uint8Array(n);ti=0}
-      else{const cp=new Uint8Array(ch*4);let q=0;for(let p=0;p<n;p++)if(!mask[p]){cp[q]=px[p*4];cp[q+1]=px[p*4+1];cp[q+2]=px[p*4+2];cp[q+3]=255;q+=4}
-        pal=G.quantize(cp,colors-1);idx=mapPixels(px,W,H,pal,o.dither,mask);ti=pal.length;pal.push([0,0,0]);
-        for(let p=0;p<n;p++){if(mask[p])idx[p]=ti;else{prev[p*3]=px[p*4];prev[p*3+1]=px[p*4+1];prev[p*3+2]=px[p*4+2]}}}
-      dispose=1;
-    }
-    enc.writeFrame(idx,W,H,{palette:pal,delay:cs*10,transparent:ti>=0,transparentIndex:ti>=0?ti:0,dispose,repeat});
+    const r=gifStep(G,st,px,W,H,o);
+    enc.writeFrame(r.idx,W,H,{palette:r.pal,delay:cs*10,transparent:r.ti>=0,transparentIndex:r.ti>=0?r.ti:0,dispose:r.dispose,repeat});
     busyStep(job,i+1);await tick();
   }
   enc.finish();return new Blob([enc.bytes()],{type:'image/gif'});
@@ -1723,18 +1747,104 @@ async function openSave(onlySel){
   const o={...SAVE_PREF,name:`${today()}-${S.name}${onlySel?'-selected':''}`,onlySel};
   const aud=onlySel?hasLinked(frames):hasAudio();
   const fmtBtns=Object.entries(FORMATS).map(([k,v])=>`<button type="button" data-fmt="${k}" class="${o.fmt===k?'on':''}">${v.t}</button>`).join('');
-  let pvTok=0,estTok=0,estT=0;const support={gif:true,apng:true,webp:WEBP_OK,mp4:null,webm:null};let springs=[];
-  const startPreview=d=>{const pv=$('#svPv',d);if(!pv)return;const px=pv.getContext('2d');const tok=++pvTok;let i=0;
-    (async()=>{while(tok===pvTok&&!$('#modal').hidden){
-      const[W,H]=outDims(o);const s=Math.min(1,380/W,440/H);const pw=Math.max(1,Math.round(W*s)),ph=Math.max(1,Math.round(H*s));
-      if(pv.width!==pw||pv.height!==ph){pv.width=pw;pv.height=ph}
-      prepFrames(frames,o);const t0=performance.now();
-      try{await renderOut({c:pv,x:px},frames,i,pw,ph,{...o,opaque:o.fmt==='mp4'||o.fmt==='webm'})}catch(e){}
-      const info=$('#svPvInfo',d);if(info)info.textContent=`${i+1} / ${frames.length} · ${fmtS(o._starts[i])}`;
-      const w=frames[i].delay-(performance.now()-t0);await sleep(Math.max(10,w));i=(i+1)%frames.length}})()};
+  let estTok=0,estT=0;const support={gif:true,apng:true,webp:WEBP_OK,mp4:null,webm:null};let springs=[];
+  /* ---- quality preview: every frame goes through the same encoder settings as the real save ---- */
+  const PV={tok:0,i:0,playing:true,zoom:'fit',key:'',W:0,H:0,rc:null,st:null,vs:null,next:-1,start:0,wake:null,lag:false,d:null};
+  const isVid=()=>o.fmt==='mp4'||o.fmt==='webm';
+  const pvKey=()=>JSON.stringify([o.fmt,o.q,o.dither,o.reduce,o.bar,o.barColor,o.barPos,...outDims(o)]);
+  const keyInt=()=>{prepFrames(frames,o);const fps=frames.length/Math.max(.001,o._total/1000);return Math.max(1,Math.round(fps*2))};
+  const resetPipe=()=>{PV.st=null;if(PV.vs){PV.vs.close();PV.vs=null}PV.next=-1};
+  const dropRes=r=>{if(r&&r.bmp&&r.bmp.close)r.bmp.close();if(r&&r.vf)r.vf.close()};
+  async function videoSession(kind,W,H){
+    if(!('VideoEncoder' in window)||!('VideoDecoder' in window))return null;
+    prepFrames(frames,o);const fps=frames.length/Math.max(.001,o._total/1000);
+    const base={width:W,height:H,bitrate:Math.round(vBitrate(W,H,fps,o.q,o.reduce)),framerate:Math.max(1,Math.round(fps))};
+    const codec=await pickCodec(kind==='mp4'?MP4_CODECS:WEBM_CODECS,kind==='mp4'?{...base,avc:{format:'avc'}}:base);if(!codec)return null;
+    let out=null,err=null,cfgd=false,sent=0,got=0,waiter=null;
+    const dec=new VideoDecoder({output:f=>{if(out)out.close();out=f;got++;if(waiter&&got>=sent){const w=waiter;waiter=null;w()}},error:e=>{err=e}});
+    const enc=new VideoEncoder({output:(ch,meta)=>{if(!cfgd&&meta&&meta.decoderConfig){dec.configure({...meta.decoderConfig,optimizeForLatency:true});cfgd=true}if(cfgd){dec.decode(ch);sent++}},error:e=>{err=e}});
+    enc.configure(kind==='mp4'?{...base,codec,avc:{format:'avc'}}:{...base,codec});
+    return{async frame(src,i,key){const vf=new VideoFrame(src,{timestamp:Math.round(o._starts[i]*1000),duration:Math.round(frames[i].delay*1000)});
+        enc.encode(vf,{keyFrame:key});vf.close();await enc.flush();
+        /* never flush the decoder: that would demand a new key frame. Wait for its output instead */
+        if(got<sent)await new Promise(r=>{waiter=r;setTimeout(()=>{if(waiter===r){waiter=null;r()}},1500)});
+        if(err)throw err;const f=out;out=null;return f},
+      close(){try{enc.close()}catch(e){}try{dec.close()}catch(e){}if(out){out.close();out=null}}};
+  }
+  async function processFrame(i){
+    const[W,H]=outDims(o);
+    if(!PV.rc||PV.W!==W||PV.H!==H){PV.rc=outCtx(W,H);PV.W=W;PV.H=H}
+    prepFrames(frames,o);
+    await renderOut(PV.rc,frames,i,W,H,{...o,opaque:isVid()});
+    if(o.fmt==='gif'){const G=await getGifenc();if(!PV.st)PV.st={anyAlpha:frames.some(f=>f.alpha||aspectOff(f)),prev:null};
+      const r=gifStep(G,PV.st,PV.rc.x.getImageData(0,0,W,H).data,W,H,o);return{img:new ImageData(gifPaint(PV.st,r,W,H),W,H)}}
+    if(o.fmt==='webp'&&WEBP_OK){const b=await toBlob(PV.rc.c,'image/webp',clamp((o.q-(o.reduce?15:0))/100,.05,1));return{bmp:await createImageBitmap(b)}}
+    if(isVid()){if(!PV.vs){PV.vs=await videoSession(o.fmt,W,H);PV.vsFail=!PV.vs}
+      if(PV.vs){const vf=await PV.vs.frame(PV.rc.c,i,i===PV.start||i%keyInt()===0);if(vf)return{vf}}}
+    return{raw:true};
+  }
+  async function showFrame(i){
+    const d=PV.d,cv=$('#svPv',d);if(!cv)return;
+    const key=pvKey();if(key!==PV.key){PV.key=key;resetPipe()}
+    const seq=o.fmt==='gif'||isVid();
+    if(seq&&i!==PV.next){
+      resetPipe();const s0=o.fmt==='gif'?Math.max(0,i-40):Math.floor(i/keyInt())*keyInt();PV.start=s0;
+      const busy=$('#svBusy',d);
+      for(let k=s0;k<i;k++){if(PV.key!==key||!d.isConnected)return;if(busy){busy.hidden=false;busy.textContent=`화질 반영 중 ${k-s0+1}/${i-s0+1}`}dropRes(await processFrame(k));PV.next=k+1}
+      if(busy)busy.hidden=true;
+    }
+    if(!seq)PV.start=i;
+    const r=await processFrame(i);
+    if(PV.key!==key||!cv.isConnected){dropRes(r);return}
+    PV.next=i+1;
+    const W=PV.W,H=PV.H;if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;fitPv()}
+    const x=cv.getContext('2d');x.clearRect(0,0,W,H);
+    if(r.img)x.putImageData(r.img,0,0);else if(r.bmp){x.drawImage(r.bmp,0,0);r.bmp.close()}else if(r.vf){x.drawImage(r.vf,0,0,W,H);r.vf.close()}else x.drawImage(PV.rc.c,0,0);
+    const info=$('#svPvInfo',d),sk=$('#svSeek',d);if(info)info.textContent=`${i+1} / ${frames.length} · ${fmtS(o._starts[i])}`;if(sk&&document.activeElement!==sk)sk.value=i;
+  }
+  function pvNote(){
+    const n=$('#svPvNote',PV.d);if(!n)return;let t;
+    if(o.fmt==='gif')t=`실제 저장 화질이에요 · 색상 최대 ${qColors(o.q,o.reduce)}개${o.dither?' · 디더링':''}${o.reduce?' · 용량 줄이기':''}`;
+    else if(o.fmt==='webp')t=`실제 저장 화질이에요 · WebP 품질 ${Math.round(clamp(o.q-(o.reduce?15:0),5,100))}`;
+    else if(o.fmt==='apng')t='APNG는 무손실이라 원본 그대로 저장돼요';
+    else t=PV.vsFail?'이 브라우저에선 영상 화질 미리보기를 할 수 없어 원본을 보여줘요':'실제 인코더로 만든 화질이에요 (저장본과 거의 같아요)';
+    if(PV.zoom==='fit'&&(PV.W>((PV.d&&$('#svView',PV.d)?.clientWidth)||1e9)||PV.H>((PV.d&&$('#svView',PV.d)?.clientHeight)||1e9)))t+=' · <b>100%</b>로 보면 실제 픽셀 그대로 확인할 수 있어요';
+    if(PV.lag&&PV.playing)t+=' · 처리 시간 때문에 실제보다 천천히 재생돼요';
+    n.innerHTML=t;
+  }
+  function fitPv(){
+    const d=PV.d;if(!d)return;const v=$('#svView',d),cv=$('#svPv',d);if(!v||!cv||!PV.W)return;
+    if(PV.zoom==='fit'){const s=Math.min(1,(v.clientWidth-16)/PV.W,(v.clientHeight-16)/PV.H);cv.style.width=Math.max(1,Math.round(PV.W*s))+'px';cv.style.height=Math.max(1,Math.round(PV.H*s))+'px';v.classList.remove('z1')}
+    else{cv.style.width=PV.W+'px';cv.style.height=PV.H+'px';v.classList.add('z1')}
+    pvNote();
+  }
+  const wakePv=()=>{const w=PV.wake;PV.wake=null;if(w)w()};
+  function setPlayIco(){const b=$('#svPlay',PV.d);if(b)b.innerHTML=PV.playing?'<svg class="i" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" stroke-width="3"/></svg>':'<svg class="i" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg>'}
+  async function pvLoop(d){
+    PV.d=d;const tok=++PV.tok;
+    while(tok===PV.tok&&d.isConnected&&!$('#modal').hidden){
+      const t0=performance.now();
+      try{await showFrame(PV.i)}catch(e){console.warn(e)}
+      if(tok!==PV.tok)break;
+      if(!PV.playing){pvNote();await new Promise(r=>{PV.wake=r});continue}
+      const took=performance.now()-t0,dl=frames[PV.i].delay;const lag=took>dl*1.25;if(lag!==PV.lag){PV.lag=lag;pvNote()}
+      await sleep(Math.max(4,dl-took));
+      if(tok!==PV.tok||!PV.playing)continue;
+      PV.i=(PV.i+1)%frames.length;
+    }
+  }
   await dialog({title:onlySel?`Save ${frames.length} selected frames`:'Save',wide:true,buttons:[{t:'Cancel',act:'cancel'},{t:'Save',act:'save',primary:true}],
   body:`<div class="save-grid">
-    <div class="pv"><div class="pv-inner"><canvas id="svPv" width="10" height="10"></canvas></div><div class="t" id="svPvInfo"></div></div>
+    <div class="pv">
+      <div class="pv-view" id="svView"><span class="pv-busy" id="svBusy" hidden></span><div class="pv-inner"><canvas id="svPv" width="10" height="10"></canvas></div></div>
+      <div class="pv-bar">
+        <button type="button" class="tb" id="svPlay" aria-label="미리보기 재생/정지" data-tip="Play / Pause|미리보기 재생·정지"></button>
+        <input type="range" id="svSeek" min="0" max="${frames.length-1}" value="0" aria-label="미리보기 위치">
+        <span class="t" id="svPvInfo"></span>
+        <div class="sortbar mini" id="svZoom"><button type="button" data-z="fit" class="on">Fit</button><button type="button" data-z="1">100%</button></div>
+      </div>
+      <div class="pv-note" id="svPvNote"></div>
+    </div>
     <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
       <div class="card2"><div class="kv"><span>이미지 크기</span><b id="svDim"></b></div><div class="kv"><span>재생 시간</span><b>${(frames.reduce((a,f)=>a+f.delay,0)/1000).toFixed(2)}초 · ${frames.length}프레임</b></div><div class="kv"><span>예상 파일 크기</span><b class="est" id="svEst">계산 중…</b></div></div>
       <div class="fld"><span>저장 포맷</span><div class="sortbar" id="svFmt">${fmtBtns}</div></div>
@@ -1776,7 +1886,7 @@ async function openSave(onlySel){
         g('svAudioNote').textContent=!vid?`${FORMATS[o.fmt].t}는 소리를 담을 수 없어요 · MP4나 WebM을 고르세요`:audioSupport[o.fmt]===false?'이 브라우저에선 소리 없이 저장돼요':onlySel?'선택한 프레임의 소리만 들어가요':`${o.fmt==='mp4'?'AAC':'Opus'} 128kbps · 프레임 길이에 맞춰 잘려요`}
       g('svWarn').hidden=!w.length;g('svWarn').innerHTML=w.join('<br>');
       d.querySelector('[data-act="save"]').disabled=support[o.fmt]===false;
-      estimateSoon();checkVideo();};
+      estimateSoon();checkVideo();pvNote();if(!PV.playing)wakePv();};
     const checkVideo=async()=>{if(!('VideoEncoder' in window)){if(support.mp4!==false){support.mp4=support.webm=false;refresh()}return}const[W,H]=outDims({...o,fmt:'mp4'});const key=W+'x'+H;if(checkVideo.k===key)return;checkVideo.k=key;
       const base={width:W,height:H,bitrate:4e6,framerate:30};const a=!!(await pickCodec(MP4_CODECS,{...base,avc:{format:'avc'}})),b=!!(await pickCodec(WEBM_CODECS,base));
       const ch=support.mp4!==a||support.webm!==b;support.mp4=a;support.webm=b;
@@ -1789,17 +1899,26 @@ async function openSave(onlySel){
     ['svLoop','svDither','svBar','svBarC','svBarPos','svReduce','svScaleOn','svMaxOn','svMax','svAudio'].forEach(id=>g(id).addEventListener('change',refresh));
     g('svBarC').addEventListener('input',()=>{o.barColor=g('svBarC').value});
     g('svName').addEventListener('input',()=>{o.name=g('svName').value});
-    refresh();startPreview(d);
+    PV.d=d;setPlayIco();
+    g('svPlay').onclick=()=>{PV.playing=!PV.playing;setPlayIco();pvNote();wakePv()};
+    g('svSeek').oninput=e=>{PV.playing=false;setPlayIco();PV.i=clamp(+e.target.value,0,frames.length-1);wakePv()};
+    g('svZoom').onclick=e=>{const b=e.target.closest('[data-z]');if(!b)return;PV.zoom=b.dataset.z==='fit'?'fit':'1';$$('#svZoom button',d).forEach(x=>x.classList.toggle('on',x===b));fitPv()};
+    const view=g('svView');new ResizeObserver(()=>fitPv()).observe(view);
+    view.addEventListener('pointerdown',e=>{if(PV.zoom==='fit'||e.button!==0)return;e.preventDefault();const sx=e.clientX,sy=e.clientY,l0=view.scrollLeft,t0=view.scrollTop;view.classList.add('drag');
+      const mv=ev=>{view.scrollLeft=l0-(ev.clientX-sx);view.scrollTop=t0-(ev.clientY-sy)};const up=()=>{view.classList.remove('drag');removeEventListener('pointermove',mv);removeEventListener('pointerup',up)};
+      addEventListener('pointermove',mv);addEventListener('pointerup',up)});
+    view.addEventListener('dblclick',()=>{const b=$(`#svZoom [data-z="${PV.zoom==='fit'?'1':'fit'}"]`,d);b&&b.click()});
+    refresh();pvLoop(d);
   },
   onAct:async(act,d)=>{
     if(act!=='save')return true;
-    pvTok++;
+    PV.tok++;wakePv();resetPipe();
     const ok=await runExport(frames,{...o});
-    if(!ok){startPreview(d);return false}
+    if(!ok){PV.key='';pvLoop(d);return false}
     Object.assign(SAVE_PREF,{audio:o.audioWant,fmt:o.fmt,q:o.q,dither:o.dither,loop:o.loop,loopN:o.loopN,bar:false,barColor:o.barColor,barPos:o.barPos,reduce:o.reduce,scaleOn:o.scaleOn,scale:o.scale,maxOn:o.maxOn,maxMB:o.maxMB});
     return true;
   }});
-  pvTok++;
+  PV.tok++;wakePv();resetPipe();
 }
 async function estimateSize(frames,o){
   const[W,H]=outDims(o);prepFrames(frames,o);
