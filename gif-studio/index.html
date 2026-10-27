@@ -438,11 +438,10 @@ select.in{cursor:pointer}
         <span class="vsep"></span>
         </span>
         <span class="atools">
-        <button class="tb" data-atool="cut" type="button"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.6 8.6L20 19M8.6 15.4L20 5"/></svg></button>
         <button class="tb" data-atool="copy" type="button"><svg class="i" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg></button>
         <button class="tb" data-atool="paste" type="button"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2.8h6V4M9 11h6M9 15h4"/></svg></button>
         <button class="tb" data-atool="dup" type="button"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="9" width="12" height="11" rx="2"/><path d="M9 9V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4"/></svg></button>
-        <button class="tb" data-atool="split" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v18"/><rect x="3" y="8" width="6" height="8" rx="1.5"/><rect x="15" y="8" width="6" height="8" rx="1.5"/></svg></button>
+        <button class="tb" data-atool="split" type="button"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.6 8.6L20 19M8.6 15.4L20 5"/></svg></button>
         <button class="tb" data-atool="trimIn" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M7 4v16M7 4h3M7 20h3"/><rect x="12" y="8" width="9" height="8" rx="1.5"/></svg></button>
         <button class="tb" data-atool="trimOut" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M17 4v16M17 4h-3M17 20h-3"/><rect x="3" y="8" width="9" height="8" rx="1.5"/></svg></button>
         <button class="tb" data-atool="loop" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></svg></button>
@@ -1120,7 +1119,7 @@ function clickRow(i,e){
   else{S.sel=new Set([i]);S.anchor=i}
   S.cur=i;renderList();renderStage();updatePlayer();renderPanel();
 }
-listEl.addEventListener('pointerdown',e=>{const r=e.target.closest('.row');if(!r)return;if(e.button===2&&S.sel.has(+r.dataset.i))return;stopPlay();if(S.aSel||S.aTrack){clearAudioSel();renderTimeline()}clickRow(+r.dataset.i,e);listEl.focus({preventScroll:true})});
+listEl.addEventListener('pointerdown',e=>{const r=e.target.closest('.row');if(!r)return;{const a=document.activeElement;if(a&&$('#panel').contains(a))a.blur()}if(e.button===2&&S.sel.has(+r.dataset.i))return;stopPlay();if(S.aSel||S.aTrack){clearAudioSel();renderTimeline()}clickRow(+r.dataset.i,e);listEl.focus({preventScroll:true})});
 listEl.addEventListener('dblclick',e=>{if(e.target.closest('.row'))dlgTime()});
 listEl.addEventListener('contextmenu',e=>{e.preventDefault();if(!S.frames.length)return;openMenu(e.clientX,e.clientY)});
 
@@ -1275,7 +1274,7 @@ let rz={keep:true};
 const audioFocus=()=>S.mode==='edit'&&!!(S.aSel||S.aTrack);
 /* clicking frames edits frames, clicking the audio bar edits audio: panel, toolbar and timeline follow */
 function syncFocus(){const f=audioFocus()?'audio':'frame';const app=$('#app');if(app.dataset.focus!==f){app.dataset.focus=f;hideBub();updateInfo()}
-  if(f==='audio'){const n=selClips().length,c=selClip();const dis={cut:!n,copy:!n,paste:!A.cb.length,dup:!n,split:!n,trimIn:!c,trimOut:!c,loop:!n,del:!n,add:false};
+  if(f==='audio'){const n=selClips().length,c=selClip();const dis={copy:!n,paste:!A.cb.length,dup:!n,split:!n&&S.aSel!=='linked',trimIn:!c,trimOut:!c,loop:!n,del:!n,add:false};
     $$('[data-atool]').forEach(b=>{b.disabled=!!dis[b.dataset.atool]});const lb=$('[data-atool="loop"]');lb.classList.toggle('muted',!!n&&selClips().every(x=>x.loop))}}
 function renderPanel(){
   if(S.mode==='layer')return renderLayerPanel();
@@ -1594,8 +1593,29 @@ function tracks(){ensureTracks();const t=[];if(hasLinked())t.push({kind:'linked'
 function trackObj(id){return id==='linked'?S.linked:S.tracks.find(t=>t.id===id)||S.clips.find(c=>c.id===id)}
 function anySolo(){return(hasLinked()&&S.linked.solo)||S.tracks.some(t=>t.solo)}
 const audible=t=>{if(t&&t.src){t=trackOf(t);if(!t)return true}return!t.mute&&(!anySolo()||t.solo)};
-function envelope(p,vol,a,b,fin,fout){const len=Math.max(0.002,b-a);let fi=Math.max(0.004,fin/1000),fo=Math.max(0.004,fout/1000);if(fi+fo>len){const k=len/(fi+fo);fi*=k;fo*=k}
-  p.setValueAtTime(0,a);p.linearRampToValueAtTime(vol,a+fi);p.setValueAtTime(vol,Math.max(a+fi,b-fo));p.linearRampToValueAtTime(0,b)}
+/* fade shapes: how far the change has progressed at x (0..1) */
+const CURVE={lin:x=>x,in:x=>x*x*x,out:x=>1-Math.pow(1-x,3),s:x=>x*x*(3-2*x)};
+const CURVE_OPTS=[['lin','Linear'],['in','Ease in · 점점 빠르게'],['out','Ease out · 점점 느리게'],['s','S-curve']];
+function envelope(p,vol,a,b,fin,fout,fiC='lin',foC='lin',hard=false){
+  const len=Math.max(0.002,b-a);const mn=hard?0:0.004;let fi=Math.max(mn,fin/1000),fo=Math.max(mn,fout/1000);if(fi+fo>len){const k=len/(fi+fo);fi*=k;fo*=k}
+  const cv=(f,up,n)=>{const r=new Float32Array(n);for(let k=0;k<n;k++){const x=k/(n-1);r[k]=vol*(up?CURVE[f](x):1-CURVE[f](x))}return r};
+  const N=t=>Math.max(8,Math.min(512,Math.round(t*400)));const eps=1e-4;
+  try{
+    if(fi<=0)p.setValueAtTime(vol,a);
+    else if(fiC==='lin'||!CURVE[fiC]){p.setValueAtTime(0,a);p.linearRampToValueAtTime(vol,a+fi)}
+    else p.setValueCurveAtTime(cv(fiC,true,N(fi)),a,fi);
+    const t1=a+fi+(fi>0&&fiC!=='lin'?eps:0);
+    if(fo<=0){p.setValueAtTime(vol,Math.max(t1,b-eps))}
+    else if(foC==='lin'||!CURVE[foC]){p.setValueAtTime(vol,Math.max(t1,b-fo));p.linearRampToValueAtTime(0,b)}
+    else{const s0=Math.max(t1+eps,b-fo),d=b-s0;if(d>eps)p.setValueCurveAtTime(cv(foC,false,N(d)),s0,d);else p.linearRampToValueAtTime(0,b)}
+  }catch(e){console.warn('envelope',e);try{p.cancelScheduledValues(a);p.setValueAtTime(0,a);p.linearRampToValueAtTime(vol,a+Math.max(fi,.004));p.setValueAtTime(vol,Math.max(a+fi,b-fo));p.linearRampToValueAtTime(0,b)}catch(e2){}}
+}
+/* Frame audio can be split into parts (at frame edges); a part starts at a frame carrying auSeg */
+const SEG_DEF={vol:1,fadeIn:0,fadeOut:0,fiC:'lin',foC:'lin'};
+function linkedSegs(frames=S.frames){const out=[];let t=0;
+  frames.forEach((f,i)=>{if(i===0||f.auSeg)out.push({i0:i,start:t,cfg:{...SEG_DEF,...(f.auSeg||{})}});t+=f.delay});
+  out.forEach((sg,k)=>{const nx=out[k+1];sg.end=nx?nx.start:t;sg.i1=nx?nx.i0-1:frames.length-1;sg.k=k});return out}
+const selSeg=(segs=linkedSegs())=>segs.find(sg=>S.frames[sg.i0]&&S.frames[sg.i0].id===A.segFid)||segs[0];
 /* render every audible track into one stereo buffer exactly as long as the frames */
 async function buildMix(frames,{clips=true,raw=false,keepGain=false}={}){
   ensureTracks();
@@ -1605,23 +1625,26 @@ async function buildMix(frames,{clips=true,raw=false,keepGain=false}={}){
   const ok=t=>!t.mute&&(!solo||t.solo);let n=0;
   if(hasLinked(frames)&&ok(L0)){
     const g=oc.createGain();g.connect(oc.destination);envelope(g.gain,L0.vol,0,total/1000,L0.fadeIn,L0.fadeOut);
+    const segs=linkedSegs(frames),segOf=new Array(frames.length);segs.forEach(sg=>{for(let i=sg.i0;i<=sg.i1;i++)segOf[i]=sg.k});
+    const sgn=segs.map(sg=>{const gs=oc.createGain();gs.connect(g);const c=sg.cfg;
+      if(raw)gs.gain.value=1;else envelope(gs.gain,c.vol,sg.start/1000,sg.end/1000,c.fadeIn,c.fadeOut,c.fiC,c.foC,true);return gs});
     const runs=[];
     frames.forEach((f,i)=>{const a=f.au;if(!a||!AS.has(a.src))return;const play=Math.min(f.delay,a.len);if(play<=0)return;const gg=raw&&!keepGain?1:(a.gain??1);
       const at=starts[i],lo=a.rev?a.t0+a.len-play:a.t0,hi=lo+play;const r=runs[runs.length-1];
-      if(r&&r.src===a.src&&r.rev===a.rev&&r.g===gg&&Math.abs(r.at+r.d-at)<1&&(a.rev?Math.abs(r.lo-hi)<2:Math.abs(r.hi-lo)<2)){r.d+=play;if(a.rev)r.lo=lo;else r.hi=hi}
-      else runs.push({src:a.src,rev:a.rev,g:gg,at,d:play,lo,hi})});
+      if(r&&r.src===a.src&&r.rev===a.rev&&r.g===gg&&r.sg===segOf[i]&&Math.abs(r.at+r.d-at)<1&&(a.rev?Math.abs(r.lo-hi)<2:Math.abs(r.hi-lo)<2)){r.d+=play;if(a.rev)r.lo=lo;else r.hi=hi}
+      else runs.push({src:a.src,rev:a.rev,g:gg,sg:segOf[i],at,d:play,lo,hi})});
     for(const r of runs){const s=AS.get(r.src);const node=oc.createBufferSource(),gn=oc.createGain();node.buffer=r.rev?revBuf(s):s.buf;
-      const off=r.rev?(s.dur-r.hi)/1000:r.lo/1000,at=r.at/1000,d=r.d/1000;envelope(gn.gain,r.g,at,at+d,0,0);node.connect(gn);gn.connect(g);node.start(at,Math.max(0,off),d);n++}
+      const off=r.rev?(s.dur-r.hi)/1000:r.lo/1000,at=r.at/1000,d=r.d/1000;envelope(gn.gain,r.g,at,at+d,0,0);node.connect(gn);gn.connect(sgn[r.sg]||g);node.start(at,Math.max(0,off),d);n++}
   }
   for(const c of cl){const tr=trackOf(c);if(!tr||!ok(tr)||!AS.has(c.src))continue;let at=c.start,d=clipLen(c),skip=0;if(at<0){skip=-at;d+=at;at=0}if(at+d>total)d=total-at;if(d<=1)continue;
     const node=oc.createBufferSource(),gn=oc.createGain();node.buffer=AS.get(c.src).buf;let off;
     if(c.loop){const L=Math.max(1,srcLen(c));node.loop=true;node.loopStart=c.in/1000;node.loopEnd=c.out/1000;off=c.in+(((c.phase||0)+skip)%L)}else off=c.in+skip;
-    envelope(gn.gain,c.vol*tr.vol,at/1000,(at+d)/1000,c.fadeIn,c.fadeOut);
+    envelope(gn.gain,c.vol*tr.vol,at/1000,(at+d)/1000,c.fadeIn,c.fadeOut,c.fiC,c.foC);
     node.connect(gn);gn.connect(oc.destination);node.start(at/1000,off/1000,d/1000);n++}
   if(!n)return null;
   return await oc.startRendering();
 }
-function mixKey(){return S.frames.map(f=>f.au?`${f.delay}:${f.au.src}:${f.au.t0}:${f.au.len}:${f.au.rev?1:0}:${f.au.gain??1}`:f.delay).join('|')+'#'+JSON.stringify(S.clips)+JSON.stringify(S.tracks)+JSON.stringify(S.linked)}
+function mixKey(){return S.frames.map(f=>f.au?`${f.delay}:${f.au.src}:${f.au.t0}:${f.au.len}:${f.au.rev?1:0}:${f.au.gain??1}:${f.auSeg?JSON.stringify(f.auSeg):''}`:f.delay).join('|')+'#'+JSON.stringify(S.clips)+JSON.stringify(S.tracks)+JSON.stringify(S.linked)}
 async function getMix(){const k=mixKey();if(A.mixKey===k)return A.mix;const m=await buildMix(S.frames);A.mixKey=k;A.mix=m;return m}
 function ensureAC(){if(!A.ac){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;A.ac=new C();A.gain=A.ac.createGain();A.gain.connect(A.ac.destination)}A.gain.gain.value=A.mute?0:1;return A.ac}
 function stopAudio(){if(A.src){try{A.src.stop()}catch(e){}try{A.src.disconnect()}catch(e){}A.src=null}}
@@ -1640,7 +1663,7 @@ async function encodeAudio(kind,buf){
   await enc.flush();try{enc.close()}catch(e){}if(err)throw err;return out}
 
 /* ---------- audio clip edits ---------- */
-function newClip(src,name,dur,track){return{id:'c'+(CID++),src,name,track,start:0,in:0,out:Math.round(dur),vol:1,fadeIn:0,fadeOut:0,loop:false,loopLen:0,phase:0}}
+function newClip(src,name,dur,track){return{id:'c'+(CID++),src,name,track,start:0,in:0,out:Math.round(dur),vol:1,fadeIn:0,fadeOut:0,fiC:'lin',foC:'lin',loop:false,loopLen:0,phase:0}}
 function openTimeline(){A.open=true;$('#tl').classList.remove('closed');$('#tlTog').setAttribute('aria-expanded','true')}
 async function importAudioFiles(files){
   for(const f of files){const job=busyStart('Reading audio',0);$('#busyText').textContent=f.name;const buf=await decodeAudioFile(f);busyEnd();if(job.cancel)return;
@@ -1659,7 +1682,9 @@ async function unlinkAudio(){
   if(!buf)return toast('분리할 소리가 없어요');
   const src=addSource('Frame audio',buf);
   commit(()=>{ensureTracks();const tr=TRACK_DEF('Frame audio');Object.assign(tr,{mute:S.linked.mute,solo:S.linked.solo,fromLink:true});S.tracks.unshift(tr);
-    const c=newClip(src,'Frame audio',buf.duration*1000,tr.id);Object.assign(c,{vol:S.linked.vol,fadeIn:S.linked.fadeIn,fadeOut:S.linked.fadeOut,fromLink:true});S.clips.unshift(c);
+    const parts=linkedSegs().map((sg,k)=>{const c=newClip(src,'Frame audio'+(k?` ${k+1}`:''),buf.duration*1000,tr.id);
+      Object.assign(c,{start:sg.start,in:sg.start,out:Math.min(Math.round(buf.duration*1000),sg.end),vol:Math.round(S.linked.vol*sg.cfg.vol*100)/100,fadeIn:sg.cfg.fadeIn,fadeOut:sg.cfg.fadeOut,fiC:sg.cfg.fiC,foC:sg.cfg.foC,fromLink:true});return c}).filter(c=>c.out-c.in>5);
+    S.clips.unshift(...parts);const c=parts[0];
     /* frames keep their sound underneath, so Relink can bring it back after any frame edits */
     S.linkedBak={...S.linked};S.linkOff=true;S.linked=LINKED_DEF();S.aSel=c.id;S.aTrack=tr.id;A.multi=new Set([c.id])},'소리를 분리했어요 · 이제 따로 옮기고 자를 수 있어요');
 }
@@ -1716,6 +1741,17 @@ function clipTrim(c,side,T){const s=c.start,e=c.start+clipLen(c);if(!(T>s&&T<e))
 function clipAlign(c,side,T){commit(()=>{c.start=Math.round(side==='in'?T:T-clipLen(c))})}
 function clipDelete(list){if(!Array.isArray(list))list=[list];if(!list.length)return;const ids=new Set(list.map(c=>c.id));
   commit(()=>{S.clips=S.clips.filter(x=>!ids.has(x.id));const t=S.aTrack;clearAudioSel();S.aTrack=t},list.length>1?`오디오 ${list.length}개를 삭제했어요`:'오디오를 삭제했어요')}
+function setSegCfg(sg,patch,live){const f=S.frames[sg.i0];const nf=cloneF(f,{auSeg:{...sg.cfg,...patch}});S.frames[sg.i0]=nf;if(A.segFid===f.id||!A.segFid)A.segFid=nf.id;if(live){renderTimeline()}}
+function splitLinked(T=playT()){
+  if(!hasLinked())return;const i=frameAt(clamp(T,0,Math.max(0,S.total-1)));
+  if(i===0)return toast('맨 앞에서는 나눌 수 없어요 · 재생 위치를 옮겨 주세요');
+  if(S.frames[i].auSeg)return toast('이미 나뉜 곳이에요');
+  const segs=linkedSegs(),sg=segs.find(x=>i>x.i0&&i<=x.i1);if(!sg)return;
+  commit(()=>{const cur={...sg.cfg};setSegCfg(sg,{fadeOut:0});S.frames[i]=cloneF(S.frames[i],{auSeg:{...cur,fadeIn:0}});A.segFid=S.frames[i].id;S.aSel='linked';S.aTrack=null;A.multi=new Set()},
+    `${fmtS(S.starts[i])}에서 나눴어요 · 마디마다 Fade를 따로 줄 수 있어요`);
+}
+function joinLinked(sg){if(!sg||sg.i0===0)return toast('맨 앞 마디예요');const segs=linkedSegs(),prev=segs[sg.k-1];
+  commit(()=>{setSegCfg(prev,{fadeOut:sg.cfg.fadeOut,foC:sg.cfg.foC});const f=S.frames[sg.i0];const nf=cloneF(f);delete nf.auSeg;S.frames[sg.i0]=nf;A.segFid=S.frames[prev.i0].id},'앞 마디와 합쳤어요')}
 function relinkAudio(){
   if(!canRelink())return toast('다시 연결할 프레임 소리가 없어요');
   commit(()=>{S.clips=S.clips.filter(c=>!c.fromLink);S.tracks=S.tracks.filter(t=>!(t.fromLink&&!clipsOn(t.id).length));
@@ -1776,23 +1812,25 @@ function renderTimeline(){
     const a=Math.max(Math.floor(x0),0),b=Math.min(Math.ceil(x1),w);for(let px=a;px<b;px++){const p0=(px-x0)/(x1-x0),p1=(px+1-x0)/(x1-x0);
       const ta=rev?hi-p1*(hi-lo):lo+p0*(hi-lo),tb=rev?hi-p0*(hi-lo):lo+p1*(hi-lo);const b0=Math.max(0,Math.floor(ta/1000*PPS)),b1=Math.min(mx.length,Math.max(b0+1,Math.ceil(tb/1000*PPS)));
       let m=0;for(let q=b0;q<b1;q++)if(mx[q]>m)m=mx[q];const am=Math.min(hh,Math.max(.5,Math.pow(m/top,.8)*hh*Math.min(amp,1.6)));c.fillRect(px,yc-am,1,am*2)}c.globalAlpha=1};
-  const fades=(x0,x1,y,fi,fo,dim)=>{c.globalAlpha=dim?.3:.9;c.strokeStyle='#ffffff';c.lineWidth=1.5;const t=y+6,b=y+ROW-6;
-    if(fi>0){c.beginPath();c.moveTo(x0+1,b);c.lineTo(Math.min(x1,x0+fi*k),t);c.stroke()}if(fo>0){c.beginPath();c.moveTo(Math.max(x0,x1-fo*k),t);c.lineTo(x1-1,b);c.stroke()}c.globalAlpha=1;c.lineWidth=1};
+  const fades=(x0,x1,y,fi,fo,dim,fiC='lin',foC='lin')=>{c.globalAlpha=dim?.3:.9;c.strokeStyle='#ffffff';c.lineWidth=1.5;const t=y+6,b=y+ROW-6;
+    const path=(xa,xb,up,f)=>{const F2=CURVE[f]||CURVE.lin;c.beginPath();for(let q=0;q<=24;q++){const u=q/24,xx=xa+(xb-xa)*u,v=up?F2(u):1-F2(u);const yy=b-(b-t)*v;q?c.lineTo(xx,yy):c.moveTo(xx,yy)}c.stroke()};
+    if(fi>0)path(x0+1,Math.min(x1,x0+fi*k),true,fiC);if(fo>0)path(Math.max(x0,x1-fo*k),x1-1,false,foC);c.globalAlpha=1;c.lineWidth=1};
   const volLine=(x0,x1,y,v,sel,dim,label)=>{if(x1-x0<6)return;const vy=Math.round(volY(y,v))+.5;c.globalAlpha=dim?.35:sel?1:.55;c.strokeStyle='#FFD23F';c.lineWidth=sel?2:1.25;c.beginPath();c.moveTo(x0+3,vy);c.lineTo(x1-3,vy);c.stroke();c.lineWidth=1;
     if(sel&&label&&x1-x0>48){c.font=`800 10px ${F}`;c.textBaseline='bottom';const t=Math.round(v*100)+'%';const tw=c.measureText(t).width;c.fillStyle='#FFD23F';c.fillText(t,x1-tw-7,Math.max(y+15,vy-2))}c.globalAlpha=1};
   tr.forEach((t,r)=>{const y=RUL+r*ROW;
-    if(t.kind==='linked'){const dim=!audible(S.linked),sel=S.aSel==='linked';bar(X(0),X(S.total),y,sel,dim);
-      S.frames.forEach((f,i)=>{const a=f.au;if(!a)return;const play=Math.min(f.delay,a.len);const lo=a.rev?a.t0+a.len-play:a.t0;const g=S.linked.vol*(a.gain??1);
+    if(t.kind==='linked'){const dim=!audible(S.linked),selL=S.aSel==='linked';const segs=linkedSegs(),ss=selL?selSeg(segs):null;const segOf=[];
+      segs.forEach(sg=>{for(let i=sg.i0;i<=sg.i1;i++)segOf[i]=sg;bar(X(sg.start)+(sg.k?1.5:0),X(sg.end)-(sg.k<segs.length-1?1.5:0),y,sg===ss,dim)});const sel=selL;
+      S.frames.forEach((f,i)=>{const a=f.au;if(!a)return;const play=Math.min(f.delay,a.len);const lo=a.rev?a.t0+a.len-play:a.t0;const g=S.linked.vol*(segOf[i]?segOf[i].cfg.vol:1)*(a.gain??1);
         wave(a.src,lo,lo+play,a.rev,X(S.starts[i]),X(S.starts[i]+play),y,dim,g);
         const vy=Math.round(volY(y,g))+.5;c.globalAlpha=dim?.35:sel?1:.55;c.strokeStyle='#FFD23F';c.lineWidth=sel?2:1.25;c.beginPath();c.moveTo(X(S.starts[i]),vy);c.lineTo(X(S.starts[i]+f.delay),vy);c.stroke();c.lineWidth=1;c.globalAlpha=1});
-      fades(X(0),X(S.total),y,S.linked.fadeIn,S.linked.fadeOut,dim);
-      if(sel){c.font=`800 10px ${F}`;c.textBaseline='top';c.fillStyle='#FFD23F';c.fillText(Math.round(S.linked.vol*100)+'%',X(0)+8,y+8)}}
+      segs.forEach(sg=>fades(X(sg.start),X(sg.end),y,sg.cfg.fadeIn,sg.cfg.fadeOut,dim,sg.cfg.fiC,sg.cfg.foC));
+      if(ss){c.font=`800 10px ${F}`;c.textBaseline='top';c.fillStyle='#FFD23F';c.fillText((segs.length>1?`${ss.k+1}/${segs.length} · `:'')+Math.round(S.linked.vol*ss.cfg.vol*100)+'%',X(ss.start)+8,y+8)}}
     else{const dim=!audible(t.t);
       for(const cl of clipsOn(t.id)){const sel=isSelC(cl),x0=X(cl.start),x1=X(cl.start+clipLen(cl)),len=clipLen(cl);bar(x0,x1,y,sel,dim);
         if(cl.loop){const L=Math.max(1,srcLen(cl));let p=0;while(p<len-0.5){const sp=((cl.phase||0)+p)%L,seg=Math.min(L-sp,len-p);wave(cl.src,cl.in+sp,cl.in+sp+seg,false,X(cl.start+p),X(cl.start+p+seg),y,dim,cl.vol*t.t.vol);
             p+=seg;if(p<len-0.5){const bx=Math.round(X(cl.start+p))+.5;c.globalAlpha=.45;c.strokeStyle='#ffffff';c.setLineDash([2,2]);c.beginPath();c.moveTo(bx,y+7);c.lineTo(bx,y+ROW-7);c.stroke();c.setLineDash([]);c.globalAlpha=1}}}
         else wave(cl.src,cl.in,cl.out,false,x0,x1,y,dim,cl.vol*t.t.vol);
-        fades(x0,x1,y,cl.fadeIn,cl.fadeOut,dim);volLine(x0,x1,y,cl.vol,sel,dim,true);
+        fades(x0,x1,y,cl.fadeIn,cl.fadeOut,dim,cl.fiC,cl.foC);volLine(x0,x1,y,cl.vol,sel,dim,true);
         if(x1-x0>70){c.save();c.beginPath();c.rect(x0+8,y,x1-x0-16,ROW);c.clip();c.font=`700 10.5px ${F}`;c.textBaseline='top';c.fillStyle=dim?'rgba(255,255,255,.4)':'rgba(255,255,255,.92)';c.fillText((cl.loop?'↻ ':'')+cl.name,x0+9,y+8);c.restore()}}}});
   if(ext>S.total+1){const xe=X(S.total);c.fillStyle='rgba(240,240,244,.78)';c.fillRect(xe,RUL,w-xe,h-RUL);c.setLineDash([3,3]);c.strokeStyle='#9a9aa8';c.beginPath();c.moveTo(Math.round(xe)+.5,0);c.lineTo(Math.round(xe)+.5,h);c.stroke();c.setLineDash([]);
     c.fillStyle='#9a9aa8';c.font=`700 10px ${F}`;c.textBaseline='middle';c.fillText('END',xe+4,RUL+ROW/2>h?RUL/2:RUL+11)}
@@ -1821,7 +1859,7 @@ $('#aMute').onclick=()=>{A.mute=!A.mute;if(A.gain)A.gain.gain.value=A.mute?0:1;s
 setMuteIcon();
 $('#aAdd').onclick=()=>openFile('audio','audio/*,video/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.opus,.mp4,.mov,.webm');
 $('#aTrackAdd').onclick=()=>addTrack();
-tlHeads.addEventListener('click',e=>{const row=e.target.closest('.th[data-id]');if(!row)return;const id=row.dataset.id;const b=e.target.closest('[data-a]');
+tlHeads.addEventListener('click',e=>{blurPanel();const row=e.target.closest('.th[data-id]');if(!row)return;const id=row.dataset.id;const b=e.target.closest('[data-a]');
   if(b){const a=b.dataset.a;if(a==='unlink')return unlinkAudio();if(a==='relink')return relinkAudio();const o=trackObj(id);if(!o)return;commit(()=>{o[a]=!o[a]});return}
   if(id==='linked'){A.multi=new Set();S.aSel='linked';S.aTrack=null}else{A.multi=new Set();S.aSel=null;S.aTrack=id}renderTimeline();renderPanel()});
 tlHeads.addEventListener('contextmenu',e=>{const row=e.target.closest('.th[data-id]');if(!row||row.dataset.id==='linked')return;e.preventDefault();A.multi=new Set();S.aSel=null;S.aTrack=row.dataset.id;renderTimeline();renderPanel();openMenu(e.clientX,e.clientY,audioMenuDef())});
@@ -1830,7 +1868,9 @@ function seekTime(t){const i=frameAt(clamp(t,0,Math.max(0,S.total-1)));S.cur=i;e
 function tlHit(px,py){
   const g=tlGeom;if(!g)return{};if(py<RUL)return{ruler:true};
   const row=Math.floor((py-RUL)/ROW),t=g.tr[row];if(!t)return{row};const y=RUL+row*ROW;
-  if(t.kind==='linked'){const onLine=Math.abs(py-volY(y,S.linked.vol))<=4&&px>g.X(0)+4&&px<g.X(S.total)-4;return{row,t,linked:true,mode:onLine?'lv':null}}
+  if(t.kind==='linked'){const T=(px-TPAD)/g.k;const segs=linkedSegs();const sg=segs.find(x=>T>=x.start&&T<x.end)||segs[segs.length-1];const fi=frameAt(clamp(T,0,Math.max(0,S.total-1)));
+    const lv=S.linked.vol*(sg?sg.cfg.vol:1)*((S.frames[fi]&&S.frames[fi].au&&S.frames[fi].au.gain)??1);
+    const onLine=Math.abs(py-volY(y,lv))<=4&&px>g.X(0)+4&&px<g.X(S.total)-4;return{row,t,linked:true,seg:sg,mode:onLine?'lv':null}}
   const list=clipsOn(t.id);
   for(let i=list.length-1;i>=0;i--){const c=list[i],x0=g.X(c.start),x1=g.X(c.start+clipLen(c));if(px<x0-7||px>x1+7)continue;
     let mode=null;if(Math.abs(px-x0)<=7&&px<x1-4)mode='l';else if(Math.abs(px-x1)<=7)mode='r';else if(px>x0&&px<x1)mode=Math.abs(py-volY(y,c.vol))<=4&&x1-x0>16?'v':'m';
@@ -1840,15 +1880,17 @@ function tlHit(px,py){
 tlCv.addEventListener('pointermove',e=>{if(e.buttons||!tlGeom)return;const r=tlCv.getBoundingClientRect();const h=tlHit(e.clientX-r.left,e.clientY-r.top);
   tlCv.style.cursor=h.ruler?'col-resize':h.mode==='l'||h.mode==='r'?'ew-resize':h.mode==='v'||h.mode==='lv'?'ns-resize':h.mode==='m'?'grab':h.t?'pointer':'default';
   tlCv.title=h.mode==='v'||h.mode==='lv'?'위아래로 끌어 볼륨 조절':''});
+/* finish any half-typed panel value first, so it lands on the item it was typed for */
+const blurPanel=()=>{const a=document.activeElement;if(a&&$('#panel').contains(a))a.blur()};
 tlCv.addEventListener('pointerdown',e=>{
-  if(!tlGeom||e.button!==0)return;const r=tlCv.getBoundingClientRect();const px=e.clientX-r.left,py=e.clientY-r.top;const g=tlGeom;
+  blurPanel();if(!tlGeom||e.button!==0)return;const r=tlCv.getBoundingClientRect();const px=e.clientX-r.left,py=e.clientY-r.top;const g=tlGeom;
   if(py<RUL){e.preventDefault();stopPlay();const seek=ev=>seekTime((ev.clientX-r.left-TPAD)/g.k);seek(e);
     const up=()=>{removeEventListener('pointermove',seek);removeEventListener('pointerup',up)};addEventListener('pointermove',seek);addEventListener('pointerup',up);return}
   const h=tlHit(px,py);const add=e.shiftKey||(IS_MAC?e.metaKey:e.ctrlKey);
   if(!h.t){clearAudioSel();renderTimeline();renderPanel();return}
-  if(h.linked){A.multi=new Set();S.aSel='linked';S.aTrack=null;
-    if(h.mode==='lv'){e.preventDefault();stopPlay();S.undo.push(snap());S.redo=[];const v0=S.linked.vol,sy=e.clientY;let moved=false;
-      const mv=ev=>{const dy=ev.clientY-sy;if(!moved&&Math.abs(dy)<2)return;moved=true;S.linked.vol=Math.round(clamp(v0-dy/(ROW-12)*2,0,2)*100)/100;renderTimeline()};
+  if(h.linked){A.multi=new Set();S.aSel='linked';S.aTrack=null;if(h.seg&&S.frames[h.seg.i0])A.segFid=S.frames[h.seg.i0].id;
+    if(h.mode==='lv'&&h.seg){e.preventDefault();stopPlay();S.undo.push(snap());S.redo=[];const v0=h.seg.cfg.vol,sy=e.clientY,k0=h.seg.k;let moved=false;
+      const mv=ev=>{const dy=ev.clientY-sy;if(!moved&&Math.abs(dy)<2)return;moved=true;const sg=linkedSegs()[k0];setSegCfg(sg,{vol:Math.round(clamp(v0-dy/(ROW-12)*2,0,2)*100)/100},true)};
       const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);if(!moved)S.undo.pop();renderTimeline();renderPanel()};addEventListener('pointermove',mv);addEventListener('pointerup',up);return}
     renderTimeline();renderPanel();return}
   if(!h.c){A.multi=new Set();S.aSel=null;S.aTrack=h.t.id;renderTimeline();renderPanel();return}
@@ -1877,11 +1919,16 @@ tlCv.addEventListener('pointerdown',e=>{
     A.newTrack=false;if(!moved)S.undo.pop();else S.aTrack=c.track;renderTimeline();renderPanel()};
   addEventListener('pointermove',mv);addEventListener('pointerup',up);
 });
-tlCv.addEventListener('contextmenu',e=>{e.preventDefault();if(!tlGeom)return;const r=tlCv.getBoundingClientRect();const h=tlHit(e.clientX-r.left,e.clientY-r.top);
+tlCv.addEventListener('contextmenu',e=>{e.preventDefault();blurPanel();if(!tlGeom)return;const r=tlCv.getBoundingClientRect();const h=tlHit(e.clientX-r.left,e.clientY-r.top);
   if(h.ruler)return;
-  if(h.c){if(!isSelC(h.c))selectClip(h.c,false)}else if(h.t&&h.t.kind==='track'){A.multi=new Set();S.aSel=null;S.aTrack=h.t.id}else if(h.linked){return}
+  if(h.c){if(!isSelC(h.c))selectClip(h.c,false)}else if(h.t&&h.t.kind==='track'){A.multi=new Set();S.aSel=null;S.aTrack=h.t.id}else if(h.linked){A.multi=new Set();S.aSel='linked';S.aTrack=null;if(h.seg&&S.frames[h.seg.i0])A.segFid=S.frames[h.seg.i0].id}
   renderTimeline();renderPanel();openMenu(e.clientX,e.clientY,audioMenuDef())});
 function audioMenuDef(){
+  if(S.aSel==='linked'){const segs=linkedSegs(),sg=selSeg(segs);const i=frameAt(clamp(playT(),0,Math.max(0,S.total-1)));
+    return{title:'Frame audio',hint:segs.length>1?`마디 ${sg.k+1} / ${segs.length}`:fmtS(playT())+' 위치',cols:[[
+      {h:'마디',items:[{t:'재생 위치에서 나누기',k:'mod+shift+D',f:()=>splitLinked(),dis:i===0||!!S.frames[i]?.auSeg},{t:'앞 마디와 합치기',f:()=>joinLinked(selSeg()),dis:!sg||sg.k===0},
+        {t:'이 마디 볼륨 100%로',f:()=>commit(()=>setSegCfg(selSeg(),{vol:1}))}]},
+      {h:'연결',items:[{t:'Unlink · 소리 분리',f:()=>unlinkAudio()}]}]]};}
   const list=selClips(),T=playT(),n=list.length,tid=S.aTrack||list[0]?.track;const anyIn=list.some(c=>T>c.start+10&&T<c.start+clipLen(c)-10);const allLoop=n&&list.every(c=>c.loop);
   const left=[
     {h:'편집',items:[{t:'잘라내기',k:'mod+X',f:()=>clipCopy(selClips(),true),dis:!n},{t:'복사',k:'mod+C',f:()=>clipCopy(selClips()),dis:!n},
@@ -1897,11 +1944,16 @@ function audioMenuDef(){
 
 /* ---------- side panel: selected audio ---------- */
 const secS=ms=>(ms/1000).toFixed(2);
+const curveSel=(id,v)=>`<select class="in" id="${id}" aria-label="곡선">${CURVE_OPTS.map(([k,t])=>`<option value="${k}"${k===(v||'lin')?' selected':''}>${t}</option>`).join('')}</select>`;
+const fadeHTML=o=>`<div class="grid2"><label class="fld"><span>Fade in (s)</span><input class="in" id="auFi" type="number" min="0" step="0.1" value="${secS(o.fadeIn)}"></label><label class="fld"><span>Fade out (s)</span><input class="in" id="auFo" type="number" min="0" step="0.1" value="${secS(o.fadeOut)}"></label>
+    <div class="fld">${curveSel('auFiC',o.fiC)}</div><div class="fld">${curveSel('auFoC',o.foC)}</div></div>`;
 const qh=(t,d)=>`<button type="button" class="qh" data-tip="${esc(t)}|${esc(d)}" aria-label="도움말">?</button>`;
 function audioPanelHTML(){
-  if(S.aSel==='linked'){const o=S.linked;return`<div class="sec"><h3>${icon(ICO_LINK)}Frame audio${qh('Frame audio','영상에서 가져온 소리예요. 프레임을 지우거나 옮기고 뒤집으면 소리도 같이 따라가요. 일부 구간만 크게·작게 하려면 프레임을 고른 뒤 Selected frames의 소리 볼륨을 쓰세요. Unlink하면 따로 편집할 수 있고, Relink로 다시 연결할 수 있어요.')}</h3>
+  if(S.aSel==='linked'){const o=S.linked,segs=linkedSegs(),sg=selSeg(segs);return`<div class="sec"><h3>${icon(ICO_LINK)}Frame audio${qh('Frame audio','영상에서 가져온 소리예요. 위치는 프레임에 묶여 있어서 옮길 수 없지만, 재생 위치(프레임 경계)에서 나누기(Split)는 할 수 있어요. 나눈 마디마다 볼륨과 Fade를 따로 줘요. 막대에서 마디를 눌러 고르고, 오른쪽 클릭으로 앞 마디와 합칠 수 있어요. 일부 프레임만 크게·작게 하려면 Selected frames의 소리 볼륨을 쓰세요. Unlink하면 마디가 각각 오디오 클립이 되고, Relink로 다시 연결할 수 있어요.')}</h3>
     <div class="fld"><span>전체 볼륨</span><div class="srange"><input type="range" id="auVol" min="0" max="200" value="${Math.round(o.vol*100)}"></div></div>
-    <div class="grid2"><label class="fld"><span>페이드 인 (초)</span><input class="in" id="auFi" type="number" min="0" step="0.1" value="${secS(o.fadeIn)}"></label><label class="fld"><span>페이드 아웃 (초)</span><input class="in" id="auFo" type="number" min="0" step="0.1" value="${secS(o.fadeOut)}"></label></div>
+    ${segs.length>1?`<div class="kv"><span>선택한 마디</span><b>${sg.k+1} / ${segs.length} · ${fmtS(sg.start)} ~ ${fmtS(sg.end)}</b></div>
+    <div class="fld"><span>마디 볼륨</span><div class="srange"><input type="range" id="sgVol" min="0" max="200" value="${Math.round(sg.cfg.vol*100)}"></div></div>`:''}
+    ${fadeHTML(sg?sg.cfg:SEG_DEF)}
     <button type="button" class="primary" id="auUnlink">Unlink · 소리 분리</button></div>`}
   const relink=canRelink()?`<button type="button" class="btn" id="auRelink">Relink · 프레임에 다시 연결</button>`:'';
   const keys=`잘라내기 ${kb('mod')}X · 복사 ${kb('mod')}C · 붙여넣기 ${kb('mod')}V · 복제 ${kb('mod')}D · 나누기 ${kb('mod+shift')}D · 앞/뒤 자르기 ${kb('alt')}[ / ${kb('alt')}] · 삭제 Del. 자르기·나누기는 재생 위치(주황 선) 기준이에요. 막대를 위아래로 끌면 다른 트랙으로 옮겨져요. 위쪽 아이콘이나 오른쪽 클릭 메뉴로도 할 수 있어요.`;
@@ -1919,14 +1971,17 @@ function audioPanelHTML(){
     <div class="fld"><span>볼륨</span><div class="srange"><input type="range" id="auVol" min="0" max="200" value="${Math.round(p.vol*100)}"></div></div>
     <div class="opt"><span>끝까지 반복 (배경음)</span><input type="checkbox" class="sw" id="acLoop" ${allLoop?'checked':''}></div>
     ${c?`<div class="grid2"><label class="fld"><span>시작 위치 (초)</span><input class="in" id="acStart" type="number" step="0.01" value="${secS(c.start)}"></label>${c.loop?`<label class="fld"><span>반복 길이 (초)</span><input class="in" id="acLoopLen" type="number" min="0.02" step="0.01" value="${secS(clipLen(c))}"></label>`:'<span></span>'}</div>
-    <div class="grid2"><label class="fld"><span>페이드 인 (초)</span><input class="in" id="auFi" type="number" min="0" step="0.1" value="${secS(c.fadeIn)}"></label><label class="fld"><span>페이드 아웃 (초)</span><input class="in" id="auFo" type="number" min="0" step="0.1" value="${secS(c.fadeOut)}"></label></div>`:''}
+    ${fadeHTML(c)}`:''}
     ${list.some(x=>x.fromLink)?relink:''}</div>`;
 }
 function bindAudioPanel(){
   const vol=$('#auVol');const rl=$('#auRelink');if(rl)rl.onclick=relinkAudio;
   if(S.aSel==='linked'){const o=S.linked;if(vol){springRange(vol);vol.onpointerdown=()=>{S.undo.push(snap());S.redo=[]};vol.oninput=e=>{o.vol=+e.target.value/100;renderTimeline()}}
-    const num=(id,fn)=>{const el=$('#'+id);if(el)el.onchange=e=>{const v=+e.target.value;if(!isFinite(v))return;commit(()=>fn(v))}};
-    num('auFi',v=>o.fadeIn=Math.max(0,Math.round(v*1000)));num('auFo',v=>o.fadeOut=Math.max(0,Math.round(v*1000)));$('#auUnlink').onclick=unlinkAudio;return}
+    const sv=$('#sgVol');if(sv){springRange(sv);sv.onpointerdown=()=>{S.undo.push(snap());S.redo=[]};sv.oninput=e=>setSegCfg(selSeg(),{vol:+e.target.value/100},true)}
+    const num=(id,key)=>{const el=$('#'+id);if(el)el.onchange=e=>{const v=+e.target.value;if(!isFinite(v))return;commit(()=>setSegCfg(selSeg(),{[key]:Math.max(0,Math.round(v*1000))}))}};
+    num('auFi','fadeIn');num('auFo','fadeOut');
+    ['auFiC','auFoC'].forEach(id=>{const el=$('#'+id);if(el)el.onchange=e=>commit(()=>setSegCfg(selSeg(),{[id==='auFiC'?'fiC':'foC']:e.target.value}))});
+    $('#auUnlink').onclick=unlinkAudio;return}
   const list=selClips();
   if(!list.length){const t=S.aTrack&&S.tracks.find(x=>x.id===S.aTrack);if(!t)return;
     if(vol){springRange(vol);vol.onpointerdown=()=>{S.undo.push(snap());S.redo=[]};vol.oninput=e=>{t.vol=+e.target.value/100;renderTimeline()}}
@@ -1937,6 +1992,7 @@ function bindAudioPanel(){
   const c=list.length===1?list[0]:null;
   if(c){const num=(id,fn)=>{const el=$('#'+id);if(el)el.onchange=e=>{const v=+e.target.value;if(!isFinite(v))return;commit(()=>fn(v))}};
     num('auFi',v=>c.fadeIn=Math.max(0,Math.round(v*1000)));num('auFo',v=>c.fadeOut=Math.max(0,Math.round(v*1000)));
+    ['auFiC','auFoC'].forEach(id=>{const el=$('#'+id);if(el)el.onchange=e=>commit(()=>{c[id==='auFiC'?'fiC':'foC']=e.target.value})});
     num('acStart',v=>c.start=Math.max(0,Math.round(v*1000)));num('acLoopLen',v=>{c.loopLen=Math.max(20,Math.round(v*1000))})}
 }
 
@@ -2412,12 +2468,12 @@ function addToEditor(items){
 const dz=$('#dz');
 dz.onclick=()=>openFile(S.mode==='layer'?'layer':'edit');
 $('#editEmpty').onclick=()=>openFile('edit');
-(()=>{const tips={cut:['Cut','잘라내기','mod+X'],copy:['Copy','복사','mod+C'],paste:['Paste','재생 위치에 붙여넣기','mod+V'],dup:['Duplicate','바로 뒤에 복제','mod+D'],
+(()=>{const tips={copy:['Copy','복사','mod+C'],paste:['Paste','재생 위치에 붙여넣기','mod+V'],dup:['Duplicate','바로 뒤에 복제','mod+D'],
     split:['Split','재생 위치에서 나누기','mod+shift+D'],trimIn:['Trim in','재생 위치 앞부분 잘라내기','alt+['],trimOut:['Trim out','재생 위치 뒷부분 잘라내기','alt+]'],
     loop:['Loop to end','끝까지 반복 (배경음) 켜기·끄기',''],del:['Delete','선택한 오디오 삭제','Del'],add:['Add audio','오디오 파일 불러오기','']};
   $$('[data-atool]').forEach(b=>{const t=tips[b.dataset.atool];b.dataset.tip=`${t[0]}|${t[1]}${t[2]?' · '+kb(t[2]):''}`;b.setAttribute('aria-label',t[1]);
     b.onclick=()=>{const k=b.dataset.atool,L=selClips(),c=selClip();
-      if(k==='cut')clipCopy(L,true);else if(k==='copy')clipCopy(L);else if(k==='paste')clipPaste();else if(k==='dup')clipDuplicate(L);else if(k==='split')clipSplit(L,playT());
+      if(k==='copy')clipCopy(L);else if(k==='paste')clipPaste();else if(k==='dup')clipDuplicate(L);else if(k==='split'){S.aSel==='linked'?splitLinked():clipSplit(L,playT())}
       else if(k==='trimIn'){c&&clipTrim(c,'in',playT())}else if(k==='trimOut'){c&&clipTrim(c,'out',playT())}else if(k==='loop')clipLoop(L,!L.every(x=>x.loop));
       else if(k==='del')clipDelete(L);else if(k==='add')openFile('audio','audio/*,video/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.opus,.mp4,.mov,.webm')}})})();
 $$('[data-tool]').forEach(b=>b.onclick=()=>{
@@ -2534,6 +2590,7 @@ addEventListener('keydown',e=>{
   if(e.key==='Escape')return;
   const ac=selClip();
   if(mod&&!e.shiftKey&&c==='KeyV'&&A.cbKind==='audio'&&A.cb.length)return go(()=>clipPaste());
+  if(S.aSel==='linked'&&mod&&e.shiftKey&&c==='KeyD')return go(()=>splitLinked());
   if(ac){
     if(e.key==='Delete'||e.key==='Backspace')return go(()=>clipDelete(selClips()));
     if(mod&&!e.shiftKey&&c==='KeyC')return go(()=>clipCopy(selClips()));
