@@ -351,6 +351,9 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .bub.on{opacity:1;transform:none}
 .bub b{display:block;font-weight:700}
 .bub span{display:block;color:rgba(255,255,255,.7);font-weight:500}
+.bub em.hl{font-style:normal;font-weight:700;color:#FF7A50}
+.opt .qh,.chkq .qh{display:inline-grid;margin:0 0 0 6px;vertical-align:-3px}
+.chkq{display:flex;align-items:center;min-height:34px}
 .bub::after{content:"";position:absolute;left:var(--ax,50%);top:-5px;width:10px;height:10px;background:#000;transform:translateX(-50%) rotate(45deg);border-radius:2px}
 .bub.up::after{top:auto;bottom:-5px}
 
@@ -782,7 +785,8 @@ function hideBub(){bub.classList.remove('on');bubEl=null;clearTimeout(bubT)}
 document.addEventListener('pointerover',e=>{
   if(e.pointerType==='touch')return;
   const el=e.target.closest('[data-tip]');if(el===bubEl)return;hideBub();if(!el)return;bubEl=el;
-  bubT=setTimeout(()=>{if(bubEl!==el||!el.isConnected)return;const[a,b]=el.dataset.tip.split('|');bub.innerHTML=`<b>${esc(a)}</b>${b?`<span>${esc(b)}</span>`:''}`;
+  bubT=setTimeout(()=>{if(bubEl!==el||!el.isConnected)return;const tip=el.dataset.tip,cut=tip.indexOf('|'),a=cut<0?tip:tip.slice(0,cut),b=cut<0?'':tip.slice(cut+1);
+    const body=b.split('\n').map(l=>l.startsWith('!!')?`<em class="hl">${esc(l.slice(2))}</em>`:esc(l)).join('<br>');bub.innerHTML=`<b>${esc(a)}</b>${b?`<span>${body}</span>`:''}`;
     const r=el.getBoundingClientRect(),bw=bub.offsetWidth,bh=bub.offsetHeight;
     let left=clamp(r.left+r.width/2-bw/2,8,innerWidth-bw-8);let top=r.bottom+10,up=false;if(top+bh>innerHeight-8){top=r.top-bh-10;up=true}
     bub.style.left=left+'px';bub.style.top=top+'px';bub.style.setProperty('--ax',(r.left+r.width/2-left)+'px');bub.classList.toggle('up',up);bub.classList.add('on')},380);
@@ -2460,21 +2464,21 @@ async function openSave(onlySel){
       <div class="fld"><span>저장 포맷</span><div class="sortbar" id="svFmt">${fmtBtns}</div></div>
       <label class="fld"><span>파일명</span><div style="display:flex;gap:6px;align-items:center"><input class="in" id="svName" type="text" value="${esc(o.name)}"><span id="svExt" style="color:var(--mute2);font-weight:600">.gif</span></div></label>
       <div class="grid2"><label class="fld"><span>반복</span><select class="in" id="svLoop"><option value="inf">무한 반복</option><option value="1">1회 재생</option><option value="2">2회</option><option value="3">3회</option><option value="5">5회</option></select></label>
-        <div class="fld" id="svDitherRow"><span>&nbsp;</span><label class="chk" style="min-height:34px"><input type="checkbox" id="svDither" ${o.dither?'checked':''}>디더링</label></div></div>
+        <div class="fld" id="svDitherRow"><span>&nbsp;</span><div class="chkq"><label class="chk"><input type="checkbox" id="svDither" ${o.dither?'checked':''}>디더링</label>${qh('디더링','색 수가 부족할 때 점을 섞어서 중간색처럼 보이게 해요.\n그라데이션의 줄무늬는 줄지만, 점 노이즈가 생기고 용량이 커져요.\n원래 GIF 색을 그대로 저장할 때(화질 85% 이상)는 쓰이지 않아요.')}</div></div></div>
       <div class="fld"><span>화질 <span id="svQNote" style="color:var(--mute)"></span></span><div class="srange"><input type="range" id="svQ" min="1" max="100" value="${o.q}"></div></div>
-      <div class="fld" id="svLossyRow"><span class="vhead">Lossy 압축 <span id="svLossyNote" style="color:var(--mute);font-weight:500"></span>${qh('Lossy','거의 같은 색을 같은 걸로 묶어 압축해요. 색 수·프레임·크기는 그대로 두고 용량을 줄이는 방법이에요. 15~25에서 시작해 미리보기를 100%로 확대해 확인하세요. 높이면 가로 번짐이나 지글거림이 생길 수 있고, 한 번 저장하면 되돌릴 수 없어요. 0이면 꺼져요.')}</span><div class="srange"><input type="range" id="svLossy" min="0" max="100" value="${o.lossy||0}"></div></div>
+      <div class="fld" id="svLossyRow"><span class="vhead">Lossy 압축 <span id="svLossyNote" style="color:var(--mute);font-weight:500"></span>${qh('Lossy','!!비슷한 색을 같은 색으로 묶어 용량을 줄이는 방법.\n낮은 값으로 시작 및 100% 사이즈로 확인하며 진행을 권장.\n값이 높아지면 가로번짐 및 지글거림이 생길 수 있습니다.')}</span><div class="srange"><input type="range" id="svLossy" min="0" max="100" value="${o.lossy||0}"></div></div>
       <div class="card2">
         <div class="opt" id="svAudioRow"${aud?'':' hidden'}><span>소리 포함<small id="svAudioNote"></small></span><input type="checkbox" class="sw" id="svAudio" ${SAVE_PREF.audio!==false?'checked':''}></div>
-        <div class="opt"><span>진행 표시 삽입</span><input type="checkbox" class="sw" id="svBar"></div>
+        <div class="opt"><span>진행바 삽입${qh('진행바 삽입','재생 위치를 보여주는 얇은 막대를 화면 위나 아래에 그려 넣어요.\n색과 위치를 고를 수 있고, 저장 파일에 그대로 들어가요.')}</span><input type="checkbox" class="sw" id="svBar"></div>
         <div class="grid2" id="svBarOpts" hidden><label class="fld"><span>색</span><input type="color" id="svBarC" value="${o.barColor}" class="in" style="padding:2px"></label><label class="fld"><span>위치</span><select class="in" id="svBarPos"><option value="bottom">아래</option><option value="top">위</option></select></label></div>
-        <div class="opt"><span>파일 용량 더 줄이기<small>화질을 조금 낮추고 정지된 부분을 더 많이 재사용</small></span><input type="checkbox" class="sw" id="svReduce"></div>
-        <div class="opt"><span>이미지 크기 줄이기</span><input type="checkbox" class="sw" id="svScaleOn"></div>
+        <div class="opt"><span>파일 용량 더 줄이기${qh('파일 용량 더 줄이기','GIF: 쓸 수 있는 색 수를 25% 줄이고, 조금만 바뀐 픽셀은 이전 프레임을 그대로 재사용해요.\nWebP는 품질을 15 낮추고, MP4·WebM은 비트레이트를 낮춰요.\n주의: 그라데이션·피부가 거칠어지고, 천천히 바뀌는 부분이 늦게 따라와 잔상·얼룩처럼 보일 수 있어요.\n원래 GIF 색 그대로 저장도 꺼지니, 포토샵 GIF를 고쳐 다시 저장할 땐 켜지 않는 걸 권장해요.')}</span><input type="checkbox" class="sw" id="svReduce"></div>
+        <div class="opt"><span>이미지 크기 줄이기${qh('이미지 크기 줄이기','가로·세로 픽셀 수를 줄여요. 비율 유지를 풀면 따로 정할 수 있어요.\n용량이 크게 줄지만, 화면이 작아지고 작은 글자가 흐려질 수 있어요.')}</span><input type="checkbox" class="sw" id="svScaleOn"></div>
         <div class="sub-in" id="svScaleRow" hidden>
           <div class="srange"><input type="range" id="svScale" min="5" max="100" value="${o.scale}"></div>
           <div class="grid2"><label class="fld"><span>너비 (px)</span><input class="in" id="svSW" type="number" min="1"></label><label class="fld"><span>높이 (px)</span><input class="in" id="svSH" type="number" min="1"></label></div>
           <label class="chk"><input type="checkbox" id="svKeep" ${o.keep!==false?'checked':''}>가로세로 비율 유지</label>
         </div>
-        <div class="opt"><span>최대 용량에 맞추기<small>넘을 것 같으면 무엇을 줄일지 미리 알려 드려요</small></span><input type="checkbox" class="sw" id="svMaxOn"></div>
+        <div class="opt"><span>최대 용량에 맞추기${qh('최대 용량에 맞추기','정한 용량을 넘을 것 같으면 무엇을 얼마나 줄일지 미리 보여 주고, 저장할 때 그만큼 맞춰요.\n줄일 항목은 크기·화질·프레임 수 중에 고를 수 있어요. GIF의 화질은 Lossy를 먼저 올려요.')}</span><input type="checkbox" class="sw" id="svMaxOn"></div>
         <div class="sub-in" id="svMaxRow" hidden>
           <label class="fld"><span>최대 (MB)</span><input class="in" id="svMax" type="number" min="0.1" step="0.1" value="${o.maxMB}"></label>
           <div class="fld" id="svFitRow"><span>줄일 항목</span><div class="sortbar" id="svFit">
