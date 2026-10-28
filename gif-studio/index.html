@@ -352,7 +352,7 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .bub b{display:block;font-weight:700}
 .bub span{display:block;color:rgba(255,255,255,.7);font-weight:500}
 .bub em.hl{font-style:normal;font-weight:700;color:#FF7A50}
-.opt .qh,.chkq .qh{display:inline-grid;margin:0 0 0 6px;vertical-align:-3px}
+.opt .qh,.chkq .qh,.fld>span .qh{display:inline-grid;margin:0 0 0 6px;vertical-align:-3px}
 .chkq{display:flex;align-items:center;min-height:34px}
 .bub::after{content:"";position:absolute;left:var(--ax,50%);top:-5px;width:10px;height:10px;background:#000;transform:translateX(-50%) rotate(45deg);border-radius:2px}
 .bub.up::after{top:auto;bottom:-5px}
@@ -1645,7 +1645,7 @@ const CURVE_OPTS=[['lin','Linear'],['in','Ease in'],['out','Ease out'],['s','S-c
 /* fiL / foL: where a fade starts / ends, as a share of the volume (0 = silence) */
 function envelope(p,vol,a,b,fin,fout,fiC='lin',foC='lin',hard=false,fiL=0,foL=0){
   const len=Math.max(0.002,b-a);const mn=hard?0:0.004;let fi=Math.max(mn,fin/1000),fo=Math.max(mn,fout/1000);if(fi+fo>len){const k=len/(fi+fo);fi*=k;fo*=k}
-  const v0=vol*clamp(fiL||0,0,1),v1=vol*clamp(foL||0,0,1);
+  const v0=vol*clamp(fiL||0,0,2),v1=vol*clamp(foL||0,0,2);
   const cv=(f,up,n)=>{const r=new Float32Array(n);for(let k=0;k<n;k++){const x=k/(n-1);r[k]=up?v0+(vol-v0)*CURVE[f](x):vol-(vol-v1)*CURVE[f](x)}return r};
   const N=t=>Math.max(8,Math.min(512,Math.round(t*400)));const eps=1e-4;
   try{
@@ -1660,7 +1660,7 @@ function envelope(p,vol,a,b,fin,fout,fiC='lin',foC='lin',hard=false,fiL=0,foL=0)
 }
 /* the same shape as a number (0..1) at time t ms inside a part of length len ms: used to draw waves and the volume line */
 function envGain(t,len,o){let fi=o.fadeIn||0,fo=o.fadeOut||0;if(fi+fo>len&&fi+fo>0){const k=len/(fi+fo);fi*=k;fo*=k}
-  const fiL=clamp(o.fiL||0,0,1),foL=clamp(o.foL||0,0,1);
+  const fiL=clamp(o.fiL||0,0,2),foL=clamp(o.foL||0,0,2);
   if(fi>0&&t<fi)return fiL+(1-fiL)*(CURVE[o.fiC]||CURVE.lin)(clamp(t/fi,0,1));
   if(fo>0&&t>len-fo)return 1-(1-foL)*(CURVE[o.foC]||CURVE.lin)(clamp((t-(len-fo))/fo,0,1));
   return 1}
@@ -1952,11 +1952,13 @@ tlCv.addEventListener('pointermove',e=>{if(e.buttons||!tlGeom)return;const r=tlC
 /* volume (0..2) under a y position inside a row starting at rowY */
 const yToVol=(rowY,yy)=>clamp((1-(yy-(rowY+6))/(ROW-12))*2,0,2);
 /* while dragging on the timeline, keep the panel numbers in step */
+/* fade level shown as -100 (silence) .. 0 (the volume itself) .. +100 (double) */
+const LV=v=>Math.round(((v||0)-1)*100);
 function livePanel(){
   const setR=(id,v)=>{const el=$('#'+id);if(el&&document.activeElement!==el){el.value=v;el._sp&&el._sp.sync()}},setN=(id,v)=>{const el=$('#'+id);if(el&&document.activeElement!==el)el.value=v};
   const P=v=>Math.round(v*100);
-  if(S.aSel==='linked'){const sg=selSeg();setR('auVol',P(S.linked.vol));setN('auVolN',P(S.linked.vol));if(sg){setR('sgVol',P(sg.cfg.vol));setN('sgVolN',P(sg.cfg.vol));setN('auFiL',P(sg.cfg.fiL||0));setN('auFoL',P(sg.cfg.foL||0))}return}
-  const p=selClip()||selClips()[0];if(p){setR('auVol',P(p.vol));setN('auVolN',P(p.vol));setN('auFiL',P(p.fiL||0));setN('auFoL',P(p.foL||0))}}
+  if(S.aSel==='linked'){const sg=selSeg();setR('auVol',P(S.linked.vol));setN('auVolN',P(S.linked.vol));if(sg){setR('sgVol',P(sg.cfg.vol));setN('sgVolN',P(sg.cfg.vol));setN('auFiL',LV(sg.cfg.fiL));setN('auFoL',LV(sg.cfg.foL))}return}
+  const p=selClip()||selClips()[0];if(p){setR('auVol',P(p.vol));setN('auVolN',P(p.vol));setN('auFiL',LV(p.fiL));setN('auFoL',LV(p.foL))}}
 /* finish any half-typed panel value first, so it lands on the item it was typed for */
 const blurPanel=()=>{const a=document.activeElement;if(a&&$('#panel').contains(a))a.blur()};
 tlCv.addEventListener('pointerdown',e=>{
@@ -1972,7 +1974,7 @@ tlCv.addEventListener('pointerdown',e=>{
       const mv=ev=>{const dy=ev.clientY-sy;if(!moved&&Math.abs(dy)<2)return;moved=true;const sg=linkedSegs()[k0];
         /* with a single part the line is the Master Volume; with several parts it is that part's Select Volume */
         if(h.mode==='lv'){if(one){S.linked.vol=Math.round(clamp(m0-dy/(ROW-12)*2,0,2)*100)/100;renderTimeline()}else setSegCfg(sg,{vol:Math.round(clamp(v0-dy/(ROW-12)*2,0,2)*100)/100},true)}
-        else setSegCfg(sg,{[h.mode==='fil'?'fiL':'foL']:Math.round(clamp(l0-dy/(ROW-12),0,1)*100)/100},true);
+        else setSegCfg(sg,{[h.mode==='fil'?'fiL':'foL']:Math.round(clamp(l0-dy/(ROW-12),0,2)*100)/100},true);
         livePanel()};
       const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);if(!moved)S.undo.pop();renderTimeline();renderPanel()};addEventListener('pointermove',mv);addEventListener('pointerup',up);return}
     renderTimeline();renderPanel();return}
@@ -1990,7 +1992,7 @@ tlCv.addEventListener('pointerdown',e=>{
   const rowOfTrack=id=>g.tr.findIndex(t=>t.id===id);
   const mv=ev=>{const dx=ev.clientX-sx,dy=ev.clientY-sy;const th=mode==='fil'||mode==='fol'||mode==='v'?2:3;if(!moved&&Math.abs(dx)<th&&Math.abs(dy)<th)return;moved=true;const dt=dx/g.k,L0=clipLen(c0);
     if(mode==='v'){const dv=-dy/(ROW-12)*2;group.forEach((x,i)=>{x.vol=Math.round(clamp(g0[i].vol+dv,0,2)*100)/100});renderTimeline();livePanel();return}
-    if(mode==='fil'||mode==='fol'){const k2=mode==='fil'?'fiL':'foL';c[k2]=Math.round(clamp((c0[k2]||0)-dy/(ROW-12),0,1)*100)/100;renderTimeline();livePanel();return}
+    if(mode==='fil'||mode==='fol'){const k2=mode==='fil'?'fiL':'foL';c[k2]=Math.round(clamp((c0[k2]||0)-dy/(ROW-12),0,2)*100)/100;renderTimeline();livePanel();return}
     if(mode==='m'){const ns=c0.start+dt,a=snapT(ns),b=snapT(ns+L0)-L0;const st=Math.round(Math.abs(a-ns)<=Math.abs(b-ns)?a:b);const d=Math.max(-Math.min(...g0.map(x=>x.start)),st-c0.start);
       group.forEach((x,i)=>{x.start=Math.round(g0[i].start+d)});
       /* drag up/down to move onto another track (single clip) */
@@ -2033,10 +2035,10 @@ const secS=ms=>(ms/1000).toFixed(2);
 const curveSel=(id,v)=>`<select class="in" id="${id}" aria-label="곡선">${CURVE_OPTS.map(([k,t])=>`<option value="${k}"${k===(v||'lin')?' selected':''}>${t}</option>`).join('')}</select>`;
 const fadeHTML=o=>`<div class="fadegrid">
     <div class="fcol"><label class="fld"><span>Fade in (s)</span><input class="in" id="auFi" type="number" min="0" step="0.1" value="${secS(o.fadeIn)}"></label>${curveSel('auFiC',o.fiC)}
-      <label class="fld"><span>Start volume (%)</span><input class="in" id="auFiL" type="number" min="0" max="100" step="1" value="${Math.round((o.fiL||0)*100)}"></label></div>
+      <label class="fld"><span>Start volume${qh('Start volume','-100 무음에서 시작 · 0 원래 볼륨 그대로 · +100 두 배 큰 소리에서 시작\n-100이면 점점 커지고, +값이면 큰 소리에서 원래 볼륨으로 작아져요.\n+값은 원래보다 커서 소리가 찢어질 수 있어요.')}</span><input class="in" id="auFiL" type="number" min="-100" max="100" step="1" value="${LV(o.fiL)}"></label></div>
     <div class="fsep"></div>
     <div class="fcol"><label class="fld"><span>Fade out (s)</span><input class="in" id="auFo" type="number" min="0" step="0.1" value="${secS(o.fadeOut)}"></label>${curveSel('auFoC',o.foC)}
-      <label class="fld"><span>End volume (%)</span><input class="in" id="auFoL" type="number" min="0" max="100" step="1" value="${Math.round((o.foL||0)*100)}"></label></div></div>`;
+      <label class="fld"><span>End volume${qh('End volume','-100 무음으로 끝 · 0 원래 볼륨 그대로 · +100 두 배 큰 소리로 끝\n-100이면 점점 작아지고, +값이면 원래 볼륨에서 커지며 끝나요.\n+값은 원래보다 커서 소리가 찢어질 수 있어요.')}</span><input class="in" id="auFoL" type="number" min="-100" max="100" step="1" value="${LV(o.foL)}"></label></div></div>`;
 /* a volume slider with a % number box that stay in step */
 const volField=(id,label,v,sub='')=>`<div class="fld"><span class="vhead">${label}${sub?`<small>${sub}</small>`:''}<span class="vnum"><input class="in" id="${id}N" type="number" min="0" max="200" step="1" value="${Math.round(v*100)}" aria-label="${label} %">%</span></span><div class="srange"><input type="range" id="${id}" min="0" max="200" value="${Math.round(v*100)}" aria-label="${label}"></div></div>`;
 function bindVol(id,apply){const r=$('#'+id),n=$('#'+id+'N');if(!r)return;springRange(r);
@@ -2044,7 +2046,7 @@ function bindVol(id,apply){const r=$('#'+id),n=$('#'+id+'N');if(!r)return;spring
   if(n)n.onchange=()=>{const v=clamp(Math.round(+n.value||0),0,200);n.value=v;r.value=v;r._sp&&r._sp.sync();commit(()=>apply(v/100,false))}}
 const qh=(t,d)=>`<button type="button" class="qh" data-tip="${esc(t)}|${esc(d)}" aria-label="도움말">?</button>`;
 function audioPanelHTML(){
-  if(S.aSel==='linked'){const o=S.linked,segs=linkedSegs(),sg=selSeg(segs);return`<div class="sec"><h3>${icon(ICO_LINK)}Frame audio${qh('Frame audio','영상에서 가져온 소리예요. 위치는 프레임에 묶여 있어서 옮길 수 없지만, 재생 위치(프레임 경계)에서 나누기(Split)는 할 수 있어요. 나눈 마디마다 볼륨과 Fade를 따로 줘요. 막대에서 마디를 눌러 고르고, 오른쪽 클릭으로 앞 마디와 합칠 수 있어요. 페이드 곡선: Linear 일정하게 · Ease in 점점 빠르게 · Ease out 점점 느리게 · S-curve 천천히-빠르게-천천히. Start/End volume은 페이드가 시작·끝나는 볼륨이고, 막대 위 노란 점을 위아래로 끌어도 바뀌어요. 일부 프레임만 크게·작게 하려면 Selected frames의 소리 볼륨을 쓰세요. Unlink하면 마디가 각각 오디오 클립이 되고, Relink로 다시 연결할 수 있어요.')}</h3>
+  if(S.aSel==='linked'){const o=S.linked,segs=linkedSegs(),sg=selSeg(segs);return`<div class="sec"><h3>${icon(ICO_LINK)}Frame audio${qh('Frame audio','영상에서 가져온 소리예요. 위치는 프레임에 묶여 있어서 옮길 수 없지만, 재생 위치(프레임 경계)에서 나누기(Split)는 할 수 있어요. 나눈 마디마다 볼륨과 Fade를 따로 줘요. 막대에서 마디를 눌러 고르고, 오른쪽 클릭으로 앞 마디와 합칠 수 있어요. 페이드 곡선: Linear 일정하게 · Ease in 점점 빠르게 · Ease out 점점 느리게 · S-curve 천천히-빠르게-천천히. Start/End volume은 -100(무음) · 0(원래 볼륨) · +100(두 배)이고, 막대 위 노란 점을 위아래로 끌어도 바뀌어요. 일부 프레임만 크게·작게 하려면 Selected frames의 소리 볼륨을 쓰세요. Unlink하면 마디가 각각 오디오 클립이 되고, Relink로 다시 연결할 수 있어요.')}</h3>
     ${volField('auVol','Master Volume',o.vol)}
     ${segs.length>1?volField('sgVol','Select Volume',sg.cfg.vol,`${sg.k+1}/${segs.length} · ${fmtS(sg.start)}~${fmtS(sg.end)}`):''}
     ${fadeHTML(sg?sg.cfg:SEG_DEF)}</div>`}
@@ -2069,7 +2071,7 @@ function audioPanelHTML(){
 }
 function bindAudioPanel(){
   const rl=$('#auRelink');if(rl)rl.onclick=relinkAudio;
-  const pct=v=>clamp(Math.round(+v||0),0,100)/100;
+  const pct=v=>clamp(1+Math.round(+v||0)/100,0,2);
   if(S.aSel==='linked'){const o=S.linked;
     bindVol('auVol',v=>{o.vol=v;renderTimeline()});
     bindVol('sgVol',(v,live)=>setSegCfg(selSeg(),{vol:v},live));
@@ -2846,6 +2848,16 @@ function focusWidth(){
     if(audioFocus()){clearAudioSel();renderTimeline()}renderPanel();el=S.crop.active?$('#crW'):$('#rzW')}
   if(!el)return;el.scrollIntoView({block:'center',behavior:'smooth'});el.focus({preventScroll:true});el.select();
 }
+/* Space always plays / pauses (never presses the last clicked button), except while typing text */
+const isTyping=el=>!!el&&(el.isContentEditable||el.tagName==='TEXTAREA'||(el.tagName==='INPUT'&&/^(text|number|search|email|url|password|tel)$/.test(el.type)));
+addEventListener('keydown',e=>{
+  if(e.code!=='Space'||e.ctrlKey||e.metaKey||e.altKey||isTyping(e.target))return;
+  e.preventDefault();e.stopImmediatePropagation();if(e.repeat)return;
+  if($('.tour-card')||!$('#busy').hidden)return;
+  if(!$('#modal').hidden){const sp=$('#svPlay');if(sp)sp.click();return}
+  closeMenu();if(S.mode==='layer'){L.playing?stopPlay():play()}else{S.playing?stopPlay():play()}
+},true);
+addEventListener('keyup',e=>{if(e.code==='Space'&&!isTyping(e.target))e.preventDefault()},true);
 /* ---------- keyboard ---------- */
 addEventListener('keydown',e=>{
   if(e.key==='Escape'){if(!$('#ctx').hidden)return closeMenu();if(modalClose)return modalClose();if(S.crop.active){S.crop.active=false;renderStage();renderPanel();return}if(S.aSel||S.aTrack){clearAudioSel();renderTimeline();renderPanel()}return}
@@ -2862,7 +2874,6 @@ addEventListener('keydown',e=>{
     const ly=selLayer();
     if(ly&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)&&!e.target.matches('input')){e.preventDefault();const st=e.shiftKey?10:1;lPush();if(e.key==='ArrowUp')ly.y-=st;if(e.key==='ArrowDown')ly.y+=st;if(e.key==='ArrowLeft')ly.x-=st;if(e.key==='ArrowRight')ly.x+=st;placeLayerBox();syncLayerInputs();renderLayerStage();return}
     if(ly&&(e.key==='Delete'||e.key==='Backspace'))return go(()=>{lPush();L.layers=L.layers.filter(l=>l!==ly);L.sel=L.layers[0]?.id??null;lChanged()});
-    if(e.code==='Space'&&!e.target.matches('button'))return go(()=>L.playing?stopPlay():play());
     return;
   }
   if(!S.frames.length||e.target.matches('input'))return;
@@ -2900,7 +2911,6 @@ addEventListener('keydown',e=>{
   if(mod&&c==='KeyC')return go(()=>{const x=s();x&&OPS.copy(x)});
   if(mod&&c==='KeyX')return go(()=>{const x=s();x&&OPS.cut(x)});
   if(mod&&c==='KeyV')return go(()=>OPS.paste(e.shiftKey));
-  if(c==='Space'&&!e.target.matches('button'))return go(()=>S.playing?stopPlay():play());
   if(e.key==='ArrowLeft')return go(()=>goFrame(S.cur-1));
   if(e.key==='ArrowRight')return go(()=>goFrame(S.cur+1));
   if(e.key==='Home')return go(()=>goFrame(0));
