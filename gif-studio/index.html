@@ -2128,7 +2128,128 @@ function gifPaint(st,r,W,H){
   for(let p=0,j=0;p<n;p++,j+=4){const k=idx[p];if(k===ti){if(dispose===2)d[j+3]=0;continue}const c=pal[k];d[j]=c[0];d[j+1]=c[1];d[j+2]=c[2];d[j+3]=255}
   return d;
 }
+/* =========================================================
+   GIF writer: one shared palette, only the changed box per frame, optional lossy LZW
+   ========================================================= */
+const LZW_STAMP=new Int32Array(4096*256),LZW_VAL=new Int16Array(4096*256);let LZW_GEN=0;
+const LZW_FIRST=new Int16Array(4096),LZW_NEXT=new Int16Array(4096),LZW_CH=new Uint8Array(4096);
+/* LZW (GIF flavour). With thr>0 a pixel may follow an existing dictionary branch whose colour is within thr
+   (sum of |dR|+|dG|+|dB|): longer matches, smaller file. `out` receives the pixels as actually encoded. */
+function lzwEncode(idx,mcs,thr,dist,ti,out){
+  const n=idx.length,clear=1<<mcs,eoi=clear+1;
+  let bytes=new Uint8Array(Math.max(4096,n>>1)),bl=0,cur=0,nb=0;
+  const put=v=>{if(bl>=bytes.length){const nb2=new Uint8Array(bytes.length*2);nb2.set(bytes);bytes=nb2}bytes[bl++]=v};
+  let sz,maxcode,nxt,gen;
+  const emit=code=>{cur|=code<<nb;nb+=sz;while(nb>=8){put(cur&255);cur>>>=8;nb-=8}};
+  const reset=()=>{gen=++LZW_GEN;if(gen>2e9){LZW_STAMP.fill(0);gen=LZW_GEN=1}nxt=eoi+1;sz=mcs+1;maxcode=(1<<sz)-1;LZW_FIRST.fill(-1)};
+  reset();emit(clear);
+  let i=0;
+  while(i<n){
+    let node=idx[i];out[i]=node;i++;
+    while(i<n){const c=idx[i],key=node*256+c;
+      if(LZW_STAMP[key]===gen){node=LZW_VAL[key];out[i]=c;i++;continue}
+      if(thr>0&&c!==ti){let best=-1,bd=thr+1;
+        for(let ch=LZW_FIRST[node];ch>=0;ch=LZW_NEXT[ch]){const cc=LZW_CH[ch];if(cc===ti)continue;const d=dist[cc*256+c];if(d<bd){bd=d;best=ch}}
+        if(best>=0){node=best;out[i]=LZW_CH[best];i++;continue}}
+      break}
+    emit(node);
+    if(nxt>maxcode&&sz<12){sz++;maxcode=sz===12?4096:(1<<sz)-1}
+    if(i<n){
+      if(nxt<4096){const c=idx[i],key=node*256+c;LZW_STAMP[key]=gen;LZW_VAL[key]=nxt;LZW_CH[nxt]=c;LZW_NEXT[nxt]=LZW_FIRST[node];LZW_FIRST[node]=nxt;nxt++}
+      else{emit(clear);reset()}
+    }
+  }
+  emit(eoi);if(nb>0)put(cur&255);
+  return bytes.subarray(0,bl);
+}
+/* pass 1: one palette for the whole animation.
+   exact : every colour fits (a GIF being re-saved) -> kept as is, no dithering
+   keep  : almost every pixel uses <=255 colours (a GIF with a small patch on top) -> those colours kept, the few others snap to the nearest
+   quant : otherwise one palette is built from all frames */
+async function gifPalette(frames,W,H,o,job,phase){
+  if(frames.some(f=>f.alpha||aspectOff(f)))return{legacy:true};
+  const G=await getGifenc();const rc=outCtx(W,H);prepFrames(frames,o);const n=W*H;
+  const maxC=Math.min(255,qColors(o.q,o.reduce)),keepMax=o.q>=85&&!o.reduce?255:maxC;const cnt=new Map();let track=true,total=0;
+  const step=Math.max(1,Math.floor(frames.length*n/1.2e6));const smp=new Uint8Array((Math.floor(frames.length*n/step)+frames.length+4)*4);let q=0,g=0;
+  for(let i=0;i<frames.length;i++){
+    if(job&&job.cancel)throw new Cancel();
+    await renderOut(rc,frames,i,W,H,{...o,opaque:true});const px=rc.x.getImageData(0,0,W,H).data;let last=-1,run=0;
+    for(let p=0,j=0;p<n;p++,j+=4,g++){const k=(px[j]<<16)|(px[j+1]<<8)|px[j+2];
+      if(track){if(k===last)run++;else{if(last>=0)cnt.set(last,(cnt.get(last)||0)+run);last=k;run=1;if(cnt.size>8192){track=false;cnt.clear()}}}
+      if(g%step===0){smp[q]=px[j];smp[q+1]=px[j+1];smp[q+2]=px[j+2];smp[q+3]=255;q+=4}}
+    if(track&&last>=0)cnt.set(last,(cnt.get(last)||0)+run);total+=n;
+    if(phase)phase(i+1);await tick();
+  }
+  let pal,mode='quant',map=null;
+  if(track&&cnt.size&&cnt.size<=keepMax){mode='exact';pal=[...cnt.keys()]}
+  else if(track&&keepMax===255){const top=[...cnt.entries()].sort((a,b)=>b[1]-a[1]).slice(0,255);const cov=top.reduce((s,e)=>s+e[1],0)/total;if(cov>=0.99){mode='keep';pal=top.map(e=>e[0])}}
+  if(mode!=='quant'){map=new Map(pal.map((k,i)=>[k,i]));pal=pal.map(k=>[k>>16&255,k>>8&255,k&255])}
+  else pal=G.quantize(smp.subarray(0,q),maxC);
+  const np=pal.length,dist=new Uint16Array(65536);
+  for(let a=0;a<np;a++)for(let b=0;b<np;b++)dist[a*256+b]=Math.abs(pal[a][0]-pal[b][0])+Math.abs(pal[a][1]-pal[b][1])+Math.abs(pal[a][2]-pal[b][2]);
+  return{pal,mode,exact:mode==='exact',map,dist};
+}
+function gifState(pi,o,W,H){const lossy=clamp(Math.round(+o.lossy||0),0,100);const n=W*H;
+  return{...pi,W,H,first:true,prev:new Int32Array(n).fill(-1),src:pi.map?new Int32Array(n).fill(-1):null,near:new Map(),
+    dither:!!o.dither&&!pi.map,lossy,same:Math.max(o.reduce?36:10,lossy)}}
+/* nearest palette entry for a colour outside the kept palette */
+function gifNear(st,k){let v=st.near.get(k);if(v!==undefined)return v;const r=k>>16&255,g=k>>8&255,b=k&255,pal=st.pal;let best=0,bd=1e9;
+  for(let i=0;i<pal.length;i++){const c=pal[i];const d=(r-c[0])**2*2+(g-c[1])**2*4+(b-c[2])**2*3;if(d<bd){bd=d;best=i}}st.near.set(k,best);return best}
+/* the size estimate runs often: keep the palette while only Lossy / dithering change */
+let GP_CACHE={key:'',frames:null,pi:null};
+async function gifPaletteCached(frames,W,H,o){const key=JSON.stringify([o.q,o.reduce,o.bar,o.barColor,o.barPos,W,H,frames.length,S.total]);
+  if(GP_CACHE.key===key&&GP_CACHE.frames===frames&&GP_CACHE.pi)return GP_CACHE.pi;const pi=await gifPalette(frames,W,H,o,null,null);GP_CACHE={key,frames,pi};return pi}
+/* one frame: find what changed, keep that box, map to the palette, LZW it */
+function gifFrame(st,px){
+  const{W,H}=st,n=W*H,TI=255,prev=st.prev,src=st.src;let x0=0,y0=0,x1=W-1,y1=H-1,mask=null;
+  if(!st.first){mask=new Uint8Array(n);x0=W;y0=H;x1=-1;y1=-1;const thr=st.same;
+    for(let y=0,p=0;y<H;y++)for(let x=0;x<W;x++,p++){const j=p*4;let same;
+      /* palette kept: compare with the previous source frame, so snapped colours do not count as changes */
+      if(src){const k=(px[j]<<16)|(px[j+1]<<8)|px[j+2];same=src[p]===k;
+        /* with Lossy on, a pixel already shown within the Lossy tolerance also counts as unchanged */
+        if(!same&&st.lossy>0){const pv=prev[p];same=pv>=0&&Math.abs(px[j]-(pv>>16&255))+Math.abs(px[j+1]-(pv>>8&255))+Math.abs(px[j+2]-(pv&255))<=st.lossy}}
+      else{const pv=prev[p];same=pv>=0&&Math.abs(px[j]-(pv>>16&255))+Math.abs(px[j+1]-(pv>>8&255))+Math.abs(px[j+2]-(pv&255))<=thr}
+      if(same)mask[p]=1;else{if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}}
+    if(x1<0){st.first=false;return{x:0,y:0,w:1,h:1,bytes:lzwEncode(new Uint8Array([TI]),8,0,st.dist,TI,new Uint8Array(1)),ti:TI}}}
+  if(src)for(let p=0,j=0;p<n;p++,j+=4)src[p]=(px[j]<<16)|(px[j+1]<<8)|px[j+2];
+  const bw=x1-x0+1,bh=y1-y0+1,m=bw*bh;const cp=new Uint8ClampedArray(m*4),cm=mask?new Uint8Array(m):null;
+  for(let y=0;y<bh;y++){const s=(y0+y)*W+x0;cp.set(px.subarray(s*4,(s+bw)*4),y*bw*4);if(cm)cm.set(mask.subarray(s,s+bw),y*bw)}
+  let idx;
+  if(st.map){idx=new Uint8Array(m);const map=st.map;for(let d=0,j=0;d<m;d++,j+=4){if(cm&&cm[d]){idx[d]=TI;continue}const k=(cp[j]<<16)|(cp[j+1]<<8)|cp[j+2];const v=map.get(k);idx[d]=v===undefined?gifNear(st,k):v}}
+  else{idx=mapPixels(cp,bw,bh,st.pal,st.dither,cm);if(cm)for(let d=0;d<m;d++)if(cm[d])idx[d]=TI}
+  const fin=new Uint8Array(m);const bytes=lzwEncode(idx,8,st.lossy,st.dist,TI,fin);
+  const pal=st.pal;for(let y=0;y<bh;y++)for(let x=0;x<bw;x++){const v=fin[y*bw+x];if(v===TI)continue;const c=pal[v];prev[(y0+y)*W+x0+x]=(c[0]<<16)|(c[1]<<8)|c[2]}
+  st.first=false;return{x:x0,y:y0,w:bw,h:bh,bytes,ti:mask?TI:-1};
+}
+/* what a viewer shows after the frames so far */
+function gifShown(st,buf){const n=st.W*st.H,prev=st.prev;if(!buf||buf.length!==n*4)buf=new Uint8ClampedArray(n*4);
+  for(let p=0,j=0;p<n;p++,j+=4){const v=prev[p];if(v<0){buf[j+3]=0;continue}buf[j]=v>>16&255;buf[j+1]=v>>8&255;buf[j+2]=v&255;buf[j+3]=255}return buf}
+function gifAssemble(W,H,pal,o,frames){
+  const parts=[],hd=[];const w16=v=>hd.push(v&255,v>>8&255);
+  for(const ch of 'GIF89a')hd.push(ch.charCodeAt(0));w16(W);w16(H);hd.push(0xF7,0,0);
+  for(let k=0;k<256;k++){const c=pal[k]||[0,0,0];hd.push(c[0],c[1],c[2])}
+  const repeat=o.loop==='inf'?0:(+o.loopN<=1?-1:(+o.loopN)-1);
+  if(repeat>=0){hd.push(0x21,0xFF,0x0B);for(const ch of 'NETSCAPE2.0')hd.push(ch.charCodeAt(0));hd.push(3,1,repeat&255,repeat>>8&255,0)}
+  parts.push(new Uint8Array(hd));
+  for(const f of frames){const h=[0x21,0xF9,4,(1<<2)|(f.ti>=0?1:0),f.cs&255,f.cs>>8&255,f.ti>=0?f.ti:0,0,0x2C,f.x&255,f.x>>8,f.y&255,f.y>>8,f.w&255,f.w>>8,f.h&255,f.h>>8,0,8];
+    parts.push(new Uint8Array(h));const b=f.bytes;const blk=new Uint8Array(b.length+Math.ceil(b.length/255)+1);let q=0;
+    for(let s=0;s<b.length;s+=255){const len=Math.min(255,b.length-s);blk[q++]=len;blk.set(b.subarray(s,s+len),q);q+=len}blk[q++]=0;parts.push(blk.subarray(0,q))}
+  parts.push(new Uint8Array([0x3B]));return new Blob(parts,{type:'image/gif'});
+}
 async function encodeGIF(frames,W,H,o,job){
+  const pi=await gifPalette(frames,W,H,o,job,job?k=>{const t=$('#busyText');if(t)t.textContent=`색상 분석 ${k}/${frames.length}`}:null);
+  if(pi.legacy)return encodeGIFLegacy(frames,W,H,o,job);
+  const st=gifState(pi,o,W,H);const rc=outCtx(W,H);prepFrames(frames,o);const out=[];let acc=0,prevCs=0;
+  for(let i=0;i<frames.length;i++){
+    if(job&&job.cancel)throw new Cancel();
+    await renderOut(rc,frames,i,W,H,{...o,opaque:true});const px=rc.x.getImageData(0,0,W,H).data;
+    acc+=frames[i].delay;let cs=Math.round(acc/10)-prevCs;if(cs<2)cs=2;prevCs+=cs;
+    const r=gifFrame(st,px);r.cs=cs;out.push(r);busyStep(job,i+1);await tick();
+  }
+  return gifAssemble(W,H,pi.pal,o,out);
+}
+/* frames with transparency keep the per-frame palette writer (needs restore-to-background) */
+async function encodeGIFLegacy(frames,W,H,o,job){
   const G=await getGifenc();
   const enc=G.GIFEncoder();const rc=outCtx(W,H);prepFrames(frames,o);
   const st={anyAlpha:frames.some(f=>f.alpha||aspectOff(f)),prev:null};
@@ -2210,7 +2331,7 @@ function outDims(o){const[bw,bh]=outSize();const sx=o.scaleOn?(o.sx??o.scale/100
 /* =========================================================
    Save dialog
    ========================================================= */
-const SAVE_PREF={fmt:'gif',q:90,dither:true,loop:'inf',loopN:1,bar:false,barColor:'#FF2F00',barPos:'bottom',reduce:false,scaleOn:false,scale:50,sx:.5,sy:.5,keep:true,maxOn:false,maxMB:5,fitBy:'size'};
+const SAVE_PREF={fmt:'gif',q:90,dither:true,loop:'inf',loopN:1,bar:false,barColor:'#FF2F00',barPos:'bottom',reduce:false,scaleOn:false,scale:50,sx:.5,sy:.5,keep:true,maxOn:false,maxMB:5,fitBy:'size',lossy:0};
 async function openSave(onlySel){
   if(S.crop.active)return toast('자르기를 먼저 적용하거나 취소해 주세요');
   const frames=onlySel?selIdx().map(i=>S.frames[i]):S.frames.slice();
@@ -2222,10 +2343,10 @@ async function openSave(onlySel){
   let estTok=0,estT=0;const support={gif:true,apng:true,webp:WEBP_OK,mp4:null,webm:null};let springs=[];
   /* ---- quality preview: every frame goes through the same encoder settings as the real save ---- */
   const po={...o};let plan=null;
-  const planKey=()=>JSON.stringify([o.fmt,o.q,o.dither,o.reduce,o.scaleOn,o.sx,o.sy,o.maxMB,o.fitBy,o.bar,o.audio,o.maxOn]);
+  const planKey=()=>JSON.stringify([o.fmt,o.q,o.dither,o.reduce,o.scaleOn,o.sx,o.sy,o.maxMB,o.fitBy,o.bar,o.audio,o.maxOn,o.lossy]);
   const PV={tok:0,i:0,playing:true,zoom:'fit',key:'',W:0,H:0,rc:null,st:null,vs:null,next:-1,start:0,wake:null,lag:false,d:null};
   const isVid=()=>po.fmt==='mp4'||po.fmt==='webm';
-  const pvKey=()=>JSON.stringify([po.fmt,po.q,po.dither,po.reduce,po.bar,po.barColor,po.barPos,po.bitrateMul||1,...outDims(po)]);
+  const pvKey=()=>JSON.stringify([po.fmt,po.q,po.dither,po.reduce,po.bar,po.barColor,po.barPos,po.bitrateMul||1,po.lossy||0,...outDims(po)]);
   const keyInt=()=>{prepFrames(frames,po);const fps=frames.length/Math.max(.001,po._total/1000);return Math.max(1,Math.round(fps*2))};
   const resetPipe=()=>{PV.st=null;if(PV.vs){PV.vs.close();PV.vs=null}PV.next=-1};
   const dropRes=r=>{if(r&&r.bmp&&r.bmp.close)r.bmp.close();if(r&&r.vf)r.vf.close()};
@@ -2249,9 +2370,18 @@ async function openSave(onlySel){
     const[W,H]=outDims(po);
     if(!PV.rc||PV.W!==W||PV.H!==H){PV.rc=outCtx(W,H);PV.W=W;PV.H=H}
     prepFrames(frames,po);
-    await renderOut(PV.rc,frames,i,W,H,{...po,opaque:isVid()});
-    if(po.fmt==='gif'){const G=await getGifenc();if(!PV.st)PV.st={anyAlpha:frames.some(f=>f.alpha||aspectOff(f)),prev:null};
+    if(po.fmt==='gif'){
+      /* the same two passes as the real save: one shared palette for the whole animation, then frame by frame */
+      const gk=JSON.stringify([po.q,po.reduce,po.bar,po.barColor,po.barPos,W,H]);
+      if(PV.gpKey!==gk){PV.gpKey=gk;PV.gp=null;const busy=$('#svBusy',PV.d);if(busy)busy.hidden=false;
+        const gp=await gifPalette(frames,W,H,po,null,k=>{if(busy&&PV.gpKey===gk)busy.textContent=`색상 분석 ${k}/${frames.length}`});
+        if(busy)busy.hidden=true;if(PV.gpKey!==gk)return{raw:true};PV.gp=gp;pvNote()}
+      if(!PV.gp.legacy){
+        await renderOut(PV.rc,frames,i,W,H,{...po,opaque:true});
+        if(!PV.st)PV.st=gifState(PV.gp,po,W,H);gifFrame(PV.st,PV.rc.x.getImageData(0,0,W,H).data);PV.buf=gifShown(PV.st,PV.buf);return{img:new ImageData(PV.buf,W,H)}}
+      await renderOut(PV.rc,frames,i,W,H,po);const G=await getGifenc();if(!PV.st)PV.st={anyAlpha:true,prev:null};
       const r=gifStep(G,PV.st,PV.rc.x.getImageData(0,0,W,H).data,W,H,po);return{img:new ImageData(gifPaint(PV.st,r,W,H),W,H)}}
+    await renderOut(PV.rc,frames,i,W,H,{...po,opaque:isVid()});
     if(po.fmt==='webp'&&WEBP_OK){const b=await toBlob(PV.rc.c,'image/webp',clamp((po.q-(po.reduce?15:0))/100,.05,1));return{bmp:await createImageBitmap(b)}}
     if(isVid()){if(!PV.vs){PV.vs=await videoSession(po.fmt,W,H);PV.vsFail=!PV.vs}
       if(PV.vs){const vf=await PV.vs.frame(PV.rc.c,i,i===PV.start||i%keyInt()===0);if(vf)return{vf}}}
@@ -2278,7 +2408,7 @@ async function openSave(onlySel){
   }
   function pvNote(){
     const n=$('#svPvNote',PV.d);if(!n)return;let t;
-    if(po.fmt==='gif')t=`실제 저장 화질이에요 · 색상 최대 ${qColors(po.q,po.reduce)}개${po.dither?' · 디더링':''}${po.reduce?' · 용량 줄이기':''}`;
+    if(po.fmt==='gif'){const md=PV.gp&&PV.gp.mode;t=`실제 저장 화질이에요 · ${md==='exact'?'원래 색 그대로':md==='keep'?'원래 색 유지 (새 색만 가까운 색으로)':`색상 최대 ${qColors(po.q,po.reduce)}개${po.dither?' · 디더링':''}`}${po.lossy>0?` · Lossy ${po.lossy}`:''}${po.reduce?' · 용량 줄이기':''}`}
     else if(po.fmt==='webp')t=`실제 저장 화질이에요 · WebP 품질 ${Math.round(clamp(po.q-(po.reduce?15:0),5,100))}`;
     else if(po.fmt==='apng')t='APNG는 무손실이라 원본 그대로 저장돼요';
     else t=PV.vsFail?'이 브라우저에선 영상 화질 미리보기를 할 수 없어 원본을 보여줘요':'실제 인코더로 만든 화질이에요 (저장본과 거의 같아요)';
@@ -2326,6 +2456,7 @@ async function openSave(onlySel){
       <div class="grid2"><label class="fld"><span>반복</span><select class="in" id="svLoop"><option value="inf">무한 반복</option><option value="1">1회 재생</option><option value="2">2회</option><option value="3">3회</option><option value="5">5회</option></select></label>
         <div class="fld" id="svDitherRow"><span>&nbsp;</span><label class="chk" style="min-height:34px"><input type="checkbox" id="svDither" ${o.dither?'checked':''}>디더링</label></div></div>
       <div class="fld"><span>화질 <span id="svQNote" style="color:var(--mute)"></span></span><div class="srange"><input type="range" id="svQ" min="1" max="100" value="${o.q}"></div></div>
+      <div class="fld" id="svLossyRow"><span class="vhead">Lossy 압축 <span id="svLossyNote" style="color:var(--mute);font-weight:500"></span>${qh('Lossy','거의 같은 색을 같은 걸로 묶어 압축해요. 색 수·프레임·크기는 그대로 두고 용량을 줄이는 방법이에요. 15~25에서 시작해 미리보기를 100%로 확대해 확인하세요. 높이면 가로 번짐이나 지글거림이 생길 수 있고, 한 번 저장하면 되돌릴 수 없어요. 0이면 꺼져요.')}</span><div class="srange"><input type="range" id="svLossy" min="0" max="100" value="${o.lossy||0}"></div></div>
       <div class="card2">
         <div class="opt" id="svAudioRow"${aud?'':' hidden'}><span>소리 포함<small id="svAudioNote"></small></span><input type="checkbox" class="sw" id="svAudio" ${SAVE_PREF.audio!==false?'checked':''}></div>
         <div class="opt"><span>진행 표시 삽입</span><input type="checkbox" class="sw" id="svBar"></div>
@@ -2342,7 +2473,7 @@ async function openSave(onlySel){
           <label class="fld"><span>최대 (MB)</span><input class="in" id="svMax" type="number" min="0.1" step="0.1" value="${o.maxMB}"></label>
           <div class="fld" id="svFitRow"><span>줄일 항목</span><div class="sortbar" id="svFit">
             <button type="button" data-fit="size" data-tip="Size|이미지 크기를 줄여요 · 화질과 움직임은 그대로">크기</button>
-            <button type="button" data-fit="quality" data-tip="Quality|색상·품질을 낮춰요 · 크기와 움직임은 그대로">화질</button>
+            <button type="button" data-fit="quality" data-tip="Quality|GIF는 Lossy를 먼저 올리고, 그래도 크면 색을 줄여요 · 크기와 움직임은 그대로">화질</button>
             <button type="button" data-fit="frames" data-tip="Frames|프레임을 솎아내요 · 재생 시간은 그대로">프레임 수</button></div></div>
           <p class="fitplan" id="svPlan">계산 중…</p>
         </div>
@@ -2351,7 +2482,7 @@ async function openSave(onlySel){
     </div></div>`,
   onMount:d=>{
     const g=id=>$('#'+id,d);
-    const read=()=>{const vid=o.fmt==='mp4'||o.fmt==='webm';o.audioWant=g('svAudio').checked;o.audio=aud&&vid&&o.audioWant&&audioSupport[o.fmt]!==false;o.q=+g('svQ').value;o.dither=g('svDither').checked;o.loop=g('svLoop').value==='inf'?'inf':'n';o.loopN=+g('svLoop').value||1;
+    const read=()=>{const vid=o.fmt==='mp4'||o.fmt==='webm';o.audioWant=g('svAudio').checked;o.audio=aud&&vid&&o.audioWant&&audioSupport[o.fmt]!==false;o.q=+g('svQ').value;o.lossy=+g('svLossy').value;o.dither=g('svDither').checked;o.loop=g('svLoop').value==='inf'?'inf':'n';o.loopN=+g('svLoop').value||1;
       o.bar=g('svBar').checked;o.barColor=g('svBarC').value;o.barPos=g('svBarPos').value;o.reduce=g('svReduce').checked;o.scaleOn=g('svScaleOn').checked;o.keep=g('svKeep').checked;
       o.maxOn=g('svMaxOn').checked;o.maxMB=+g('svMax').value;o.name=g('svName').value};
     const refresh=()=>{if(!g('svQ'))return;read();Object.assign(po,o);if(plan&&o.maxOn&&plan.key===planKey())Object.assign(po,plan.adj);else plan=null;const[W,H]=outDims(o);syncScaleUI();showDim();g('svExt').textContent='.'+FORMATS[o.fmt].ext;
@@ -2360,7 +2491,8 @@ async function openSave(onlySel){
       $$('#svFit button',d).forEach(b=>{b.classList.toggle('on',b.dataset.fit===o.fitBy);b.disabled=b.dataset.fit==='quality'&&o.fmt==='apng'});g('svFitRow').hidden=o.fmt==='mp4'||o.fmt==='webm';
       g('svDitherRow').style.visibility=o.fmt==='gif'?'visible':'hidden';g('svLoop').disabled=o.fmt==='mp4'||o.fmt==='webm';
       const qn=g('svQNote');g('svQ').disabled=o.fmt==='apng';
-      if(o.fmt==='gif')qn.textContent=`· 프레임마다 색상 최대 ${qColors(o.q,o.reduce)}개`;
+      g('svLossyRow').hidden=o.fmt!=='gif';g('svLossyNote').textContent=o.lossy>0?(o.lossy<=25?'· 가벼움':o.lossy<=45?'· 보통 · 번짐 확인':'· 강함 · 번짐 주의'):'· 꺼짐';
+      if(o.fmt==='gif')qn.textContent=o.q>=85&&!o.reduce?`· 색상 최대 255개 (원래 GIF의 색은 그대로)`:`· 색상 최대 ${qColors(o.q,o.reduce)}개`;
       else if(o.fmt==='webp')qn.textContent=`· WebP 품질 ${Math.round(clamp(o.q-(o.reduce?15:0),5,100))}`;
       else if(o.fmt==='apng')qn.textContent='· APNG는 무손실이라 원본 화질 그대로 저장돼요';
       else{prepFrames(frames,o);const fps=frames.length/Math.max(.001,o._total/1000);qn.textContent=`· 영상 약 ${(vBitrate(W,H,fps,o.q,o.reduce)/1e6).toFixed(1)}Mbps`}
@@ -2395,9 +2527,9 @@ async function openSave(onlySel){
     const syncScaleUI=()=>{const sw=g('svSW'),sh=g('svSH');const[W,H]=outDims({...o,scaleOn:true});
       if(document.activeElement!==sw)sw.value=W;if(document.activeElement!==sh)sh.value=H;sw.max=BW;sh.max=BH};
     const setScale=(sx,sy,fromSlider)=>{o.sx=clamp(sx,1/BW,1);o.sy=clamp(sy,1/BH,1);if(!fromSlider){g('svScale').value=Math.round(Math.max(o.sx,o.sy)*100);springs[1]&&springs[1].sync()}o.scale=+g('svScale').value};
-    springs=[springRange(g('svQ')),springRange(g('svScale'))];
+    springs=[springRange(g('svQ')),springRange(g('svScale')),springRange(g('svLossy'),v=>v?String(v):'Off')];
     g('svFmt').onclick=e=>{const b=e.target.closest('[data-fmt]');if(!b)return;o.fmt=b.dataset.fmt;refresh()};
-    g('svQ').addEventListener('input',refresh);
+    g('svQ').addEventListener('input',refresh);g('svLossy').addEventListener('input',refresh);
     g('svScale').addEventListener('input',()=>{const p=+g('svScale').value/100;setScale(p,p,true);refresh()});
     g('svSW').addEventListener('input',()=>{const w=+g('svSW').value;if(!(w>0))return;const sx=Math.min(w,BW)/BW;setScale(sx,g('svKeep').checked?sx:o.sy);refresh()});
     g('svSH').addEventListener('input',()=>{const h=+g('svSH').value;if(!(h>0))return;const sy=Math.min(h,BH)/BH;setScale(g('svKeep').checked?sy:o.sx,sy);refresh()});
@@ -2424,7 +2556,7 @@ async function openSave(onlySel){
     PV.tok++;wakePv();resetPipe();
     const ok=await runExport(frames,{...o,_n:frames.length},o.maxOn&&plan&&plan.key===planKey()?plan:null);
     if(!ok){PV.key='';pvLoop(d);return false}
-    Object.assign(SAVE_PREF,{audio:o.audioWant,fmt:o.fmt,q:o.q,dither:o.dither,loop:o.loop,loopN:o.loopN,bar:false,barColor:o.barColor,barPos:o.barPos,reduce:o.reduce,scaleOn:o.scaleOn,scale:o.scale,sx:o.sx,sy:o.sy,keep:o.keep,maxOn:o.maxOn,maxMB:o.maxMB,fitBy:o.fitBy});
+    Object.assign(SAVE_PREF,{audio:o.audioWant,fmt:o.fmt,q:o.q,dither:o.dither,loop:o.loop,loopN:o.loopN,bar:false,barColor:o.barColor,barPos:o.barPos,reduce:o.reduce,scaleOn:o.scaleOn,scale:o.scale,sx:o.sx,sy:o.sy,keep:o.keep,maxOn:o.maxOn,maxMB:o.maxMB,fitBy:o.fitBy,lossy:o.lossy});
     return true;
   }});
   PV.tok++;wakePv();resetPipe();
@@ -2434,9 +2566,16 @@ async function estimateSize(frames,o){
   if(o.fmt==='mp4'||o.fmt==='webm'){const fps=frames.length/Math.max(.001,o._total/1000);return Math.round((vBitrate(W,H,fps,o.q,o.reduce)+(o.audio?128000:0))*(o._total/1000)/8)+2048}
   const n=frames.length;
   if(o.fmt==='gif'){
-    const runs=n<=6?[[0,n]]:[[0,3],[Math.floor(n/2),3]];let bytes=0,cnt=0;
-    for(const[s,len]of runs){const sub=frames.slice(s,s+len);const b=await encodeGIF(sub,W,H,{...o,bar:false},null);bytes+=b.size-800;cnt+=sub.length}
-    return Math.round(bytes/cnt*n)+800;
+    const pi=await gifPaletteCached(frames,W,H,o);
+    if(pi.legacy){const runs=n<=6?[[0,n]]:[[0,3],[Math.floor(n/2),3]];let bytes=0,cnt=0;
+      for(const[s,len]of runs){const sub=frames.slice(s,s+len);const b=await encodeGIFLegacy(sub,W,H,{...o,bar:false},null);bytes+=b.size-800;cnt+=sub.length}
+      return Math.round(bytes/cnt*n)+800}
+    /* first frame is stored whole, the rest only as the changed box: measure both kinds and add up */
+    const rc=outCtx(W,H);const step=async(st,i)=>{await renderOut(rc,frames,i,W,H,{...o,opaque:true});return gifFrame(st,rc.x.getImageData(0,0,W,H).data)};
+    let st=gifState(pi,o,W,H);const full=(await step(st,0)).bytes.length+40;if(n===1)return full+900;
+    const starts=n<=6?[0]:[0,Math.floor(n/3),Math.floor(2*n/3)];let sum=0,cnt=0;
+    for(const s0 of starts){if(s0){st=gifState(pi,o,W,H);await step(st,s0)}for(let i=s0+1;i<Math.min(n,s0+4);i++){sum+=(await step(st,i)).bytes.length+40;cnt++}}
+    return Math.round(full+sum/Math.max(1,cnt)*(n-1)+900);
   }
   const k=Math.min(5,n);const rc=outCtx(W,H);let bytes=0;
   for(let j=0;j<k;j++){const i=Math.floor(j*n/k);await renderOut(rc,frames,i,W,H,o);
@@ -2471,8 +2610,11 @@ async function planFit(frames,o,max,est0,stale){
   try{
     if(by==='size'){const r=await shrink(o,frames,est0);adj=r.a;est=r.e}
     else if(by==='quality'){
-      const steps=[];for(let q=o.q-10;q>=5;q-=10)steps.push(q);if(steps[steps.length-1]!==5)steps.push(5);
-      let hit=null;for(const q of steps){const a={q,reduce:o.fmt==='gif'?q<=50||o.reduce:o.reduce};const e=await E({...o,...a});if(e<=max){hit={a,e};break}hit={a,e,miss:true}}
+      const steps=[];
+      if(o.fmt==='gif'){const L0=o.lossy||0;for(const L of [20,30,45,60,80])if(L>L0)steps.push({lossy:L});const Lm=Math.max(L0,80);for(let q=o.q-15;q>=5;q-=15)steps.push({lossy:Lm,q,reduce:q<=50||o.reduce})}
+      else{for(let q=o.q-10;q>=5;q-=10)steps.push({q,reduce:o.reduce});if(!steps.length||steps[steps.length-1].q!==5)steps.push({q:5,reduce:o.reduce})}
+      let hit=null;for(const a of steps){const e=await E({...o,...a});if(e<=max){hit={a,e};break}hit={a,e,miss:true}}
+      if(!hit)hit={a:{},e:est0,miss:true};
       adj=hit.a;est=hit.e;
       if(hit.miss){const r=await shrink({...o,...adj},frames,est);adj={...adj,...r.a};est=r.e;extra='size'}
     }else{
@@ -2487,8 +2629,8 @@ async function planFit(frames,o,max,est0,stale){
   let html;
   if(by==='size')html=`${sizeTxt}로 줄여요.<span class="m">화질과 프레임 수(${frames.length}개)는 그대로예요. 화면이 작아지는 대신 선명함은 유지돼요.</span>`;
   else if(by==='quality'){
-    const qt=o.fmt==='gif'?`색상 ${qColors(o.q,o.reduce)}개 → <span class="k">${qColors(adj.q,adj.reduce)}개</span> (화질 ${o.q} → ${adj.q})`:`WebP 품질 ${Math.round(clamp(o.q-(o.reduce?15:0),5,100))} → <span class="k">${Math.round(clamp(adj.q-(adj.reduce?15:0),5,100))}</span>`;
-    html=`${qt}로 낮춰요.<span class="m">${o.fmt==='gif'?'색이 줄어 그라데이션에 줄무늬나 점무늬가 생길 수 있어요.':'세밀한 부분이 뭉개지고 경계가 번질 수 있어요.'}${extra?` 화질을 최저로 낮춰도 커서 ${sizeTxt}도 줄여요.`:' 크기와 프레임 수는 그대로예요.'}</span>`}
+    const qt=o.fmt==='gif'?`Lossy ${o.lossy||0} → <span class="k">${adj.lossy??(o.lossy||0)}</span>${adj.q!=null?` · 색상 ${qColors(o.q,o.reduce)}개 → <span class="k">${qColors(adj.q,adj.reduce)}개</span>`:''}`:`WebP 품질 ${Math.round(clamp(o.q-(o.reduce?15:0),5,100))} → <span class="k">${Math.round(clamp(adj.q-(adj.reduce?15:0),5,100))}</span>`;
+    html=`${qt}${o.fmt==='gif'?'로 맞춰요.':'로 낮춰요.'}<span class="m">${o.fmt==='gif'?(adj.q!=null?'Lossy를 최대로 올려도 커서 색 수도 줄여요. 그라데이션에 줄무늬나 가로 번짐이 생길 수 있어요.':'거의 같은 색을 묶어 압축해요. 색 수·크기·프레임은 그대로지만, 높을수록 가로 번짐이 생길 수 있어요.'):'세밀한 부분이 뭉개지고 경계가 번질 수 있어요.'}${extra?` 화질을 최저로 낮춰도 커서 ${sizeTxt}도 줄여요.`:' 크기와 프레임 수는 그대로예요.'}</span>`}
   else html=`프레임 ${frames.length}개 → <span class="k">${keep}개</span> (${pct(keep,frames.length)}%)로 솎아내요.<span class="m">재생 시간은 그대로지만 움직임이 덜 부드러워져요.${extra?` 그래도 커서 ${sizeTxt}도 줄여요.`:' 크기와 화질은 그대로예요.'} 프레임 솎기는 미리보기에 반영되지 않아요.</span>`;
   if(est>max)html+=`<span class="m"><b style="color:var(--o)">최대한 줄여도 약 ${fmtB(est)}라 ${fmtB(max)}보다 조금 클 수 있어요.</b></span>`;
   return{adj,est,keep,html,by};
@@ -2514,7 +2656,7 @@ async function runExport(frames,o,plan){
   if(r!=='saved')return false;
   /* tell what was actually given up to fit */
   const ch=[];if(o.maxOn){const[W0,H0]=outDims(o);if(W!==W0||H!==H0)ch.push(`크기 ${W0}×${H0}→${W}×${H}`);
-    if(opt.q!==o.q)ch.push(`화질 ${o.q}→${opt.q}`);if(plan&&plan.keep&&plan.keep<(o._n||plan.keep+1))ch.push(`프레임 →${plan.keep}개`);
+    if(opt.q!==o.q)ch.push(`화질 ${o.q}→${opt.q}`);if((opt.lossy||0)!==(o.lossy||0))ch.push(`Lossy ${o.lossy||0}→${opt.lossy}`);if(plan&&plan.keep&&plan.keep<(o._n||plan.keep+1))ch.push(`프레임 →${plan.keep}개`);
     if(opt.bitrateMul&&opt.bitrateMul<1)ch.push(`비트레이트 ${Math.round(opt.bitrateMul*100)}%`);if(tries)ch.push(`${tries}번 다시 만듦`)}
   toast(`Saved · ${FORMATS[fmt].t} ${W}×${H} · ${fmtB(blob.size)}${opt._aOut?' · 소리 포함':''}${opt._aMiss?' · 이 브라우저에선 소리 없이 저장됐어요':''}${ch.length?' · '+ch.join(', '):''}${blob.size>max?' (최대 용량보다 커요)':''}`,6000);
   return true;
