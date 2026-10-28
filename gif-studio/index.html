@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Moving Image Studio</title>
-<meta name="description" content="영상·GIF·이미지를 프레임 단위로 편집하고 GIF·WebP·MP4·WebM·APNG로 저장하는 웹 움짤 편집기">
+<meta name="description" content="영상·GIF·이미지를 프레임 단위로 편집하고 GIF·WebP·MP4·WebM·APNG로 저장하는 웹 GIF·영상 편집기">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Moving Image Studio">
-<meta property="og:description" content="영상·GIF·이미지를 프레임 단위로 편집하고 GIF·WebP·MP4·WebM·APNG로 저장하는 웹 움짤 편집기">
+<meta property="og:description" content="영상·GIF·이미지를 프레임 단위로 편집하고 GIF·WebP·MP4·WebM·APNG로 저장하는 웹 GIF·영상 편집기">
 <meta property="og:url" content="https://nyong.app/gif-studio/">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23000'/%3E%3Ccircle cx='32' cy='32' r='13' fill='%23FF2F00'/%3E%3C/svg%3E">
@@ -169,7 +169,12 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .row img{width:34px;height:34px;object-fit:contain;border-radius:6px;background:var(--stage)}
 .row .d{color:var(--mute2)}
 .row:hover{background:#f7f7f9}
-.row.sel{background:var(--sel)}
+/* colour labels: tinted row + strong edge; a selected row stays orange */
+.row[data-lb]{background:var(--lb-bg)}
+.row[data-lb]:not(.cur){border-left-color:var(--lb)}
+.row[data-lb]:hover{background:var(--lb-bg);filter:brightness(.97)}
+.lbdot{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.12);flex:none}
+.row.sel,.row.sel[data-lb],.row.sel[data-lb]:hover{background:var(--sel);filter:none}
 .row.cur{border-left-color:var(--o)}
 .row.cur .n{color:var(--o);font-weight:700}
 .list-foot{position:absolute;left:0;right:0;bottom:0;z-index:5;height:var(--bar);display:flex;align-items:center;gap:2px;padding:0 8px;background:var(--glass);
@@ -420,7 +425,7 @@ input[type=range]:disabled{opacity:.4;cursor:default}
     <div class="subline"><span></span><button class="how" id="howBtn" type="button">How it works</button></div>
     <div class="sortbar" id="modes" role="tablist">
       <button type="button" id="tabEdit" class="on" role="tab" data-tip="Edit|프레임 편집">Edit</button>
-      <button type="button" id="tabLayer" role="tab" data-tip="Layer|틀 이미지와 움짤 합성">Layer</button>
+      <button type="button" id="tabLayer" role="tab" data-tip="Layer|틀 이미지와 영상 합성">Layer</button>
     </div>
     <p class="lbl" id="dzLbl">File to edit</p>
     <button class="drop" id="dz" type="button"><span id="dzT">Drop video · GIF · image</span><small id="dzS">끌어다 놓거나 눌러서 고르세요</small></button>
@@ -493,7 +498,7 @@ input[type=range]:disabled{opacity:.4;cursor:default}
           <div class="lfoot">
             <button class="btn" id="lAddImg" type="button">+ Image</button>
             <button class="btn" id="lAddAnim" type="button">+ GIF · Video</button>
-            <button class="btn" id="lFromEdit" type="button" style="flex-basis:100%">편집 중인 움짤을 레이어로</button>
+            <button class="btn" id="lFromEdit" type="button" style="flex-basis:100%">편집 영상 가져오기</button>
           </div>
         </div>
       </section>
@@ -1131,7 +1136,7 @@ const listPad=()=>parseFloat(getComputedStyle(listEl).getPropertyValue('--pad'))
 function renderList(){
   const n=S.frames.length,P=listPad();spacer.style.height=(P+n*ROWH+70)+'px';
   const top=listEl.scrollTop-P,h=listEl.clientHeight||400;const a=Math.max(0,Math.floor(top/ROWH)-4),b=Math.min(n,Math.ceil((top+h)/ROWH)+4);
-  let html='';for(let i=a;i<b;i++){const f=S.frames[i];html+=`<div class="row${S.sel.has(i)?' sel':''}${i===S.cur?' cur':''}" style="top:${P+i*ROWH}px" data-i="${i}"><span class="n">${i+1}</span><img src="${f.thumb}" alt=""><span class="t">${fmtS(S.starts[i]||0)}</span><span class="d">${f.delay}</span></div>`}
+  let html='';for(let i=a;i<b;i++){const f=S.frames[i];const lb=f.label&&LABELS[f.label];html+=`<div class="row${S.sel.has(i)?' sel':''}${i===S.cur?' cur':''}" style="top:${P+i*ROWH}px${lb?`;--lb:${lb.c};--lb-bg:${lb.bg}`:''}"${lb?` data-lb="${f.label}"`:''} data-i="${i}"><span class="n">${i+1}</span><img src="${f.thumb}" alt=""><span class="t">${fmtS(S.starts[i]||0)}</span><span class="d">${f.delay}</span></div>`}
   $$('.row',listEl).forEach(r=>r.remove());spacer.insertAdjacentHTML('afterend',html);
   $('#cnt').textContent=n?`${S.sel.size} / ${n}`:'';
 }
@@ -1152,12 +1157,21 @@ listEl.addEventListener('contextmenu',e=>{e.preventDefault();if(!S.frames.length
 /* =========================================================
    Context menu
    ========================================================= */
+const LABELS={blue:{t:'Blue',c:'#3B82F6',bg:'#EAF2FF'},green:{t:'Green',c:'#22A55B',bg:'#E5F6EC'},yellow:{t:'Yellow',c:'#E0AE00',bg:'#FFF6D2'},
+  pink:{t:'Pink',c:'#EC4899',bg:'#FDE8F3'},brown:{t:'Brown',c:'#9A6B3F',bg:'#F3EAE0'},purple:{t:'Purple',c:'#8B5CF6',bg:'#F0EAFE'}};
+/* a label colour no frame uses yet, or none when every colour is taken */
+function nextLabel(){const used=new Set(S.frames.map(f=>f.label).filter(Boolean));return Object.keys(LABELS).find(k=>!used.has(k))||null}
+function setLabel(idx,label){if(!idx.length)return;
+  commit(()=>{const set=new Set(idx);S.frames=S.frames.map((f,i)=>{if(!set.has(i))return f;const n=cloneF(f);if(label)n.label=label;else delete n.label;return n})},
+    label?`${idx.length}프레임을 ${LABELS[label].t}로 표시했어요`:`${idx.length}프레임의 색 표시를 지웠어요`)}
 function menuDef(){
   const s=()=>needSel(),n=S.sel.size;
   const left=[
     {h:'Time · Speed',items:[{t:'시간 설정…',k:'mod+F',f:()=>dlgTime()},
       {t:'재생 속도 10% 빠르게',k:'mod+K',f:()=>{const x=s();x&&OPS.speed(x,0.9)}},{t:'재생 속도 10% 느리게',k:'mod+J',f:()=>{const x=s();x&&OPS.speed(x,1/0.9)}}]},
     {h:'Order',items:[{t:'역순으로 뒤집기',f:()=>{const x=s();x&&(x.length>1?OPS.reverse(x):toast('2프레임 이상 선택하세요'))}},{t:'뒤에 역재생 붙이기 (왕복)',f:()=>{const x=s();x&&OPS.yoyo(x)}}]},
+    {h:'Label',items:[{t:'Label color',sub:[...Object.entries(LABELS).map(([k,v])=>({t:`<i class="lbdot" style="background:${v.c}"></i>${v.t}`,f:()=>{const x=s();x&&setLabel(x,k)}})),
+      {t:'<i class="lbdot" style="background:#fff"></i>None',f:()=>{const x=s();x&&setLabel(x,null)}}]}]},
     {h:'Move · Copy',items:[{t:'맨 앞으로 이동',k:'alt+PgUp',f:()=>{const x=s();x&&OPS.moveTo(x,'front')}},{t:'맨 앞에 복사',k:'alt+shift+PgUp',f:()=>{const x=s();x&&OPS.copyTo(x,'front')}},
       {t:'한 칸 위로',k:'alt+↑',f:()=>{const x=s();x&&OPS.moveUp(x)}},{t:'한 칸 아래로',k:'alt+↓',f:()=>{const x=s();x&&OPS.moveDown(x)}},
       {t:'맨 뒤로 이동',k:'alt+PgDn',f:()=>{const x=s();x&&OPS.moveTo(x,'back')}},{t:'맨 뒤에 복사',k:'alt+shift+PgDn',f:()=>{const x=s();x&&OPS.copyTo(x,'back')}}]},
@@ -1485,7 +1499,7 @@ function renderLayerPanel(){
   <div class="sec"><h3>${icon('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14"/>')}Make frames</h3>
     <div class="grid2"><label class="fld"><span>길이 (초)</span><input class="in" id="cmpDur" type="number" min="0.1" step="0.1" value="${(dur/1000).toFixed(2)}"></label>
     <label class="fld"><span>프레임 간격</span><select class="in" id="cmpFps">${animN===1?`<option value="auto"${L.fps==='auto'?' selected':''}>원본 타이밍</option>`:''}${[30,25,24,20,15,12,10].map(n=>`<option value="${n}"${String(L.fps)===String(n)||(L.fps==='auto'&&animN!==1&&n===15)?' selected':''}>${n} fps</option>`).join('')}</select></label></div>
-    ${L.dur?'<button type="button" class="btn" id="cmpDurAuto">길이를 움짤 길이로 되돌리기</button>':''}
+    ${L.dur?'<button type="button" class="btn" id="cmpDurAuto">길이를 영상 길이로 되돌리기</button>':''}
     <button type="button" class="primary" id="cmpGo" ${L.layers.length?'':'disabled'}>Make frames</button>
     <p class="note">만든 프레임은 Edit으로 넘어가요. 거기서 다듬고 Save로 저장하세요.</p>
   </div>`;
@@ -1560,7 +1574,7 @@ async function compToFrames(){
   const name=L.layers.find(l=>l.anim)?.name||L.layers[0].name;
   commit(()=>{
     if(mode==='replace'||!S.frames.length||S.isSample){S.frames=out;S.W0=L.W;S.H0=L.H;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name=name+'-frame';S.isSample=false;S.clips=[];S.tracks=[];S.linkOff=false;S.linkedBak=null;S.linked=LINKED_DEF();S.aSel=null;S.aTrack=null;setSel([0],0)}
-    else{const at=S.frames.length;S.frames.push(...out);setSel([at],at)}
+    else{const lb=nextLabel();if(lb)out.forEach(f=>{f.label=lb});const at=S.frames.length;S.frames.push(...out);setSel([at],at)}
   });
   setMode('edit');toast(`프레임 ${out.length}개를 만들었어요`);
 }
@@ -2534,11 +2548,12 @@ async function handleFiles(files,target){
   addToEditor(items);
 }
 function addToEditor(items){
-  const fresh=S.isSample||!S.frames.length;const nf=items.flatMap(i=>i.frames);
+  const fresh=S.isSample||!S.frames.length;const nf=items.flatMap(i=>i.frames);const lb=fresh?null:nextLabel();
   commit(()=>{
     if(fresh){S.frames=[];S.W0=items[0].W;S.H0=items[0].H;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name=baseName(items[0].name);S.isSample=false;S.linked=LINKED_DEF()}
+    if(lb)nf.forEach(f=>{f.label=lb});
     const at=S.frames.length;S.frames.push(...nf);setSel([at],at);
-  },fresh?`${nf.length}프레임을 불러왔어요`:`${nf.length}프레임을 뒤에 추가했어요`);
+  },fresh?`${nf.length}프레임을 불러왔어요`:`${nf.length}프레임을 뒤에 추가했어요${lb?` · ${LABELS[lb].t}로 표시`:''}`);
   S.view.fit=true;layoutStage();ensureVisible(S.cur);
 }
 const dz=$('#dz');
@@ -2612,7 +2627,7 @@ const TOUR_ALL=[
 ];
 const TOUR_LAYER=[
   {el:'#dz',t:'Add a frame image',d:'틀이 될 PNG·JPG를 끌어다 놓거나 눌러서 고르세요. 첫 이미지를 올리면 캔버스가 그 크기로 맞춰져요.'},
-  {el:'#lAddAnim',t:'Add GIF · Video',d:'틀 위나 아래에 올릴 GIF·영상을 추가해요. 편집 중인 움짤을 바로 레이어로 가져올 수도 있어요.'},
+  {el:'#lAddAnim',t:'Add GIF · Video',d:'틀 위나 아래에 올릴 GIF·영상을 추가해요. 편집 영상을 바로 레이어로 가져올 수도 있어요.'},
   {el:'#llist',t:'Layers',d:'위에 있는 레이어가 화면에서 앞에 보여요. 눌러서 고르고, 오른쪽 패널에서 맨 앞·앞·뒤·맨 뒤로 순서를 바꾸거나 불투명도를 조절해요.'},
   {el:'#stage',t:'Size · Position',d:'고른 레이어를 끌어서 옮기고, 모서리를 끌어 크기를 바꿔요. 방향키는 1px, Shift+방향키는 10px씩 움직여요. '+(IS_MAC?'⌘':'Ctrl')+'R을 누르면 너비 칸으로 바로 가요.'},
   {el:'#panel',t:'Canvas',d:'캔버스 크기(프리셋 또는 직접 입력)와 배경(투명·흰색·검정·색 지정)을 정해요. 고른 레이어의 위치·크기도 숫자로 맞출 수 있어요.'},
