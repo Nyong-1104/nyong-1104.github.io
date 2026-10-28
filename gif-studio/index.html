@@ -334,6 +334,8 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .busy-card{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;width:min(360px,100%)}
 .ring{width:68px;height:68px;border-radius:50%;border:5px solid #ececf0;border-top-color:var(--o);animation:spin 1.15s cubic-bezier(.55,.12,.45,.88) infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;width:11px;height:11px;border:2px solid #dcdce3;border-top-color:var(--o);border-radius:50%;animation:spin .75s linear infinite;vertical-align:-1px;margin:0 4px 0 7px}
+.est small{color:var(--mute);font-weight:600;font-size:11px}
 .busy-card b{font-size:17px;font-weight:800;letter-spacing:-.4px}
 .bar{width:100%;height:4px;border-radius:999px;background:#ececf0;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--o);transition:width .12s}
@@ -734,7 +736,7 @@ let toastT=0;
 function toast(msg,ms=2600){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,ms)}
 function busyStart(title,total){const job={cancel:false,total};$('#busyTitle').textContent=title;$('#busyBar').style.width='0%';$('#busyText').textContent='';$('#busy').hidden=false;hideBub();
   $('#busyCancel').onclick=()=>{job.cancel=true;$('#busyText').textContent='취소하는 중…'};return job}
-function busyStep(job,i,text){if(!job||job.cancel)return;const p=job.total?i/job.total:0;$('#busyBar').style.width=(p*100).toFixed(1)+'%';$('#busyText').textContent=text||(job.total?`${i} / ${job.total}`:'')}
+function busyStep(job,i,text){if(!job||job.cancel||job.silent)return;const p=job.total?i/job.total:0;$('#busyBar').style.width=(p*100).toFixed(1)+'%';$('#busyText').textContent=text||(job.total?`${i} / ${job.total}`:'')}
 function busyEnd(){$('#busy').hidden=true}
 
 let modalClose=null;
@@ -2197,8 +2199,8 @@ function gifNear(st,k){let v=st.near.get(k);if(v!==undefined)return v;const r=k>
   for(let i=0;i<pal.length;i++){const c=pal[i];const d=(r-c[0])**2*2+(g-c[1])**2*4+(b-c[2])**2*3;if(d<bd){bd=d;best=i}}st.near.set(k,best);return best}
 /* the size estimate runs often: keep the palette while only Lossy / dithering change */
 let GP_CACHE={key:'',frames:null,pi:null};
-async function gifPaletteCached(frames,W,H,o){const key=JSON.stringify([o.q,o.reduce,o.bar,o.barColor,o.barPos,W,H,frames.length,S.total]);
-  if(GP_CACHE.key===key&&GP_CACHE.frames===frames&&GP_CACHE.pi)return GP_CACHE.pi;const pi=await gifPalette(frames,W,H,o,null,null);GP_CACHE={key,frames,pi};return pi}
+async function gifPaletteCached(frames,W,H,o,job,phase){const key=JSON.stringify([o.q,o.reduce,o.bar,o.barColor,o.barPos,W,H,frames.length,S.total]);
+  if(GP_CACHE.key===key&&GP_CACHE.frames===frames&&GP_CACHE.pi)return GP_CACHE.pi;const pi=await gifPalette(frames,W,H,o,job,phase);GP_CACHE={key,frames,pi};return pi}
 /* one frame: find what changed, keep that box, map to the palette, LZW it */
 function gifFrame(st,px){
   const{W,H}=st,n=W*H,TI=255,prev=st.prev,src=st.src;let x0=0,y0=0,x1=W-1,y1=H-1,mask=null;
@@ -2237,7 +2239,7 @@ function gifAssemble(W,H,pal,o,frames){
   parts.push(new Uint8Array([0x3B]));return new Blob(parts,{type:'image/gif'});
 }
 async function encodeGIF(frames,W,H,o,job){
-  const pi=await gifPalette(frames,W,H,o,job,job?k=>{const t=$('#busyText');if(t)t.textContent=`색상 분석 ${k}/${frames.length}`}:null);
+  const pi=await gifPaletteCached(frames,W,H,o,job,job&&!job.silent?k=>{const t=$('#busyText');if(t)t.textContent=`색상 분석 ${k}/${frames.length}`}:null);
   if(pi.legacy)return encodeGIFLegacy(frames,W,H,o,job);
   const st=gifState(pi,o,W,H);const rc=outCtx(W,H);prepFrames(frames,o);const out=[];let acc=0,prevCs=0;
   for(let i=0;i<frames.length;i++){
@@ -2293,7 +2295,7 @@ async function encodeVideo(kind,frames,W,H,o,job){
   const M=kind==='mp4'?window.Mp4Muxer:window.WebMMuxer;if(!M)throw new Error('영상 저장 모듈을 불러오지 못했어요');
   let aq=null;o._aOut=false;
   if(o.audio&&hasLinked(frames)||o.audio&&!o.onlySel&&S.clips.length){
-    if(await audioSupported(kind)){if(job){$('#busyText').textContent='소리 만드는 중'}const mix=await buildMix(frames,{clips:!o.onlySel});if(mix){aq=await encodeAudio(kind,mix);o._aOut=true}}
+    if(await audioSupported(kind)){if(job&&!job.silent){$('#busyText').textContent='소리 만드는 중'}const mix=await buildMix(frames,{clips:!o.onlySel});if(mix){aq=await encodeAudio(kind,mix);o._aOut=true}}
     else o._aMiss=true;
   }
   const target=new M.ArrayBufferTarget();
@@ -2343,6 +2345,10 @@ async function openSave(onlySel){
   let estTok=0,estT=0;const support={gif:true,apng:true,webp:WEBP_OK,mp4:null,webm:null};let springs=[];
   /* ---- quality preview: every frame goes through the same encoder settings as the real save ---- */
   const po={...o};let plan=null;
+  /* exact size: after the settings settle, the real file is made in the background; Save then reuses it */
+  const ex={job:null,res:null};
+  const exKey=()=>JSON.stringify([o.fmt,o.q,o.dither,o.reduce,o.lossy,o.loop,o.loopN,o.bar,o.barColor,o.barPos,o.scaleOn,o.sx,o.sy,o.audio,o.maxOn,o.maxMB,o.fitBy,o.maxOn&&plan&&plan.key===planKey()?[plan.adj,plan.keep||0]:null]);
+  const exStop=()=>{if(ex.job){ex.job.cancel=true;ex.job=null}};
   const planKey=()=>JSON.stringify([o.fmt,o.q,o.dither,o.reduce,o.scaleOn,o.sx,o.sy,o.maxMB,o.fitBy,o.bar,o.audio,o.maxOn,o.lossy]);
   const PV={tok:0,i:0,playing:true,zoom:'fit',key:'',W:0,H:0,rc:null,st:null,vs:null,next:-1,start:0,wake:null,lag:false,d:null};
   const isVid=()=>po.fmt==='mp4'||po.fmt==='webm';
@@ -2374,7 +2380,7 @@ async function openSave(onlySel){
       /* the same two passes as the real save: one shared palette for the whole animation, then frame by frame */
       const gk=JSON.stringify([po.q,po.reduce,po.bar,po.barColor,po.barPos,W,H]);
       if(PV.gpKey!==gk){PV.gpKey=gk;PV.gp=null;const busy=$('#svBusy',PV.d);if(busy)busy.hidden=false;
-        const gp=await gifPalette(frames,W,H,po,null,k=>{if(busy&&PV.gpKey===gk)busy.textContent=`색상 분석 ${k}/${frames.length}`});
+        const gp=await gifPaletteCached(frames,W,H,po,null,k=>{if(busy&&PV.gpKey===gk)busy.textContent=`색상 분석 ${k}/${frames.length}`});
         if(busy)busy.hidden=true;if(PV.gpKey!==gk)return{raw:true};PV.gp=gp;pvNote()}
       if(!PV.gp.legacy){
         await renderOut(PV.rc,frames,i,W,H,{...po,opaque:true});
@@ -2450,7 +2456,7 @@ async function openSave(onlySel){
       <div class="pv-note" id="svPvNote"></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
-      <div class="card2"><div class="kv"><span>이미지 크기</span><b id="svDim"></b></div><div class="kv"><span>재생 시간</span><b>${(frames.reduce((a,f)=>a+f.delay,0)/1000).toFixed(2)}초 · ${frames.length}프레임</b></div><div class="kv"><span>예상 파일 크기</span><b class="est" id="svEst">계산 중…</b></div></div>
+      <div class="card2"><div class="kv"><span>이미지 크기</span><b id="svDim"></b></div><div class="kv"><span>재생 시간</span><b>${(frames.reduce((a,f)=>a+f.delay,0)/1000).toFixed(2)}초 · ${frames.length}프레임</b></div><div class="kv"><span id="svEstLbl">예상 파일 크기</span><b class="est" id="svEst"><span class="spin"></span><small>계산 중</small></b></div></div>
       <div class="fld"><span>저장 포맷</span><div class="sortbar" id="svFmt">${fmtBtns}</div></div>
       <label class="fld"><span>파일명</span><div style="display:flex;gap:6px;align-items:center"><input class="in" id="svName" type="text" value="${esc(o.name)}"><span id="svExt" style="color:var(--mute2);font-weight:600">.gif</span></div></label>
       <div class="grid2"><label class="fld"><span>반복</span><select class="in" id="svLoop"><option value="inf">무한 반복</option><option value="1">1회 재생</option><option value="2">2회</option><option value="3">3회</option><option value="5">5회</option></select></label>
@@ -2509,18 +2515,32 @@ async function openSave(onlySel){
       const base={width:W,height:H,bitrate:4e6,framerate:30};const a=!!(await pickCodec(MP4_CODECS,{...base,avc:{format:'avc'}})),b=!!(await pickCodec(WEBM_CODECS,base));
       const ch=support.mp4!==a||support.webm!==b;support.mp4=a;support.webm=b;
       const am=await audioSupported('mp4'),aw=await audioSupported('webm');if(ch||checkVideo.a!==`${am}${aw}`){checkVideo.a=`${am}${aw}`;refresh()}};
-    const estimateSoon=()=>{clearTimeout(estT);g('svEst').textContent='계산 중…';if(o.maxOn&&!(plan&&plan.key===planKey()))g('svPlan').textContent='계산 중…';const tok=++estTok;estT=setTimeout(()=>estimate(tok),450)};
+    const SPIN='<span class="spin"></span><small>계산 중</small>';
+    const setEst=(html,busy)=>{const e=g('svEst');if(!e)return;g('svEstLbl').textContent='예상 파일 크기';e.innerHTML=html+(busy?SPIN:'')};
+    const estimateSoon=()=>{clearTimeout(estT);exStop();setEst('',true);if(o.maxOn&&!(plan&&plan.key===planKey()))g('svPlan').textContent='계산 중…';const tok=++estTok;estT=setTimeout(()=>estimate(tok),450)};
+    const showExact=size=>{const e=g('svEst');if(!e)return;g('svEstLbl').textContent='파일 크기';e.innerHTML=`${fmtB(size)} <small>${size.toLocaleString()} bytes</small>`;e.title=''};
+    /* make the real file quietly; on success show its exact size */
+    const startExact=async tok=>{
+      exStop();const key=exKey();if(ex.res&&ex.res.key===key){showExact(ex.res.blob.size);return}
+      if(support[o.fmt]===false)return;
+      const job={cancel:false,silent:true,total:frames.length};ex.job=job;
+      const pl=o.maxOn&&plan&&plan.key===planKey()?plan:null;const fr=pl&&pl.keep&&pl.keep<frames.length?thinFrames(frames,pl.keep):frames;
+      const opt={...o,...(pl?pl.adj:{})};const[W,H]=outDims(opt);
+      try{const blob=await encode(o.fmt,fr,W,H,opt,job);if(job.cancel||tok!==estTok||!g('svEst'))return;
+        ex.job=null;ex.res={key,blob,W,H,opt};showExact(blob.size);
+        if(o.maxOn){const max=o.maxMB*1048576,pp=g('svPlan');if(pp&&blob.size>max)pp.insertAdjacentHTML('beforeend',`<span class="m"><b style="color:var(--o)">실제로 만들어 보니 ${fmtB(blob.size)}라 ${fmtB(max)}보다 커요. 저장할 때 한 번 더 줄여요.</b></span>`)}
+      }catch(e){if(!(e instanceof Cancel)&&!job.cancel)console.warn(e);if(ex.job===job)ex.job=null}};
     const estimate=async tok=>{if(!g('svEst'))return;
       try{const v=await estimateSize(frames,{...o});if(tok!==estTok||!g('svEst'))return;
-        if(!v){g('svEst').textContent='계산할 수 없어요';return}
+        if(!v){setEst('계산할 수 없어요',false);return}
         const max=o.maxMB*1048576;
-        if(!o.maxOn){g('svEst').textContent='약 '+fmtB(v);return}
-        if(v<=max){plan=null;Object.assign(po,o);g('svEst').textContent='약 '+fmtB(v);g('svPlan').innerHTML=`지금 설정으로 약 <span class="k">${fmtB(v)}</span>예요. ${fmtB(max)} 안에 들어가서 아무것도 줄이지 않아요.`;showDim();pvNote();if(!PV.playing)wakePv();return}
-        g('svEst').textContent='약 '+fmtB(v)+' → 줄이는 중…';g('svPlan').textContent='무엇을 얼마나 줄일지 계산하고 있어요…';
+        if(!o.maxOn){setEst('약 '+fmtB(v),true);startExact(tok);return}
+        if(v<=max){plan=null;Object.assign(po,o);setEst('약 '+fmtB(v),true);g('svPlan').innerHTML=`지금 설정으로 약 <span class="k">${fmtB(v)}</span>예요. ${fmtB(max)} 안에 들어가서 아무것도 줄이지 않아요.`;showDim();pvNote();if(!PV.playing)wakePv();startExact(tok);return}
+        setEst('약 '+fmtB(v)+' → 줄이는 중',true);g('svPlan').textContent='무엇을 얼마나 줄일지 계산하고 있어요…';
         const pl=await planFit(frames,{...o},max,v,()=>tok!==estTok);if(tok!==estTok||!g('svEst')||!pl)return;
         pl.key=planKey();plan=pl;Object.assign(po,o,pl.adj);
-        g('svEst').textContent=`약 ${fmtB(v)} → 약 ${fmtB(pl.est)}`;g('svPlan').innerHTML=pl.html;showDim();pvNote();PV.key='';if(!PV.playing)wakePv();
-      }catch(e){console.warn(e);if(tok===estTok&&g('svEst'))g('svEst').textContent='계산할 수 없어요'}};
+        setEst(`약 ${fmtB(v)} → 약 ${fmtB(pl.est)}`,true);g('svPlan').innerHTML=pl.html;showDim();pvNote();PV.key='';if(!PV.playing)wakePv();startExact(tok);
+      }catch(e){console.warn(e);if(tok===estTok&&g('svEst'))setEst('계산할 수 없어요',false)}};
     const showDim=()=>{const[W,H]=outDims(o),[W2,H2]=outDims(po);const fr=plan&&o.maxOn&&plan.keep?` · ${plan.keep}프레임`:'';
       g('svDim').innerHTML=(W2!==W||H2!==H)?`${W} × ${H} → <span style="color:var(--o)">${W2} × ${H2}</span>${fr}`:`${W} × ${H}${fr}`};
     const [BW,BH]=outSize();
@@ -2554,12 +2574,14 @@ async function openSave(onlySel){
   onAct:async(act,d)=>{
     if(act!=='save')return true;
     PV.tok++;wakePv();resetPipe();
-    const ok=await runExport(frames,{...o,_n:frames.length},o.maxOn&&plan&&plan.key===planKey()?plan:null);
+    /* the background file is already made with exactly these settings: save it as is */
+    const pre=ex.res&&ex.res.key===exKey()&&(!o.maxOn||ex.res.blob.size<=o.maxMB*1048576)?ex.res:null;exStop();
+    const ok=await runExport(frames,{...o,_n:frames.length},o.maxOn&&plan&&plan.key===planKey()?plan:null,pre);
     if(!ok){PV.key='';pvLoop(d);return false}
     Object.assign(SAVE_PREF,{audio:o.audioWant,fmt:o.fmt,q:o.q,dither:o.dither,loop:o.loop,loopN:o.loopN,bar:false,barColor:o.barColor,barPos:o.barPos,reduce:o.reduce,scaleOn:o.scaleOn,scale:o.scale,sx:o.sx,sy:o.sy,keep:o.keep,maxOn:o.maxOn,maxMB:o.maxMB,fitBy:o.fitBy,lossy:o.lossy});
     return true;
   }});
-  PV.tok++;wakePv();resetPipe();
+  exStop();PV.tok++;wakePv();resetPipe();
 }
 async function estimateSize(frames,o){
   const[W,H]=outDims(o);prepFrames(frames,o);
@@ -2635,11 +2657,12 @@ async function planFit(frames,o,max,est0,stale){
   if(est>max)html+=`<span class="m"><b style="color:var(--o)">최대한 줄여도 약 ${fmtB(est)}라 ${fmtB(max)}보다 조금 클 수 있어요.</b></span>`;
   return{adj,est,keep,html,by};
 }
-async function runExport(frames,o,plan){
+async function runExport(frames,o,plan,pre){
   const fmt=o.fmt;let opt={...o,...(plan?plan.adj:{})};let blob=null,W=0,H=0;
   if(plan&&plan.keep&&plan.keep<frames.length)frames=thinFrames(frames,plan.keep);
   const max=o.maxOn?o.maxMB*1048576:Infinity;let tries=0;
-  try{
+  if(pre){blob=pre.blob;W=pre.W;H=pre.H;opt={...pre.opt}}
+  else try{
     for(let attempt=0;attempt<5;attempt++){
       [W,H]=outDims(opt);
       const job=busyStart(attempt?`Retrying ${FORMATS[fmt].t} (${attempt}/4)`:`Making ${FORMATS[fmt].t}`,frames.length);
