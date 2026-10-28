@@ -273,8 +273,8 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .menu .mcol{min-width:0}
 .menu .mh0{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:9px 10px 7px;font-size:13px;font-weight:800;color:var(--ink);border-bottom:1px solid var(--line2);margin-bottom:2px}
 .menu .mh0 small{font-size:11.5px;font-weight:600;color:var(--mute)}
-.menu .mh{padding:9px 10px 3px;font-size:11px;font-weight:700;color:var(--mute);letter-spacing:.2px}
-.menu .mh:first-child{padding-top:6px}
+.menu .mh{padding:9px 10px 3px;margin-top:5px;border-top:1px solid var(--line2);font-size:10.5px;font-weight:700;color:var(--mute);letter-spacing:.2px}
+.menu .mh:first-child{padding-top:6px;margin-top:0;border-top:0}
 .menu .mi.has-sub.open{background:var(--sel);color:var(--o)}
 #ctxSub{min-width:200px;z-index:51}
 #ctx{max-width:calc(100vw - 16px)}
@@ -1155,21 +1155,21 @@ listEl.addEventListener('contextmenu',e=>{e.preventDefault();if(!S.frames.length
 function menuDef(){
   const s=()=>needSel(),n=S.sel.size;
   const left=[
-    {h:'시간 · 속도',items:[{t:'시간 설정…',k:'mod+F',f:()=>dlgTime()},
+    {h:'Time · Speed',items:[{t:'시간 설정…',k:'mod+F',f:()=>dlgTime()},
       {t:'재생 속도 10% 빠르게',k:'mod+K',f:()=>{const x=s();x&&OPS.speed(x,0.9)}},{t:'재생 속도 10% 느리게',k:'mod+J',f:()=>{const x=s();x&&OPS.speed(x,1/0.9)}}]},
-    {h:'순서',items:[{t:'역순으로 뒤집기',f:()=>{const x=s();x&&(x.length>1?OPS.reverse(x):toast('2프레임 이상 선택하세요'))}},{t:'뒤에 역재생 붙이기 (왕복)',f:()=>{const x=s();x&&OPS.yoyo(x)}}]},
-    {h:'이동 · 복사',items:[{t:'맨 앞으로 이동',k:'alt+PgUp',f:()=>{const x=s();x&&OPS.moveTo(x,'front')}},{t:'맨 앞에 복사',k:'alt+shift+PgUp',f:()=>{const x=s();x&&OPS.copyTo(x,'front')}},
+    {h:'Order',items:[{t:'역순으로 뒤집기',f:()=>{const x=s();x&&(x.length>1?OPS.reverse(x):toast('2프레임 이상 선택하세요'))}},{t:'뒤에 역재생 붙이기 (왕복)',f:()=>{const x=s();x&&OPS.yoyo(x)}}]},
+    {h:'Move · Copy',items:[{t:'맨 앞으로 이동',k:'alt+PgUp',f:()=>{const x=s();x&&OPS.moveTo(x,'front')}},{t:'맨 앞에 복사',k:'alt+shift+PgUp',f:()=>{const x=s();x&&OPS.copyTo(x,'front')}},
       {t:'한 칸 위로',k:'alt+↑',f:()=>{const x=s();x&&OPS.moveUp(x)}},{t:'한 칸 아래로',k:'alt+↓',f:()=>{const x=s();x&&OPS.moveDown(x)}},
       {t:'맨 뒤로 이동',k:'alt+PgDn',f:()=>{const x=s();x&&OPS.moveTo(x,'back')}},{t:'맨 뒤에 복사',k:'alt+shift+PgDn',f:()=>{const x=s();x&&OPS.copyTo(x,'back')}}]},
   ];
   const right=[
-    {h:'편집',items:[{t:'복사',k:'mod+C',f:()=>{const x=s();x&&OPS.copy(x)}},{t:'잘라내기',k:'mod+X',f:()=>{const x=s();x&&OPS.cut(x)}},
+    {h:'Edit',items:[{t:'복사',k:'mod+C',f:()=>{const x=s();x&&OPS.copy(x)}},{t:'잘라내기',k:'mod+X',f:()=>{const x=s();x&&OPS.cut(x)}},
       {t:'위에 붙여넣기',k:'mod+V',f:()=>OPS.paste(false),dis:!S.clip.length},{t:'아래에 붙여넣기',k:'mod+shift+V',f:()=>OPS.paste(true),dis:!S.clip.length}]},
-    {h:'삭제',items:[{t:'삭제',k:'Del',f:()=>{const x=s();x&&OPS.remove(x)}},
+    {h:'Delete',items:[{t:'삭제',k:'Del',f:()=>{const x=s();x&&OPS.remove(x)}},
       {t:'짝 · 홀 · N번째만 삭제',sub:[{t:'짝수 번째 삭제',f:()=>deleteParity('even')},{t:'홀수 번째 삭제',f:()=>deleteParity('odd')},{t:'N번째마다 삭제…',k:IS_MAC?'alt+⌫':'alt+Del',f:()=>deleteParity('nth')}]},
       {t:'선택 안 한 프레임 삭제',f:()=>{const set=S.sel;OPS.remove(allIdx().filter(i=>!set.has(i)))}}]},
-    {h:'내보내기',items:[{t:'PNG로 내보내기',k:'mod+shift+E',f:()=>exportSelPNG()},{t:'이 프레임만 저장…',k:'mod+shift+S',f:()=>openSave(true)}]},
-    {h:'전체 프레임',items:[{t:'모두 선택',k:'mod+A',f:()=>selAll()},
+    {h:'Export',items:[{t:'PNG로 내보내기',k:'mod+shift+E',f:()=>exportSelPNG()},{t:'이 프레임만 저장…',k:'mod+shift+S',f:()=>openSave(true)}]},
+    {h:'All frames',items:[{t:'모두 선택',k:'mod+A',f:()=>selAll()},
       {t:'짝 · 홀 · N번째 선택',sub:[{t:'짝수 번째 선택',f:()=>selectParity('even')},{t:'홀수 번째 선택',f:()=>selectParity('odd')},{t:'N번째마다 선택…',f:()=>selectParity('nth')}]},
       {t:'선택 취소',k:'mod+U',f:()=>selNone()},{t:'선택 반전',k:'mod+I',f:()=>selInvert()},
       {t:'현재 프레임 앞 모두 삭제',k:'mod+[',f:()=>OPS.remove(allIdx().filter(i=>i<S.cur))},{t:'현재 프레임 뒤 모두 삭제',k:'mod+]',f:()=>OPS.remove(allIdx().filter(i=>i>S.cur))}]},
@@ -1354,7 +1354,7 @@ function renderPanel(){
   </div>
   <div class="sec"><h3>Shortcuts</h3><div class="kbd-list">
     <span>재생 / 정지</span><kbd>Space</kbd><span>이전·다음 프레임</span><kbd>← →</kbd><span>여러 개 선택</span><kbd>${kb('shift')}클릭 · ${kb('mod')}클릭</kbd>
-    <span>실행 취소</span><kbd>${kb('mod+Z')}</kbd><span>저장</span><kbd>${kb('mod+S')}</kbd><span>확대·축소</span><kbd>${kb('mod')}휠</kbd></div></div>`;
+    <span>실행 취소</span><kbd>${kb('mod+Z')}</kbd><span>저장</span><kbd>${kb('mod+S')}</kbd><span>너비 입력</span><kbd>${kb('mod')}R</kbd><span>확대·축소</span><kbd>${kb('mod')}휠</kbd></div></div>`;
   const ratio=H/W;
   $('#rzKeep').onchange=e=>rz.keep=e.target.checked;
   $('#rzW').oninput=e=>{if(rz.keep&&+e.target.value>0)$('#rzH').value=Math.max(1,Math.round(+e.target.value*ratio))};
@@ -1992,18 +1992,18 @@ tlCv.addEventListener('contextmenu',e=>{e.preventDefault();blurPanel();if(!tlGeo
 function audioMenuDef(){
   if(S.aSel==='linked'){const segs=linkedSegs(),sg=selSeg(segs);const i=frameAt(clamp(playT(),0,Math.max(0,S.total-1)));
     return{title:'Frame audio',hint:segs.length>1?`마디 ${sg.k+1} / ${segs.length}`:fmtS(playT())+' 위치',cols:[[
-      {h:'마디',items:[{t:'재생 위치에서 나누기',k:'mod+shift+D',f:()=>splitLinked(),dis:i===0||!!S.frames[i]?.auSeg},{t:'앞 마디와 합치기',f:()=>joinLinked(selSeg()),dis:!sg||sg.k===0},
+      {h:'Parts',items:[{t:'재생 위치에서 나누기',k:'mod+shift+D',f:()=>splitLinked(),dis:i===0||!!S.frames[i]?.auSeg},{t:'앞 마디와 합치기',f:()=>joinLinked(selSeg()),dis:!sg||sg.k===0},
         {t:'이 마디 볼륨 100%로',f:()=>commit(()=>setSegCfg(selSeg(),{vol:1}))}]},
-      {h:'연결',items:[{t:'Unlink · 소리 분리',f:()=>unlinkAudio()}]}]]};}
+      {h:'Link',items:[{t:'Unlink · 소리 분리',f:()=>unlinkAudio()}]}]]};}
   const list=selClips(),T=playT(),n=list.length,tid=S.aTrack||list[0]?.track;const anyIn=list.some(c=>T>c.start+10&&T<c.start+clipLen(c)-10);const allLoop=n&&list.every(c=>c.loop);
   const left=[
-    {h:'편집',items:[{t:'잘라내기',k:'mod+X',f:()=>clipCopy(selClips(),true),dis:!n},{t:'복사',k:'mod+C',f:()=>clipCopy(selClips()),dis:!n},
+    {h:'Edit',items:[{t:'잘라내기',k:'mod+X',f:()=>clipCopy(selClips(),true),dis:!n},{t:'복사',k:'mod+C',f:()=>clipCopy(selClips()),dis:!n},
       {t:'재생 위치에 붙여넣기',k:'mod+V',f:()=>clipPaste(),dis:!A.cb.length},{t:'바로 뒤에 복제',k:'mod+D',f:()=>clipDuplicate(selClips()),dis:!n}]},
-    {h:'자르기 (재생 위치 기준)',items:[{t:'둘로 나누기',k:'mod+shift+D',f:()=>clipSplit(selClips(),playT()),dis:!anyIn},
+    {h:'Split · Trim',items:[{t:'둘로 나누기',k:'mod+shift+D',f:()=>clipSplit(selClips(),playT()),dis:!anyIn},
       {t:'앞부분 잘라내기',k:'alt+[',f:()=>{const c=selClip();c&&clipTrim(c,'in',playT())},dis:n!==1||!anyIn},{t:'뒷부분 잘라내기',k:'alt+]',f:()=>{const c=selClip();c&&clipTrim(c,'out',playT())},dis:n!==1||!anyIn}]},
-    {h:'소리',items:[{t:allLoop?'반복 끄기':'끝까지 반복 (배경음)',f:()=>clipLoop(selClips(),!allLoop),dis:!n},{t:'볼륨 100%로',f:()=>commit(()=>selClips().forEach(c=>c.vol=1)),dis:!n},
+    {h:'Sound',items:[{t:allLoop?'반복 끄기':'끝까지 반복 (배경음)',f:()=>clipLoop(selClips(),!allLoop),dis:!n},{t:'볼륨 100%로',f:()=>commit(()=>selClips().forEach(c=>c.vol=1)),dis:!n},
       {t:'삭제',k:'Del',f:()=>clipDelete(selClips()),dis:!n}]},
-    {h:'트랙',items:[{t:'새 트랙 추가',f:()=>addTrack()},{t:'이 트랙 삭제',f:()=>deleteTrack(tid),dis:!tid}]},
+    {h:'Track',items:[{t:'새 트랙 추가',f:()=>addTrack()},{t:'이 트랙 삭제',f:()=>deleteTrack(tid),dis:!tid}]},
   ];
   return{title:n?(n>1?`오디오 ${n}개`:esc(list[0].name)):(tid?esc(S.tracks.find(t=>t.id===tid)?.name||'트랙'):'오디오'),hint:fmtS(T)+' 위치',cols:[left]};
 }
@@ -2605,13 +2605,21 @@ const TOUR_ALL=[
   {el:'#dz',t:'Drop a file',d:'영상(MP4·WebM·MOV), GIF, 이미지를 끌어다 놓거나 눌러서 고르세요. 영상은 구간과 초당 프레임을 정해서 불러와요.'},
   {el:'#left',t:'Edit frames',d:'프레임을 고르고 오른쪽 클릭하면 복사·이동·삭제·짝/홀 선택 메뉴가 나와요. Shift·'+(IS_MAC?'⌘':'Ctrl')+' 클릭으로 여러 개를 고를 수 있어요.'},
   {el:'#tools',t:'Quick tools',d:'시간 설정, 속도 ±10%, 역재생, 왕복, 프레임 줄이기를 한 번에. 아이콘에 마우스를 올리면 설명이 떠요.'},
-  {el:'#panel',t:'Size · Crop',d:'크기 조절, 회전·반전, 자르기를 여기서 해요.'},
+  {el:'#panel',t:'Size · Crop',d:'크기 조절, 회전·반전, 자르기를 여기서 해요. '+(IS_MAC?'⌘':'Ctrl')+'R을 누르면 너비(px) 칸으로 바로 가서 입력할 수 있어요.'},
   {el:'#tl',t:'Audio',d:'영상 소리는 Frame audio로 들어와서 프레임과 같이 잘려요. + Audio로 음악을, + Track으로 빈 트랙을 올리고 막대를 오른쪽 클릭하면 잘라내기·복사·붙여넣기·나누기·끝까지 반복 메뉴가 나와요. 노란 선을 위아래로 끌면 볼륨이 바뀌어요. MP4·WebM으로 저장하면 소리가 같이 들어가요.'},
   {el:'#modes',t:'Layer',d:'틀 이미지(PNG·JPG) 위나 아래에 GIF·영상을 올려 위치와 크기를 맞춘 뒤 프레임으로 만들 수 있어요.'},
   {el:'#btnSave',t:'Save',d:'GIF·WebP·MP4·WebM·APNG로 저장해요. 예상 용량을 보면서 화질과 크기를 조절하고, 최대 용량에 맞춰 자동으로 줄일 수도 있어요.'},
 ];
+const TOUR_LAYER=[
+  {el:'#dz',t:'Add a frame image',d:'틀이 될 PNG·JPG를 끌어다 놓거나 눌러서 고르세요. 첫 이미지를 올리면 캔버스가 그 크기로 맞춰져요.'},
+  {el:'#lAddAnim',t:'Add GIF · Video',d:'틀 위나 아래에 올릴 GIF·영상을 추가해요. 편집 중인 움짤을 바로 레이어로 가져올 수도 있어요.'},
+  {el:'#llist',t:'Layers',d:'위에 있는 레이어가 화면에서 앞에 보여요. 눌러서 고르고, 오른쪽 패널에서 맨 앞·앞·뒤·맨 뒤로 순서를 바꾸거나 불투명도를 조절해요.'},
+  {el:'#stage',t:'Size · Position',d:'고른 레이어를 끌어서 옮기고, 모서리를 끌어 크기를 바꿔요. 방향키는 1px, Shift+방향키는 10px씩 움직여요. '+(IS_MAC?'⌘':'Ctrl')+'R을 누르면 너비 칸으로 바로 가요.'},
+  {el:'#panel',t:'Canvas',d:'캔버스 크기(프리셋 또는 직접 입력)와 배경(투명·흰색·검정·색 지정)을 정해요. 고른 레이어의 위치·크기도 숫자로 맞출 수 있어요.'},
+  {el:'#btnSave',t:'Make frames',d:'합성한 결과를 프레임으로 만들어 Edit로 보내요. 거기서 프레임을 다듬고 GIF·MP4 등으로 저장하면 돼요.'},
+];
 function runTour(){
-  setMode('edit');let i=0;const TOUR=TOUR_ALL.filter(s=>{const el=$(s.el);return el&&el.offsetParent!==null});const hole=document.createElement('div');hole.className='tour-hole';const card=document.createElement('div');card.className='tour-card';
+  const isL=S.mode==='layer';if(!isL)setMode('edit');let i=0;const TOUR=(isL?TOUR_LAYER:TOUR_ALL).filter(s=>{const el=$(s.el);return el&&el.offsetParent!==null});const hole=document.createElement('div');hole.className='tour-hole';const card=document.createElement('div');card.className='tour-card';
   document.body.append(hole,card);
   const end=()=>{hole.remove();card.remove();removeEventListener('resize',place);removeEventListener('keydown',key,true)};
   const place=()=>{const s=TOUR[i];const el=$(s.el);el.scrollIntoView({block:'nearest'});const r=el.getBoundingClientRect();const pad=6;
@@ -2628,6 +2636,8 @@ function runTour(){
   addEventListener('resize',place);addEventListener('keydown',key,true);place();
 }
 $('#howBtn').onclick=runTour;
+/* ask before a reload or tab close throws work away */
+addEventListener('beforeunload',e=>{if(S.frames.length||S.clips.length||L.layers.length){e.preventDefault();e.returnValue=''}});
 
 /* ---------- licenses ---------- */
 const MIT=`Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -2644,9 +2654,18 @@ $('#licBtn').onclick=()=>dialog({title:'Open source licenses',body:`
   <div class="kv"><span>Pretendard</span><b>© Kil Hyung-jin · OFL 1.1</b></div></div>
   <pre class="lic">MIT License\n\n${MIT}</pre>`,buttons:[{t:'Close',act:'ok',primary:true}]});
 
+/* Ctrl+R: jump straight into the width box (frame size in Edit, selected layer in Layer) */
+function focusWidth(){
+  closeMenu();let el;
+  if(S.mode==='layer'){el=$('#lyW')||$('#cvW')}
+  else{if(!S.frames.length)return toast('파일을 불러온 뒤 크기를 바꿀 수 있어요');
+    if(audioFocus()){clearAudioSel();renderTimeline()}renderPanel();el=S.crop.active?$('#crW'):$('#rzW')}
+  if(!el)return;el.scrollIntoView({block:'center',behavior:'smooth'});el.focus({preventScroll:true});el.select();
+}
 /* ---------- keyboard ---------- */
 addEventListener('keydown',e=>{
   if(e.key==='Escape'){if(!$('#ctx').hidden)return closeMenu();if(modalClose)return modalClose();if(S.crop.active){S.crop.active=false;renderStage();renderPanel();return}if(S.aSel||S.aTrack){clearAudioSel();renderTimeline();renderPanel()}return}
+  if((IS_MAC?e.metaKey:e.ctrlKey)&&!e.shiftKey&&!e.altKey&&e.code==='KeyR'){e.preventDefault();if(!$('#modal').hidden||!$('#busy').hidden||$('.tour-card'))return;focusWidth();return}
   if(!$('#modal').hidden||!$('#busy').hidden||$('.tour-card'))return;
   if(e.target.matches('input:not([type=range]):not([type=checkbox]),select,textarea'))return;
   const mod=IS_MAC?e.metaKey:e.ctrlKey;const c=e.code;
