@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-10-29T05:50:14+09:00",
+  "ranAt": "2026-10-29T13:44:36+09:00",
   "stats": {
     "asOf": "2026-10-29",
-    "asOfIso": "2026-10-29T05:50:14+09:00",
+    "asOfIso": "2026-10-29T13:44:36+09:00",
     "cardsTotal": 4941,
     "cardsLive": 2443,
     "skippedTierC": 2498,
@@ -14,7 +14,7 @@
       "B": 980,
       "C": 2626
     },
-    "ebayPricesRestored": 2853,
+    "ebayPricesRestored": 2855,
     "brgPopsRestored": 2481,
     "psaPopsRestored": 2240,
     "brg": {
@@ -25,10 +25,10 @@
           "setsResolved": 102,
           "setsMissing": 1,
           "setsUnavailable": 4,
-          "cardsMatched": 2460,
-          "cardsNoBrgEntry": 2569,
+          "cardsMatched": 2459,
+          "cardsNoBrgEntry": 2570,
           "cardsAttempted": 5029,
-          "brgEntriesFetched": 3497,
+          "brgEntriesFetched": 3496,
           "dryRun": false,
           "setMap": [
             {
@@ -670,19 +670,19 @@
             }
           ],
           "errors": [],
-          "matchRate": 0.4892,
-          "cardsUnmatched": 2569
+          "matchRate": 0.489,
+          "cardsUnmatched": 2570
         }
       },
       "setsResolved": 102,
       "setsMissing": 1,
       "setsUnavailable": 4,
-      "cardsMatched": 2460,
-      "cardsNoBrgEntry": 2569,
+      "cardsMatched": 2459,
+      "cardsNoBrgEntry": 2570,
       "cardsAttempted": 5029,
-      "brgEntriesFetched": 3497,
+      "brgEntriesFetched": 3496,
       "dryRun": 0,
-      "cardsUnmatched": 2569
+      "cardsUnmatched": 2570
     },
     "ebay": {
       "ebayEnabled": true,
@@ -690,15 +690,15 @@
         "all": {
           "ebayEnabled": true,
           "jobsPlanned": 50,
-          "jobsOk": 5,
-          "jobsEmpty": 45,
+          "jobsOk": 27,
+          "jobsEmpty": 23,
           "jobsFailed": 0,
           "dryRun": false
         }
       },
       "jobsPlanned": 50,
-      "jobsOk": 5,
-      "jobsEmpty": 45,
+      "jobsOk": 27,
+      "jobsEmpty": 23,
       "jobsFailed": 0
     },
     "liveSource": "eBay+seed+BRG"
