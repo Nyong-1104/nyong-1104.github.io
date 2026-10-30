@@ -1078,10 +1078,15 @@ const setSel=(arr,cur)=>{S.sel=new Set(arr);if(cur!==undefined)S.cur=cur;else if
 function scopeMsg(idx){return idx.length===S.frames.length?`전체 ${idx.length}프레임`:`선택한 ${idx.length}프레임`}
 
 const OPS={
-  setDelay(idx,ms){commit(()=>{for(const i of idx)S.frames[i]=cloneF(S.frames[i],{delay:ms})},`${scopeMsg(idx)}을 ${ms}ms로 바꿨어요`)},
+  setDelay(idx,ms){commit(()=>{for(const i of idx){const f=S.frames[i];S.frames[i]=cloneF(f,{delay:ms,base:fBase(f),spd:undefined})}},`${scopeMsg(idx)}을 ${ms}ms로 바꿨어요`)},
   fitDuration(idx,totalMs){const cur=idx.reduce((a,i)=>a+S.frames[i].delay,0);if(!cur)return;let acc=0,prev=0;
-    commit(()=>{for(const i of idx){acc+=S.frames[i].delay;const e=Math.round(acc*totalMs/cur);S.frames[i]=cloneF(S.frames[i],{delay:Math.max(10,e-prev)});prev=e}},`${scopeMsg(idx)}을 ${(totalMs/1000).toFixed(2)}초에 맞췄어요`)},
-  speed(idx,f){commit(()=>{for(const i of idx)S.frames[i]=cloneF(S.frames[i],{delay:Math.max(10,Math.round(S.frames[i].delay*f))})},`${scopeMsg(idx)} 속도를 ${f<1?'10% 빠르게':'10% 느리게'} 했어요`)},
+    commit(()=>{for(const i of idx){acc+=S.frames[i].delay;const e=Math.round(acc*totalMs/cur);const f=S.frames[i];S.frames[i]=cloneF(f,{delay:Math.max(10,e-prev),base:fBase(f),spd:undefined});prev=e}},`${scopeMsg(idx)}을 ${(totalMs/1000).toFixed(2)}초에 맞췄어요`)},
+  speed(idx,f){commit(()=>{for(const i of idx){const x=S.frames[i];S.frames[i]=cloneF(x,{delay:Math.max(10,Math.round(x.delay*f)),base:fBase(x),spd:undefined})}},`${scopeMsg(idx)} 속도를 ${f<1?'10% 빠르게':'10% 느리게'} 했어요`)},
+  /* speed in %: 100 = each frame's own length, so 200 → 50 → 100 comes back exactly */
+  setSpeed(idx,pct,msg,after){pct=clamp(Math.round(pct),10,400);const r=pct/100;const first=Math.min(...idx);
+    const moved=S.clips.some(c=>c.start+clipLen(c)>S.starts[first]);
+    commit(()=>{for(const i of idx){const f=S.frames[i],b=fBase(f);S.frames[i]=cloneF(f,{delay:Math.max(10,Math.round(b/r)),base:b,spd:pct===100?undefined:r})}after&&after()},
+      (msg||`${scopeMsg(idx)} 속도를 ${pct}%로 바꿨어요`)+(moved?' · 따로 둔 오디오 클립은 위치 그대로예요':''))},
   reverse(idx){commit(()=>{const fs=idx.map(i=>S.frames[i]).reverse().map(revAu);idx.forEach((i,k)=>S.frames[i]=fs[k])},`${scopeMsg(idx)} 순서를 뒤집었어요`)},
   yoyo(idx){if(idx.length<3)return toast('3프레임 이상 선택해야 왕복을 만들 수 있어요');
     commit(()=>{const back=idx.slice(1,-1).reverse().map(i=>revAu(S.frames[i]));const at=idx[idx.length-1]+1;S.frames.splice(at,0,...back);setSel(back.map((_,k)=>at+k),at)},`역재생 프레임 ${idx.length-2}개를 추가했어요`)},
@@ -1091,11 +1096,11 @@ const OPS={
   removeKeep(idx){if(!idx.length)return;if(idx.length>=S.frames.length)return toast('모든 프레임을 지울 수는 없어요');
     commit(()=>{const set=new Set(idx);const out=[];let carry=null;
       S.frames.forEach((f,i)=>{
-        if(set.has(i)){if(out.length){const k=out[out.length-1];out[out.length-1]=cloneF(k,{delay:k.delay+f.delay,au:mergeAu([k,f])})}else carry=carry?{delay:carry.delay+f.delay,list:[...carry.list,f]}:{delay:f.delay,list:[f]};return}
-        if(carry){out.push(cloneF(f,{delay:f.delay+carry.delay,au:mergeAu([...carry.list,f])}));carry=null}else out.push(f)});
+        if(set.has(i)){if(out.length){const k=out[out.length-1];out[out.length-1]=cloneF(k,{...joinT([k,f]),au:mergeAu([k,f])})}else carry=carry?{list:[...carry.list,f]}:{list:[f]};return}
+        if(carry){out.push(cloneF(f,{...joinT([...carry.list,f]),au:mergeAu([...carry.list,f])}));carry=null}else out.push(f)});
       S.frames=out;const c=Math.min(idx[0],out.length-1);setSel([c],c)},`${idx.length}프레임을 삭제했어요 · 전체 시간 유지`)},
   merge(idx){if(idx.length<2)return toast('2프레임 이상 선택하세요');
-    commit(()=>{const total=idx.reduce((a,i)=>a+S.frames[i].delay,0);const keep=cloneF(S.frames[idx[0]],{delay:total,au:mergeAu(idx.map(i=>S.frames[i]))});const set=new Set(idx.slice(1));S.frames[idx[0]]=keep;S.frames=S.frames.filter((_,i)=>!set.has(i));setSel([idx[0]],idx[0])},`${idx.length}프레임을 하나로 합쳤어요`)},
+    commit(()=>{const keep=cloneF(S.frames[idx[0]],{...joinT(idx.map(i=>S.frames[i])),au:mergeAu(idx.map(i=>S.frames[i]))});const set=new Set(idx.slice(1));S.frames[idx[0]]=keep;S.frames=S.frames.filter((_,i)=>!set.has(i));setSel([idx[0]],idx[0])},`${idx.length}프레임을 하나로 합쳤어요`)},
   copyTo(idx,where){commit(()=>{const cp=idx.map(i=>cloneF(S.frames[i]));if(where==='front'){S.frames.unshift(...cp);setSel(cp.map((_,k)=>k))}else{const at=S.frames.length;S.frames.push(...cp);setSel(cp.map((_,k)=>at+k))}},`${idx.length}프레임을 ${where==='front'?'맨 앞':'맨 뒤'}에 복사했어요`)},
   moveTo(idx,where){commit(()=>{const set=new Set(idx);const mv=idx.map(i=>S.frames[i]);const rest=S.frames.filter((_,i)=>!set.has(i));
     if(where==='front'){S.frames=[...mv,...rest];setSel(mv.map((_,k)=>k))}else{S.frames=[...rest,...mv];setSel(mv.map((_,k)=>rest.length+k))}})},
@@ -1105,7 +1110,7 @@ const OPS={
     commit(()=>{const set=new Set(idx);const out=[];let k=0,lastKept=-1;
       for(let i=0;i<S.frames.length;i++){const f=S.frames[i];
         if(!set.has(i)){out.push(f);lastKept=-1;continue}
-        if(k%n===0){out.push(cloneF(f));lastKept=out.length-1}else if(lastKept>=0){const kf=out[lastKept];out[lastKept]=cloneF(kf,{delay:kf.delay+f.delay,au:mergeAu([kf,f])})}
+        if(k%n===0){out.push(cloneF(f));lastKept=out.length-1}else if(lastKept>=0){const kf=out[lastKept];out[lastKept]=cloneF(kf,{...joinT([kf,f]),au:mergeAu([kf,f])})}
         k++}
       const removed=S.frames.length-out.length;S.frames=out;setSel([0],0);toast(`${removed}프레임을 줄였어요 (재생 시간 유지)`)})},
   copy(idx){S.clip=idx.map(i=>S.frames[i]);A.cbKind='frames';toast(`${idx.length}프레임을 복사했어요`)},
@@ -1195,7 +1200,7 @@ function menuDef(){
   const s=()=>needSel(),n=S.sel.size;
   const left=[
     {h:'Time · Speed',items:[{t:'시간 설정…',k:'mod+F',f:()=>dlgTime()},
-      {t:'재생 속도 10% 빠르게',k:'mod+K',f:()=>{const x=s();x&&OPS.speed(x,0.9)}},{t:'재생 속도 10% 느리게',k:'mod+J',f:()=>{const x=s();x&&OPS.speed(x,1/0.9)}}]},
+      {t:'재생 속도 10% 빠르게',k:'mod+K',f:()=>{const x=s();x&&OPS.speed(x,0.9)}},{t:'재생 속도 10% 느리게',k:'mod+J',f:()=>{const x=s();x&&OPS.speed(x,1/0.9)}},{t:'속도 바꾸기 (%)…',f:()=>dlgSpeed('frames')}]},
     {h:'Order',items:[{t:'역순으로 뒤집기',f:()=>{const x=s();x&&(x.length>1?OPS.reverse(x):toast('2프레임 이상 선택하세요'))}},{t:'뒤에 역재생 붙이기 (왕복)',f:()=>{const x=s();x&&OPS.yoyo(x)}}]},
     {h:'Label',items:[{t:'Label color',sub:[...Object.entries(LABELS).map(([k,v])=>({t:`<i class="lbdot" style="background:${v.c}"></i>${v.t}`,f:()=>{const x=s();x&&setLabel(x,k)}})),
       {t:'<i class="lbdot" style="background:#fff"></i>None',f:()=>{const x=s();x&&setLabel(x,null)}}]}]},
@@ -1390,6 +1395,7 @@ function renderPanel(){
     <div class="kv"><span>선택</span><b id="pSelN">${s.length}개</b></div>
     <div class="kv"><span>선택 구간 길이</span><b id="pSelD">${fmtS(selDur)}</b></div>
     <div class="grid2" style="align-items:end"><label class="fld"><span>프레임 시간 (ms)</span><input class="in" id="pDelay" type="number" min="10" step="10" value="${S.frames[S.cur]?.delay||100}"></label><button type="button" class="btn" id="pDelayApply">Apply</button></div>
+    ${(()=>{const fr=s.map(i=>S.frames[i]);return spdHTML('pSpd',spdOf(fr),hasLinked(fr)?keepPitch():null,'선택한 프레임의 재생 속도를 바꿔요. 연결된 소리(Frame audio)도 같이 빨라지거나 느려져요. 선택한 프레임 속도가 서로 다르면 "혼합"으로 보이고, 값을 넣으면 하나로 맞춰져요.\n'+SPD_TIP)})()}
     ${hasLinked(s.map(i=>S.frames[i]))?`<div class="fld"><span>선택한 프레임 소리 볼륨 <span style="color:var(--mute)">· 이 구간 소리만 키우거나 줄여요</span></span><div class="srange"><input type="range" id="pGain" min="0" max="200" value="${Math.round(((S.frames[S.sel.has(S.cur)?S.cur:s[0]]||{}).au?.gain??1)*100)}"></div></div>`:''}
     <p class="note">목록을 오른쪽 클릭하면 복사·이동·삭제·짝/홀 선택 메뉴가 모두 나와요.</p>
   </div>
@@ -1407,11 +1413,13 @@ function renderPanel(){
   $('#flipH').onclick=()=>flip('h');$('#flipV').onclick=()=>flip('v');
   $('#crStart').onclick=startCrop;$('#crClear')&&($('#crClear').onclick=()=>commit(()=>{const f=outSize()[0]/cropRect().w;S.tf.crop=null;const[RW2,RH2]=rotSize();S.tf.outW=Math.round(RW2*f);S.tf.outH=Math.round(RH2*f)},'자르기를 해제했어요'));
   $('#pDelayApply').onclick=()=>{const ms=Math.round(+$('#pDelay').value);const x=needSel();if(x&&ms>=10)OPS.setDelay(x,ms)};
+  bindSpd('pSpd',{apply:p=>{const x=needSel();x&&OPS.setSpeed(x,p)},bases:()=>selIdx().map(i=>fBase(S.frames[i])),pitch:setLinkedPitch});
   const pg=$('#pGain');if(pg){springRange(pg);let pushed=false;pg.onpointerdown=()=>{S.undo.push(snap());S.redo=[];pushed=true};
     pg.oninput=e=>{if(!pushed){S.undo.push(snap());S.redo=[];pushed=true}const v=+e.target.value/100;const set=new Set(selIdx());S.frames=S.frames.map((f,i)=>set.has(i)&&f.au?cloneF(f,{au:{...f.au,gain:v}}):f);renderTimeline()};
     pg.onchange=()=>{pushed=false;toast(`선택한 ${selIdx().length}프레임의 소리를 ${pg.value}%로 맞췄어요`)}}
 }
-function softPanel(){const s=selIdx();const n=$('#pSelN');if(n){n.textContent=s.length+'개';$('#pSelD').textContent=fmtS(s.reduce((a,i)=>a+S.frames[i].delay,0))}}
+function softPanel(){const s=selIdx();const n=$('#pSelN');if(n){n.textContent=s.length+'개';$('#pSelD').textContent=fmtS(s.reduce((a,i)=>a+S.frames[i].delay,0))}
+  const sp=$('#pSpd');if(sp&&document.activeElement!==sp){const v=spdOf(s.map(i=>S.frames[i]));sp.value=v??'';sp.placeholder=v==null?'혼합':'100';sp.dispatchEvent(new Event('input'))}}
 function rotate(d){commit(()=>{
   const[ow,oh]=outSize();const[RW,RH]=rotSize();const c=S.tf.crop;
   if(c){if(d===90)S.tf.crop={x:RH-c.y-c.h,y:c.x,w:c.h,h:c.w};else if(d===-90)S.tf.crop={x:c.y,y:RW-c.x-c.w,w:c.h,h:c.w};else S.tf.crop={x:RW-c.x-c.w,y:RH-c.y-c.h,w:c.w,h:c.h}}
@@ -1640,12 +1648,50 @@ function addSource(name,buf){const id='a'+(ASID++);AS.set(id,{id,name,buf,dur:bu
 async function decodeAudioFile(file){try{const ab=await file.arrayBuffer();const oc=new OfflineAudioContext(2,1,SR);const buf=await oc.decodeAudioData(ab);return buf&&buf.length>SR*0.02?buf:null}catch(e){return null}}
 function revBuf(s){if(s.rev)return s.rev;const b=s.buf;const r=new AudioBuffer({length:b.length,numberOfChannels:b.numberOfChannels,sampleRate:b.sampleRate});
   for(let c=0;c<b.numberOfChannels;c++)r.copyToChannel(b.getChannelData(c).slice().reverse(),c);s.rev=r;return r}
+/* ---------- speed: time-stretch that keeps the pitch (WSOLA) ---------- */
+/* chs: input channels, rate: 2 = twice as fast, outLen: output samples */
+function wsola(chs,rate,outLen){
+  const W=2048,Hs=W>>1,tol=512,D=4,inLen=chs[0].length,nc=chs.length;
+  const out=chs.map(()=>new Float32Array(outLen+W)),ws=new Float32Array(outLen+W);
+  const win=new Float32Array(W);for(let k=0;k<W;k++)win[k]=0.5-0.5*Math.cos(2*Math.PI*k/W);
+  const md=new Float32Array(Math.ceil(inLen/D));for(let k=0;k<md.length;k++){let s=0;for(let c=0;c<nc;c++)s+=chs[c][k*D]||0;md[k]=s/nc}
+  const L=Hs/D,maxS=Math.max(0,inLen-W);let prev=-1;
+  for(let o=0;o<outLen;o+=Hs){const nom=Math.min(maxS,Math.round(o*rate));let best=nom;
+    if(prev>=0){const tg=prev+Hs;if(tg+Hs<=inLen){const ti=Math.floor(tg/D);let bv=-Infinity;
+      const a0=Math.max(0,nom-tol),a1=Math.min(maxS,nom+tol);
+      for(let cand=a0;cand<=a1;cand+=D){const ci=Math.floor(cand/D);let xy=0,yy=1e-9;
+        for(let k=0;k<L;k++){const y=md[ci+k]||0;xy+=(md[ti+k]||0)*y;yy+=y*y}
+        const v=xy/Math.sqrt(yy);if(v>bv){bv=v;best=cand}}}}
+    for(let c=0;c<nc;c++){const x=chs[c],y=out[c];for(let k=0;k<W;k++){const v=x[best+k];if(v!==undefined)y[o+k]+=v*win[k]}}
+    for(let k=0;k<W;k++)ws[o+k]+=win[k];prev=best}
+  for(let c=0;c<nc;c++){const y=out[c];for(let i=0;i<outLen;i++)if(ws[i]>1e-6)y[i]/=ws[i]}
+  return out.map(y=>y.subarray(0,outLen))}
+const STRETCH=new Map();
+/* part of a source (from offMs, srcMs long, played rate times faster) as a pitch-kept buffer */
+function stretchBuf(s,rev,offMs,srcMs,rate){const key=`${s.id}:${rev?1:0}:${Math.round(offMs)}:${Math.round(srcMs)}:${rate.toFixed(4)}`;
+  if(STRETCH.has(key)){const b=STRETCH.get(key);STRETCH.delete(key);STRETCH.set(key,b);return b}
+  const buf=rev?revBuf(s):s.buf,sr=buf.sampleRate;const a=clamp(Math.round(offMs*sr/1000),0,buf.length),n=Math.max(1,Math.round(srcMs*sr/1000));
+  const e=Math.min(buf.length,a+n+2048+512);const chs=[];for(let c=0;c<buf.numberOfChannels;c++)chs.push(buf.getChannelData(c).subarray(a,e));
+  const outLen=Math.max(1,Math.round(n/rate));const res=wsola(chs,rate,outLen);
+  const b=new AudioBuffer({length:outLen,numberOfChannels:res.length,sampleRate:sr});res.forEach((y,c)=>b.copyToChannel(y,c));
+  STRETCH.set(key,b);while(STRETCH.size>48)STRETCH.delete(STRETCH.keys().next().value);return b}
+/* a frame's speed: base = its own length at 100%, delay = how long it shows now */
+const fBase=f=>f.base??f.delay;
+const fRate=f=>fBase(f)/Math.max(1,f.delay);
+const fPct=f=>f.spd&&Math.abs(fBase(f)/f.spd-f.delay)<1?Math.round(f.spd*100):Math.round(fRate(f)*100);
+/* the speed shared by these frames, or null when they differ */
+function spdOf(list){if(!list.length)return 100;const v=list.map(fPct);const mn=Math.min(...v),mx=Math.max(...v);if(mx-mn>1)return null;
+  const cnt={};let best=v[0];for(const x of v){cnt[x]=(cnt[x]||0)+1;if(cnt[x]>cnt[best])best=x}return best}
+/* time fields for a frame made by joining these frames */
+const joinT=list=>({delay:list.reduce((s,f)=>s+f.delay,0),base:list.reduce((s,f)=>s+fBase(f),0),spd:undefined});
+const keepPitch=()=>S.linked.keepPitch!==false;
+const cSpd=c=>c.spd||1;
 const hasLinked=(frames=S.frames)=>!S.linkOff&&frames.some(f=>f.au);
 const canRelink=()=>!!S.linkOff&&S.frames.some(f=>f.au);
 const hasAudio=()=>hasLinked()||S.clips.length>0;
 const srcLen=c=>c.out-c.in;
 /* a looping clip (background music) can run longer than its source */
-const clipLen=c=>c.loop?Math.max(20,Math.round(c.loopLen||srcLen(c))):srcLen(c);
+const clipLen=c=>c.loop?Math.max(20,Math.round(c.loopLen||srcLen(c)/cSpd(c))):srcLen(c)/cSpd(c);
 function revAu(f){return f.au?cloneF(f,{au:{...f.au,rev:!f.au.rev}}):cloneF(f)}
 function mergeAu(list){const a=list.map(f=>f.au);if(!a[0])return null;const g0=a[0].gain??1;if(a.some(x=>!x||x.src!==a[0].src||x.rev!==a[0].rev||(x.gain??1)!==g0))return a[0];
   for(let i=1;i<a.length;i++){const p=a[i-1],c=a[i];if(!a[0].rev?Math.abs(p.t0+p.len-c.t0)>2:Math.abs(c.t0+c.len-p.t0)>2)return a[0]}
@@ -1704,22 +1750,45 @@ async function buildMix(frames,{clips=true,raw=false,keepGain=false}={}){
     const sgn=segs.map(sg=>{const gs=oc.createGain();gs.connect(g);const c=sg.cfg;
       if(raw)gs.gain.value=1;else envelope(gs.gain,c.vol,sg.start/1000,sg.end/1000,c.fadeIn,c.fadeOut,c.fiC,c.foC,true,c.fiL,c.foL);return gs});
     const runs=[];
-    frames.forEach((f,i)=>{const a=f.au;if(!a||!AS.has(a.src))return;const play=Math.min(f.delay,a.len);if(play<=0)return;const gg=raw&&!keepGain?1:(a.gain??1);
-      const at=starts[i],lo=a.rev?a.t0+a.len-play:a.t0,hi=lo+play;const r=runs[runs.length-1];
-      if(r&&r.src===a.src&&r.rev===a.rev&&r.g===gg&&r.sg===segOf[i]&&Math.abs(r.at+r.d-at)<1&&(a.rev?Math.abs(r.lo-hi)<2:Math.abs(r.hi-lo)<2)){r.d+=play;if(a.rev)r.lo=lo;else r.hi=hi}
-      else runs.push({src:a.src,rev:a.rev,g:gg,sg:segOf[i],at,d:play,lo,hi})});
-    for(const r of runs){const s=AS.get(r.src);const node=oc.createBufferSource(),gn=oc.createGain();node.buffer=r.rev?revBuf(s):s.buf;
-      const off=r.rev?(s.dur-r.hi)/1000:r.lo/1000,at=r.at/1000,d=r.d/1000;envelope(gn.gain,r.g,at,at+d,0,0);node.connect(gn);gn.connect(sgn[r.sg]||g);node.start(at,Math.max(0,off),d);n++}
+    /* a frame plays its own sound (base long at 100%) squeezed or stretched into its delay */
+    frames.forEach((f,i)=>{const a=f.au;if(!a||!AS.has(a.src))return;const rate=fRate(f),use=Math.min(a.len,fBase(f));if(use<=0)return;const gg=raw&&!keepGain?1:(a.gain??1);
+      const at=starts[i],out=use/rate,lo=a.rev?a.t0+a.len-use:a.t0,hi=lo+use;const r=runs[runs.length-1];
+      /* frames join one run while one even speed keeps them within 15ms of their place (frame-time rounding makes tiny differences) */
+      let join=r&&r.src===a.src&&r.rev===a.rev&&r.g===gg&&r.sg===segOf[i]&&Math.abs(r.at+r.d-at)<1&&(a.rev?Math.abs(r.lo-hi)<2:Math.abs(r.hi-lo)<2);
+      if(join){const R=(r.s+use)/(r.d+out);join=Math.abs(R*r.d-r.s)/R<15}
+      if(join){r.d+=out;r.s+=use;if(a.rev)r.lo=lo;else r.hi=hi}
+      else runs.push({src:a.src,rev:a.rev,g:gg,sg:segOf[i],s:use,at,d:out,lo,hi,fi:0,fo:0,ext:0})});
+    runs.forEach(r=>{r.rate=r.s/r.d;if(Math.abs(r.rate-1)<2e-3)r.rate=1});
+    /* where the speed changes, overlap the two runs a little so the join is smooth */
+    const XF=12;
+    runs.forEach((r,k)=>{const nx=runs[k+1];if(!nx||nx.sg!==r.sg||Math.abs(r.rate-nx.rate)<1e-3||Math.abs(r.at+r.d-nx.at)>1)return;
+      const s=AS.get(r.src);const room=r.rev?r.lo:s.dur-r.hi;const ext=Math.max(0,Math.min(XF,room/r.rate));r.ext=ext;r.fo=ext||4;nx.fi=ext||4});
+    const kp=keepPitch();
+    for(const r of runs){const s=AS.get(r.src);const node=oc.createBufferSource(),gn=oc.createGain();
+      const offMs=r.rev?s.dur-r.hi:r.lo,at=r.at/1000,dOut=(r.d+r.ext)/1000;
+      envelope(gn.gain,r.g,at,at+dOut,r.fi,r.fo);node.connect(gn);gn.connect(sgn[r.sg]||g);
+      if(Math.abs(r.rate-1)<1e-3){node.buffer=r.rev?revBuf(s):s.buf;node.start(at,Math.max(0,offMs/1000),dOut)}
+      else if(kp){const b=stretchBuf(s,r.rev,Math.max(0,offMs),(r.d+r.ext)*r.rate,r.rate);node.buffer=b;node.start(at,0);node.stop(at+dOut)}
+      else{node.buffer=r.rev?revBuf(s):s.buf;node.playbackRate.value=r.rate;node.start(at,Math.max(0,offMs/1000));node.stop(at+dOut)}
+      n++}
   }
   for(const c of cl){const tr=trackOf(c);if(!tr||!ok(tr)||!AS.has(c.src))continue;let at=c.start,d=clipLen(c),skip=0;if(at<0){skip=-at;d+=at;at=0}if(at+d>total)d=total-at;if(d<=1)continue;
-    const node=oc.createBufferSource(),gn=oc.createGain();node.buffer=AS.get(c.src).buf;let off;
-    if(c.loop){const L=Math.max(1,srcLen(c));node.loop=true;node.loopStart=c.in/1000;node.loopEnd=c.out/1000;off=c.in+(((c.phase||0)+skip)%L)}else off=c.in+skip;
-    envelope(gn.gain,c.vol*tr.vol,at/1000,(at+d)/1000,c.fadeIn,c.fadeOut,c.fiC,c.foC,false,c.fiL,c.foL);
-    node.connect(gn);gn.connect(oc.destination);node.start(at/1000,off/1000,d/1000);n++}
+    const s=AS.get(c.src),sp=cSpd(c);const node=oc.createBufferSource(),gn=oc.createGain();let off;
+    envelope(gn.gain,c.vol*tr.vol,at/1000,(at+d)/1000,c.fadeIn,c.fadeOut,c.fiC,c.foC,false,c.fiL,c.foL);node.connect(gn);gn.connect(oc.destination);
+    if(Math.abs(sp-1)<1e-3){node.buffer=s.buf;
+      if(c.loop){const L=Math.max(1,srcLen(c));node.loop=true;node.loopStart=c.in/1000;node.loopEnd=c.out/1000;off=c.in+(((c.phase||0)+skip)%L)}else off=c.in+skip;
+      node.start(at/1000,off/1000,d/1000)}
+    else if(c.keepPitch!==false){const b=stretchBuf(s,false,c.in,srcLen(c),sp);node.buffer=b;const Lb=b.duration*1000;
+      if(c.loop){node.loop=true;node.loopStart=0;node.loopEnd=b.duration;off=(((c.phase||0)/sp+skip)%Lb)}else off=skip;
+      node.start(at/1000,off/1000);node.stop((at+d)/1000)}
+    else{node.buffer=s.buf;node.playbackRate.value=sp;
+      if(c.loop){const L=Math.max(1,srcLen(c));node.loop=true;node.loopStart=c.in/1000;node.loopEnd=c.out/1000;off=c.in+(((c.phase||0)+skip*sp)%L)}else off=c.in+skip*sp;
+      node.start(at/1000,off/1000);node.stop((at+d)/1000)}
+    n++}
   if(!n)return null;
   return await oc.startRendering();
 }
-function mixKey(){return S.frames.map(f=>f.au?`${f.delay}:${f.au.src}:${f.au.t0}:${f.au.len}:${f.au.rev?1:0}:${f.au.gain??1}:${f.auSeg?JSON.stringify(f.auSeg):''}`:f.delay).join('|')+'#'+JSON.stringify(S.clips)+JSON.stringify(S.tracks)+JSON.stringify(S.linked)}
+function mixKey(){return S.frames.map(f=>f.au?`${f.delay}/${fBase(f)}:${f.au.src}:${f.au.t0}:${f.au.len}:${f.au.rev?1:0}:${f.au.gain??1}:${f.auSeg?JSON.stringify(f.auSeg):''}`:f.delay).join('|')+'#'+JSON.stringify(S.clips)+JSON.stringify(S.tracks)+JSON.stringify(S.linked)}
 async function getMix(){const k=mixKey();if(A.mixKey===k)return A.mix;const m=await buildMix(S.frames);A.mixKey=k;A.mix=m;return m}
 function ensureAC(){if(!A.ac){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;A.ac=new C();A.gain=A.ac.createGain();A.gain.connect(A.ac.destination)}A.gain.gain.value=A.mute?0:1;return A.ac}
 function stopAudio(){if(A.src){try{A.src.stop()}catch(e){}try{A.src.disconnect()}catch(e){}A.src=null}}
@@ -1804,15 +1873,15 @@ function clipSplit(list,T){
   const hit=list.filter(c=>T>c.start+10&&T<c.start+clipLen(c)-10);
   if(!hit.length)return toast('재생 위치(주황 선)가 오디오 막대 안에 있어야 나눌 수 있어요');
   commit(()=>{const made=[];for(const c of hit){const d=Math.round(T-c.start);let b;
-      if(c.loop){b={...c,id:'c'+(CID++),start:c.start+d,loopLen:clipLen(c)-d,phase:((c.phase||0)+d)%Math.max(1,srcLen(c)),fadeIn:0};c.loopLen=d}
-      else{const cut=c.in+d;b={...c,id:'c'+(CID++),start:c.start+d,in:cut,fadeIn:0};c.out=cut}
+      if(c.loop){b={...c,id:'c'+(CID++),start:c.start+d,loopLen:clipLen(c)-d,phase:((c.phase||0)+d*cSpd(c))%Math.max(1,srcLen(c)),fadeIn:0};c.loopLen=d}
+      else{const cut=Math.round(c.in+d*cSpd(c));b={...c,id:'c'+(CID++),start:c.start+d,in:cut,fadeIn:0};c.out=cut}
       c.fadeOut=0;S.clips.splice(S.clips.indexOf(c)+1,0,b);made.push(b)}
     A.multi=new Set(made.map(c=>c.id));S.aSel=made[made.length-1].id},hit.length>1?`${hit.length}개를 재생 위치에서 나눴어요`:'재생 위치에서 나눴어요');
 }
 function clipTrim(c,side,T){const s=c.start,e=c.start+clipLen(c);if(!(T>s&&T<e))return toast('재생 위치가 오디오 막대 안에 있어야 해요');
   commit(()=>{const d=Math.round(T-s);
-    if(side==='in'){if(c.loop){c.loopLen=clipLen(c)-d;c.phase=((c.phase||0)+d)%Math.max(1,srcLen(c))}else c.in+=d;c.start+=d}
-    else{if(c.loop)c.loopLen=d;else c.out=c.in+d}},side==='in'?'앞을 잘랐어요':'뒤를 잘랐어요')}
+    if(side==='in'){if(c.loop){c.loopLen=clipLen(c)-d;c.phase=((c.phase||0)+d*cSpd(c))%Math.max(1,srcLen(c))}else c.in=Math.round(c.in+d*cSpd(c));c.start+=d}
+    else{if(c.loop)c.loopLen=d;else c.out=Math.round(c.in+d*cSpd(c))}},side==='in'?'앞을 잘랐어요':'뒤를 잘랐어요')}
 function clipAlign(c,side,T){commit(()=>{c.start=Math.round(side==='in'?T:T-clipLen(c))})}
 function clipDelete(list){if(!Array.isArray(list))list=[list];if(!list.length)return;const ids=new Set(list.map(c=>c.id));
   commit(()=>{S.clips=S.clips.filter(x=>!ids.has(x.id));const t=S.aTrack;clearAudioSel();S.aTrack=t},list.length>1?`오디오 ${list.length}개를 삭제했어요`:'오디오를 삭제했어요')}
@@ -1834,7 +1903,7 @@ function relinkAudio(){
     '프레임 소리를 다시 연결했어요 · 분리한 뒤의 오디오 작업은 초기화됐어요');
 }
 function clipLoop(list,on){if(!list.length)return;
-  commit(()=>{for(const c of list){if(on){c.loop=true;c.phase=0;c.loopLen=Math.max(srcLen(c),S.total-c.start>20?S.total-c.start:srcLen(c))}else{c.loop=false;c.loopLen=0;c.phase=0}}},
+  commit(()=>{for(const c of list){if(on){c.loop=true;c.phase=0;c.loopLen=Math.round(Math.max(srcLen(c)/cSpd(c),S.total-c.start>20?S.total-c.start:srcLen(c)/cSpd(c)))}else{c.loop=false;c.loopLen=0;c.phase=0}}},
     on?'프레임 끝까지 반복해서 깔아요 · 오른쪽 끝을 끌어 길이를 바꿀 수 있어요':'반복을 껐어요')}
 function addTrack(){commit(()=>{ensureTracks();const t=TRACK_DEF(`Audio ${S.tracks.length+1}`);S.tracks.push(t);S.aSel=null;A.multi=new Set();S.aTrack=t.id},'빈 트랙을 추가했어요 · 오디오를 끌어다 놓거나 붙여넣을 수 있어요');openTimeline()}
 function deleteTrack(id){const t=S.tracks.find(x=>x.id===id);if(!t)return;const n=clipsOn(id).length;
@@ -1899,14 +1968,14 @@ function renderTimeline(){
       /* gain at a pixel: master x part volume x part fade x per-frame volume */
       const gAt=px=>{const T=clamp((px-TPAD)/k,0,Math.max(0,S.total-0.001));const i=frameAt(T);const sg=segOf[i]||segs[0];if(!sg)return S.linked.vol;const f=S.frames[i];
         return S.linked.vol*sg.cfg.vol*envGain(T-sg.start,sg.end-sg.start,sg.cfg)*((f&&f.au&&f.au.gain)??1)};
-      S.frames.forEach((f,i)=>{const a=f.au;if(!a)return;const play=Math.min(f.delay,a.len);const lo=a.rev?a.t0+a.len-play:a.t0;
-        wave(a.src,lo,lo+play,a.rev,X(S.starts[i]),X(S.starts[i]+play),y,dim,gAt)});
+      S.frames.forEach((f,i)=>{const a=f.au;if(!a)return;const use=Math.min(a.len,fBase(f)),play=use/fRate(f);const lo=a.rev?a.t0+a.len-use:a.t0;
+        wave(a.src,lo,lo+use,a.rev,X(S.starts[i]),X(S.starts[i]+play),y,dim,gAt)});
       segs.forEach(sg=>{const xa=X(sg.start)+(sg.k?1.5:0),xb=X(sg.end)-(sg.k<segs.length-1?1.5:0);envLine(xa,xb,y,px=>gAt(clamp(px,xa+.5,xb-.5)),sg===ss,dim);
         if(sg===ss){const m=S.linked.vol*sg.cfg.vol;if(sg.cfg.fadeIn>0)knob(xa+4,volY(y,m*(sg.cfg.fiL||0)));if(sg.cfg.fadeOut>0)knob(xb-4,volY(y,m*(sg.cfg.foL||0)));pctLabel(xb,y,m,xa)}})}
     else{const dim=!audible(t.t);
       for(const cl of clipsOn(t.id)){const sel=isSelC(cl),x0=X(cl.start),x1=X(cl.start+clipLen(cl)),len=clipLen(cl);bar(x0,x1,y,sel,dim);
         const ev=px=>cl.vol*envGain(clamp((px-x0)/k,0,len),len,cl),wv=px=>ev(px)*t.t.vol;
-        if(cl.loop){const L=Math.max(1,srcLen(cl));let p=0;while(p<len-0.5){const sp=((cl.phase||0)+p)%L,seg=Math.min(L-sp,len-p);wave(cl.src,cl.in+sp,cl.in+sp+seg,false,X(cl.start+p),X(cl.start+p+seg),y,dim,wv);
+        if(cl.loop){const L=Math.max(1,srcLen(cl)),q=cSpd(cl);let p=0;while(p<len-0.5){const sp=((cl.phase||0)+p*q)%L,seg=Math.min((L-sp)/q,len-p);wave(cl.src,cl.in+sp,cl.in+sp+seg*q,false,X(cl.start+p),X(cl.start+p+seg),y,dim,wv);
             p+=seg;if(p<len-0.5){const bx=Math.round(X(cl.start+p))+.5;c.globalAlpha=.45;c.strokeStyle='#ffffff';c.setLineDash([2,2]);c.beginPath();c.moveTo(bx,y+7);c.lineTo(bx,y+ROW-7);c.stroke();c.setLineDash([]);c.globalAlpha=1}}}
         else wave(cl.src,cl.in,cl.out,false,x0,x1,y,dim,wv);
         envLine(x0,x1,y,ev,sel,dim);
@@ -2019,9 +2088,9 @@ tlCv.addEventListener('pointerdown',e=>{
       /* drag up/down to move onto another track (single clip) */
       if(group.length===1){const row=Math.floor((ev.clientY-r.top-RUL)/ROW);const t=g.tr[row];const was=A.newTrack;A.newTrack=row>=g.tr.length;if(was!==A.newTrack)requestAnimationFrame(()=>{const el=$('#tlBody');if(A.newTrack&&el)el.scrollTop=el.scrollHeight});
         c.track=t&&t.kind==='track'?t.id:c0.track}}
-    else if(mode==='l'){const lim=c0.loop?L0-20:L0-20;const d=clamp(snapT(c0.start+dt)-c0.start,c0.loop?-c0.start:-c0.in,lim);c.start=Math.round(c0.start+d);
-      if(c0.loop){c.loopLen=Math.round(L0-d);const Ls=Math.max(1,srcLen(c0));c.phase=(((c0.phase||0)+Math.round(d))%Ls+Ls)%Ls}else c.in=Math.round(c0.in+d)}
-    else{if(c0.loop){c.loopLen=Math.round(Math.max(20,snapT(c0.start+L0+dt)-c0.start))}else{const d=clamp(snapT(c0.start+L0+dt)-(c0.start+L0),-(L0-20),src.dur-c0.out);c.out=Math.round(c0.out+d)}}
+    else if(mode==='l'){const lim=c0.loop?L0-20:L0-20;const sp0=cSpd(c0);const d=clamp(snapT(c0.start+dt)-c0.start,c0.loop?-c0.start:Math.max(-c0.start,-c0.in/sp0),lim);c.start=Math.round(c0.start+d);
+      if(c0.loop){c.loopLen=Math.round(L0-d);const Ls=Math.max(1,srcLen(c0));c.phase=(((c0.phase||0)+Math.round(d*sp0))%Ls+Ls)%Ls}else c.in=Math.round(c0.in+d*sp0)}
+    else{if(c0.loop){c.loopLen=Math.round(Math.max(20,snapT(c0.start+L0+dt)-c0.start))}else{const sp0=cSpd(c0);const d=clamp(snapT(c0.start+L0+dt)-(c0.start+L0),-(L0-20),(src.dur-c0.out)/sp0);c.out=Math.round(c0.out+d*sp0)}}
     renderTimeline()};
   const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);
     if(moved&&A.newTrack&&group.length===1){ensureTracks();const t=TRACK_DEF(`Audio ${S.tracks.length+1}`);S.tracks.push(t);c.track=t.id}
@@ -2036,7 +2105,7 @@ function audioMenuDef(){
   if(S.aSel==='linked'){const segs=linkedSegs(),sg=selSeg(segs);const i=frameAt(clamp(playT(),0,Math.max(0,S.total-1)));
     return{title:'Frame audio',hint:segs.length>1?`마디 ${sg.k+1} / ${segs.length}`:fmtS(playT())+' 위치',cols:[[
       {h:'Parts',items:[{t:'재생 위치에서 나누기',k:'mod+shift+D',f:()=>splitLinked(),dis:i===0||!!S.frames[i]?.auSeg},{t:'앞 마디와 합치기',f:()=>joinLinked(selSeg()),dis:!sg||sg.k===0},
-        {t:'이 마디 볼륨 100%로',f:()=>commit(()=>setSegCfg(selSeg(),{vol:1}))}]},
+        {t:'이 마디 볼륨 100%로',f:()=>commit(()=>setSegCfg(selSeg(),{vol:1}))},{t:segs.length>1?'이 마디 속도 바꾸기…':'속도 바꾸기…',f:()=>dlgSpeed('seg')}]},
       {h:'Link',items:[{t:'Unlink · 소리 분리',f:()=>unlinkAudio()}]}]]};}
   const list=selClips(),T=playT(),n=list.length,tid=S.aTrack||list[0]?.track;const anyIn=list.some(c=>T>c.start+10&&T<c.start+clipLen(c)-10);const allLoop=n&&list.every(c=>c.loop);
   const left=[
@@ -2044,7 +2113,7 @@ function audioMenuDef(){
       {t:'재생 위치에 붙여넣기',k:'mod+V',f:()=>clipPaste(),dis:!A.cb.length},{t:'바로 뒤에 복제',k:'mod+D',f:()=>clipDuplicate(selClips()),dis:!n}]},
     {h:'Split · Trim',items:[{t:'둘로 나누기',k:'mod+shift+D',f:()=>clipSplit(selClips(),playT()),dis:!anyIn},
       {t:'앞부분 잘라내기',k:'alt+[',f:()=>{const c=selClip();c&&clipTrim(c,'in',playT())},dis:n!==1||!anyIn},{t:'뒷부분 잘라내기',k:'alt+]',f:()=>{const c=selClip();c&&clipTrim(c,'out',playT())},dis:n!==1||!anyIn}]},
-    {h:'Sound',items:[{t:allLoop?'반복 끄기':'끝까지 반복 (배경음)',f:()=>clipLoop(selClips(),!allLoop),dis:!n},{t:'볼륨 100%로',f:()=>commit(()=>selClips().forEach(c=>c.vol=1)),dis:!n},
+    {h:'Sound',items:[{t:allLoop?'반복 끄기':'끝까지 반복 (배경음)',f:()=>clipLoop(selClips(),!allLoop),dis:!n},{t:'볼륨 100%로',f:()=>commit(()=>selClips().forEach(c=>c.vol=1)),dis:!n},{t:'속도 바꾸기…',f:()=>dlgSpeed('clip'),dis:!n},
       {t:'삭제',k:'Del',f:()=>clipDelete(selClips()),dis:!n}]},
     {h:'Track',items:[{t:'새 트랙 추가',f:()=>addTrack()},{t:'이 트랙 삭제',f:()=>deleteTrack(tid),dis:!tid}]},
   ];
@@ -2066,10 +2135,51 @@ function bindVol(id,apply){const r=$('#'+id),n=$('#'+id+'N');if(!r)return;spring
   r.onpointerdown=()=>{S.undo.push(snap());S.redo=[]};r.oninput=()=>{apply(+r.value/100,true);if(n)n.value=r.value};r.onchange=()=>renderPanel();
   if(n)n.onchange=()=>{const v=clamp(Math.round(+n.value||0),0,200);n.value=v;r.value=v;r._sp&&r._sp.sync();commit(()=>apply(v/100,false))}}
 const qh=(t,d)=>`<button type="button" class="qh" data-tip="${esc(t)}|${esc(d)}" aria-label="도움말">?</button>`;
+/* ---------- speed field: frames, a Frame audio part, audio clips ---------- */
+const SPD_TIP='100%가 원래 속도예요. 200%는 두 배 빠르게(길이 절반), 50%는 절반 속도(길이 두 배)예요.\n10~400%까지 넣을 수 있고, 다시 100%로 하면 처음 길이로 정확히 돌아와요.\n300% 이상·30% 이하는 소리가 뭉개지거나 울릴 수 있어요.';
+const PITCH_TIP='켜면 빠르게 해도 목소리가 높아지지 않고, 느리게 해도 낮아지지 않아요.\n끄면 테이프처럼 빠르면 높게, 느리면 낮게 들려요.';
+function spdHTML(id,pct,pitch,tip,btn=true){
+  const fld=`<label class="fld"><span>Speed (%)${qh('Speed',tip||SPD_TIP)}</span><input class="in" id="${id}" type="number" min="10" max="400" step="5" value="${pct??''}" placeholder="${pct==null?'혼합':'100'}"></label>`;
+  return`${btn?`<div class="grid2" style="align-items:end">${fld}<button type="button" class="btn" id="${id}Go">Apply</button></div>`:fld}
+  ${pitch==null?'':`<div class="chkq"><label class="chk"><input type="checkbox" id="${id}Pitch" ${pitch?'checked':''}>음 높이 유지</label>${qh('음 높이 유지',PITCH_TIP)}</div>`}
+  <p class="warn" id="${id}Warn" hidden></p>`}
+function spdWarnText(pct,bases){const w=[];if(pct>=300||pct<=30)w.push('300% 이상·30% 이하는 소리가 뭉개지거나 울릴 수 있어요.');
+  if(bases&&bases.some(b=>Math.round(b/(pct/100))<20))w.push('20ms보다 짧아지는 프레임이 있어요. GIF에서는 브라우저가 100ms로 느리게 재생해요.');return w.join(' ')}
+function bindSpd(id,{apply,bases,pitch,root}){const el=$('#'+id,root);if(!el)return;const w=$('#'+id+'Warn',root);
+  const upd=()=>{const v=+el.value;const t=el.value!==''&&v>0?spdWarnText(clamp(Math.round(v),10,400),bases&&bases()):'';w.textContent=t;w.hidden=!t};
+  const go=()=>{if(el.value==='')return toast('속도(%)를 넣어 주세요');const v=+el.value;if(!(v>0))return;const p=clamp(Math.round(v),10,400);el.value=p;apply&&apply(p)};
+  el.oninput=upd;if(apply)el.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();go()}};const b=$('#'+id+'Go',root);if(b)b.onclick=go;
+  const pc=$('#'+id+'Pitch',root);if(pc&&pitch)pc.onchange=e=>pitch(e.target.checked);upd();return upd}
+const segIdx=sg=>{const r=[];for(let i=sg.i0;i<=sg.i1;i++)r.push(i);return r};
+const clipPct=list=>{const v=list.map(c=>Math.round(cSpd(c)*100));return v.every(x=>x===v[0])?v[0]:null};
+function setClipSpd(list,pct,pitch){const r=pct/100;commit(()=>{for(const c of list){if(pct===100)delete c.spd;else c.spd=r;if(pitch!=null)c.keepPitch=pitch}},
+  `${list.length>1?`오디오 ${list.length}개`:'오디오'} 속도를 ${pct}%로 바꿨어요`)}
+function setLinkedPitch(v){commit(()=>{S.linked.keepPitch=v},v?'음 높이 유지를 켰어요':'음 높이 유지를 껐어요')}
+function setSegSpeed(sg,pct,pitch){const segs=linkedSegs();const k=sg.k;
+  OPS.setSpeed(segIdx(sg),pct,`${segs.length>1?`마디 ${k+1}`:'Frame audio'} 속도를 ${pct}%로 바꿨어요`,()=>{if(pitch!=null)S.linked.keepPitch=pitch;A.segFid=S.frames[sg.i0].id})}
+/* right-click "속도 바꾸기…": the same field in a small dialog, with quick picks */
+async function dlgSpeed(kind){
+  let idx=null,list=null,cur,pitch,note,bases=null;
+  if(kind==='clip'){list=selClips();if(!list.length)return;cur=clipPct(list);pitch=list.every(c=>c.keepPitch!==false);note=`${list.length>1?`오디오 ${list.length}개`:'이 오디오'}의 소리 속도만 바뀌어요. 영상은 그대로예요.`}
+  else{if(kind==='seg'){idx=segIdx(selSeg())}else{idx=needSel();if(!idx)return}
+    const fr=idx.map(i=>S.frames[i]);cur=spdOf(fr);pitch=hasLinked(fr)?keepPitch():null;bases=()=>idx.map(i=>fBase(S.frames[i]));
+    note=`${kind==='seg'?'선택한 마디':scopeMsg(idx)}의 영상${pitch!=null?'과 소리':''} 속도가 같이 바뀌어요. 지금 길이 ${fmtS(fr.reduce((a,f)=>a+f.delay,0))}`}
+  const r=await dialog({title:'Speed',body:`<p class="note">${note}</p>
+    <div class="sortbar" id="spdPre" style="display:grid;grid-template-columns:repeat(4,1fr)">${[25,50,75,100,125,150,200,300].map(p=>`<button type="button" data-p="${p}" class="${p===cur?'on':''}">${p}%</button>`).join('')}</div>
+    ${spdHTML('dSpd',cur,pitch,null,false)}`,
+    buttons:[{t:'Cancel',act:'cancel'},{t:'Apply',act:'ok',primary:true}],
+    onMount:d=>{const upd=bindSpd('dSpd',{bases,root:d});const el=$('#dSpd',d);
+      $('#spdPre',d).onclick=e=>{const b=e.target.closest('[data-p]');if(!b)return;el.value=b.dataset.p;$$('#spdPre button',d).forEach(x=>x.classList.toggle('on',x===b));upd&&upd()};
+      el.addEventListener('input',()=>$$('#spdPre button',d).forEach(x=>x.classList.toggle('on',x.dataset.p===el.value)));setTimeout(()=>{el.focus();el.select()},30)}});
+  if(r.act!=='ok'||r.vals.dSpd==='')return;const v=+r.vals.dSpd;if(!(v>0))return;const p=clamp(Math.round(v),10,400);const pv='dSpdPitch' in r.vals?r.vals.dSpdPitch:null;
+  if(kind==='clip')return setClipSpd(list,p,pv);
+  if(kind==='seg')return setSegSpeed(selSeg(),p,pv);
+  OPS.setSpeed(idx,p,null,()=>{if(pv!=null)S.linked.keepPitch=pv})}
 function audioPanelHTML(){
-  if(S.aSel==='linked'){const o=S.linked,segs=linkedSegs(),sg=selSeg(segs);return`<div class="sec"><h3>${icon(ICO_LINK)}Frame audio${qh('Frame audio','영상에서 가져온 소리예요. 위치는 프레임에 묶여 있어서 옮길 수 없지만, 재생 위치(프레임 경계)에서 나누기(Split)는 할 수 있어요. 나눈 마디마다 볼륨과 Fade를 따로 줘요. 막대에서 마디를 눌러 고르고, 오른쪽 클릭으로 앞 마디와 합칠 수 있어요. 페이드 곡선: Linear 일정하게 · Ease in 점점 빠르게 · Ease out 점점 느리게 · S-curve 천천히-빠르게-천천히. Start/End volume은 -100(무음) · 0(원래 볼륨) · +100(두 배)이고, 막대 위 노란 점을 위아래로 끌어도 바뀌어요. 일부 프레임만 크게·작게 하려면 Selected frames의 소리 볼륨을 쓰세요. Unlink하면 마디가 각각 오디오 클립이 되고, Relink로 다시 연결할 수 있어요.')}</h3>
+  if(S.aSel==='linked'){const o=S.linked,segs=linkedSegs(),sg=selSeg(segs);return`<div class="sec"><h3>${icon(ICO_LINK)}Frame audio${qh('Frame audio','영상에서 가져온 소리예요. 위치는 프레임에 묶여 있어서 옮길 수 없지만, 재생 위치(프레임 경계)에서 나누기(Split)는 할 수 있어요. 나눈 마디마다 볼륨과 Fade를 따로 줘요. 막대에서 마디를 눌러 고르고, 오른쪽 클릭으로 앞 마디와 합칠 수 있어요. 페이드 곡선: Linear 일정하게 · Ease in 점점 빠르게 · Ease out 점점 느리게 · S-curve 천천히-빠르게-천천히. Start/End volume은 -100(무음) · 0(원래 볼륨) · +100(두 배)이고, 막대 위 노란 점을 위아래로 끌어도 바뀌어요. 일부 프레임만 크게·작게 하려면 Selected frames의 소리 볼륨을 쓰세요. Speed(%)는 마디의 영상과 소리 속도를 같이 바꿔요. Unlink하면 마디가 각각 오디오 클립이 되고, Relink로 다시 연결할 수 있어요.')}</h3>
     ${volField('auVol','Master Volume',o.vol)}
     ${segs.length>1?volField('sgVol','Select Volume',sg.cfg.vol,`${sg.k+1}/${segs.length} · ${fmtS(sg.start)}~${fmtS(sg.end)}`):''}
+    ${spdHTML('sgSpd',spdOf(S.frames.slice(sg.i0,sg.i1+1)),keepPitch(),(segs.length>1?'고른 마디':'Frame audio 전체')+'의 영상과 소리 속도를 같이 바꿔요. 마디 안 프레임 속도가 서로 다르면 "혼합"으로 보이고, 값을 넣으면 하나로 맞춰져요.\n'+SPD_TIP)}
     ${fadeHTML(sg?sg.cfg:SEG_DEF)}</div>`}
   const relink=canRelink()?`<button type="button" class="btn" id="auRelink">Relink · 프레임에 다시 연결</button>`:'';
   const keys=`잘라내기 ${kb('mod')}X · 복사 ${kb('mod')}C · 붙여넣기 ${kb('mod')}V · 복제 ${kb('mod')}D · 나누기 ${kb('mod+shift')}D · 앞/뒤 자르기 ${kb('alt')}[ / ${kb('alt')}] · 삭제 Del. 자르기·나누기는 재생 위치(주황 선) 기준이에요. 막대를 위아래로 끌면 다른 트랙으로 옮겨져요. 위쪽 아이콘이나 오른쪽 클릭 메뉴로도 할 수 있어요.`;
@@ -2085,6 +2195,7 @@ function audioPanelHTML(){
   return`<div class="sec"><h3>${icon(ICO_WAVE)}${c?'Audio clip':`Audio clips · ${list.length}개`}${qh('Audio clip',(c?'':'여러 개를 고르면 볼륨·반복이 모두에 같이 적용돼요. ')+'볼륨은 막대 위 노란 선을, 페이드 시작·끝 볼륨은 노란 점을 위아래로 끌어도 바뀌어요. 페이드 곡선: Linear 일정하게 · Ease in 점점 빠르게 · Ease out 점점 느리게 · S-curve 천천히-빠르게-천천히. '+keys)}</h3>
     ${c?`<div class="kv"><span title="${esc(c.name)}">${esc(c.name)}</span><b>${fmtS(clipLen(c))}</b></div>`:''}
     ${volField('auVol','Volume',p.vol)}
+    ${spdHTML('acSpd',clipPct(list),list.every(x=>x.keepPitch!==false),'이 오디오의 소리 속도만 바꿔요 (영상은 그대로). 막대 길이도 같이 바뀌어요.\n'+SPD_TIP)}
     <div class="opt"><span>끝까지 반복 (배경음)</span><input type="checkbox" class="sw" id="acLoop" ${allLoop?'checked':''}></div>
     ${c?`<div class="grid2"><label class="fld"><span>시작 위치 (초)</span><input class="in" id="acStart" type="number" step="0.01" value="${secS(c.start)}"></label>${c.loop?`<label class="fld"><span>반복 길이 (초)</span><input class="in" id="acLoopLen" type="number" min="0.02" step="0.01" value="${secS(clipLen(c))}"></label>`:'<span></span>'}</div>
     ${fadeHTML(c)}`:''}
@@ -2096,6 +2207,7 @@ function bindAudioPanel(){
   if(S.aSel==='linked'){const o=S.linked;
     bindVol('auVol',v=>{o.vol=v;renderTimeline()});
     bindVol('sgVol',(v,live)=>setSegCfg(selSeg(),{vol:v},live));
+    bindSpd('sgSpd',{apply:p=>setSegSpeed(selSeg(),p),bases:()=>segIdx(selSeg()).map(i=>fBase(S.frames[i])),pitch:setLinkedPitch});
     const num=(id,key,f)=>{const el=$('#'+id);if(el)el.onchange=e=>{const v=+e.target.value;if(!isFinite(v))return;commit(()=>setSegCfg(selSeg(),{[key]:f(v)}))}};
     num('auFi','fadeIn',v=>Math.max(0,Math.round(v*1000)));num('auFo','fadeOut',v=>Math.max(0,Math.round(v*1000)));num('auFiL','fiL',pct);num('auFoL','foL',pct);
     ['auFiC','auFoC'].forEach(id=>{const el=$('#'+id);if(el)el.onchange=e=>commit(()=>setSegCfg(selSeg(),{[id==='auFiC'?'fiC':'foC']:e.target.value}))});
@@ -2107,6 +2219,7 @@ function bindAudioPanel(){
     $('#atDel').onclick=()=>deleteTrack(t.id);return}
   bindVol('auVol',v=>{selClips().forEach(c=>c.vol=v);renderTimeline()});
   $('#acLoop').onchange=e=>clipLoop(selClips(),e.target.checked);
+  bindSpd('acSpd',{apply:p=>setClipSpd(selClips(),p),pitch:v=>commit(()=>selClips().forEach(c=>c.keepPitch=v),v?'음 높이 유지를 켰어요':'음 높이 유지를 껐어요')});
   const c=list.length===1?list[0]:null;
   if(c){const num=(id,fn)=>{const el=$('#'+id);if(el)el.onchange=e=>{const v=+e.target.value;if(!isFinite(v))return;commit(()=>fn(v))}};
     num('auFi',v=>c.fadeIn=Math.max(0,Math.round(v*1000)));num('auFo',v=>c.fadeOut=Math.max(0,Math.round(v*1000)));
@@ -2635,7 +2748,7 @@ async function estimateSize(frames,o){
 function thinFrames(frames,keep){
   const n=frames.length;keep=clamp(Math.round(keep),Math.min(2,n),n);if(keep>=n)return frames.slice();
   const pick=new Set();for(let j=0;j<keep;j++)pick.add(Math.round(j*n/keep));
-  const out=[];for(let i=0;i<n;i++){const f=frames[i];if(pick.has(i)||!out.length)out.push(cloneF(f));else{const k=out[out.length-1];out[out.length-1]=cloneF(k,{delay:k.delay+f.delay,au:mergeAu([k,f])})}}
+  const out=[];for(let i=0;i<n;i++){const f=frames[i];if(pick.has(i)||!out.length)out.push(cloneF(f));else{const k=out[out.length-1];out[out.length-1]=cloneF(k,{...joinT([k,f]),au:mergeAu([k,f])})}}
   return out;
 }
 const fmtRate=b=>b>=1e6?(b/1e6).toFixed(1)+'Mbps':Math.max(1,Math.round(b/1000))+'kbps';
