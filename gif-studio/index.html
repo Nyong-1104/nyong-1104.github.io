@@ -1294,7 +1294,7 @@ stageEl.addEventListener('wheel',e=>{if(!(e.ctrlKey||e.metaKey))return;e.prevent
 
 /* ---------- expected memory: what this page holds (a web page can't read the tab's real number) ---------- */
 const MEM_WARN=1.5*1073741824,MEM_BAD=3*1073741824;
-const MEM_SPAN=`<span class="m"> · </span><span class="mem" id="memI" data-tip="예상 메모리|이 탭이 쓰는 메모리를 계산으로 추정한 값이에요. 프레임 이미지, 미리보기용으로 풀어둔 이미지, 소리, 되돌리기 기록을 합쳤어요.\n브라우저 자체가 쓰는 메모리는 빠져 있어서 실제보다 조금 적게 나와요. 실제 값은 Shift+Esc(크롬 작업 관리자)에서 볼 수 있어요.\n1.5GB부터 주황, 3GB부터 빨강으로 바뀌어요. 빨강이면 탭이 멈출 수 있으니 저장해 두거나 크기·프레임을 줄여 주세요."></span>`;
+const MEM_SPAN=`<span class="mem" id="memI" hidden data-tip="메모리 경고|이 탭이 메모리를 많이 쓰고 있을 때만 나타나요.\n주황: 많이 사용 중이에요. 저장해 두는 걸 권해요.\n빨강: 탭이 멈출 수 있어요. 저장해 두거나 크기·프레임을 줄여 주세요.\n프레임·소리·되돌리기 기록으로 계산한 추정이라 정확한 값은 아니에요. 실제 사용량은 Shift+Esc(크롬 작업 관리자)에서 볼 수 있어요."></span>`;
 function memEstimate(){const seen=new Set(),dims=new Map();let b=0;
   const addF=f=>{if(!f)return;if(f.blob&&!seen.has(f.blob)){seen.add(f.blob);b+=f.blob.size;dims.set(f.blob,f)}if(f.thumb&&!seen.has(f.thumb)){seen.add(f.thumb);b+=f.thumb.length}};
   S.frames.forEach(addF);for(const st of [...S.undo,...S.redo])(st.frames||[]).forEach(addF);(S.clip||[]).forEach(addF);
@@ -1303,10 +1303,11 @@ function memEstimate(){const seen=new Set(),dims=new Map();let b=0;
   const ab=x=>x?x.length*x.numberOfChannels*4:0;
   for(const a of AS.values())b+=ab(a.buf)+ab(a.rev)+(a.peaks?a.peaks.mx.byteLength:0);
   for(const x of STRETCH.values())b+=ab(x);b+=ab(A.mix);return b}
-const fmtMem=b=>b>=1073741824?(b/1073741824).toFixed(1)+'GB':Math.max(1,Math.round(b/1048576))+'MB';
 let memWarned=false;
 function updMem(){const el=$('#memI');if(!el)return;let b=0;try{b=memEstimate()}catch(e){return}
-  el.textContent='예상 메모리 '+fmtMem(b);el.classList.toggle('warn',b>=MEM_WARN&&b<MEM_BAD);el.classList.toggle('bad',b>=MEM_BAD);
+  const lv=b>=MEM_BAD?'bad':b>=MEM_WARN?'warn':'';el.hidden=!lv;
+  if(lv&&el.dataset.lv!==lv)el.innerHTML=`<span class="m"> · </span>${lv==='bad'?'메모리 부족 위험':'메모리 많이 사용 중'}`;el.dataset.lv=lv;
+  el.classList.toggle('warn',lv==='warn');el.classList.toggle('bad',lv==='bad');
   if(b>=MEM_BAD&&!memWarned){memWarned=true;toast('작업 데이터가 커서 탭이 멈출 수 있어요. 저장해 두거나 크기·프레임을 줄여 주세요.')}else if(b<MEM_BAD*0.85)memWarned=false}
 setInterval(()=>{if(!document.hidden)updMem()},2000);
 function updateInfo(){
