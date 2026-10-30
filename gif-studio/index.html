@@ -1087,6 +1087,13 @@ const OPS={
     commit(()=>{const back=idx.slice(1,-1).reverse().map(i=>revAu(S.frames[i]));const at=idx[idx.length-1]+1;S.frames.splice(at,0,...back);setSel(back.map((_,k)=>at+k),at)},`역재생 프레임 ${idx.length-2}개를 추가했어요`)},
   remove(idx,msg){if(!idx.length)return;if(idx.length>=S.frames.length)return toast('모든 프레임을 지울 수는 없어요');
     commit(()=>{const set=new Set(idx);const first=idx[0];S.frames=S.frames.filter((_,i)=>!set.has(i));const c=Math.min(first,S.frames.length-1);setSel([c],c)},msg||`${idx.length}프레임을 삭제했어요`)},
+  /* delete but keep the running time: a removed frame's time (and linked sound) goes to the frame before it, or the next one at the very start */
+  removeKeep(idx){if(!idx.length)return;if(idx.length>=S.frames.length)return toast('모든 프레임을 지울 수는 없어요');
+    commit(()=>{const set=new Set(idx);const out=[];let carry=null;
+      S.frames.forEach((f,i)=>{
+        if(set.has(i)){if(out.length){const k=out[out.length-1];out[out.length-1]=cloneF(k,{delay:k.delay+f.delay,au:mergeAu([k,f])})}else carry=carry?{delay:carry.delay+f.delay,list:[...carry.list,f]}:{delay:f.delay,list:[f]};return}
+        if(carry){out.push(cloneF(f,{delay:f.delay+carry.delay,au:mergeAu([...carry.list,f])}));carry=null}else out.push(f)});
+      S.frames=out;const c=Math.min(idx[0],out.length-1);setSel([c],c)},`${idx.length}프레임을 삭제했어요 · 전체 시간 유지`)},
   merge(idx){if(idx.length<2)return toast('2프레임 이상 선택하세요');
     commit(()=>{const total=idx.reduce((a,i)=>a+S.frames[i].delay,0);const keep=cloneF(S.frames[idx[0]],{delay:total,au:mergeAu(idx.map(i=>S.frames[i]))});const set=new Set(idx.slice(1));S.frames[idx[0]]=keep;S.frames=S.frames.filter((_,i)=>!set.has(i));setSel([idx[0]],idx[0])},`${idx.length}프레임을 하나로 합쳤어요`)},
   copyTo(idx,where){commit(()=>{const cp=idx.map(i=>cloneF(S.frames[i]));if(where==='front'){S.frames.unshift(...cp);setSel(cp.map((_,k)=>k))}else{const at=S.frames.length;S.frames.push(...cp);setSel(cp.map((_,k)=>at+k))}},`${idx.length}프레임을 ${where==='front'?'맨 앞':'맨 뒤'}에 복사했어요`)},
@@ -1109,7 +1116,21 @@ const OPS={
 function parityPick(list,kind,n){return list.filter((_,k)=>kind==='even'?(k%2===1):kind==='odd'?(k%2===0):((k+1)%n===0))}
 async function askN(title){const r=await dialog({title,body:`<label class="fld"><span>몇 번째마다</span><input class="in" id="nVal" type="number" min="2" max="100" value="3"></label>`,buttons:[{t:'Cancel',act:'cancel'},{t:'OK',act:'ok',primary:true}]});return r.act==='ok'?clamp(+r.vals.nVal|0,2,100):0}
 async function selectParity(kind){let n=0;if(kind==='nth'){n=await askN('N번째 프레임마다 선택');if(!n)return}const pick=parityPick(allIdx(),kind,n);setSel(pick);renderList();renderStage();updateInfo();renderPanel()}
-async function deleteParity(kind){const s=needSel();if(!s)return;let n=0;if(kind==='nth'){n=await askN('선택한 프레임 중 N번째마다 삭제');if(!n)return}OPS.remove(parityPick(s,kind,n))}
+let KEEP_TIME=true;try{const v=localStorage.getItem('mis.keepTime');if(v!==null)KEEP_TIME=v==='1'}catch(e){}
+async function deleteParity(kind){const s=needSel();if(!s)return;
+  const title={even:'짝수 번째 삭제',odd:'홀수 번째 삭제',nth:'N번째마다 삭제'}[kind];
+  const r=await dialog({title,body:`<p class="note">선택한 ${s.length}프레임 안에서 지워요.</p>
+    ${kind==='nth'?`<label class="fld"><span>몇 번째마다</span><input class="in" id="nVal" type="number" min="2" max="100" value="3"></label>`:''}
+    <div class="chkq"><label class="chk"><input type="checkbox" id="keepT" ${KEEP_TIME?'checked':''}>전체 시간 유지</label>${qh('전체 시간 유지','지운 프레임의 시간을 바로 앞 프레임에 더해서 전체 재생 시간이 그대로예요.\n맨 앞 프레임을 지우면 바로 뒤 프레임에 더해요. 영상 소리도 같이 이어져요.\n끄면 프레임만 지워져서 재생 시간이 짧아져요.')}</div>
+    <p class="note" id="dpEst"></p>`,buttons:[{t:'Cancel',act:'cancel'},{t:'Delete',act:'ok',primary:true}],
+    onMount:d=>{const upd=()=>{const n=kind==='nth'?clamp(+($('#nVal',d)?.value)|0,2,100):0;const pick=parityPick(s,kind,n);const keep=$('#keepT',d).checked;
+      const rm=pick.reduce((a,i)=>a+S.frames[i].delay,0);d.querySelector('[data-act="ok"]').disabled=!pick.length||pick.length>=S.frames.length;
+      $('#dpEst',d).textContent=pick.length?`${pick.length}프레임 삭제 · 재생 시간 ${fmtS(S.total)} → ${fmtS(keep?S.total:S.total-rm)}`:'지울 프레임이 없어요'};
+      d.addEventListener('input',upd);d.addEventListener('change',upd);upd()}});
+  if(r.act!=='ok')return;
+  const n=kind==='nth'?clamp(+r.vals.nVal|0,2,100):0;KEEP_TIME=!!r.vals.keepT;try{localStorage.setItem('mis.keepTime',KEEP_TIME?'1':'0')}catch(e){}
+  const pick=parityPick(s,kind,n);if(!pick.length)return toast('지울 프레임이 없어요');
+  KEEP_TIME?OPS.removeKeep(pick):OPS.remove(pick)}
 
 async function dlgTime(){
   const idx=selIdx().length>1?selIdx():allIdx();const cur=S.frames[idx[0]]?.delay||100;const total=idx.reduce((a,i)=>a+S.frames[i].delay,0);
