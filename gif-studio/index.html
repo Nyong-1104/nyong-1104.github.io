@@ -137,6 +137,9 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 @supports not (backdrop-filter:blur(1px)){.top,.player,.list-head,.lhead{background:rgba(255,255,255,.96)}}
 .cnt{font-size:14px;font-weight:700;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
 .cnt .m{color:var(--mute);font-weight:500}
+.cnt .mem{color:var(--mute);font-weight:500;cursor:help}
+.cnt .mem.warn{color:#E08600;font-weight:700}
+.cnt .mem.bad{color:#E5172C;font-weight:800}
 .cnt .tag{display:inline-block;margin-right:8px;padding:2px 8px;border-radius:999px;background:var(--o);color:#fff;font-size:11px;font-weight:700;vertical-align:1px}
 .toolbar{display:flex;align-items:center;gap:2px;overflow-x:auto;scrollbar-width:none;flex:none;max-width:100%}
 .toolbar::-webkit-scrollbar{display:none}
@@ -1289,13 +1292,30 @@ $('#zoomIn').onclick=()=>zoomStep(1);$('#zoomOut').onclick=()=>zoomStep(-1);$('#
 new ResizeObserver(()=>{layoutStage();renderList()}).observe(stageEl);
 stageEl.addEventListener('wheel',e=>{if(!(e.ctrlKey||e.metaKey))return;e.preventDefault();zoomStep(e.deltaY<0?1:-1)},{passive:false});
 
+/* ---------- expected memory: what this page holds (a web page can't read the tab's real number) ---------- */
+const MEM_WARN=1.5*1073741824,MEM_BAD=3*1073741824;
+const MEM_SPAN=`<span class="m"> · </span><span class="mem" id="memI" data-tip="예상 메모리|이 탭이 쓰는 메모리를 계산으로 추정한 값이에요. 프레임 이미지, 미리보기용으로 풀어둔 이미지, 소리, 되돌리기 기록을 합쳤어요.\n브라우저 자체가 쓰는 메모리는 빠져 있어서 실제보다 조금 적게 나와요. 실제 값은 Shift+Esc(크롬 작업 관리자)에서 볼 수 있어요.\n1.5GB부터 주황, 3GB부터 빨강으로 바뀌어요. 빨강이면 탭이 멈출 수 있으니 저장해 두거나 크기·프레임을 줄여 주세요."></span>`;
+function memEstimate(){const seen=new Set(),dims=new Map();let b=0;
+  const addF=f=>{if(!f)return;if(f.blob&&!seen.has(f.blob)){seen.add(f.blob);b+=f.blob.size;dims.set(f.blob,f)}if(f.thumb&&!seen.has(f.thumb)){seen.add(f.thumb);b+=f.thumb.length}};
+  S.frames.forEach(addF);for(const st of [...S.undo,...S.redo])(st.frames||[]).forEach(addF);(S.clip||[]).forEach(addF);
+  for(const l of L.layers)(l.frames||[]).forEach(addF);for(const st of [...L.undo,...L.redo])if(st.fr)for(const v of st.fr.values())(v.frames||[]).forEach(addF);
+  for(const k of bmpCache.keys()){const f=dims.get(k);if(f&&f.w&&f.h)b+=f.w*f.h*4}
+  const ab=x=>x?x.length*x.numberOfChannels*4:0;
+  for(const a of AS.values())b+=ab(a.buf)+ab(a.rev)+(a.peaks?a.peaks.mx.byteLength:0);
+  for(const x of STRETCH.values())b+=ab(x);b+=ab(A.mix);return b}
+const fmtMem=b=>b>=1073741824?(b/1073741824).toFixed(1)+'GB':Math.max(1,Math.round(b/1048576))+'MB';
+let memWarned=false;
+function updMem(){const el=$('#memI');if(!el)return;let b=0;try{b=memEstimate()}catch(e){return}
+  el.textContent='예상 메모리 '+fmtMem(b);el.classList.toggle('warn',b>=MEM_WARN&&b<MEM_BAD);el.classList.toggle('bad',b>=MEM_BAD);
+  if(b>=MEM_BAD&&!memWarned){memWarned=true;toast('작업 데이터가 커서 탭이 멈출 수 있어요. 저장해 두거나 크기·프레임을 줄여 주세요.')}else if(b<MEM_BAD*0.85)memWarned=false}
+setInterval(()=>{if(!document.hidden)updMem()},2000);
 function updateInfo(){
-  if(S.mode==='layer'){$('#info').innerHTML=`${L.layers.length} layers <span class="m">· ${L.W}×${L.H} · ${(compDur()/1000).toFixed(2)}s</span>`;return}
+  if(S.mode==='layer'){$('#info').innerHTML=`${L.layers.length} layers <span class="m">· ${L.W}×${L.H} · ${(compDur()/1000).toFixed(2)}s</span>${L.layers.length?MEM_SPAN:''}`;updMem();return}
   if(audioFocus()){const c=selClip(),n=selClips().length,t=S.aTrack&&S.tracks.find(x=>x.id===S.aTrack);
-    $('#info').innerHTML=`Audio <span class="m">· ${S.aSel==='linked'?'Frame audio':n>1?`${n}개 선택`:c?esc(c.name):t?esc(t.name):''}</span>`;return}
+    $('#info').innerHTML=`Audio <span class="m">· ${S.aSel==='linked'?'Frame audio':n>1?`${n}개 선택`:c?esc(c.name):t?esc(t.name):''}</span>${MEM_SPAN}`;updMem();return}
   const n=S.frames.length;if(!n){$('#info').innerHTML='<span class="m">No frames · 파일을 불러오세요</span>';return}
   const[W,H]=outSize();
-  $('#info').innerHTML=`${S.isSample?'<span class="tag">Sample</span>':''}${n} frames <span class="m">· ${(S.total/1000).toFixed(2)}s · ${W}×${H}</span>`;
+  $('#info').innerHTML=`${S.isSample?'<span class="tag">Sample</span>':''}${n} frames <span class="m">· ${(S.total/1000).toFixed(2)}s · ${W}×${H}</span>${MEM_SPAN}`;updMem();
 }
 
 /* ---------- playback ---------- */
