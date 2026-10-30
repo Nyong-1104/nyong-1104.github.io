@@ -1347,7 +1347,7 @@ function renderPanel(){
     return;
   }
   p.innerHTML=`
-  <div class="sec"><h3>${icon('<path d="M4 14v6h6M20 10V4h-6M4 20l7-7M20 4l-7 7"/>')}Size · Rotate</h3>
+  <div class="sec" id="secSize"><h3>${icon('<path d="M4 14v6h6M20 10V4h-6M4 20l7-7M20 4l-7 7"/>')}Size · Rotate</h3>
     <div class="grid2"><label class="fld"><span>너비 (px)</span><input class="in" id="rzW" type="number" min="1" value="${W}"></label><label class="fld"><span>높이 (px)</span><input class="in" id="rzH" type="number" min="1" value="${H}"></label></div>
     <label class="chk"><input type="checkbox" id="rzKeep" ${rz.keep?'checked':''}>비율 유지</label>
     <div class="grid4">${[25,50,75,100].map(v=>`<button type="button" class="btn" data-pct="${v}">${v}%</button>`).join('')}</div>
@@ -1361,7 +1361,7 @@ function renderPanel(){
     </div>
     <p class="note">원본 ${S.W0}×${S.H0}${S.tf.rot?` · ${S.tf.rot}° 회전`:''}${S.tf.fh?' · 좌우 반전':''}${S.tf.fv?' · 상하 반전':''}</p>
   </div>
-  <div class="sec"><h3>${icon('<path d="M6 2v16h16M2 6h16v16"/>')}Crop</h3>
+  <div class="sec" id="secCrop"><h3>${icon('<path d="M6 2v16h16M2 6h16v16"/>')}Crop</h3>
     ${S.tf.crop?`<div class="kv"><span>적용된 영역</span><b>${S.tf.crop.w}×${S.tf.crop.h}</b></div>`:''}
     <div class="row-btns"><button type="button" class="btn" id="crStart">${S.tf.crop?'영역 다시 정하기':'Video Crop'}</button>${S.tf.crop?'<button type="button" class="btn" id="crClear">자르기 해제</button>':''}</div>
   </div>
@@ -2791,7 +2791,7 @@ const TOUR_ALL=[
   {el:'#dz',t:'Drop a file',d:'영상(MP4·WebM·MOV), GIF, 이미지를 끌어다 놓거나 눌러서 고르세요. 영상은 구간과 초당 프레임을 정해서 불러와요.'},
   {el:'#left',t:'Edit frames',d:'프레임을 고르고 오른쪽 클릭하면 복사·이동·삭제·짝/홀 선택 메뉴가 나와요. Shift·'+(IS_MAC?'⌘':'Ctrl')+' 클릭으로 여러 개를 고를 수 있어요.'},
   {el:'#tools',t:'Quick tools',d:'시간 설정, 속도 ±10%, 역재생, 왕복, 프레임 줄이기를 한 번에. 아이콘에 마우스를 올리면 설명이 떠요.'},
-  {el:'#panel',t:'Size · Crop',d:'크기 조절, 회전·반전, 자르기를 여기서 해요. '+(IS_MAC?'⌘':'Ctrl')+'R을 누르면 너비(px) 칸으로 바로 가서 입력할 수 있어요.'},
+  {el:'#secSize',el2:'#secCrop',t:'Size · Crop',d:'크기 조절, 회전·반전, 자르기를 여기서 해요. '+(IS_MAC?'⌘':'Ctrl')+'R을 누르면 너비(px) 칸으로 바로 가서 입력할 수 있어요.'},
   {el:'#tl',t:'Audio',d:'영상 소리는 Frame audio로 들어와서 프레임과 같이 잘려요. + Audio로 음악을, + Track으로 빈 트랙을 올리고 막대를 오른쪽 클릭하면 잘라내기·복사·붙여넣기·나누기·끝까지 반복 메뉴가 나와요. 노란 선을 위아래로 끌면 볼륨이 바뀌어요. MP4·WebM으로 저장하면 소리가 같이 들어가요.'},
   {el:'#modes',t:'Layer',d:'틀 이미지(PNG·JPG) 위나 아래에 GIF·영상을 올려 위치와 크기를 맞춘 뒤 프레임으로 만들 수 있어요.'},
   {el:'#btnSave',t:'Save',d:'GIF·WebP·MP4·WebM·APNG로 저장해요. 예상 용량을 보면서 화질과 크기를 조절하고, 최대 용량에 맞춰 자동으로 줄일 수도 있어요.'},
@@ -2805,10 +2805,16 @@ const TOUR_LAYER=[
   {el:'#btnSave',t:'Make frames',d:'합성한 결과를 프레임으로 만들어 Edit로 보내요. 거기서 프레임을 다듬고 GIF·MP4 등으로 저장하면 돼요.'},
 ];
 function runTour(){
-  const isL=S.mode==='layer';if(!isL)setMode('edit');let i=0;const TOUR=(isL?TOUR_LAYER:TOUR_ALL).filter(s=>{const el=$(s.el);return el&&el.offsetParent!==null});const hole=document.createElement('div');hole.className='tour-hole';const card=document.createElement('div');card.className='tour-card';
+  const isL=S.mode==='layer';
+  if(!isL){setMode('edit');if(audioFocus()){clearAudioSel();renderTimeline()}renderPanel()}
+  let i=0;const shown=sel=>{const el=sel&&$(sel);return!!el&&el.offsetParent!==null&&el.getBoundingClientRect().height>4};
+  let TOUR=(isL?TOUR_LAYER:TOUR_ALL).filter(s=>shown(s.el));
+  if(!isL&&!S.frames.length)TOUR=TOUR.map(s=>s.el==='#dz'?{...s,d:s.d+' 불러오면 오른쪽에 크기·회전·자르기 설정이 나와요.'}:s);
+  const hole=document.createElement('div');hole.className='tour-hole';const card=document.createElement('div');card.className='tour-card';
   document.body.append(hole,card);
   const end=()=>{hole.remove();card.remove();removeEventListener('resize',place);removeEventListener('keydown',key,true)};
-  const place=()=>{const s=TOUR[i];const el=$(s.el);el.scrollIntoView({block:'nearest'});const r=el.getBoundingClientRect();const pad=6;
+  const place=()=>{const s=TOUR[i];const el=$(s.el);el.scrollIntoView({block:'nearest'});let r=el.getBoundingClientRect();const pad=6;
+    const e2=s.el2&&$(s.el2);if(shown(s.el2)){const q=e2.getBoundingClientRect();const L=Math.min(r.left,q.left),T=Math.min(r.top,q.top);r={left:L,top:T,width:Math.max(r.right,q.right)-L,height:Math.max(r.bottom,q.bottom)-T}}
     const hr={left:Math.max(4,r.left-pad),top:Math.max(4,r.top-pad),width:Math.min(innerWidth-8,r.width+pad*2),height:Math.min(innerHeight-8,r.height+pad*2)};
     Object.assign(hole.style,{left:hr.left+'px',top:hr.top+'px',width:hr.width+'px',height:hr.height+'px'});
     card.innerHTML=`<div class="stp">STEP ${i+1} / ${TOUR.length}</div><h4>${s.t}</h4><p>${s.d}</p><div class="row-btns"><button type="button" class="btn" data-t="skip">${i===TOUR.length-1?'Close':'Skip'}</button><button type="button" class="primary" data-t="next">${i===TOUR.length-1?'Done':'Next'}</button></div>`;
