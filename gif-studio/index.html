@@ -1135,6 +1135,12 @@ const OPS={
   moveTo(idx,where){commit(()=>{const set=new Set(idx);const mv=idx.map(i=>S.frames[i]);const rest=S.frames.filter((_,i)=>!set.has(i));
     if(where==='front'){S.frames=[...mv,...rest];setSel(mv.map((_,k)=>k))}else{S.frames=[...rest,...mv];setSel(mv.map((_,k)=>rest.length+k))}})},
   moveUp(idx){if(idx[0]===0)return;commit(()=>{for(const i of idx){[S.frames[i-1],S.frames[i]]=[S.frames[i],S.frames[i-1]]}setSel(idx.map(i=>i-1),S.cur-1)})},
+  /* move the picked frames d places (Alt+Shift+↑↓ = 10) */
+  moveBy(idx,d){idx=[...idx].sort((a,b)=>a-b);const n=S.frames.length;const st=d<0?Math.min(-d,idx[0]):Math.min(d,n-1-idx[idx.length-1]);
+    if(!st)return toast(d<0?'더 앞으로 갈 수 없어요':'더 뒤로 갈 수 없어요');
+    commit(()=>{let cur=idx;for(let k=0;k<st;k++){if(d<0){for(const i of cur)[S.frames[i-1],S.frames[i]]=[S.frames[i],S.frames[i-1]];cur=cur.map(i=>i-1)}
+      else{for(const i of [...cur].reverse())[S.frames[i+1],S.frames[i]]=[S.frames[i],S.frames[i+1]];cur=cur.map(i=>i+1)}}
+      setSel(cur,clamp(S.cur+(d<0?-st:st),0,n-1))},`${scopeMsg(idx)}을 ${st}칸 ${d<0?'앞으로':'뒤로'} 옮겼어요`)},
   moveDown(idx){if(idx[idx.length-1]>=S.frames.length-1)return;commit(()=>{for(const i of[...idx].reverse()){[S.frames[i+1],S.frames[i]]=[S.frames[i],S.frames[i+1]]}setSel(idx.map(i=>i+1),S.cur+1)})},
   thin(idx,n){if(idx.length<n)return toast('선택한 프레임이 너무 적어요');
     commit(()=>{const set=new Set(idx);const out=[];let k=0,lastKept=-1;
@@ -1237,7 +1243,7 @@ function menuDef(){
     {h:'Label',items:[{t:'Label color',sub:[...Object.entries(LABELS).map(([k,v])=>({t:`<i class="lbdot" style="background:${v.c}"></i>${v.t}`,f:()=>{const x=s();x&&setLabel(x,k)}})),
       {t:'<i class="lbdot" style="background:#fff"></i>None',f:()=>{const x=s();x&&setLabel(x,null)}}]}]},
     {h:'Move · Copy',items:[{t:'맨 앞으로 이동',k:'alt+PgUp',f:()=>{const x=s();x&&OPS.moveTo(x,'front')}},{t:'맨 앞에 복사',k:'alt+shift+PgUp',f:()=>{const x=s();x&&OPS.copyTo(x,'front')}},
-      {t:'한 칸 위로',k:'alt+↑',f:()=>{const x=s();x&&OPS.moveUp(x)}},{t:'한 칸 아래로',k:'alt+↓',f:()=>{const x=s();x&&OPS.moveDown(x)}},
+      {t:'한 칸 위로',k:'alt+↑',f:()=>{const x=s();x&&OPS.moveUp(x)}},{t:'한 칸 아래로',k:'alt+↓',f:()=>{const x=s();x&&OPS.moveDown(x)}},{t:'10칸 위로',k:'alt+shift+↑',f:()=>{const x=s();x&&OPS.moveBy(x,-10)}},{t:'10칸 아래로',k:'alt+shift+↓',f:()=>{const x=s();x&&OPS.moveBy(x,10)}},
       {t:'맨 뒤로 이동',k:'alt+PgDn',f:()=>{const x=s();x&&OPS.moveTo(x,'back')}},{t:'맨 뒤에 복사',k:'alt+shift+PgDn',f:()=>{const x=s();x&&OPS.copyTo(x,'back')}}]},
   ];
   const right=[
@@ -1474,7 +1480,7 @@ function renderPanel(){
     <p class="note">목록을 오른쪽 클릭하면 복사·이동·삭제·짝/홀 선택 메뉴가 모두 나와요.</p>
   </div>
   <div class="sec"><h3>Shortcuts</h3><div class="kbd-list">
-    <span>재생 / 정지</span><kbd>Space</kbd><span>이전·다음 프레임</span><kbd>← →</kbd><span>여러 개 선택</span><kbd>${kb('shift')}클릭 · ${kb('mod')}클릭</kbd>
+    <span>재생 / 정지</span><kbd>Space</kbd><span>이전·다음 프레임</span><kbd>← →</kbd><span>10프레임씩 이동</span><kbd>${kb('shift')}← →</kbd><span>순서 10칸 옮기기</span><kbd>${kb('alt+shift')}↑ ↓</kbd><span>여러 개 선택</span><kbd>${kb('shift')}클릭 · ${kb('mod')}클릭</kbd>
     <span>실행 취소</span><kbd>${kb('mod+Z')}</kbd><span>저장</span><kbd>${kb('mod+S')}</kbd><span>너비 입력</span><kbd>${kb('mod')}R</kbd><span>확대·축소</span><kbd>${kb('mod')}휠</kbd></div></div>`;
   /* size applies as you type (it only changes the output size, the original frames stay as they are) */
   const cr=cropRect(),r0=cr.h/cr.w,ratio=Math.abs(H/W-r0)<r0*0.02?r0:H/W;
@@ -2055,6 +2061,8 @@ function setMuteIcon(){$('#aMuteIco').innerHTML=A.mute?'<path d="M4 9h4l5-4v14l-
 function renderTimeline(){
   if(S.mode!=='edit')return;syncFocus();
   const tr=tracks(),na=tr.filter(t=>t.kind!=='video').length;
+  {const tb=$('#aTrackAdd'),af=audioFocus();tb.textContent=af?'+ Audio track':'+ Video track';
+    tb.dataset.tip=af?'Add audio track|빈 오디오 트랙 추가 · 배경음·효과음을 나눠 깔 때':'Add video|영상·GIF·이미지를 재생 위치에 끼워 넣어요 · 새 조각으로 들어가서 따로 자르고 옮길 수 있어요 (오디오 쪽을 고르면 오디오 트랙 추가로 바뀌어요)'}
   if(na&&!A.auto){A.auto=true;openTimeline()}
   const nc=S.clips.length;
   $('#tlSum').textContent=na?`${na} track${na>1?'s':''}${nc?` · ${nc} clip${nc>1?'s':''}`:''}${hasLinked()?' · 프레임 소리 연결됨':''}`:'소리 없음 · 소리 있는 영상이나 음악을 추가하세요';
@@ -2158,7 +2166,7 @@ $('#tlTog').onclick=()=>{A.open=!A.open;A.auto=true;$('#tl').classList.toggle('c
 $('#aMute').onclick=()=>{A.mute=!A.mute;if(A.gain)A.gain.gain.value=A.mute?0:1;setMuteIcon();toast(A.mute?'미리보기 소리를 껐어요 (저장에는 영향 없어요)':'미리보기 소리를 켰어요')};
 setMuteIcon();
 $('#aAdd').onclick=()=>openFile('audio','audio/*,video/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.opus,.mp4,.mov,.webm');
-$('#aTrackAdd').onclick=()=>addTrack();
+$('#aTrackAdd').onclick=()=>audioFocus()?addTrack():openFile('vinsert');
 tlHeads.addEventListener('click',e=>{blurPanel();const row=e.target.closest('.th[data-id]');if(!row)return;const id=row.dataset.id;const b=e.target.closest('[data-a]');
   if(b){const a=b.dataset.a;if(a==='unlink')return unlinkAudio();if(a==='relink')return relinkAudio();const o=trackObj(id);if(!o)return;commit(()=>{o[a]=!o[a]});return}
   if(id==='video'){clearAudioSel();renderTimeline();renderPanel();return}
@@ -3026,6 +3034,7 @@ async function handleFiles(files,target){
   else files=files.filter(f=>!isAudioFile(f));
   const items=await importFiles(files);if(!items.length)return;
   if(target==='layer')return addLayerItems(items);
+  if(target==='vinsert')return insertToEditor(items);
   addToEditor(items);
 }
 function addToEditor(items){
@@ -3037,6 +3046,19 @@ function addToEditor(items){
   },fresh?`${nf.length}프레임을 불러왔어요`:`${nf.length}프레임을 뒤에 추가했어요${lb?` · ${LABELS[lb].t}로 표시`:''}`);
   S.view.fit=true;layoutStage();ensureVisible(S.cur);
 }
+/* + Video track: put a video / GIF / image in at the playhead as its own piece */
+function insertToEditor(items){
+  if(S.isSample||!S.frames.length)return addToEditor(items);
+  const nf=items.flatMap(i=>i.frames),lb=nextLabel(),n=S.frames.length;const T=playT();const i=frameAt(clamp(T,0,Math.max(0,S.total-1)));
+  const j=T>=S.total?n:(T-S.starts[i]<S.frames[i].delay/2?i:i+1);const at=j>=n?S.total:S.starts[j];const name=items.map(x=>x.name).join(', ');
+  commit(()=>{const lk=hasLinked()||(!S.linkOff&&nf.some(f=>f.au));
+    if(j<n){if(j>0&&!videoSegs().some(x=>x.i0===j))cutFrames(j);if(j===0){const sg=linkedSegs()[0];S.frames[0]=cloneF(S.frames[0],{vCut:true,...(lk&&sg?{auSeg:{...sg.cfg}}:{})})}}
+    nf.forEach((f,k)=>{if(lb)f.label=lb;if(k===0){f.vCut=true;if(lk)f.auSeg={...SEG_DEF}}});
+    S.frames.splice(j,0,...nf);setSel(nf.map((_,k)=>j+k),j);
+    /* sound kept apart (Unlink): the new video's sound goes in as a clip at the same place */
+    if(S.linkOff&&nf[0].au&&AS.has(nf[0].au.src)){ensureTracks();const src=nf[0].au.src;const c=newClip(src,baseName(items[0].name),AS.get(src).dur,S.tracks[0].id);c.start=Math.round(at);S.clips.push(c)}
+  },`${name} ${nf.length}프레임을 ${fmtS(at)} 위치에 넣었어요${lb?` · ${LABELS[lb].t}로 표시`:''}${S.linkOff&&S.clips.some(c=>c.start+clipLen(c)>at)?' · 따로 둔 오디오 클립은 위치 그대로예요':' · Video 줄에서 끌어서 옮길 수 있어요'}`);
+  S.view.fit=true;layoutStage();ensureVisible(j)}
 const dz=$('#dz');
 dz.onclick=()=>openFile(S.mode==='layer'?'layer':'edit');
 $('#editEmpty').onclick=()=>openFile('edit');
@@ -3217,6 +3239,7 @@ addEventListener('keydown',e=>{
   if(mod&&c==='KeyJ')return go(()=>{const x=s();x&&OPS.speed(x,1/0.9)});
   if(e.altKey&&e.key==='PageUp')return go(()=>{const x=s();x&&(e.shiftKey?OPS.copyTo(x,'front'):OPS.moveTo(x,'front'))});
   if(e.altKey&&e.key==='PageDown')return go(()=>{const x=s();x&&(e.shiftKey?OPS.copyTo(x,'back'):OPS.moveTo(x,'back'))});
+  if(e.altKey&&e.shiftKey&&(e.key==='ArrowUp'||e.key==='ArrowDown'))return go(()=>{const x=s();x&&OPS.moveBy(x,e.key==='ArrowUp'?-10:10)});
   if(e.altKey&&e.key==='ArrowUp')return go(()=>{const x=s();x&&OPS.moveUp(x)});
   if(e.altKey&&e.key==='ArrowDown')return go(()=>{const x=s();x&&OPS.moveDown(x)});
   if(e.altKey&&!mod&&(e.key==='Delete'||(IS_MAC&&e.key==='Backspace')))return go(()=>deleteParity('nth'));
@@ -3229,8 +3252,8 @@ addEventListener('keydown',e=>{
   if(mod&&c==='KeyC')return go(()=>{const x=s();x&&OPS.copy(x)});
   if(mod&&c==='KeyX')return go(()=>{const x=s();x&&OPS.cut(x)});
   if(mod&&c==='KeyV')return go(()=>OPS.paste(e.shiftKey));
-  if(e.key==='ArrowLeft')return go(()=>goFrame(S.cur-1));
-  if(e.key==='ArrowRight')return go(()=>goFrame(S.cur+1));
+  if(e.key==='ArrowLeft')return go(()=>goFrame(S.cur-(e.shiftKey?10:1)));
+  if(e.key==='ArrowRight')return go(()=>goFrame(S.cur+(e.shiftKey?10:1)));
   if(e.key==='Home')return go(()=>goFrame(0));
   if(e.key==='End')return go(()=>goFrame(S.frames.length-1));
   if(e.key==='ArrowUp'||e.key==='ArrowDown'){return go(()=>{const i=clamp(S.cur+(e.key==='ArrowUp'?-1:1),0,S.frames.length-1);if(e.shiftKey){S.cur=i;const a=Math.min(S.anchor,i),b=Math.max(S.anchor,i);S.sel=new Set(Array.from({length:b-a+1},(_,k)=>a+k));stopPlay();ensureVisible(i);renderList();renderStage();updatePlayer();renderPanel()}else goFrame(i)})}
