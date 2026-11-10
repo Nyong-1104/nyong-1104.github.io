@@ -169,6 +169,9 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .row{position:absolute;left:0;right:0;height:40px;display:grid;grid-template-columns:38px 40px 1fr 46px;align-items:center;gap:6px;padding:0 10px;font-size:12px;cursor:default;user-select:none;
   border-left:3px solid transparent}
 .row .n{color:var(--mute)}
+.row .n .kf{font-style:normal;color:var(--o);font-size:9px;margin-left:3px;vertical-align:1px}
+#stageInner.camz{cursor:grab}#stageInner.camz.panning{cursor:grabbing}
+.kfrow{display:grid;grid-template-columns:1fr 38px 38px;gap:6px}
 .row img{width:34px;height:34px;object-fit:contain;border-radius:6px;background:var(--stage)}
 .row .d{color:var(--mute2)}
 .row:hover{background:#f7f7f9}
@@ -236,7 +239,7 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .tl-grip{position:absolute;left:0;right:0;top:-6px;height:12px;cursor:ns-resize;z-index:4;touch-action:none}
 .tl-grip::after{content:"";position:absolute;left:50%;top:4px;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:#dcdce3;transition:background .15s,width .15s,margin .15s}
 .tl-grip:hover::after,.tl-grip.on::after{background:var(--o);width:56px;margin-left:-28px}
-.app[data-mode="edit"][data-focus="frame"] .tl-body{filter:grayscale(1);opacity:.55}
+.app[data-mode="edit"][data-focus="frame"] .tl-body .th:not([data-id="video"]){filter:grayscale(1);opacity:.55}
 .app[data-mode="edit"][data-focus="frame"] .tl-body:hover{opacity:.8}
 .app[data-mode="layer"] .tl{display:none}
 .tl-bar{height:40px;display:flex;align-items:center;gap:6px;padding:0 12px 0 14px}
@@ -257,6 +260,7 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .th.on{background:var(--sel)}
 .th .ic{width:15px;height:15px;color:var(--mute2);flex:none}
 .th.on .ic{color:var(--o)}
+.th .vlk{display:inline-flex;color:var(--mute);margin-right:2px}
 .th .nm{flex:1;min-width:0;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .th .tg{width:22px;height:22px;flex:none;border-radius:6px;border:1.5px solid var(--line);background:#fff;font-size:10.5px;font-weight:800;color:var(--mute2);display:grid;place-items:center;padding:0}
 .th .tg:hover{border-color:#c9c9d3}
@@ -357,6 +361,8 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .bub em.hl{font-style:normal;font-weight:700;color:#FF7A50}
 .opt .qh,.chkq .qh,.fld>span .qh{display:inline-grid;margin:0 0 0 6px;vertical-align:-3px}
 .chkq{display:flex;align-items:center;min-height:34px}
+.szrow{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:34px}
+.btn.xs{min-height:28px;padding:3px 10px;font-size:12px;border-radius:8px}
 .bub::after{content:"";position:absolute;left:var(--ax,50%);top:-5px;width:10px;height:10px;background:#000;transform:translateX(-50%) rotate(45deg);border-radius:2px}
 .bub.up::after{top:auto;bottom:-5px}
 
@@ -462,6 +468,7 @@ input[type=range]:disabled{opacity:.4;cursor:default}
         <button class="tb" data-tool="reverse" type="button" data-tip="Reverse|재생 순서 뒤집기"><svg class="i" viewBox="0 0 24 24"><path d="M11 6l-6 6 6 6M19 6l-6 6 6 6"/></svg></button>
         <button class="tb" data-tool="yoyo" type="button" data-tip="Ping-pong|뒤에 역재생 프레임 추가"><svg class="i" viewBox="0 0 24 24"><path d="M4 9h14l-3-3M20 15H6l3 3"/></svg></button>
         <button class="tb" data-tool="thin" type="button" data-tip="Reduce frames|재생 시간은 그대로, 프레임 수 줄이기"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 5v14M16 5v14M10 12h4"/></svg></button>
+        <button class="tb" data-tool="split" type="button" data-tip="Split|재생 위치에서 영상 나누기 · 소리가 연결돼 있으면 같이 나뉘어요"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.6 8.6L20 19M8.6 15.4L20 5"/></svg></button>
         <button class="tb" data-tool="delete" type="button" data-tip="Delete|선택한 프레임 삭제"><svg class="i" viewBox="0 0 24 24"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg></button>
         <button class="tb" data-tool="add" type="button" data-tip="Add frames|파일을 뒤에 추가"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M12 9v6M9 12h6"/></svg></button>
         <button class="tb" data-tool="menu" type="button" data-tip="More|프레임 메뉴 전체 (오른쪽 클릭)"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/></svg></button>
@@ -842,9 +849,29 @@ function getBmp(fr){
 function rotSize(){return S.tf.rot%180?[S.H0,S.W0]:[S.W0,S.H0]}
 function cropRect(){const[RW,RH]=rotSize();return S.tf.crop||{x:0,y:0,w:RW,h:RH}}
 function outSize(){const c=cropRect();return[S.tf.outW||c.w,S.tf.outH||c.h]}
-function applyTransform(ctx,W,H,cropSpace){
+/* ---------- Zoom · Move: a camera inside the output frame ----------
+   z = 1..4 (100~400%), x/y = centre of the view (0..1 of the output). Without keyframes S.tf.cam is used for every frame;
+   a frame with f.cam is a keyframe, and frames between keyframes follow a smooth (or even) path. */
+const CAM0={z:1,x:.5,y:.5};let CAMV=0;const CAMT=new WeakMap();
+const camClamp=c=>{const z=clamp(+c.z||1,1,4);return{z,x:clamp(isFinite(c.x)?+c.x:.5,.5/z,1-.5/z),y:clamp(isFinite(c.y)?+c.y:.5,.5/z,1-.5/z)}};
+const camKeys=(frames=S.frames)=>frames.some(f=>f.cam);
+function camTrack(frames=S.frames){const hit=CAMT.get(frames);if(hit&&hit.v===CAMV&&hit.n===frames.length)return hit.c;
+  const keys=[],st=[];let t=0;frames.forEach(f=>{st.push(t);if(f.cam)keys.push({t,...f.cam});t+=f.delay});
+  const base=camClamp(S.tf.cam||CAM0),smooth=S.tf.camEase!=='linear';let k=0;
+  const c=frames.map((f,i)=>{if(!keys.length)return base;const T=st[i];if(T<=keys[0].t)return camClamp(keys[0]);const L=keys[keys.length-1];if(T>=L.t)return camClamp(L);
+    while(k<keys.length-2&&keys[k+1].t<=T)k++;const a=keys[k],b=keys[k+1];let u=(T-a.t)/Math.max(1e-6,b.t-a.t);if(smooth)u=u*u*(3-2*u);
+    return camClamp({z:a.z*Math.pow(b.z/a.z,u),x:a.x+(b.x-a.x)*u,y:a.y+(b.y-a.y)*u})});
+  CAMT.set(frames,{v:CAMV,n:frames.length,c});return c}
+/* change zoom / position on the current frame: with keyframes this writes (or makes) the current frame's keyframe */
+function camSet(p){const i=S.cur;if(!S.frames[i])return false;let made=false;
+  if(!camKeys())S.tf.cam=camClamp({...camClamp(S.tf.cam||CAM0),...p});
+  else{const f=S.frames[i];const v=camClamp({...camTrack()[i],...p});made=!f.cam;S.frames[i]={...f,cam:v}}
+  CAMV++;return made}
+const camSig=()=>JSON.stringify([S.tf.cam||null,S.tf.camEase||'',S.frames.map(f=>f.cam?[f.cam.z,f.cam.x,f.cam.y]:0)]);
+function applyTransform(ctx,W,H,cropSpace,cam){
   const[RW,RH]=rotSize();const c=cropSpace?{x:0,y:0,w:RW,h:RH}:cropRect();
-  ctx.setTransform(1,0,0,1,0,0);ctx.scale(W/c.w,H/c.h);ctx.translate(-c.x,-c.y);
+  ctx.setTransform(1,0,0,1,0,0);
+  if(cam&&!cropSpace&&(cam.z>1.0001||Math.abs(cam.x-.5)>1e-6||Math.abs(cam.y-.5)>1e-6)){const v=camClamp(cam);ctx.translate(W/2,H/2);ctx.scale(v.z,v.z);ctx.translate(-v.x*W,-v.y*H)}ctx.scale(W/c.w,H/c.h);ctx.translate(-c.x,-c.y);
   ctx.translate(RW/2,RH/2);ctx.rotate(S.tf.rot*Math.PI/180);ctx.scale(S.tf.fh?-1:1,S.tf.fv?-1:1);ctx.translate(-S.W0/2,-S.H0/2);
 }
 function drawContain(ctx,bmp){const s=Math.min(S.W0/bmp.width,S.H0/bmp.height);const w=bmp.width*s,h=bmp.height*s;ctx.drawImage(bmp,(S.W0-w)/2,(S.H0-h)/2,w,h)}
@@ -1066,7 +1093,7 @@ function undo(){if(S.mode==='layer')return lUndo();if(!S.undo.length)return toas
 function redo(){if(S.mode==='layer')return lRedo();if(!S.redo.length)return;stopPlay();S.undo.push(snap());restore(S.redo.pop());S.crop.active=false;changed();toast('Redo')}
 function recalc(){let t=0;S.starts=new Array(S.frames.length);for(let i=0;i<S.frames.length;i++){S.starts[i]=t;t+=S.frames[i].delay}S.total=t}
 function changed(){
-  recalc();const n=S.frames.length;
+  CAMV++;recalc();const n=S.frames.length;
   S.cur=clamp(S.cur,0,Math.max(0,n-1));
   S.sel=new Set([...S.sel].filter(i=>i<n));if(!S.sel.size&&n)S.sel.add(S.cur);
   ensureTracks();if(S.aSel&&S.aSel!=='linked'&&!S.clips.some(c=>c.id===S.aSel))S.aSel=null;if(S.aSel==='linked'&&!hasLinked())S.aSel=null;
@@ -1171,9 +1198,11 @@ const listPad=()=>parseFloat(getComputedStyle(listEl).getPropertyValue('--pad'))
 function renderList(){
   const n=S.frames.length,P=listPad();spacer.style.height=(P+n*ROWH+70)+'px';
   const top=listEl.scrollTop-P,h=listEl.clientHeight||400;const a=Math.max(0,Math.floor(top/ROWH)-4),b=Math.min(n,Math.ceil((top+h)/ROWH)+4);
-  let html='';for(let i=a;i<b;i++){const f=S.frames[i];const lb=f.label&&LABELS[f.label];html+=`<div class="row${S.sel.has(i)?' sel':''}${i===S.cur?' cur':''}" style="top:${P+i*ROWH}px${lb?`;--lb:${lb.c};--lb-bg:${lb.bg}`:''}"${lb?` data-lb="${f.label}"`:''} data-i="${i}"><span class="n">${i+1}</span><img src="${f.thumb}" alt=""><span class="t">${fmtS(S.starts[i]||0)}</span><span class="d">${f.delay}</span></div>`}
+  let html='';for(let i=a;i<b;i++){const f=S.frames[i];const lb=f.label&&LABELS[f.label];html+=`<div class="row${S.sel.has(i)?' sel':''}${i===S.cur?' cur':''}" style="top:${P+i*ROWH}px${lb?`;--lb:${lb.c};--lb-bg:${lb.bg}`:''}"${lb?` data-lb="${f.label}"`:''} data-i="${i}"><span class="n">${i+1}${f.cam?'<i class="kf" title="키프레임">◆</i>':''}</span><img src="${f.thumb}" alt=""><span class="t">${fmtS(S.starts[i]||0)}</span><span class="d">${f.delay}</span></div>`}
   $$('.row',listEl).forEach(r=>r.remove());spacer.insertAdjacentHTML('afterend',html);
   $('#cnt').textContent=n?`${S.sel.size} / ${n}`:'';
+  /* the Video row outlines the picked frames: redraw it when the pick changes */
+  const sk=[...S.sel].join(',')+'|'+S.frames.length;if(sk!==A.selKey){A.selKey=sk;if(tlGeom&&!audioFocus())requestAnimationFrame(()=>renderTimeline())}
 }
 listEl.addEventListener('scroll',()=>requestAnimationFrame(renderList));
 function ensureVisible(i){const P=listPad(),vt=listEl.scrollTop,vh=listEl.clientHeight;const t=P+i*ROWH,b=t+ROWH;
@@ -1274,7 +1303,9 @@ async function renderStage(){
   if(tok!==stageTok)return;
   const[W,H]=S.crop.active?rotSize():outSize();
   setCanvas(W,H);cx.setTransform(1,0,0,1,0,0);cx.clearRect(0,0,W,H);
-  cx.imageSmoothingQuality='high';applyTransform(cx,W,H,S.crop.active);drawContain(cx,bmp);cx.setTransform(1,0,0,1,0,0);
+  const cam=camTrack()[S.cur];
+  cx.imageSmoothingQuality='high';applyTransform(cx,W,H,S.crop.active,cam);drawContain(cx,bmp);cx.setTransform(1,0,0,1,0,0);
+  inner.classList.toggle('camz',!S.crop.active&&!!cam&&cam.z>1.001);
   layoutStage();
 }
 function layoutStage(){
@@ -1369,6 +1400,29 @@ const audioFocus=()=>S.mode==='edit'&&!!(S.aSel||S.aTrack);
 function syncFocus(){const f=audioFocus()?'audio':'frame';const app=$('#app');if(app.dataset.focus!==f){app.dataset.focus=f;hideBub();updateInfo()}
   if(f==='audio'){const n=selClips().length,c=selClip();const dis={copy:!n,paste:!A.cb.length,dup:!n,split:!n&&S.aSel!=='linked',trimIn:!c,trimOut:!c,loop:!n,del:!n,add:false};
     $$('[data-atool]').forEach(b=>{b.disabled=!!dis[b.dataset.atool]});const lb=$('[data-atool="loop"]');lb.classList.toggle('muted',!!n&&selClips().every(x=>x.loop))}}
+/* ---------- side panel: Zoom · Move ---------- */
+function camHTML(){if(!S.frames.length)return'';const cam=camTrack()[S.cur]||CAM0,zp=Math.round(cam.z*100),f=S.frames[S.cur],nk=S.frames.filter(x=>x.cam).length;
+  const moved=zp>100||!!S.tf.cam&&(Math.abs(S.tf.cam.x-.5)>1e-6||Math.abs(S.tf.cam.y-.5)>1e-6);
+  const prev=S.frames.findLastIndex((x,i)=>i<S.cur&&x.cam),next=S.frames.findIndex((x,i)=>i>S.cur&&x.cam);
+  return`<div class="sec" id="secCam"><h3>${icon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/>')}Zoom · Move${qh('Zoom · Move','출력 크기는 그대로 두고, 그 안에서 영상을 확대해요.\n100%보다 크게 하면 미리보기를 드래그해 보이는 위치를 옮길 수 있어요.\n시간에 따라 바꾸려면 ◇ 키프레임 추가를 누르고, 다른 프레임으로 가서 확대나 위치를 바꾸세요. 그 프레임에 키프레임이 자동으로 생기고, 키프레임 사이는 자연스럽게 이어져요.\n키프레임은 프레임에 붙어 있어서 프레임을 옮기거나 속도를 바꿔도 같이 따라가요.')}</h3>
+    <div class="fld"><span class="vhead">Zoom${nk?`<small>${f.cam?`◆ ${S.cur+1}번 키프레임`:`${S.cur+1}번 · 키프레임 사이`}</small>`:''}<span class="vnum"><input class="in" id="camZN" type="number" min="100" max="400" step="5" value="${zp}" aria-label="Zoom %">%</span></span><div class="srange"><input type="range" id="camZ" min="100" max="400" value="${zp}" aria-label="Zoom"></div></div>
+    <p class="note">${zp>100?'미리보기를 드래그하면 보이는 위치를 옮길 수 있어요.':'100%보다 크게 하면 미리보기를 드래그해 위치를 옮길 수 있어요.'}${nk?' 다른 프레임에서 확대나 위치를 바꾸면 그 프레임에 키프레임이 생겨요.':''}</p>
+    <div class="kfrow"><button type="button" class="btn" id="kfTog">${f.cam?'◆ 키프레임 삭제':'◇ 키프레임 추가'}</button><button type="button" class="btn" id="kfPrev" ${prev<0?'disabled':''} data-tip="이전 키프레임">◀</button><button type="button" class="btn" id="kfNext" ${next<0?'disabled':''} data-tip="다음 키프레임">▶</button></div>
+    ${nk?`<div class="kv"><span>키프레임</span><b>${nk}개</b></div>`:''}
+    ${nk>=2?`<label class="fld"><span>움직임</span><select class="in" id="kfEase"><option value="smooth"${S.tf.camEase!=='linear'?' selected':''}>부드럽게 (천천히 시작해서 천천히 멈춤)</option><option value="linear"${S.tf.camEase==='linear'?' selected':''}>일정하게</option></select></label>`:''}
+    ${nk||moved?'<button type="button" class="btn" id="camReset" style="width:100%">Zoom · Move 초기화</button>':''}
+  </div>`}
+function bindCam(){const zr=$('#camZ'),zn=$('#camZN');if(!zr)return;springRange(zr);let made=false;
+  zr.oninput=()=>{if(!zr._u){zr._u=true;made=false;S.undo.push(snap());S.redo=[]}if(camSet({z:+zr.value/100}))made=true;zn.value=zr.value;renderStage()};
+  zr.onchange=()=>{zr._u=false;zr.blur();changed();if(made)toast(`${S.cur+1}번 프레임에 키프레임을 만들었어요`)};
+  zn.onchange=()=>{zn.blur();const v=clamp(Math.round(+zn.value||100),100,400);const mk=camKeys()&&!S.frames[S.cur].cam;commit(()=>camSet({z:v/100}),mk?`${S.cur+1}번 프레임에 키프레임을 만들었어요 (확대 ${v}%)`:`확대를 ${v}%로 바꿨어요`)};
+  $('#kfTog').onclick=()=>{const i=S.cur,f=S.frames[i];if(!f)return;
+    if(f.cam)commit(()=>{const keep=camTrack()[i];const nf={...S.frames[i]};delete nf.cam;S.frames[i]=nf;if(!camKeys())S.tf.cam=keep;CAMV++},`${i+1}번 프레임 키프레임을 지웠어요`);
+    else{const first=!camKeys();commit(()=>{S.frames[i]={...f,cam:camTrack()[i]};CAMV++},first?`${i+1}번 프레임에 첫 키프레임을 만들었어요 · 다른 프레임으로 가서 확대나 위치를 바꿔 보세요`:`${i+1}번 프레임에 키프레임을 만들었어요`)}};
+  const jump=d=>{const i=d<0?S.frames.findLastIndex((x,k)=>k<S.cur&&x.cam):S.frames.findIndex((x,k)=>k>S.cur&&x.cam);if(i>=0){goFrame(i);renderTimeline()}};
+  $('#kfPrev').onclick=()=>jump(-1);$('#kfNext').onclick=()=>jump(1);
+  const ez=$('#kfEase');if(ez)ez.onchange=()=>commit(()=>{S.tf.camEase=ez.value;CAMV++},ez.value==='linear'?'키프레임 사이를 일정하게 움직여요':'키프레임 사이를 부드럽게 움직여요');
+  const rs=$('#camReset');if(rs)rs.onclick=()=>commit(()=>{S.frames=S.frames.map(f=>{if(!f.cam)return f;const n={...f};delete n.cam;return n});delete S.tf.cam;delete S.tf.camEase;CAMV++},'Zoom · Move를 초기화했어요')}
 function renderPanel(){
   if(S.mode==='layer')return renderLayerPanel();
   const p=$('#panel');const[W,H]=outSize();const[RW,RH]=rotSize();
@@ -1395,10 +1449,8 @@ function renderPanel(){
   }
   p.innerHTML=`
   <div class="sec" id="secSize"><h3>${icon('<path d="M4 14v6h6M20 10V4h-6M4 20l7-7M20 4l-7 7"/>')}Size · Rotate</h3>
-    <div class="grid2"><label class="fld"><span>너비 (px)</span><input class="in" id="rzW" type="number" min="1" value="${W}"></label><label class="fld"><span>높이 (px)</span><input class="in" id="rzH" type="number" min="1" value="${H}"></label></div>
-    <label class="chk"><input type="checkbox" id="rzKeep" ${rz.keep?'checked':''}>비율 유지</label>
-    <div class="grid4">${[25,50,75,100].map(v=>`<button type="button" class="btn" data-pct="${v}">${v}%</button>`).join('')}</div>
-    <button type="button" class="primary" id="rzApply">Apply size</button>
+    <div class="grid2"><label class="fld"><span>너비 (px)</span><input class="in" id="rzW" type="text" inputmode="numeric" autocomplete="off" value="${W}"></label><label class="fld"><span>높이 (px)</span><input class="in" id="rzH" type="text" inputmode="numeric" autocomplete="off" value="${H}"></label></div>
+    <div class="szrow"><label class="chk"><input type="checkbox" id="rzKeep" ${rz.keep?'checked':''}>비율 유지</label><button type="button" class="btn xs" id="rzOrig" ${W===Math.round(cropRect().w)&&H===Math.round(cropRect().h)?'disabled':''} data-tip="원래 크기|크기를 원래대로 되돌려요 (크롭했다면 크롭한 영역의 원래 크기).\n크기는 원본을 기억하고 있어서, 작게 줄였다가 다시 키워도 화질이 깨지지 않아요.">원래 크기</button></div>
     <div class="grid5">
       <button type="button" class="btn" id="rotL" data-tip="Rotate left|왼쪽으로 90°">${icon('<path d="M4 4v6h6"/><path d="M4.6 14a8 8 0 1 0 1.9-8.1L4 10"/>')}</button>
       <button type="button" class="btn" id="rotR" data-tip="Rotate right|오른쪽으로 90°">${icon('<path d="M20 4v6h-6"/><path d="M19.4 14a8 8 0 1 1-1.9-8.1L20 10"/>')}</button>
@@ -1412,6 +1464,7 @@ function renderPanel(){
     ${S.tf.crop?`<div class="kv"><span>적용된 영역</span><b>${S.tf.crop.w}×${S.tf.crop.h}</b></div>`:''}
     <div class="row-btns"><button type="button" class="btn" id="crStart">${S.tf.crop?'영역 다시 정하기':'Video Crop'}</button>${S.tf.crop?'<button type="button" class="btn" id="crClear">자르기 해제</button>':''}</div>
   </div>
+  ${camHTML()}
   <div class="sec"><h3>${icon('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/>')}Selected frames</h3>
     <div class="kv"><span>선택</span><b id="pSelN">${s.length}개</b></div>
     <div class="kv"><span>선택 구간 길이</span><b id="pSelD">${fmtS(selDur)}</b></div>
@@ -1423,15 +1476,24 @@ function renderPanel(){
   <div class="sec"><h3>Shortcuts</h3><div class="kbd-list">
     <span>재생 / 정지</span><kbd>Space</kbd><span>이전·다음 프레임</span><kbd>← →</kbd><span>여러 개 선택</span><kbd>${kb('shift')}클릭 · ${kb('mod')}클릭</kbd>
     <span>실행 취소</span><kbd>${kb('mod+Z')}</kbd><span>저장</span><kbd>${kb('mod+S')}</kbd><span>너비 입력</span><kbd>${kb('mod')}R</kbd><span>확대·축소</span><kbd>${kb('mod')}휠</kbd></div></div>`;
-  const ratio=H/W;
+  /* size applies as you type (it only changes the output size, the original frames stay as they are) */
+  const cr=cropRect(),r0=cr.h/cr.w,ratio=Math.abs(H/W-r0)<r0*0.02?r0:H/W;
   $('#rzKeep').onchange=e=>rz.keep=e.target.checked;
-  $('#rzW').oninput=e=>{if(rz.keep&&+e.target.value>0)$('#rzH').value=Math.max(1,Math.round(+e.target.value*ratio))};
-  $('#rzH').oninput=e=>{if(rz.keep&&+e.target.value>0)$('#rzW').value=Math.max(1,Math.round(+e.target.value/ratio))};
-  $$('[data-pct]',p).forEach(b=>b.onclick=()=>{const c=cropRect();const v=+b.dataset.pct/100;$('#rzW').value=Math.max(1,Math.round(c.w*v));$('#rzH').value=Math.max(1,Math.round(c.h*v))});
-  $('#rzApply').onclick=()=>{const w=Math.round(+$('#rzW').value),h=Math.round(+$('#rzH').value);if(!(w>0&&h>0))return toast('크기를 확인해 주세요');if(w>8192||h>8192)return toast('8192px보다 크게는 만들 수 없어요');
-    commit(()=>{S.tf.outW=w;S.tf.outH=h},`크기를 ${w}×${h}로 바꿨어요`);S.view.fit=true;layoutStage()};
+  const num=el=>Math.round(+String(el.value).replace(/[^0-9.]/g,''));
+  const applyRz=()=>{clearTimeout(rz.t);const w=num($('#rzW')),h=num($('#rzH'));if(!(w>0&&h>0))return;
+    if(w>8192||h>8192)return toast('8192px보다 크게는 만들 수 없어요');const[cw,ch]=outSize();if(w===cw&&h===ch)return;
+    const fid=document.activeElement&&document.activeElement.id;
+    commit(()=>{if(w===Math.round(cr.w)&&h===Math.round(cr.h)){S.tf.outW=0;S.tf.outH=0}else{S.tf.outW=w;S.tf.outH=h}},`크기를 ${w}×${h}로 바꿨어요`);S.view.fit=true;layoutStage();
+    const ob=$('#rzOrig');if(ob)ob.disabled=w===Math.round(cr.w)&&h===Math.round(cr.h);
+    if(fid&&!$('#'+fid)&&(fid==='rzW'||fid==='rzH'))renderPanel()};
+  const later=()=>{clearTimeout(rz.t);rz.t=setTimeout(applyRz,450)};
+  $('#rzW').oninput=e=>{const v=num(e.target);if(rz.keep&&v>0)$('#rzH').value=Math.max(1,Math.round(v*ratio));later()};
+  $('#rzH').oninput=e=>{const v=num(e.target);if(rz.keep&&v>0)$('#rzW').value=Math.max(1,Math.round(v/ratio));later()};
+  ['rzW','rzH'].forEach(id=>{$('#'+id).onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();applyRz()}};$('#'+id).onblur=()=>{if(rz.t)applyRz()}});
+  $('#rzOrig').onclick=()=>{clearTimeout(rz.t);commit(()=>{S.tf.outW=0;S.tf.outH=0},`원래 크기 ${Math.round(cr.w)}×${Math.round(cr.h)}로 되돌렸어요`);S.view.fit=true;layoutStage()};
   $('#rotL').onclick=()=>rotate(-90);$('#rotR').onclick=()=>rotate(90);$('#rot180').onclick=()=>rotate(180);
   $('#flipH').onclick=()=>flip('h');$('#flipV').onclick=()=>flip('v');
+  bindCam();
   $('#crStart').onclick=startCrop;$('#crClear')&&($('#crClear').onclick=()=>commit(()=>{const f=outSize()[0]/cropRect().w;S.tf.crop=null;const[RW2,RH2]=rotSize();S.tf.outW=Math.round(RW2*f);S.tf.outH=Math.round(RH2*f)},'자르기를 해제했어요'));
   $('#pDelayApply').onclick=()=>{const ms=Math.round(+$('#pDelay').value);const x=needSel();if(x&&ms>=10)OPS.setDelay(x,ms)};
   bindSpd('pSpd',{apply:p=>{const x=needSel();x&&OPS.setSpeed(x,p)},bases:()=>selIdx().map(i=>fBase(S.frames[i])),pitch:setLinkedPitch});
@@ -1634,6 +1696,16 @@ async function compToFrames(){
   });
   setMode('edit');toast(`프레임 ${out.length}개를 만들었어요`);
 }
+/* edit mode: drag the zoomed preview to move what is shown */
+inner.addEventListener('pointerdown',e=>{
+  if(S.mode!=='edit'||e.button!==0||S.crop.active||!S.frames.length)return;const cam=camTrack()[S.cur];if(!cam||cam.z<=1.001)return;
+  e.preventDefault();stopPlay();blurPanel();const[W,H]=outSize(),z=S.view.z,sx=e.clientX,sy=e.clientY,c0={...cam};let moved=false,made=false,raf=0;
+  S.undo.push(snap());S.redo=[];inner.classList.add('panning');
+  const mv=ev=>{const dx=(ev.clientX-sx)/z,dy=(ev.clientY-sy)/z;if(!moved&&Math.abs(dx)+Math.abs(dy)<2)return;moved=true;
+    if(camSet({x:c0.x-dx/(W*c0.z),y:c0.y-dy/(H*c0.z)}))made=true;if(!raf)raf=requestAnimationFrame(()=>{raf=0;renderStage()})};
+  const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);inner.classList.remove('panning');if(!moved){S.undo.pop();return}
+    changed();toast(made?`${S.cur+1}번 프레임에 키프레임을 만들었어요`:'보이는 위치를 옮겼어요')};
+  addEventListener('pointermove',mv);addEventListener('pointerup',up)});
 inner.addEventListener('pointerdown',e=>{
   if(S.mode!=='layer'||e.button!==0)return;
   const z=S.view.z;const rect=inner.getBoundingClientRect();const px=(e.clientX-rect.left)/z,py=(e.clientY-rect.top)/z;
@@ -1723,7 +1795,7 @@ const TRACK_DEF=name=>({id:'t'+(TID++),name,vol:1,mute:false,solo:false});
 function ensureTracks(){if(!S.tracks)S.tracks=[];for(const c of S.clips){if(!S.tracks.some(t=>t.id===c.track)){const t=TRACK_DEF(c.name||`Audio ${S.tracks.length+1}`);S.tracks.push(t);c.track=t.id}}}
 const trackOf=c=>S.tracks.find(t=>t.id===c.track);
 const clipsOn=id=>S.clips.filter(c=>c.track===id);
-function tracks(){ensureTracks();const t=[];if(hasLinked())t.push({kind:'linked',id:'linked'});S.tracks.forEach(tr=>t.push({kind:'track',id:tr.id,t:tr}));return t}
+function tracks(){ensureTracks();const t=[];if(S.frames.length)t.push({kind:'video',id:'video'});if(hasLinked())t.push({kind:'linked',id:'linked'});S.tracks.forEach(tr=>t.push({kind:'track',id:tr.id,t:tr}));return t}
 function trackObj(id){return id==='linked'?S.linked:S.tracks.find(t=>t.id===id)||S.clips.find(c=>c.id===id)}
 function anySolo(){return(hasLinked()&&S.linked.solo)||S.tracks.some(t=>t.solo)}
 const audible=t=>{if(t&&t.src){t=trackOf(t);if(!t)return true}return!t.mute&&(!anySolo()||t.solo)};
@@ -1758,6 +1830,38 @@ function linkedSegs(frames=S.frames){const out=[];let t=0;
   frames.forEach((f,i)=>{if(i===0||f.auSeg)out.push({i0:i,start:t,cfg:{...SEG_DEF,...(f.auSeg||{})}});t+=f.delay});
   out.forEach((sg,k)=>{const nx=out[k+1];sg.end=nx?nx.start:t;sg.i1=nx?nx.i0-1:frames.length-1;sg.k=k});return out}
 const selSeg=(segs=linkedSegs())=>segs.find(sg=>S.frames[sg.i0]&&S.frames[sg.i0].id===A.segFid)||segs[0];
+/* ---------- Video row: pieces of the frame list ----------
+   a piece starts where a frame has vCut; while the sound is linked, a sound part start is a cut too,
+   so cutting or moving a piece takes its sound along */
+function videoSegs(frames=S.frames){const lk=hasLinked(frames);const out=[];let t=0;
+  frames.forEach((f,i)=>{if(i===0||f.vCut||(lk&&f.auSeg))out.push({i0:i,start:t});t+=f.delay});
+  out.forEach((sg,k)=>{const nx=out[k+1];sg.end=nx?nx.start:t;sg.i1=nx?nx.i0-1:frames.length-1;sg.k=k});return out}
+/* make frame i the start of a piece (and of a sound part while linked). Call inside commit. */
+function cutFrames(i){if(i<=0||i>=S.frames.length)return;const o={vCut:true};
+  if(hasLinked()&&!S.frames[i].auSeg){const sg=linkedSegs().find(x=>i>x.i0&&i<=x.i1);if(sg){o.auSeg={...sg.cfg,fadeIn:0};setSegCfg(sg,{fadeOut:0})}}
+  S.frames[i]=cloneF(S.frames[i],o)}
+function splitVideo(T=playT()){if(!S.frames.length)return;const i=frameAt(clamp(T,0,Math.max(0,S.total-1)));
+  if(i===0)return toast('맨 앞에서는 나눌 수 없어요 · 재생 위치를 옮겨 주세요');
+  if(videoSegs().some(x=>x.i0===i))return toast('이미 나뉜 곳이에요');
+  const lk=hasLinked();commit(()=>cutFrames(i),`${fmtS(S.starts[i])}에서 나눴어요${lk?' · 영상과 소리가 같이 나뉘었어요':''} · 조각을 끌어서 옮길 수 있어요`)}
+function joinVideo(sg){if(!sg||sg.i0===0)return toast('맨 앞 조각이에요');
+  commit(()=>{const lk=hasLinked();if(lk&&S.frames[sg.i0].auSeg){const ls=linkedSegs();const k=ls.findIndex(x=>x.i0===sg.i0);const prev=ls[k-1];
+      if(prev)setSegCfg(prev,{fadeOut:ls[k].cfg.fadeOut,foC:ls[k].cfg.foC})}
+    const nf=cloneF(S.frames[sg.i0]);delete nf.vCut;delete nf.auSeg;S.frames[sg.i0]=nf},'앞 조각과 합쳤어요')}
+/* move frames i0..i1 (a piece) so they sit before frame j (j = length: to the end) */
+function moveVideo(i0,i1,j){const n=S.frames.length;if(j>=i0&&j<=i1+1)return false;const lk=hasLinked(),len=i1-i0+1;const jj=j>i1?j-len:j;
+  const msg=`${lk?'영상과 소리를':'영상을'} 옮겼어요${S.clips.length?' · 따로 둔 오디오 클립은 위치 그대로예요':''}`;
+  commit(()=>{
+    if(j<n&&!videoSegs().some(x=>x.i0===j))cutFrames(j);
+    if(i1+1<n&&!videoSegs().some(x=>x.i0===i1+1))cutFrames(i1+1);
+    if(i0>0&&!videoSegs().some(x=>x.i0===i0))cutFrames(i0);
+    /* write every edge onto its frame so the pieces keep their own settings after the move */
+    if(lk)for(const sg of linkedSegs())if(!S.frames[sg.i0].auSeg)S.frames[sg.i0]=cloneF(S.frames[sg.i0],{auSeg:{...sg.cfg}});
+    for(const sg of videoSegs())if(!S.frames[sg.i0].vCut)S.frames[sg.i0]=cloneF(S.frames[sg.i0],{vCut:true});
+    const fr=S.frames,block=fr.slice(i0,i1+1),rest=[...fr.slice(0,i0),...fr.slice(i1+1)];
+    S.frames=[...rest.slice(0,jj),...block,...rest.slice(jj)];
+    S.sel=new Set(Array.from({length:len},(_,k)=>jj+k));S.cur=jj;S.anchor=jj;if(lk)A.segFid=S.frames[jj].id},msg);
+  ensureVisible(jj);return true}
 /* render every audible track into one stereo buffer exactly as long as the frames */
 async function buildMix(frames,{clips=true,raw=false,keepGain=false}={}){
   ensureTracks();
@@ -1912,11 +2016,11 @@ function splitLinked(T=playT()){
   if(i===0)return toast('맨 앞에서는 나눌 수 없어요 · 재생 위치를 옮겨 주세요');
   if(S.frames[i].auSeg)return toast('이미 나뉜 곳이에요');
   const segs=linkedSegs(),sg=segs.find(x=>i>x.i0&&i<=x.i1);if(!sg)return;
-  commit(()=>{const cur={...sg.cfg};setSegCfg(sg,{fadeOut:0});S.frames[i]=cloneF(S.frames[i],{auSeg:{...cur,fadeIn:0}});A.segFid=S.frames[i].id;S.aSel='linked';S.aTrack=null;A.multi=new Set()},
+  commit(()=>{const cur={...sg.cfg};setSegCfg(sg,{fadeOut:0});S.frames[i]=cloneF(S.frames[i],{auSeg:{...cur,fadeIn:0},vCut:true});A.segFid=S.frames[i].id;S.aSel='linked';S.aTrack=null;A.multi=new Set()},
     `${fmtS(S.starts[i])}에서 나눴어요 · 마디마다 Fade를 따로 줄 수 있어요`);
 }
 function joinLinked(sg){if(!sg||sg.i0===0)return toast('맨 앞 마디예요');const segs=linkedSegs(),prev=segs[sg.k-1];
-  commit(()=>{setSegCfg(prev,{fadeOut:sg.cfg.fadeOut,foC:sg.cfg.foC});const f=S.frames[sg.i0];const nf=cloneF(f);delete nf.auSeg;S.frames[sg.i0]=nf;A.segFid=S.frames[prev.i0].id},'앞 마디와 합쳤어요')}
+  commit(()=>{setSegCfg(prev,{fadeOut:sg.cfg.fadeOut,foC:sg.cfg.foC});const f=S.frames[sg.i0];const nf=cloneF(f);delete nf.auSeg;delete nf.vCut;S.frames[sg.i0]=nf;A.segFid=S.frames[prev.i0].id},'앞 마디와 합쳤어요')}
 function relinkAudio(){
   if(!canRelink())return toast('다시 연결할 프레임 소리가 없어요');
   commit(()=>{S.clips=S.clips.filter(c=>!c.fromLink);S.tracks=S.tracks.filter(t=>!(t.fromLink&&!clipsOn(t.id).length));
@@ -1936,6 +2040,12 @@ function deleteTrack(id){const t=S.tracks.find(x=>x.id===id);if(!t)return;const 
 const RUL=24,TPAD=12,ROW0=36;let ROW=ROW0;try{ROW=clamp(Math.round(+localStorage.getItem('mis.trackH')||ROW0),ROW0,ROW0*5)}catch(e){}
 const tlCv=$('#tlCv'),tlx=tlCv.getContext('2d'),tlArea=$('#tlArea'),tlHeads=$('#tlHeads');
 let tlStatic=null,tlGeom=null;
+const THUMBS=new Map();let thumbRaf=0;
+/* list thumbnails as images for the Video row (they load once, then the row redraws) */
+function thumbImg(f){if(!f||!f.thumb)return null;let im=THUMBS.get(f.thumb);
+  if(!im){im=new Image();im.onload=()=>{if(!thumbRaf)thumbRaf=requestAnimationFrame(()=>{thumbRaf=0;renderTimeline()})};im.src=f.thumb;THUMBS.set(f.thumb,im);if(THUMBS.size>2000)THUMBS.delete(THUMBS.keys().next().value)}
+  return im.complete&&im.naturalWidth?im:null}
+const ICO_FILM='<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4"/>';
 const ICO_LINK='<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',ICO_WAVE='<path d="M3 12h2M7 8v8M11 5v14M15 9v6M19 7v10M21 12h0"/>';
 function tlExtent(){let e=S.total;for(const c of S.clips)e=Math.max(e,c.start+clipLen(c));return Math.max(e,200)}
 /* volume line: 0% at the bottom of a bar, 100% in the middle, 200% at the top */
@@ -1944,12 +2054,13 @@ const isSelC=c=>A.multi.has(c.id)||S.aSel===c.id;
 function setMuteIcon(){$('#aMuteIco').innerHTML=A.mute?'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/>':'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>';$('#aMute').classList.toggle('muted',A.mute)}
 function renderTimeline(){
   if(S.mode!=='edit')return;syncFocus();
-  const tr=tracks();
-  if(tr.length&&!A.auto){A.auto=true;openTimeline()}
+  const tr=tracks(),na=tr.filter(t=>t.kind!=='video').length;
+  if(na&&!A.auto){A.auto=true;openTimeline()}
   const nc=S.clips.length;
-  $('#tlSum').textContent=tr.length?`${tr.length} track${tr.length>1?'s':''}${nc?` · ${nc} clip${nc>1?'s':''}`:''}${hasLinked()?' · 프레임 소리 연결됨':''}`:'소리 없음 · 소리 있는 영상이나 음악을 추가하세요';
+  $('#tlSum').textContent=na?`${na} track${na>1?'s':''}${nc?` · ${nc} clip${nc>1?'s':''}`:''}${hasLinked()?' · 프레임 소리 연결됨':''}`:'소리 없음 · 소리 있는 영상이나 음악을 추가하세요';
   const curTrack=S.aTrack||(selClip()?.track);
-  tlHeads.innerHTML=`<div class="th-ruler" id="thT">${fmtS(playT())}</div>`+(tr.length?tr.map(t=>{const o=t.kind==='linked'?S.linked:t.t;const nm=t.kind==='linked'?'Frame audio':t.t.name;
+  tlHeads.innerHTML=`<div class="th-ruler" id="thT">${fmtS(playT())}</div>`+(tr.length?tr.map(t=>{if(t.kind==='video')return`<div class="th${audioFocus()?'':' on'}" data-id="video">${icon(ICO_FILM).replace('class="i"','class="i ic"')}<span class="nm" title="Video">Video</span>${hasLinked()?`<span class="vlk" data-tip="Linked|영상과 Frame audio가 연결돼 있어요. 나누거나 옮기면 소리도 같이 따라가요. Unlink하면 따로 편집해요."><svg class="i" viewBox="0 0 24 24" style="width:12px;height:12px">${ICO_LINK}</svg></span>`:''}</div>`;
+    const o=t.kind==='linked'?S.linked:t.t;const nm=t.kind==='linked'?'Frame audio':t.t.name;
     const on=t.kind==='linked'?S.aSel==='linked':curTrack===t.id;
     return`<div class="th${on?' on':''}" data-id="${t.id}">${icon(t.kind==='linked'?ICO_LINK:ICO_WAVE).replace('class="i"','class="i ic"')}<span class="nm" title="${esc(nm)}">${esc(nm)}</span>`+
       (t.kind==='track'&&t.t.fromLink&&canRelink()?`<button type="button" class="tg ul" data-a="relink" data-tip="Relink|프레임에 다시 연결 · 분리 후 오디오 작업은 초기화"><svg class="i" viewBox="0 0 24 24" style="width:13px;height:13px">${ICO_LINK}</svg></button>`:'')+
@@ -1957,7 +2068,7 @@ function renderTimeline(){
       `<button type="button" class="tg m${o.mute?' on':''}" data-a="mute" data-tip="Mute|이 트랙 음소거">M</button><button type="button" class="tg s${o.solo?' on':''}" data-a="solo" data-tip="Solo|이 트랙만 듣기">S</button></div>`}).join('')
     :'<div class="th empty">No tracks</div>');
   $('#tl').style.setProperty('--row',ROW+'px');
-  const w=Math.max(120,tlArea.clientWidth),h=RUL+Math.max(1,tr.length+(A.newTrack?1:0))*ROW,dpr=Math.min(3,devicePixelRatio||1);
+  const extraRow=na?0:1;const w=Math.max(120,tlArea.clientWidth),h=RUL+Math.max(1,tr.length+extraRow+(A.newTrack?1:0))*ROW,dpr=Math.min(3,devicePixelRatio||1);
   if(tlCv.width!==Math.round(w*dpr)||tlCv.height!==Math.round(h*dpr)){tlCv.width=Math.round(w*dpr);tlCv.height=Math.round(h*dpr)}tlCv.style.height=h+'px';
   if(!tlStatic)tlStatic=document.createElement('canvas');tlStatic.width=tlCv.width;tlStatic.height=tlCv.height;
   const ext=tlExtent(),k=(w-TPAD*2)/ext,X=t=>TPAD+t*k;tlGeom={w,h,k,X,ext,dpr,tr};
@@ -1969,9 +2080,11 @@ function renderTimeline(){
   for(let t=0;t<=ext+1;t+=minor){const x=Math.round(X(t))+.5,maj=Math.abs(t/step-Math.round(t/step))<1e-6;c.beginPath();c.moveTo(x,maj?RUL-9:RUL-5);c.lineTo(x,RUL);c.stroke();
     if(maj)c.fillText(step<1000?(t/1000).toFixed(step<100?2:1)+'s':Math.round(t/1000)+'s',x+3,9)}
   c.strokeStyle='#efeff3';c.beginPath();c.moveTo(0,RUL-.5);c.lineTo(w,RUL-.5);c.stroke();
-  const ROWS=Math.max(1,tr.length+(A.newTrack?1:0));
+  /* Zoom · Move keyframes on the ruler */
+  c.fillStyle='#FF2F00';S.frames.forEach((f,i)=>{if(!f.cam)return;const x=X(S.starts[i]);c.beginPath();c.moveTo(x,RUL-12);c.lineTo(x+4.5,RUL-7.5);c.lineTo(x,RUL-3);c.lineTo(x-4.5,RUL-7.5);c.closePath();c.fill()});
+  const ROWS=Math.max(1,tr.length+extraRow+(A.newTrack?1:0));
   for(let r=0;r<ROWS;r++){const y=RUL+r*ROW,t=tr[r];c.fillStyle=t&&t.kind==='track'&&curTrack===t.id&&!S.aSel?'#fff4f0':r%2?'#fcfcfd':'#ffffff';c.fillRect(0,y,w,ROW);c.strokeStyle='#efeff3';c.beginPath();c.moveTo(0,y+ROW-.5);c.lineTo(w,y+ROW-.5);c.stroke()}
-  if(!tr.length){c.fillStyle='#9a9aa8';c.font=`500 12px ${F}`;c.textBaseline='middle';c.fillText('소리 있는 영상을 불러오면 Frame audio가 생기고, + Audio로 음악을, + Track으로 빈 트랙을 올릴 수 있어요',TPAD,RUL+ROW/2)}
+  if(!na){c.fillStyle='#9a9aa8';c.font=`500 12px ${F}`;c.textBaseline='middle';c.fillText('소리 있는 영상을 불러오면 Frame audio가 생기고, + Audio로 음악을, + Track으로 빈 트랙을 올릴 수 있어요',TPAD,RUL+tr.length*ROW+ROW/2)}
   const bar=(x0,x1,y,sel,dim)=>{c.globalAlpha=dim?.28:1;c.fillStyle=sel?'#FF2F00':'#1a1c22';c.beginPath();c.roundRect(x0,y+5,Math.max(2,x1-x0),ROW-10,6);c.fill();c.globalAlpha=1};
   /* amp: a number, or a function of the pixel x giving the gain there (volume x fade) */
   const wave=(src,lo,hi,rev,x0,x1,y,dim,amp=1)=>{const s=AS.get(src);if(!s||x1-x0<1)return;const{mx,top}=s.peaks;const yc=y+ROW/2,hh=(ROW-18)/2;c.globalAlpha=dim?.25:.62;c.fillStyle='#ffffff';
@@ -1984,6 +2097,17 @@ function renderTimeline(){
   const knob=(x,yy)=>{c.fillStyle='#FFD23F';c.strokeStyle='#1a1c22';c.lineWidth=1.5;c.beginPath();c.arc(x,yy,4.5,0,Math.PI*2);c.fill();c.stroke();c.lineWidth=1};
   const pctLabel=(x1,y,v,x0)=>{if(x1-x0<48)return;c.font=`800 10px ${F}`;c.textBaseline='bottom';const t=Math.round(v*100)+'%';const tw=c.measureText(t).width;c.fillStyle='#FFD23F';c.fillText(t,x1-tw-8,Math.max(y+15,volY(y,v)-3))};
   tr.forEach((t,r)=>{const y=RUL+r*ROW;
+    if(t.kind==='video'){const vs=videoSegs(),th=ROW-10,tw=Math.max(10,th*(S.W0&&S.H0?S.W0/S.H0:1));
+      vs.forEach(sg=>{const x0=X(sg.start)+(sg.k?1.5:0),x1=X(sg.end)-(sg.k<vs.length-1?1.5:0);if(x1-x0<1)return;
+        c.save();c.beginPath();c.roundRect(x0,y+5,Math.max(2,x1-x0),th,6);c.fillStyle='#2a2d36';c.fill();c.clip();
+        for(let x=x0;x<x1;x+=tw){const T=clamp((x+Math.min(tw,x1-x)/2-TPAD)/k,sg.start,sg.end-0.001);const i=clamp(frameAt(T),sg.i0,sg.i1);const im=thumbImg(S.frames[i]);
+          if(im)c.drawImage(im,x,y+5,tw,th);c.fillStyle='rgba(0,0,0,.25)';c.fillRect(Math.round(x+tw)-.5,y+5,1,th)}
+        c.restore()});
+      /* frames picked in the list (or by clicking a piece) are outlined here */
+      if(!audioFocus()){const sel=[...S.sel].sort((a,b)=>a-b);let a=null,b=null;const out=()=>{if(a==null)return;const xa=X(S.starts[a]),xb=X(S.starts[b]+S.frames[b].delay);
+          c.fillStyle='rgba(255,47,0,.22)';c.fillRect(xa,y+5,Math.max(2,xb-xa),th);c.strokeStyle='#FF2F00';c.lineWidth=2;c.beginPath();c.roundRect(xa+1,y+6,Math.max(2,xb-xa-2),th-2,5);c.stroke();c.lineWidth=1};
+        for(const i of sel){if(i>=S.frames.length)continue;if(b!=null&&i===b+1)b=i;else{out();a=b=i}}out()}
+      return}
     if(t.kind==='linked'){const dim=!audible(S.linked),selL=S.aSel==='linked';const segs=linkedSegs(),ss=selL?selSeg(segs):null;const segOf=[];
       segs.forEach(sg=>{for(let i=sg.i0;i<=sg.i1;i++)segOf[i]=sg;bar(X(sg.start)+(sg.k?1.5:0),X(sg.end)-(sg.k<segs.length-1?1.5:0),y,sg===ss,dim)});
       /* gain at a pixel: master x part volume x part fade x per-frame volume */
@@ -2002,6 +2126,9 @@ function renderTimeline(){
         envLine(x0,x1,y,ev,sel,dim);
         if(sel){if(cl.fadeIn>0)knob(x0+4,volY(y,cl.vol*(cl.fiL||0)));if(cl.fadeOut>0)knob(x1-4,volY(y,cl.vol*(cl.foL||0)));pctLabel(x1,y,cl.vol,x0)}
         if(x1-x0>70){c.save();c.beginPath();c.rect(x0+8,y,x1-x0-16,ROW);c.clip();c.font=`700 10.5px ${F}`;c.textBaseline='top';c.fillStyle=dim?'rgba(255,255,255,.4)':'rgba(255,255,255,.92)';c.fillText((cl.loop?'↻ ':'')+cl.name,x0+9,y+8);c.restore()}}}});
+  /* editing frames: the sound rows go grey (the Video row stays in colour) */
+  if(!audioFocus()){const ya=RUL+tr.filter(t=>t.kind==='video').length*ROW;if(h>ya){c.save();c.globalCompositeOperation='saturation';c.fillStyle='#808080';c.fillRect(0,ya,w,h-ya);c.restore();
+    c.fillStyle='rgba(255,255,255,.45)';c.fillRect(0,ya,w,h-ya)}}
   if(ext>S.total+1){const xe=X(S.total);c.fillStyle='rgba(240,240,244,.78)';c.fillRect(xe,RUL,w-xe,h-RUL);c.setLineDash([3,3]);c.strokeStyle='#9a9aa8';c.beginPath();c.moveTo(Math.round(xe)+.5,0);c.lineTo(Math.round(xe)+.5,h);c.stroke();c.setLineDash([]);
     c.fillStyle='#9a9aa8';c.font=`700 10px ${F}`;c.textBaseline='middle';c.fillText('END',xe+4,RUL+ROW/2>h?RUL/2:RUL+11)}
   if(A.newTrack){c.fillStyle='rgba(255,47,0,.08)';c.fillRect(0,h-ROW,w,ROW);c.strokeStyle='#FF2F00';c.lineWidth=2;c.setLineDash([4,3]);c.strokeRect(1,h-ROW+1,w-2,ROW-2);c.setLineDash([]);c.lineWidth=1;
@@ -2013,6 +2140,9 @@ function drawPlayhead(){
   tlx.setTransform(1,0,0,1,0,0);tlx.clearRect(0,0,tlCv.width,tlCv.height);tlx.drawImage(tlStatic,0,0);tlx.setTransform(dpr,0,0,dpr,0,0);
   const x=Math.round(X(T))+.5;tlx.strokeStyle='#FF2F00';tlx.lineWidth=1.5;tlx.beginPath();tlx.moveTo(x,4);tlx.lineTo(x,h);tlx.stroke();
   tlx.fillStyle='#FF2F00';tlx.beginPath();tlx.moveTo(x-5,0);tlx.lineTo(x+5,0);tlx.lineTo(x+5,6);tlx.lineTo(x,11);tlx.lineTo(x-5,6);tlx.closePath();tlx.fill();
+  const d=A.vdrag;if(d){const rows=['video','linked'].map(id=>tlGeom.tr.findIndex(t=>t.id===id)).filter(x=>x>=0);if(rows.length){const y0=RUL+Math.min(...rows)*ROW,y1=RUL+(Math.max(...rows)+1)*ROW;
+    if(d.ok){const xj=X(d.j>=S.frames.length?S.total:S.starts[d.j]);tlx.fillStyle='#FF2F00';tlx.fillRect(Math.round(xj)-1.5,y0+1,3,y1-y0-2)}
+    tlx.globalAlpha=.5;tlx.fillStyle=d.ok?'#FF2F00':'#9a9aa8';tlx.beginPath();tlx.roundRect(d.px-d.off,y0+5,Math.max(4,d.w),y1-y0-10,6);tlx.fill();tlx.globalAlpha=1}}
   const th=$('#thT');if(th)th.textContent=fmtS(T);
 }
 new ResizeObserver(()=>renderTimeline()).observe(tlArea);
@@ -2031,13 +2161,15 @@ $('#aAdd').onclick=()=>openFile('audio','audio/*,video/*,.mp3,.wav,.m4a,.aac,.og
 $('#aTrackAdd').onclick=()=>addTrack();
 tlHeads.addEventListener('click',e=>{blurPanel();const row=e.target.closest('.th[data-id]');if(!row)return;const id=row.dataset.id;const b=e.target.closest('[data-a]');
   if(b){const a=b.dataset.a;if(a==='unlink')return unlinkAudio();if(a==='relink')return relinkAudio();const o=trackObj(id);if(!o)return;commit(()=>{o[a]=!o[a]});return}
+  if(id==='video'){clearAudioSel();renderTimeline();renderPanel();return}
   if(id==='linked'){A.multi=new Set();S.aSel='linked';S.aTrack=null}else{A.multi=new Set();S.aSel=null;S.aTrack=id}renderTimeline();renderPanel()});
-tlHeads.addEventListener('contextmenu',e=>{const row=e.target.closest('.th[data-id]');if(!row||row.dataset.id==='linked')return;e.preventDefault();A.multi=new Set();S.aSel=null;S.aTrack=row.dataset.id;renderTimeline();renderPanel();openMenu(e.clientX,e.clientY,audioMenuDef())});
+tlHeads.addEventListener('contextmenu',e=>{const row=e.target.closest('.th[data-id]');if(!row||row.dataset.id==='linked'||row.dataset.id==='video')return;e.preventDefault();A.multi=new Set();S.aSel=null;S.aTrack=row.dataset.id;renderTimeline();renderPanel();openMenu(e.clientX,e.clientY,audioMenuDef())});
 function seekTime(t){const i=frameAt(clamp(t,0,Math.max(0,S.total-1)));S.cur=i;ensureVisible(i);renderList();renderStage();updatePlayer();renderPanel()}
 /* what is under the pointer on the timeline canvas */
 function tlHit(px,py){
   const g=tlGeom;if(!g)return{};if(py<RUL)return{ruler:true};
   const row=Math.floor((py-RUL)/ROW),t=g.tr[row];if(!t)return{row};const y=RUL+row*ROW;
+  if(t.kind==='video'){const T=(px-TPAD)/g.k;const sg=videoSegs().find(x=>T>=x.start&&T<x.end);return{row,t,video:true,seg:sg}}
   const near=(x,yy,ax,ay)=>Math.abs(x-ax)<=7&&Math.abs(yy-ay)<=6;
   if(t.kind==='linked'){const T=(px-TPAD)/g.k;const segs=linkedSegs();const sg=segs.find(x=>T>=x.start&&T<x.end)||segs[segs.length-1];const fi=frameAt(clamp(T,0,Math.max(0,S.total-1)));
     if(!sg)return{row,t,linked:true};const m=S.linked.vol*sg.cfg.vol,xa=g.X(sg.start),xb=g.X(sg.end);
@@ -2078,6 +2210,10 @@ tlCv.addEventListener('pointerdown',e=>{
     const up=()=>{removeEventListener('pointermove',seek);removeEventListener('pointerup',up)};addEventListener('pointermove',seek);addEventListener('pointerup',up);return}
   const h=tlHit(px,py);const add=e.shiftKey||(IS_MAC?e.metaKey:e.ctrlKey);
   if(!h.t){clearAudioSel();renderTimeline();renderPanel();return}
+  if(h.video){clearAudioSel();if(!h.seg){renderTimeline();renderPanel();return}
+    e.preventDefault();stopPlay();const sg=h.seg,ids=segIdx(sg);
+    if(add)ids.forEach(i=>S.sel.add(i));else S.sel=new Set(ids);S.anchor=sg.i0;if(S.cur<sg.i0||S.cur>sg.i1)S.cur=sg.i0;ensureVisible(sg.i0);
+    renderList();renderStage();updatePlayer();renderPanel();renderTimeline();if(!add)segDrag(e,sg.i0,sg.i1,r);return}
   if(h.linked){A.multi=new Set();S.aSel='linked';S.aTrack=null;if(h.seg&&S.frames[h.seg.i0])A.segFid=S.frames[h.seg.i0].id;
     if((h.mode==='lv'||h.mode==='fil'||h.mode==='fol')&&h.seg){e.preventDefault();stopPlay();S.undo.push(snap());S.redo=[];const v0=h.seg.cfg.vol,sy=e.clientY,k0=h.seg.k,rowY=r.top+RUL+h.row*ROW;let moved=false;
       if(h.mode!=='lv')renderTimeline(),renderPanel();
@@ -2088,6 +2224,8 @@ tlCv.addEventListener('pointerdown',e=>{
         else setSegCfg(sg,{[h.mode==='fil'?'fiL':'foL']:Math.round(clamp(l0-dy/(ROW-12),0,2)*100)/100},true);
         livePanel()};
       const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);if(!moved)S.undo.pop();renderTimeline();renderPanel()};addEventListener('pointermove',mv);addEventListener('pointerup',up);return}
+    /* a sound part picks its frames too, and can be dragged with them */
+    if(h.seg){S.sel=new Set(segIdx(h.seg));S.anchor=h.seg.i0;renderList();renderTimeline();renderPanel();e.preventDefault();stopPlay();segDrag(e,h.seg.i0,h.seg.i1,r);return}
     renderTimeline();renderPanel();return}
   if(!h.c){A.multi=new Set();S.aSel=null;S.aTrack=h.t.id;renderTimeline();renderPanel();return}
   const c=h.c,mode=h.mode;
@@ -2119,9 +2257,26 @@ tlCv.addEventListener('pointerdown',e=>{
   addEventListener('pointermove',mv);addEventListener('pointerup',up);
 });
 tlCv.addEventListener('contextmenu',e=>{e.preventDefault();blurPanel();if(!tlGeom)return;const r=tlCv.getBoundingClientRect();const h=tlHit(e.clientX-r.left,e.clientY-r.top);
-  if(h.ruler)return;
+  if(h.ruler){const px=e.clientX-r.left;const i=S.frames.findIndex((f,k)=>f.cam&&Math.abs(tlGeom.X(S.starts[k])-px)<=7);if(i<0)return;
+    return openMenu(e.clientX,e.clientY,{title:'키프레임',hint:`${i+1}번 프레임 · ${fmtS(S.starts[i])}`,cols:[[{h:'Zoom · Move',items:[{t:'이 키프레임으로 이동',f:()=>{goFrame(i);renderTimeline()}},
+      {t:'키프레임 삭제',f:()=>commit(()=>{const keep=camTrack()[i];const nf={...S.frames[i]};delete nf.cam;S.frames[i]=nf;if(!camKeys())S.tf.cam=keep;CAMV++},`${i+1}번 프레임 키프레임을 지웠어요`)}]}]]})}
+  if(h.video){clearAudioSel();if(h.seg&&!S.sel.has(h.seg.i0)){S.sel=new Set(segIdx(h.seg));S.anchor=h.seg.i0;renderList()}renderTimeline();renderPanel();return openMenu(e.clientX,e.clientY,videoMenuDef(h.seg))}
   if(h.c){if(!isSelC(h.c))selectClip(h.c,false)}else if(h.t&&h.t.kind==='track'){A.multi=new Set();S.aSel=null;S.aTrack=h.t.id}else if(h.linked){A.multi=new Set();S.aSel='linked';S.aTrack=null;if(h.seg&&S.frames[h.seg.i0])A.segFid=S.frames[h.seg.i0].id}
   renderTimeline();renderPanel();openMenu(e.clientX,e.clientY,audioMenuDef())});
+/* drag a piece (frames i0..i1, with their linked sound) to another place: it lands on a piece edge or between frames */
+function segDrag(e,i0,i1,r){const g=tlGeom;const sx=e.clientX;let moved=false;const n=S.frames.length;
+  const tAt=j=>j>=n?S.total:S.starts[j];const edges=[...videoSegs().map(x=>x.i0),n];const off=e.clientX-r.left-g.X(S.starts[i0]),w=g.X(tAt(i1+1))-g.X(S.starts[i0]);
+  const pick=px=>{let best=null,bd=1e9;for(const j of edges){const d=Math.abs(g.X(tAt(j))-px);if(d<bd){bd=d;best=j}}if(bd<=14)return best;
+    const T=clamp((px-TPAD)/g.k,0,Math.max(0,S.total-0.001));const i=frameAt(T);return T<S.starts[i]+S.frames[i].delay/2?i:i+1};
+  const mv=ev=>{if(!moved&&Math.abs(ev.clientX-sx)<4)return;moved=true;const px=ev.clientX-r.left;const j=pick(px);A.vdrag={px,off,w,j,ok:!(j>=i0&&j<=i1+1)};tlCv.style.cursor='grabbing';drawPlayhead()};
+  const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);const d=A.vdrag;A.vdrag=null;tlCv.style.cursor='';if(moved&&d&&d.ok)moveVideo(i0,i1,d.j);else drawPlayhead()};
+  addEventListener('pointermove',mv);addEventListener('pointerup',up)}
+function videoMenuDef(sg){const vs=videoSegs();const i=frameAt(clamp(playT(),0,Math.max(0,S.total-1)));const lk=hasLinked();const idx=sg?segIdx(sg):[];
+  return{title:'Video',hint:sg?`조각 ${sg.k+1} / ${vs.length}`:fmtS(playT())+' 위치',cols:[[
+    {h:'Pieces',items:[{t:'재생 위치에서 나누기',k:'mod+shift+D',f:()=>splitVideo(),dis:i===0||vs.some(x=>x.i0===i)},{t:'앞 조각과 합치기',f:()=>joinVideo(sg),dis:!sg||sg.k===0},
+      {t:'맨 앞으로 옮기기',f:()=>moveVideo(sg.i0,sg.i1,0),dis:!sg||sg.k===0},{t:'맨 뒤로 옮기기',f:()=>moveVideo(sg.i0,sg.i1,S.frames.length),dis:!sg||sg.k===vs.length-1}]},
+    {h:'Edit',items:[{t:'잘라내기',k:'mod+X',f:()=>OPS.cut(idx),dis:!sg},{t:'복사',k:'mod+C',f:()=>OPS.copy(idx),dis:!sg},{t:'붙여넣기',k:'mod+V',f:()=>OPS.paste(false),dis:!(S.clip&&S.clip.length)},{t:'삭제',k:'Del',f:()=>OPS.remove(idx),dis:!sg}]},
+    {h:'Link',items:lk?[{t:'Unlink · 소리 분리',f:()=>unlinkAudio()}]:canRelink()?[{t:'Relink · 다시 연결',f:()=>relinkAudio()}]:[{t:'연결된 소리 없음',f:()=>{},dis:true}]}]]}}
 function audioMenuDef(){
   if(S.aSel==='linked'){const segs=linkedSegs(),sg=selSeg(segs);const i=frameAt(clamp(playT(),0,Math.max(0,S.total-1)));
     return{title:'Frame audio',hint:segs.length>1?`마디 ${sg.k+1} / ${segs.length}`:fmtS(playT())+' 위치',cols:[[
@@ -2257,7 +2412,7 @@ async function renderOut(rc,frames,i,W,H,o){
   const b=await getBmp(frames[i]);
   const x=rc.x;x.setTransform(1,0,0,1,0,0);x.globalCompositeOperation='source-over';x.clearRect(0,0,W,H);
   if(o.opaque){x.fillStyle='#ffffff';x.fillRect(0,0,W,H)}
-  x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';applyTransform(x,W,H,false);drawContain(x,b);x.setTransform(1,0,0,1,0,0);
+  x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';applyTransform(x,W,H,false,camTrack(frames)[i]);drawContain(x,b);x.setTransform(1,0,0,1,0,0);
   if(o.bar&&o._total){const end=(o._starts[i]+frames[i].delay)/o._total;const bh=Math.max(2,Math.round(Math.min(W,H)*0.012));x.fillStyle=o.barColor||'#FF2F00';x.fillRect(0,o.barPos==='top'?0:H-bh,Math.round(W*end),bh)}
 }
 const qColors=(q,red)=>clamp(Math.round((16+240*Math.pow(q/100,1.5))*(red?0.75:1)),4,256);
@@ -2360,7 +2515,7 @@ function gifNear(st,k){let v=st.near.get(k);if(v!==undefined)return v;const r=k>
   for(let i=0;i<pal.length;i++){const c=pal[i];const d=(r-c[0])**2*2+(g-c[1])**2*4+(b-c[2])**2*3;if(d<bd){bd=d;best=i}}st.near.set(k,best);return best}
 /* the size estimate runs often: keep the palette while only Lossy / dithering change */
 let GP_CACHE={key:'',frames:null,pi:null};
-async function gifPaletteCached(frames,W,H,o,job,phase){const key=JSON.stringify([o.q,o.reduce,o.bar,o.barColor,o.barPos,W,H,frames.length,S.total]);
+async function gifPaletteCached(frames,W,H,o,job,phase){const key=JSON.stringify([o.q,o.reduce,o.bar,o.barColor,o.barPos,W,H,frames.length,S.total,S.tf,camSig()]);
   if(GP_CACHE.key===key&&GP_CACHE.frames===frames&&GP_CACHE.pi)return GP_CACHE.pi;const pi=await gifPalette(frames,W,H,o,job,phase);GP_CACHE={key,frames,pi};return pi}
 /* one frame: find what changed, keep that box, map to the palette, LZW it */
 function gifFrame(st,px){
@@ -2901,6 +3056,7 @@ $$('[data-tool]').forEach(b=>b.onclick=()=>{
   if(t==='reverse')return OPS.reverse(tgt());
   if(t==='yoyo')return OPS.yoyo(tgt());
   if(t==='thin')return dlgThin();
+  if(t==='split')return splitVideo();
   if(t==='delete'){const s=needSel();return s&&OPS.remove(s)}
   if(t==='add')return openFile('edit');
   if(t==='menu'){const r=b.getBoundingClientRect();return openMenu(r.left,r.bottom+6)}
@@ -3054,6 +3210,7 @@ addEventListener('keydown',e=>{
     if(mod&&e.shiftKey&&c==='KeyD')return go(()=>clipSplit(selClips(),playT()));
   }
   const s=()=>needSel();
+  if(mod&&e.shiftKey&&c==='KeyD')return go(()=>splitVideo());
   if(mod&&e.shiftKey&&c==='KeyE')return go(exportSelPNG);
   if(mod&&c==='KeyF')return go(dlgTime);
   if(mod&&c==='KeyK')return go(()=>{const x=s();x&&OPS.speed(x,0.9)});
