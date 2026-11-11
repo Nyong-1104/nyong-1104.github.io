@@ -152,8 +152,8 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .zoom:hover{color:var(--o)}
 .app[data-mode="layer"] .ftools{display:none}
 .atools{display:none}
-.app[data-mode="edit"][data-focus="audio"] .ftools{display:none!important}
-.app[data-mode="edit"][data-focus="audio"] .atools{display:contents}
+.app[data-mode="edit"][data-focus="audio"] .ftools,.app[data-mode="edit"][data-focus="vlayer"] .ftools{display:none!important}
+.app[data-mode="edit"][data-focus="audio"] .atools,.app[data-mode="edit"][data-focus="vlayer"] .atools{display:contents}
 .tb:disabled{opacity:.3;cursor:default}
 .qh{margin-left:auto;width:17px;height:17px;border-radius:50%;border:1.5px solid #d4d4dc;background:#fff;color:var(--mute2);font-size:10.5px;font-weight:800;display:grid;place-items:center;padding:0;cursor:help;flex:none;line-height:1}
 .qh:hover{border-color:var(--o);color:var(--o)}
@@ -172,6 +172,9 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .row .n .kf{font-style:normal;color:var(--o);font-size:9px;margin-left:3px;vertical-align:1px}
 #stageInner.camz{cursor:grab}#stageInner.camz.panning{cursor:grabbing}
 .kfrow{display:grid;grid-template-columns:1fr 38px 38px;gap:6px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.bgpick{display:flex;align-items:center;gap:10px}.bgpick input[type=color]{width:34px;height:26px;padding:0;border:1px solid var(--line);border-radius:6px;background:none;cursor:pointer}
+.bgpick input[type=color]:disabled{opacity:.35;cursor:default}.lbl2{font-size:12px;color:var(--mute);display:inline-flex;align-items:center;gap:4px}
 .row img{width:34px;height:34px;object-fit:contain;border-radius:6px;background:var(--stage)}
 .row .d{color:var(--mute2)}
 .row:hover{background:#f7f7f9}
@@ -261,6 +264,7 @@ input[type=range]:disabled{opacity:.4;cursor:default}
 .th .ic{width:15px;height:15px;color:var(--mute2);flex:none}
 .th.on .ic{color:var(--o)}
 .th .vlk{display:inline-flex;color:var(--mute);margin-right:2px}
+.th.off .nm,.th.off .ic{opacity:.4}
 .th .nm{flex:1;min-width:0;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .th .tg{width:22px;height:22px;flex:none;border-radius:6px;border:1.5px solid var(--line);background:#fff;font-size:10.5px;font-weight:800;color:var(--mute2);display:grid;place-items:center;padding:0}
 .th .tg:hover{border-color:#c9c9d3}
@@ -545,7 +549,7 @@ input[type=range]:disabled{opacity:.4;cursor:default}
             <button class="tl-tog" id="tlTog" type="button" aria-expanded="false"><svg class="i" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>Audio</button>
             <span class="tl-sum" id="tlSum"></span><span class="sp"></span>
             <button class="tb" id="aMute" type="button" data-tip="Preview sound|미리보기 소리 켜기/끄기"><svg class="i" viewBox="0 0 24 24" id="aMuteIco"></svg></button>
-            <button class="btn" id="aTrackAdd" type="button" data-tip="Add track|빈 오디오 트랙 추가 · 배경음·효과음을 나눠 깔 때">+ Track</button><button class="btn" id="aAdd" type="button" data-tip="Add audio|음악·효과음·영상 소리를 트랙으로 추가">+ Audio</button>
+            <button class="btn" id="aTrackAdd" type="button" data-tip="Add track|빈 오디오 트랙 추가 · 배경음·효과음을 나눠 깔 때">+ Track</button><button class="btn" id="vAdd" type="button">+ Video</button><button class="btn" id="aAdd" type="button" data-tip="Add audio|음악·효과음·영상 소리를 트랙으로 추가">+ Audio</button>
           </div>
           <div class="tl-body" id="tlBody">
             <div class="tl-heads" id="tlHeads"></div>
@@ -829,7 +833,8 @@ document.addEventListener('pointerdown',hideBub,true);
 const S={frames:[],W0:0,H0:0,tf:{rot:0,fh:false,fv:false,crop:null,outW:0,outH:0},
   sel:new Set(),cur:0,anchor:0,name:'motion',isSample:false,mode:'edit',playing:false,clip:[],undo:[],redo:[],
   starts:[],total:0,crop:{active:false,rect:null,ratio:'free'},view:{z:1,fit:true},
-  clips:[],tracks:[],linked:{vol:1,mute:false,solo:false,fadeIn:0,fadeOut:0},aSel:null,aTrack:null};
+  clips:[],tracks:[],linked:{vol:1,mute:false,solo:false,fadeIn:0,fadeOut:0},aSel:null,aTrack:null,
+  vtracks:[],vclips:[],vSel:null,vTrack:null};
 const LINKED_DEF=()=>({vol:1,mute:false,solo:false,fadeIn:0,fadeOut:0});
 let FID=1;
 const mkFrame=(blob,delay,w,h,alpha,thumb)=>({id:FID++,blob,delay,w,h,alpha,thumb});
@@ -850,28 +855,34 @@ function rotSize(){return S.tf.rot%180?[S.H0,S.W0]:[S.W0,S.H0]}
 function cropRect(){const[RW,RH]=rotSize();return S.tf.crop||{x:0,y:0,w:RW,h:RH}}
 function outSize(){const c=cropRect();return[S.tf.outW||c.w,S.tf.outH||c.h]}
 /* ---------- Zoom · Move: a camera inside the output frame ----------
-   z = 1..4 (100~400%), x/y = centre of the view (0..1 of the output). Without keyframes S.tf.cam is used for every frame;
-   a frame with f.cam is a keyframe, and frames between keyframes follow a smooth (or even) path. */
-const CAM0={z:1,x:.5,y:.5};let CAMV=0;const CAMT=new WeakMap();
-const camClamp=c=>{const z=clamp(+c.z||1,1,4);return{z,x:clamp(isFinite(c.x)?+c.x:.5,.5/z,1-.5/z),y:clamp(isFinite(c.y)?+c.y:.5,.5/z,1-.5/z)}};
+   z = 0.05..4 (5~400%), ox/oy = how far the picture is moved (share of the output width/height, + = right/down), r = turn in degrees.
+   Without keyframes S.tf.cam is used for every frame; a frame with f.cam is a keyframe, and frames between keyframes
+   follow a smooth (or even) path. Uncovered space is filled with S.tf.camBg (default black, or 'transparent'). */
+const CAM0={z:1,ox:0,oy:0,r:0};let CAMV=0;const CAMT=new WeakMap();
+const camClamp=c=>({z:clamp(+c.z||1,.05,4),ox:clamp(isFinite(c.ox)?+c.ox:0,-4,4),oy:clamp(isFinite(c.oy)?+c.oy:0,-4,4),r:clamp(isFinite(c.r)?+c.r:0,-360,360)});
+const camIdle=c=>!c||(Math.abs(c.z-1)<1e-4&&Math.abs(c.ox)<1e-6&&Math.abs(c.oy)<1e-6&&Math.abs(c.r)<1e-6);
 const camKeys=(frames=S.frames)=>frames.some(f=>f.cam);
 function camTrack(frames=S.frames){const hit=CAMT.get(frames);if(hit&&hit.v===CAMV&&hit.n===frames.length)return hit.c;
-  const keys=[],st=[];let t=0;frames.forEach(f=>{st.push(t);if(f.cam)keys.push({t,...f.cam});t+=f.delay});
+  const keys=[],st=[];let t=0;frames.forEach(f=>{st.push(t);if(f.cam)keys.push({t,...camClamp(f.cam)});t+=f.delay});
   const base=camClamp(S.tf.cam||CAM0),smooth=S.tf.camEase!=='linear';let k=0;
-  const c=frames.map((f,i)=>{if(!keys.length)return base;const T=st[i];if(T<=keys[0].t)return camClamp(keys[0]);const L=keys[keys.length-1];if(T>=L.t)return camClamp(L);
+  const c=frames.map((f,i)=>{if(!keys.length)return base;const T=st[i];if(T<=keys[0].t)return keys[0];const L=keys[keys.length-1];if(T>=L.t)return L;
     while(k<keys.length-2&&keys[k+1].t<=T)k++;const a=keys[k],b=keys[k+1];let u=(T-a.t)/Math.max(1e-6,b.t-a.t);if(smooth)u=u*u*(3-2*u);
-    return camClamp({z:a.z*Math.pow(b.z/a.z,u),x:a.x+(b.x-a.x)*u,y:a.y+(b.y-a.y)*u})});
+    return{z:a.z*Math.pow(b.z/a.z,u),ox:a.ox+(b.ox-a.ox)*u,oy:a.oy+(b.oy-a.oy)*u,r:a.r+(b.r-a.r)*u}});
   CAMT.set(frames,{v:CAMV,n:frames.length,c});return c}
-/* change zoom / position on the current frame: with keyframes this writes (or makes) the current frame's keyframe */
+/* change the current frame's zoom / place / turn: with keyframes this writes (or makes) the current frame's keyframe */
 function camSet(p){const i=S.cur;if(!S.frames[i])return false;let made=false;
   if(!camKeys())S.tf.cam=camClamp({...camClamp(S.tf.cam||CAM0),...p});
   else{const f=S.frames[i];const v=camClamp({...camTrack()[i],...p});made=!f.cam;S.frames[i]={...f,cam:v}}
   CAMV++;return made}
-const camSig=()=>JSON.stringify([S.tf.cam||null,S.tf.camEase||'',S.frames.map(f=>f.cam?[f.cam.z,f.cam.x,f.cam.y]:0)]);
+const camSig=()=>JSON.stringify([S.tf.cam||null,S.tf.camEase||'',S.tf.camBg||'',S.frames.map(f=>f.cam?[f.cam.z,f.cam.ox,f.cam.oy,f.cam.r]:0)]);
+/* does any frame leave part of the output uncovered? (zoomed out, moved or turned) */
+const camExposes=(frames=S.frames)=>camTrack(frames).some(c=>!camIdle(c)&&(c.z<1||c.r||c.ox||c.oy));
+const camBg=()=>S.tf.camBg||'#000000';
+function camFill(ctx,W,H,cam){const bg=camBg();if(camIdle(cam)||bg==='transparent')return;ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle=bg;ctx.fillRect(0,0,W,H)}
 function applyTransform(ctx,W,H,cropSpace,cam){
   const[RW,RH]=rotSize();const c=cropSpace?{x:0,y:0,w:RW,h:RH}:cropRect();
   ctx.setTransform(1,0,0,1,0,0);
-  if(cam&&!cropSpace&&(cam.z>1.0001||Math.abs(cam.x-.5)>1e-6||Math.abs(cam.y-.5)>1e-6)){const v=camClamp(cam);ctx.translate(W/2,H/2);ctx.scale(v.z,v.z);ctx.translate(-v.x*W,-v.y*H)}ctx.scale(W/c.w,H/c.h);ctx.translate(-c.x,-c.y);
+  if(cam&&!cropSpace&&!camIdle(cam)){ctx.translate(W/2+cam.ox*W,H/2+cam.oy*H);if(cam.r)ctx.rotate(cam.r*Math.PI/180);ctx.scale(cam.z,cam.z);ctx.translate(-W/2,-H/2)}ctx.scale(W/c.w,H/c.h);ctx.translate(-c.x,-c.y);
   ctx.translate(RW/2,RH/2);ctx.rotate(S.tf.rot*Math.PI/180);ctx.scale(S.tf.fh?-1:1,S.tf.fv?-1:1);ctx.translate(-S.W0/2,-S.H0/2);
 }
 function drawContain(ctx,bmp){const s=Math.min(S.W0/bmp.width,S.H0/bmp.height);const w=bmp.width*s,h=bmp.height*s;ctx.drawImage(bmp,(S.W0-w)/2,(S.H0-h)/2,w,h)}
@@ -1086,8 +1097,10 @@ async function importVideo(f){
 /* =========================================================
    Editor state ops
    ========================================================= */
-function snap(){return{frames:S.frames.slice(),tf:JSON.parse(JSON.stringify(S.tf)),W0:S.W0,H0:S.H0,sel:[...S.sel],cur:S.cur,name:S.name,isSample:S.isSample,clips:S.clips.map(c=>({...c})),tracks:(S.tracks||[]).map(t=>({...t})),linked:{...S.linked},aSel:S.aSel,aTrack:S.aTrack,linkOff:!!S.linkOff,linkedBak:S.linkedBak?{...S.linkedBak}:null}}
-function restore(s){S.frames=s.frames;S.tf=s.tf;S.W0=s.W0;S.H0=s.H0;S.sel=new Set(s.sel);S.cur=s.cur;S.name=s.name;S.isSample=s.isSample;S.clips=s.clips;S.tracks=s.tracks||[];S.linked=s.linked;S.aSel=s.aSel;S.aTrack=s.aTrack||null;S.linkOff=!!s.linkOff;S.linkedBak=s.linkedBak||null}
+function snap(){return{frames:S.frames.slice(),tf:JSON.parse(JSON.stringify(S.tf)),W0:S.W0,H0:S.H0,sel:[...S.sel],cur:S.cur,name:S.name,isSample:S.isSample,clips:S.clips.map(c=>({...c})),tracks:(S.tracks||[]).map(t=>({...t})),linked:{...S.linked},aSel:S.aSel,aTrack:S.aTrack,linkOff:!!S.linkOff,linkedBak:S.linkedBak?{...S.linkedBak}:null,
+  vtracks:S.vtracks.map(t=>({...t})),vclips:S.vclips.map(c=>({...c})),vSel:S.vSel,vTrack:S.vTrack}}
+function restore(s){S.frames=s.frames;S.tf=s.tf;S.W0=s.W0;S.H0=s.H0;S.sel=new Set(s.sel);S.cur=s.cur;S.name=s.name;S.isSample=s.isSample;S.clips=s.clips;S.tracks=s.tracks||[];S.linked=s.linked;S.aSel=s.aSel;S.aTrack=s.aTrack||null;S.linkOff=!!s.linkOff;S.linkedBak=s.linkedBak||null;
+  S.vtracks=s.vtracks||[];S.vclips=s.vclips||[];S.vSel=s.vSel||null;S.vTrack=s.vTrack||null}
 function commit(fn,msg){stopPlay();S.undo.push(snap());if(S.undo.length>80)S.undo.shift();S.redo=[];fn();changed();if(msg)toast(msg)}
 function undo(){if(S.mode==='layer')return lUndo();if(!S.undo.length)return toast('되돌릴 작업이 없어요');stopPlay();S.redo.push(snap());restore(S.undo.pop());S.crop.active=false;changed();toast('Undo')}
 function redo(){if(S.mode==='layer')return lRedo();if(!S.redo.length)return;stopPlay();S.undo.push(snap());restore(S.redo.pop());S.crop.active=false;changed();toast('Redo')}
@@ -1309,9 +1322,11 @@ async function renderStage(){
   if(tok!==stageTok)return;
   const[W,H]=S.crop.active?rotSize():outSize();
   setCanvas(W,H);cx.setTransform(1,0,0,1,0,0);cx.clearRect(0,0,W,H);
-  const cam=camTrack()[S.cur];
+  const cam=camTrack()[S.cur];if(!S.crop.active)camFill(cx,W,H,cam);
   cx.imageSmoothingQuality='high';applyTransform(cx,W,H,S.crop.active,cam);drawContain(cx,bmp);cx.setTransform(1,0,0,1,0,0);
-  inner.classList.toggle('camz',!S.crop.active&&!!cam&&cam.z>1.001);
+  if(!S.crop.active&&S.vclips&&S.vclips.length){await drawOverlays(cx,W,H,S.starts[S.cur]||0,()=>tok!==stageTok);if(tok!==stageTok)return;drawVSel(cx,W,H,S.starts[S.cur]||0)}
+  if(tok!==stageTok)return;
+  inner.classList.toggle('camz',!S.crop.active);
   layoutStage();
 }
 function layoutStage(){
@@ -1336,6 +1351,7 @@ function memEstimate(){const seen=new Set(),dims=new Map();let b=0;
   const addF=f=>{if(!f)return;if(f.blob&&!seen.has(f.blob)){seen.add(f.blob);b+=f.blob.size;dims.set(f.blob,f)}if(f.thumb&&!seen.has(f.thumb)){seen.add(f.thumb);b+=f.thumb.length}};
   S.frames.forEach(addF);for(const st of [...S.undo,...S.redo])(st.frames||[]).forEach(addF);(S.clip||[]).forEach(addF);
   for(const l of L.layers)(l.frames||[]).forEach(addF);for(const st of [...L.undo,...L.redo])if(st.fr)for(const v of st.fr.values())(v.frames||[]).forEach(addF);
+  for(const v of VS.values())v.frames.forEach(addF);
   for(const k of bmpCache.keys()){const f=dims.get(k);if(f&&f.w&&f.h)b+=f.w*f.h*4}
   const ab=x=>x?x.length*x.numberOfChannels*4:0;
   for(const a of AS.values())b+=ab(a.buf)+ab(a.rev)+(a.peaks?a.peaks.mx.byteLength:0);
@@ -1402,29 +1418,41 @@ $('#seek').oninput=e=>{if(S.mode==='layer'){stopPlay();L.t=+e.target.value;rende
    ========================================================= */
 let rz={keep:true};
 const audioFocus=()=>S.mode==='edit'&&!!(S.aSel||S.aTrack);
+/* a video layer (row) or one of its clips is picked */
+const vFocus=()=>S.mode==='edit'&&!audioFocus()&&!!(S.vSel||S.vTrack);
 /* clicking frames edits frames, clicking the audio bar edits audio: panel, toolbar and timeline follow */
-function syncFocus(){const f=audioFocus()?'audio':'frame';const app=$('#app');if(app.dataset.focus!==f){app.dataset.focus=f;hideBub();updateInfo()}
+function syncFocus(){const f=audioFocus()?'audio':vFocus()?'vlayer':'frame';const app=$('#app');if(app.dataset.focus!==f){app.dataset.focus=f;hideBub();updateInfo()}
   if(f==='audio'){const n=selClips().length,c=selClip();const dis={copy:!n,paste:!A.cb.length,dup:!n,split:!n&&S.aSel!=='linked',trimIn:!c,trimOut:!c,loop:!n,del:!n,add:false};
     $$('[data-atool]').forEach(b=>{b.disabled=!!dis[b.dataset.atool]});const lb=$('[data-atool="loop"]');lb.classList.toggle('muted',!!n&&selClips().every(x=>x.loop))}}
 /* ---------- side panel: Zoom · Move ---------- */
 function camHTML(){if(!S.frames.length)return'';const cam=camTrack()[S.cur]||CAM0,zp=Math.round(cam.z*100),f=S.frames[S.cur],nk=S.frames.filter(x=>x.cam).length;
-  const moved=zp>100||!!S.tf.cam&&(Math.abs(S.tf.cam.x-.5)>1e-6||Math.abs(S.tf.cam.y-.5)>1e-6);
+  const[W,H]=outSize();const bg=camBg();const moved=!camIdle(camClamp(S.tf.cam||CAM0));
   const prev=S.frames.findLastIndex((x,i)=>i<S.cur&&x.cam),next=S.frames.findIndex((x,i)=>i>S.cur&&x.cam);
-  return`<div class="sec" id="secCam"><h3>${icon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/>')}Zoom · Move${qh('Zoom · Move','출력 크기는 그대로 두고, 그 안에서 영상을 확대해요.\n100%보다 크게 하면 미리보기를 드래그해 보이는 위치를 옮길 수 있어요.\n시간에 따라 바꾸려면 ◇ 키프레임 추가를 누르고, 다른 프레임으로 가서 확대나 위치를 바꾸세요. 그 프레임에 키프레임이 자동으로 생기고, 키프레임 사이는 자연스럽게 이어져요.\n키프레임은 프레임에 붙어 있어서 프레임을 옮기거나 속도를 바꿔도 같이 따라가요.')}</h3>
-    <div class="fld"><span class="vhead">Zoom${nk?`<small>${f.cam?`◆ ${S.cur+1}번 키프레임`:`${S.cur+1}번 · 키프레임 사이`}</small>`:''}<span class="vnum"><input class="in" id="camZN" type="number" min="100" max="400" step="5" value="${zp}" aria-label="Zoom %">%</span></span><div class="srange"><input type="range" id="camZ" min="100" max="400" value="${zp}" aria-label="Zoom"></div></div>
-    <p class="note">${zp>100?'미리보기를 드래그하면 보이는 위치를 옮길 수 있어요.':'100%보다 크게 하면 미리보기를 드래그해 위치를 옮길 수 있어요.'}${nk?' 다른 프레임에서 확대나 위치를 바꾸면 그 프레임에 키프레임이 생겨요.':''}</p>
-    <div class="kfrow"><button type="button" class="btn" id="kfTog">${f.cam?'◆ 키프레임 삭제':'◇ 키프레임 추가'}</button><button type="button" class="btn" id="kfPrev" ${prev<0?'disabled':''} data-tip="이전 키프레임">◀</button><button type="button" class="btn" id="kfNext" ${next<0?'disabled':''} data-tip="다음 키프레임">▶</button></div>
+  return`<div class="sec" id="secCam"><h3>${icon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/>')}Zoom · Move${qh('Zoom · Move','출력 크기는 그대로 두고, 그 안에서 영상을 키우거나(최대 400%) 줄이고(최소 5%), 옮기고, 돌려요.\n미리보기를 드래그하면 위치가 옮겨지고 X·Y 숫자도 같이 바뀌어요. 같은 위치로 다시 맞추려면 숫자를 그대로 넣으면 돼요. 0, 0이 가운데예요.\n줄이거나 옮기거나 돌려서 비는 곳은 "빈 곳" 색으로 채워져요.\n시간에 따라 바꾸려면 ◇ Add keyframe을 누르고, 다른 프레임으로 가서 확대·위치·회전을 바꾸세요. 그 프레임에 키프레임이 자동으로 생기고, 사이는 자연스럽게 이어져요.\n키프레임은 프레임에 붙어 있어서 프레임을 옮기거나 속도를 바꿔도 같이 따라가요.')}</h3>
+    <div class="fld"><span class="vhead">Zoom${nk?`<small>${f.cam?`◆ ${S.cur+1}번 키프레임`:`${S.cur+1}번 · 키프레임 사이`}</small>`:''}<span class="vnum"><input class="in" id="camZN" type="number" min="5" max="400" step="5" value="${zp}" aria-label="Zoom %">%</span></span><div class="srange"><input type="range" id="camZ" min="5" max="400" value="${zp}" aria-label="Zoom"></div></div>
+    <div class="grid3"><label class="fld"><span>X (px)</span><input class="in" id="camX" type="number" step="1" value="${Math.round(cam.ox*W)}"></label><label class="fld"><span>Y (px)</span><input class="in" id="camY" type="number" step="1" value="${Math.round(cam.oy*H)}"></label><label class="fld"><span>회전 (°)</span><input class="in" id="camR" type="number" step="1" min="-360" max="360" value="${Math.round(cam.r*10)/10}"></label></div>
+    <div class="szrow"><span class="lbl2">빈 곳${qh('빈 곳','줄이거나 옮기거나 돌려서 영상이 덮지 않는 곳의 색이에요.\n투명은 GIF·WebP·PNG로 저장할 때만 투명하게 나오고, MP4·WebM은 흰색으로 채워져요.')}</span><span class="bgpick"><input type="color" id="camBg" value="${bg==='transparent'?'#000000':bg}" ${bg==='transparent'?'disabled':''} aria-label="빈 곳 색"><label class="chk"><input type="checkbox" id="camBgT" ${bg==='transparent'?'checked':''}>투명</label></span></div>
+    <p class="note">미리보기를 드래그하면 위치가 옮겨져요.${nk?' 다른 프레임에서 바꾸면 그 프레임에 키프레임이 생겨요.':''}</p>
+    <div class="kfrow"><button type="button" class="btn" id="kfTog">${f.cam?'◆ Delete keyframe':'◇ Add keyframe'}</button><button type="button" class="btn" id="kfPrev" ${prev<0?'disabled':''} data-tip="이전 키프레임">◀</button><button type="button" class="btn" id="kfNext" ${next<0?'disabled':''} data-tip="다음 키프레임">▶</button></div>
     ${nk?`<div class="kv"><span>키프레임</span><b>${nk}개</b></div>`:''}
     ${nk>=2?`<label class="fld"><span>움직임</span><select class="in" id="kfEase"><option value="smooth"${S.tf.camEase!=='linear'?' selected':''}>부드럽게 (천천히 시작해서 천천히 멈춤)</option><option value="linear"${S.tf.camEase==='linear'?' selected':''}>일정하게</option></select></label>`:''}
     ${nk||moved?'<button type="button" class="btn" id="camReset" style="width:100%">Zoom · Move 초기화</button>':''}
   </div>`}
-function bindCam(){const zr=$('#camZ'),zn=$('#camZN');if(!zr)return;springRange(zr);let made=false;
+/* write the current values into the Zoom · Move boxes (during a drag the panel itself is not rebuilt) */
+function camBoxes(){const c=camTrack()[S.cur];if(!c||!$('#camX'))return;const[W,H]=outSize();const put=(id,v)=>{const e=$('#'+id);if(e&&document.activeElement!==e)e.value=v};
+  put('camX',Math.round(c.ox*W));put('camY',Math.round(c.oy*H));put('camR',Math.round(c.r*10)/10);put('camZN',Math.round(c.z*100))}
+function bindCam(){const zr=$('#camZ'),zn=$('#camZN');if(!zr)return;springRange(zr);let made=false;const[W,H]=outSize();
+  const keyMsg=m=>camKeys()&&!S.frames[S.cur].cam?`${S.cur+1}번 프레임에 키프레임을 만들었어요 (${m})`:m;
   zr.oninput=()=>{if(!zr._u){zr._u=true;made=false;S.undo.push(snap());S.redo=[]}if(camSet({z:+zr.value/100}))made=true;zn.value=zr.value;renderStage()};
   zr.onchange=()=>{zr._u=false;zr.blur();changed();if(made)toast(`${S.cur+1}번 프레임에 키프레임을 만들었어요`)};
-  zn.onchange=()=>{zn.blur();const v=clamp(Math.round(+zn.value||100),100,400);const mk=camKeys()&&!S.frames[S.cur].cam;commit(()=>camSet({z:v/100}),mk?`${S.cur+1}번 프레임에 키프레임을 만들었어요 (확대 ${v}%)`:`확대를 ${v}%로 바꿨어요`)};
+  zn.onchange=()=>{zn.blur();const v=clamp(Math.round(+zn.value||100),5,400);commit(()=>camSet({z:v/100}),keyMsg(`확대 ${v}%`))};
+  const num=(id,fn,msg)=>{const e=$('#'+id);e.onchange=()=>{const v=+e.value;if(!isFinite(v))return;e.blur();commit(()=>camSet(fn(v)),keyMsg(msg(v)))};e.onkeydown=ev=>{if(ev.key==='Enter')e.onchange()}};
+  num('camX',v=>({ox:v/W}),v=>`X ${Math.round(v)}px`);num('camY',v=>({oy:v/H}),v=>`Y ${Math.round(v)}px`);num('camR',v=>({r:clamp(v,-360,360)}),v=>`회전 ${clamp(v,-360,360)}°`);
+  $('#camBg').onchange=e=>commit(()=>{S.tf.camBg=e.target.value;CAMV++},'빈 곳 색을 바꿨어요');
+  $('#camBgT').onchange=e=>commit(()=>{S.tf.camBg=e.target.checked?'transparent':($('#camBg').value||'#000000');CAMV++},e.target.checked?'빈 곳을 투명으로 했어요':'빈 곳을 색으로 채워요');
   $('#kfTog').onclick=()=>{const i=S.cur,f=S.frames[i];if(!f)return;
     if(f.cam)commit(()=>{const keep=camTrack()[i];const nf={...S.frames[i]};delete nf.cam;S.frames[i]=nf;if(!camKeys())S.tf.cam=keep;CAMV++},`${i+1}번 프레임 키프레임을 지웠어요`);
-    else{const first=!camKeys();commit(()=>{S.frames[i]={...f,cam:camTrack()[i]};CAMV++},first?`${i+1}번 프레임에 첫 키프레임을 만들었어요 · 다른 프레임으로 가서 확대나 위치를 바꿔 보세요`:`${i+1}번 프레임에 키프레임을 만들었어요`)}};
+    else{const first=!camKeys();commit(()=>{S.frames[i]={...f,cam:camTrack()[i]};CAMV++},first?`${i+1}번 프레임에 첫 키프레임을 만들었어요 · 다른 프레임으로 가서 확대·위치·회전을 바꿔 보세요`:`${i+1}번 프레임에 키프레임을 만들었어요`)}};
   const jump=d=>{const i=d<0?S.frames.findLastIndex((x,k)=>k<S.cur&&x.cam):S.frames.findIndex((x,k)=>k>S.cur&&x.cam);if(i>=0){goFrame(i);renderTimeline()}};
   $('#kfPrev').onclick=()=>jump(-1);$('#kfNext').onclick=()=>jump(1);
   const ez=$('#kfEase');if(ez)ez.onchange=()=>commit(()=>{S.tf.camEase=ez.value;CAMV++},ez.value==='linear'?'키프레임 사이를 일정하게 움직여요':'키프레임 사이를 부드럽게 움직여요');
@@ -1435,6 +1463,7 @@ function renderPanel(){
   if(document.activeElement&&p.contains(document.activeElement)&&document.activeElement.matches('input,select'))return softPanel();
   syncFocus();
   if(audioFocus()){p.innerHTML=audioPanelHTML();bindAudioPanel();return}
+  if(vFocus()){p.innerHTML=vPanelHTML();bindVPanel();return}
   if(!S.frames.length){p.innerHTML='';return}
   const s=selIdx();const selDur=s.reduce((a,i)=>a+S.frames[i].delay,0);
   if(S.crop.active){
@@ -1697,18 +1726,26 @@ async function compToFrames(){
   busyEnd();
   const name=L.layers.find(l=>l.anim)?.name||L.layers[0].name;
   commit(()=>{
-    if(mode==='replace'||!S.frames.length||S.isSample){S.frames=out;S.W0=L.W;S.H0=L.H;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name=name+'-frame';S.isSample=false;S.clips=[];S.tracks=[];S.linkOff=false;S.linkedBak=null;S.linked=LINKED_DEF();S.aSel=null;S.aTrack=null;setSel([0],0)}
+    if(mode==='replace'||!S.frames.length||S.isSample){S.frames=out;S.W0=L.W;S.H0=L.H;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name=name+'-frame';S.isSample=false;S.clips=[];S.tracks=[];S.vtracks=[];S.vclips=[];S.vSel=null;S.vTrack=null;S.linkOff=false;S.linkedBak=null;S.linked=LINKED_DEF();S.aSel=null;S.aTrack=null;setSel([0],0)}
     else{const lb=nextLabel();if(lb)out.forEach(f=>{f.label=lb});const at=S.frames.length;S.frames.push(...out);setSel([at],at)}
   });
   setMode('edit');toast(`프레임 ${out.length}개를 만들었어요`);
 }
-/* edit mode: drag the zoomed preview to move what is shown */
+/* edit mode on the preview: a layer clip under the pointer is picked and dragged; otherwise the picture itself is moved (Zoom · Move) */
 inner.addEventListener('pointerdown',e=>{
-  if(S.mode!=='edit'||e.button!==0||S.crop.active||!S.frames.length)return;const cam=camTrack()[S.cur];if(!cam||cam.z<=1.001)return;
-  e.preventDefault();stopPlay();blurPanel();const[W,H]=outSize(),z=S.view.z,sx=e.clientX,sy=e.clientY,c0={...cam};let moved=false,made=false,raf=0;
-  S.undo.push(snap());S.redo=[];inner.classList.add('panning');
-  const mv=ev=>{const dx=(ev.clientX-sx)/z,dy=(ev.clientY-sy)/z;if(!moved&&Math.abs(dx)+Math.abs(dy)<2)return;moved=true;
-    if(camSet({x:c0.x-dx/(W*c0.z),y:c0.y-dy/(H*c0.z)}))made=true;if(!raf)raf=requestAnimationFrame(()=>{raf=0;renderStage()})};
+  if(S.mode!=='edit'||e.button!==0||S.crop.active||!S.frames.length)return;
+  e.preventDefault();stopPlay();blurPanel();const[W,H]=outSize(),cr=cv.getBoundingClientRect(),k=W/Math.max(1,cr.width),sx=e.clientX,sy=e.clientY;let moved=false,raf=0;
+  const t=S.starts[S.cur]||0;const hit=S.vclips.length?vHit((e.clientX-cr.left)*k,(e.clientY-cr.top)*k,t):null;
+  const redraw=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;renderStage()})};
+  if(hit){const was=S.vSel;S.aSel=null;S.aTrack=null;A.multi=new Set();S.vSel=hit.id;S.vTrack=null;if(was!==hit.id){renderTimeline();renderPanel()}renderStage();
+    const c0={...hit};S.undo.push(snap());S.redo=[];inner.classList.add('panning');
+    const mv=ev=>{const dx=(ev.clientX-sx)*k,dy=(ev.clientY-sy)*k;if(!moved&&Math.abs(dx)+Math.abs(dy)<2)return;moved=true;const c=S.vclips.find(x=>x.id===hit.id);c.x=c0.x+dx/W;c.y=c0.y+dy/H;vBoxes();redraw()};
+    const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);inner.classList.remove('panning');if(!moved){S.undo.pop();return}changed();toast('레이어 위치를 옮겼어요')};
+    addEventListener('pointermove',mv);addEventListener('pointerup',up);return}
+  if(vFocus()){S.vSel=null;S.vTrack=null;renderTimeline();renderPanel();renderStage()}
+  const cam=camTrack()[S.cur]||CAM0,c0={...cam};let made=false;S.undo.push(snap());S.redo=[];inner.classList.add('panning');
+  const mv=ev=>{const dx=(ev.clientX-sx)*k,dy=(ev.clientY-sy)*k;if(!moved&&Math.abs(dx)+Math.abs(dy)<3)return;moved=true;
+    if(camSet({ox:c0.ox+dx/W,oy:c0.oy+dy/H}))made=true;camBoxes();redraw()};
   const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);inner.classList.remove('panning');if(!moved){S.undo.pop();return}
     changed();toast(made?`${S.cur+1}번 프레임에 키프레임을 만들었어요`:'보이는 위치를 옮겼어요')};
   addEventListener('pointermove',mv);addEventListener('pointerup',up)});
@@ -1801,8 +1838,8 @@ const TRACK_DEF=name=>({id:'t'+(TID++),name,vol:1,mute:false,solo:false});
 function ensureTracks(){if(!S.tracks)S.tracks=[];for(const c of S.clips){if(!S.tracks.some(t=>t.id===c.track)){const t=TRACK_DEF(c.name||`Audio ${S.tracks.length+1}`);S.tracks.push(t);c.track=t.id}}}
 const trackOf=c=>S.tracks.find(t=>t.id===c.track);
 const clipsOn=id=>S.clips.filter(c=>c.track===id);
-function tracks(){ensureTracks();const t=[];if(S.frames.length)t.push({kind:'video',id:'video'});if(hasLinked())t.push({kind:'linked',id:'linked'});S.tracks.forEach(tr=>t.push({kind:'track',id:tr.id,t:tr}));return t}
-function trackObj(id){return id==='linked'?S.linked:S.tracks.find(t=>t.id===id)||S.clips.find(c=>c.id===id)}
+function tracks(){ensureTracks();const t=[];if(S.frames.length){S.vtracks.forEach(v=>t.push({kind:'vtrack',id:v.id,t:v}));t.push({kind:'video',id:'video'})}if(hasLinked())t.push({kind:'linked',id:'linked'});S.tracks.forEach(tr=>t.push({kind:'track',id:tr.id,t:tr}));return t}
+function trackObj(id){return id==='linked'?S.linked:S.tracks.find(t=>t.id===id)||S.vtracks.find(t=>t.id===id)||S.clips.find(c=>c.id===id)}
 function anySolo(){return(hasLinked()&&S.linked.solo)||S.tracks.some(t=>t.solo)}
 const audible=t=>{if(t&&t.src){t=trackOf(t);if(!t)return true}return!t.mute&&(!anySolo()||t.solo)};
 /* fade shapes: how far the change has progressed at x (0..1) */
@@ -1970,7 +2007,106 @@ function selectClip(c,add){
   if(add){if(A.multi.has(c.id)&&A.multi.size>1){A.multi.delete(c.id);const last=[...A.multi].pop();S.aSel=last;S.aTrack=S.clips.find(x=>x.id===last)?.track||null;return false}
     const p=selClip();if(p)A.multi.add(p.id);A.multi.add(c.id)}else if(!A.multi.has(c.id)||A.multi.size<2)A.multi=new Set([c.id]);
   S.aSel=c.id;S.aTrack=c.track;return true}
-function clearAudioSel(){S.aSel=null;S.aTrack=null;A.multi=new Set()}
+function clearAudioSel(){S.aSel=null;S.aTrack=null;A.multi=new Set();S.vSel=null;S.vTrack=null}
+/* =========================================================
+   Video layers: rows above the Video row, the top row is in front.
+   A layer clip shows part (in..out ms) of a source (VS) from `start` on the timeline,
+   placed at x/y (share of the output size from the centre), s (1 = fits the frame), r (degrees), op (0..1).
+   ========================================================= */
+const VS=new Map();let VID=1;
+const vLen=c=>Math.max(1,c.out-c.in);
+const selV=()=>S.vSel?S.vclips.find(c=>c.id===S.vSel)||null:null;
+function vFrameAt(v,t){const st=v.starts;let lo=0,hi=st.length-1;t=clamp(t,0,v.dur-0.001);while(lo<hi){const m=(lo+hi+1)>>1;if(st[m]<=t)lo=m;else hi=m-1}return v.frames[lo]}
+function vBox(c,W,H){const v=VS.get(c.src);const bw=v?v.W:W,bh=v?v.H:H;const k=Math.min(W/bw,H/bh)*c.s;return{w:bw*k,h:bh*k,cx:W/2+c.x*W,cy:H/2+c.y*H}}
+const vVisible=(c,t)=>{const T=S.vtracks.find(x=>x.id===c.track);return T&&!T.hide&&t>=c.start&&t<c.start+vLen(c)};
+/* draw every layer clip that is on at time t, lowest row first */
+async function drawOverlays(ctx,W,H,t,stale){
+  for(let k=S.vtracks.length-1;k>=0;k--){const T=S.vtracks[k];if(T.hide)continue;
+    for(const c of S.vclips){if(c.track!==T.id||t<c.start||t>=c.start+vLen(c))continue;const v=VS.get(c.src);if(!v)continue;
+      let b;try{b=await getBmp(vFrameAt(v,c.in+(t-c.start)))}catch(e){continue}if(stale&&stale())return;
+      const{w,h,cx,cy}=vBox(c,W,H);ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=clamp(c.op,0,1);ctx.translate(cx,cy);if(c.r)ctx.rotate(c.r*Math.PI/180);
+      ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(b,-w/2,-h/2,w,h);ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1}}}
+/* outline of the picked layer clip on the preview (not saved) */
+function drawVSel(ctx,W,H,t){const c=selV();if(!c||!vFocus()||!vVisible(c,t))return;const{w,h,cx,cy}=vBox(c,W,H);const lw=Math.max(1.5,2/S.view.z);
+  ctx.save();ctx.translate(cx,cy);if(c.r)ctx.rotate(c.r*Math.PI/180);ctx.strokeStyle='#FF2F00';ctx.lineWidth=lw;ctx.setLineDash([6*lw,4*lw]);ctx.strokeRect(-w/2,-h/2,w,h);ctx.restore()}
+/* which layer clip is under an output point (top row first) */
+function vHit(px,py,t){const[W,H]=outSize();for(const T of S.vtracks){if(T.hide)continue;for(let i=S.vclips.length-1;i>=0;i--){const c=S.vclips[i];if(c.track!==T.id||!vVisible(c,t))continue;
+  const{w,h,cx,cy}=vBox(c,W,H);const a=-(c.r||0)*Math.PI/180,dx=px-cx,dy=py-cy;const lx=dx*Math.cos(a)-dy*Math.sin(a),ly=dx*Math.sin(a)+dy*Math.cos(a);if(Math.abs(lx)<=w/2&&Math.abs(ly)<=h/2)return c}}return null}
+function pickV(c){S.aSel=null;S.aTrack=null;A.multi=new Set();S.vSel=c?c.id:null;S.vTrack=c?null:S.vTrack}
+function addVTrack(){commit(()=>{const id='vt'+(VID++);S.vtracks.unshift({id,name:`Video ${S.vtracks.length+2}`,hide:false});S.vTrack=id;S.vSel=null;S.aSel=null;S.aTrack=null},'비디오 레이어를 추가했어요 · + Video로 영상을 올려 보세요')}
+/* + Video on a layer row: each file becomes a layer clip at the playhead (its sound goes in as an audio clip) */
+function addVLayerItems(items){const T=Math.round(clamp(playT(),0,Math.max(0,S.total-1)));let snd=false;
+  commit(()=>{let tid=S.vTrack||selV()?.track;if(!tid||!S.vtracks.some(t=>t.id===tid)){tid='vt'+(VID++);S.vtracks.unshift({id:tid,name:`Video ${S.vtracks.length+2}`,hide:false})}
+    let at=T,last=null;
+    for(const it of items){const src='vs'+(VID++);let t=0;const st=it.frames.map(f=>{const x=t;t+=f.delay;return x});VS.set(src,{frames:it.frames,starts:st,dur:t,W:it.W,H:it.H,name:it.name});
+      const c={id:'v'+(VID++),track:tid,src,name:baseName(it.name),start:at,in:0,out:t,x:0,y:0,s:1,r:0,op:1};S.vclips.push(c);last=c;
+      const fa=it.frames.find(f=>f.au);if(fa&&AS.has(fa.au.src)){ensureTracks();const ac=newClip(fa.au.src,baseName(it.name),AS.get(fa.au.src).dur,S.tracks[0].id);ac.start=at;S.clips.push(ac);snd=true}
+      at+=t}
+    S.vSel=last.id;S.vTrack=null;S.aSel=null;S.aTrack=null},`${items.map(i=>i.name).join(', ')}을 ${fmtS(T)} 위치에 레이어로 올렸어요`);
+  if(snd)toast('레이어 영상의 소리는 오디오 클립으로 같이 들어갔어요 · 필요 없으면 지우면 돼요')}
+function vSplit(c,T=playT()){if(!c)return toast('나눌 레이어 클립을 골라 주세요');const d=Math.round(T-c.start);if(d<20||d>vLen(c)-20)return toast('재생 위치를 클립 안쪽에 두고 나눠 주세요');
+  commit(()=>{const b={...c,id:'v'+(VID++),start:c.start+d,in:c.in+d};S.vclips.push(b);S.vclips.find(x=>x.id===c.id).out=c.in+d;S.vSel=b.id},`${fmtS(T)}에서 레이어 클립을 나눴어요`)}
+function vDelete(c){if(!c)return;commit(()=>{S.vclips=S.vclips.filter(x=>x.id!==c.id);S.vSel=null;S.vTrack=c.track},'레이어 클립을 지웠어요')}
+function vCopy(c,cut){if(!c)return;A.vcb={...c};if(cut)vDelete(c);else toast('레이어 클립을 복사했어요')}
+function vPaste(){const cb=A.vcb;if(!cb)return toast('복사한 레이어 클립이 없어요');const tid=S.vTrack||selV()?.track||cb.track;
+  commit(()=>{const tr=S.vtracks.some(t=>t.id===tid)?tid:(S.vtracks[0]||{}).id;if(!tr){const id='vt'+(VID++);S.vtracks.unshift({id,name:'Video 2',hide:false})}
+    const c={...cb,id:'v'+(VID++),track:tr||S.vtracks[0].id,start:Math.round(playT())};S.vclips.push(c);S.vSel=c.id;S.vTrack=null},`${fmtS(playT())} 위치에 붙여넣었어요`)}
+function vDup(c){if(!c)return;commit(()=>{const b={...c,id:'v'+(VID++),start:c.start+vLen(c)};S.vclips.push(b);S.vSel=b.id},'바로 뒤에 복제했어요')}
+function vTrim(c,side,T=playT()){if(!c)return;const d=Math.round(T-c.start);if(d<=0||d>=vLen(c))return toast('재생 위치를 클립 안쪽에 두세요');
+  commit(()=>{const x=S.vclips.find(o=>o.id===c.id);if(side==='in'){x.in+=d;x.start+=d}else x.out=x.in+d},side==='in'?'앞부분을 잘라냈어요':'뒷부분을 잘라냈어요')}
+function vTrackMove(id,d){const i=S.vtracks.findIndex(t=>t.id===id),j=i+d;if(i<0||j<0||j>=S.vtracks.length)return;commit(()=>{const a=S.vtracks.slice();[a[i],a[j]]=[a[j],a[i]];S.vtracks=a},d<0?'레이어를 앞으로 올렸어요':'레이어를 뒤로 내렸어요')}
+function vTrackDelete(id){const n=S.vclips.filter(c=>c.track===id).length;commit(()=>{S.vtracks=S.vtracks.filter(t=>t.id!==id);S.vclips=S.vclips.filter(c=>c.track!==id);S.vTrack=null;S.vSel=null},`비디오 레이어를 지웠어요${n?` (클립 ${n}개)`:''}`)}
+/* side panel for a layer clip / a layer row */
+function vPanelHTML(){const c=selV();const[W,H]=outSize();
+  if(!c){const T=S.vtracks.find(t=>t.id===S.vTrack);if(!T)return'';const i=S.vtracks.indexOf(T),n=S.vclips.filter(x=>x.track===T.id).length;
+    return`<div class="sec"><h3>${icon(ICO_FILM)}Video layer${qh('Video layer','위쪽 레이어가 화면에서 앞에 보여요.\n+ Video를 누르면 이 레이어의 재생 위치에 영상·GIF·이미지가 올라가요. 올린 클립은 오디오 클립처럼 끌어서 옮기고, 양 끝을 끌어서 자를 수 있어요.\n미리보기에서 클립을 클릭하면 고를 수 있고, 끌면 위치가 옮겨져요.')}</h3>
+      <label class="fld"><span>이름</span><input class="in" id="vtName" value="${esc(T.name)}"></label>
+      <div class="kv"><span>클립</span><b>${n}개</b></div>
+      <label class="chk"><input type="checkbox" id="vtHide" ${T.hide?'checked':''}>숨기기</label>
+      <div class="row-btns"><button type="button" class="btn" id="vtUp" ${i===0?'disabled':''}>앞으로 (위로)</button><button type="button" class="btn" id="vtDown" ${i===S.vtracks.length-1?'disabled':''}>뒤로 (아래로)</button></div>
+      <button type="button" class="btn" id="vtDel" style="width:100%">레이어 삭제</button></div>`}
+  const v=VS.get(c.src);
+  return`<div class="sec"><h3>${icon(ICO_FILM)}<span class="nm1">${esc(c.name)}</span>${qh('Layer clip','미리보기에서 끌면 위치가 옮겨지고, X·Y 숫자도 같이 바뀌어요. 0, 0이 가운데예요.\n크기 100%는 화면에 꽉 맞는 크기예요.\n타임라인에서 끌면 시간 위치가 옮겨지고, 양 끝을 끌면 앞뒤를 자를 수 있어요.')}</h3>
+    <div class="kv"><span>위치</span><b>${fmtS(c.start)} ~ ${fmtS(c.start+vLen(c))}</b></div>
+    <div class="kv"><span>길이</span><b>${fmtS(vLen(c))}${v?` / 원본 ${fmtS(v.dur)}`:''}</b></div>
+    <div class="grid3"><label class="fld"><span>X (px)</span><input class="in" id="vcX" type="number" step="1" value="${Math.round(c.x*W)}"></label><label class="fld"><span>Y (px)</span><input class="in" id="vcY" type="number" step="1" value="${Math.round(c.y*H)}"></label><label class="fld"><span>회전 (°)</span><input class="in" id="vcR" type="number" step="1" value="${Math.round((c.r||0)*10)/10}"></label></div>
+    <div class="fld"><span class="vhead">크기<span class="vnum"><input class="in" id="vcSN" type="number" min="5" max="400" step="5" value="${Math.round(c.s*100)}">%</span></span><div class="srange"><input type="range" id="vcS" min="5" max="400" value="${Math.round(c.s*100)}"></div></div>
+    <div class="fld"><span class="vhead">불투명도<span class="vnum"><input class="in" id="vcON" type="number" min="0" max="100" step="5" value="${Math.round(c.op*100)}">%</span></span><div class="srange"><input type="range" id="vcO" min="0" max="100" value="${Math.round(c.op*100)}"></div></div>
+    <div class="row-btns"><button type="button" class="btn" id="vcCenter">가운데로</button><button type="button" class="btn" id="vcFit">화면에 맞추기</button></div>
+    <div class="row-btns"><button type="button" class="btn" id="vcSplit">나누기</button><button type="button" class="btn" id="vcDel">삭제</button></div></div>`}
+function bindVPanel(){const c=selV();
+  if(!c){const T=S.vtracks.find(t=>t.id===S.vTrack);if(!T)return;
+    $('#vtName').onchange=e=>commit(()=>{S.vtracks.find(t=>t.id===T.id).name=e.target.value.trim()||T.name},'이름을 바꿨어요');
+    $('#vtHide').onchange=e=>commit(()=>{S.vtracks.find(t=>t.id===T.id).hide=e.target.checked},e.target.checked?'레이어를 숨겼어요':'레이어를 다시 보여요');
+    $('#vtUp').onclick=()=>vTrackMove(T.id,-1);$('#vtDown').onclick=()=>vTrackMove(T.id,1);$('#vtDel').onclick=()=>vTrackDelete(T.id);return}
+  const[W,H]=outSize();const set=(p,msg)=>commit(()=>Object.assign(S.vclips.find(x=>x.id===c.id),p),msg);
+  const num=(id,fn,msg)=>{const e=$('#'+id);e.onchange=()=>{const v=+e.value;if(!isFinite(v))return;e.blur();set(fn(v),msg(v))};e.onkeydown=ev=>{if(ev.key==='Enter')e.onchange()}};
+  num('vcX',v=>({x:v/W}),v=>`X ${Math.round(v)}px`);num('vcY',v=>({y:v/H}),v=>`Y ${Math.round(v)}px`);num('vcR',v=>({r:clamp(v,-360,360)}),v=>`회전 ${clamp(v,-360,360)}°`);
+  const slide=(rid,nid,key,lo,hi,msg)=>{const r=$('#'+rid),n=$('#'+nid);springRange(r);
+    r.oninput=()=>{if(!r._u){r._u=true;S.undo.push(snap());S.redo=[]}S.vclips.find(x=>x.id===c.id)[key]=+r.value/100;n.value=r.value;renderStage()};
+    r.onchange=()=>{r._u=false;r.blur();changed()};
+    n.onchange=()=>{n.blur();const v=clamp(Math.round(+n.value||0),lo,hi);set({[key]:v/100},msg(v))}};
+  slide('vcS','vcSN','s',5,400,v=>`크기 ${v}%`);slide('vcO','vcON','op',0,100,v=>`불투명도 ${v}%`);
+  $('#vcCenter').onclick=()=>set({x:0,y:0},'가운데로 옮겼어요');$('#vcFit').onclick=()=>set({x:0,y:0,s:1,r:0},'화면에 맞췄어요');
+  $('#vcSplit').onclick=()=>vSplit(c);$('#vcDel').onclick=()=>vDelete(c)}
+function vBoxes(){const c=selV();if(!c||!$('#vcX'))return;const[W,H]=outSize();const put=(id,v)=>{const e=$('#'+id);if(e&&document.activeElement!==e)e.value=v};put('vcX',Math.round(c.x*W));put('vcY',Math.round(c.y*H))}
+/* drag a layer clip on the timeline: move (also to another layer row) or trim an end */
+function vclipDrag(e,c,edge,r){const g=tlGeom;S.undo.push(snap());S.redo=[];let moved=false;const c0={...c},sx=e.clientX,sy=e.clientY,v=VS.get(c.src);
+  const marks=[0,S.total,playT(),...S.vclips.filter(o=>o.id!==c.id).flatMap(o=>[o.start,o.start+vLen(o)]),...videoSegs().map(x=>x.start)];
+  const snapT=t=>{let best=t,bd=7/g.k;for(const m of marks){const d=Math.abs(m-t);if(d<bd){bd=d;best=m}}return best};
+  tlCv.style.cursor=edge?'ew-resize':'grabbing';
+  const mv=ev=>{const dx=ev.clientX-sx,dy=ev.clientY-sy;if(!moved&&Math.abs(dx)<3&&Math.abs(dy)<3)return;moved=true;const dt=dx/g.k,L0=vLen(c0);
+    if(!edge){const ns=c0.start+dt,a=snapT(ns),b=snapT(ns+L0)-L0;c.start=Math.max(0,Math.round(Math.abs(a-ns)<=Math.abs(b-ns)?a:b));
+      const t=g.tr[Math.floor((ev.clientY-r.top-RUL)/ROW)];if(t&&t.kind==='vtrack')c.track=t.id}
+    else if(edge==='l'){const d=clamp(snapT(c0.start+dt)-c0.start,Math.max(-c0.start,-c0.in),L0-20);c.start=Math.round(c0.start+d);c.in=Math.round(c0.in+d)}
+    else{const d=clamp(snapT(c0.start+L0+dt)-(c0.start+L0),-(L0-20),(v?v.dur:c0.out)-c0.out);c.out=Math.round(c0.out+d)}
+    renderTimeline();renderStage()};
+  const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);tlCv.style.cursor='';if(!moved){S.undo.pop();return}changed()};
+  addEventListener('pointermove',mv);addEventListener('pointerup',up)}
+function vMenuDef(c){const T=S.vtracks.find(t=>t.id===(c?c.track:S.vTrack));const i=T?S.vtracks.indexOf(T):-1;
+  return{title:c?c.name:(T?T.name:'Video layer'),hint:c?`${fmtS(c.start)} ~ ${fmtS(c.start+vLen(c))}`:'비디오 레이어',cols:[[
+    {h:'Clip',items:[{t:'재생 위치에서 나누기',k:'mod+shift+D',f:()=>vSplit(c),dis:!c},{t:'잘라내기',k:'mod+X',f:()=>vCopy(c,true),dis:!c},{t:'복사',k:'mod+C',f:()=>vCopy(c),dis:!c},{t:'붙여넣기',k:'mod+V',f:()=>vPaste(),dis:!A.vcb},{t:'복제',k:'mod+D',f:()=>vDup(c),dis:!c},{t:'삭제',k:'Del',f:()=>vDelete(c),dis:!c}]},
+    {h:'Layer',items:[{t:'앞으로 (위로)',f:()=>vTrackMove(T.id,-1),dis:!T||i<=0},{t:'뒤로 (아래로)',f:()=>vTrackMove(T.id,1),dis:!T||i>=S.vtracks.length-1},{t:T&&T.hide?'다시 보이기':'숨기기',f:()=>commit(()=>{S.vtracks.find(x=>x.id===T.id).hide=!T.hide}),dis:!T},{t:'레이어 삭제',f:()=>vTrackDelete(T.id),dis:!T}]}]]}}
 function trackFree(id,a,b){return clipsOn(id).every(c=>c.start>=b-1||c.start+clipLen(c)<=a+1)}
 /* drop copies of clips at time T: preferred track first, then any free track, else a new one */
 function placeClips(items,T,pref){
@@ -2053,21 +2189,23 @@ function thumbImg(f){if(!f||!f.thumb)return null;let im=THUMBS.get(f.thumb);
   return im.complete&&im.naturalWidth?im:null}
 const ICO_FILM='<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4"/>';
 const ICO_LINK='<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',ICO_WAVE='<path d="M3 12h2M7 8v8M11 5v14M15 9v6M19 7v10M21 12h0"/>';
-function tlExtent(){let e=S.total;for(const c of S.clips)e=Math.max(e,c.start+clipLen(c));return Math.max(e,200)}
+function tlExtent(){let e=S.total;for(const c of S.clips)e=Math.max(e,c.start+clipLen(c));for(const c of S.vclips)e=Math.max(e,c.start+vLen(c));return Math.max(e,200)}
 /* volume line: 0% at the bottom of a bar, 100% in the middle, 200% at the top */
 const volY=(y,v)=>y+6+(ROW-12)*(1-clamp(v,0,2)/2);
 const isSelC=c=>A.multi.has(c.id)||S.aSel===c.id;
 function setMuteIcon(){$('#aMuteIco').innerHTML=A.mute?'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/>':'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>';$('#aMute').classList.toggle('muted',A.mute)}
 function renderTimeline(){
   if(S.mode!=='edit')return;syncFocus();
-  const tr=tracks(),na=tr.filter(t=>t.kind!=='video').length;
-  {const tb=$('#aTrackAdd'),af=audioFocus();tb.textContent=af?'+ Audio track':'+ Video track';
-    tb.dataset.tip=af?'Add audio track|빈 오디오 트랙 추가 · 배경음·효과음을 나눠 깔 때':'Add video|영상·GIF·이미지를 재생 위치에 끼워 넣어요 · 새 조각으로 들어가서 따로 자르고 옮길 수 있어요 (오디오 쪽을 고르면 오디오 트랙 추가로 바뀌어요)'}
+  const tr=tracks(),na=tr.filter(t=>t.kind!=='video'&&t.kind!=='vtrack').length,nv=tr.filter(t=>t.kind==='vtrack'||t.kind==='video').length;
+  {const tb=$('#aTrackAdd'),ab=$('#vAdd'),af=audioFocus(),vf=vFocus();tb.textContent=af?'+ Audio track':'+ Video track';ab.hidden=af;
+    tb.dataset.tip=af?'Add audio track|빈 오디오 트랙 추가 · 배경음·효과음을 나눠 깔 때':'Add video track|빈 비디오 레이어 추가 · 위쪽 레이어가 화면에서 앞에 보여요 (오디오 쪽을 고르면 오디오 트랙 추가로 바뀌어요)';
+    ab.dataset.tip=vf?'Add video|고른 레이어의 재생 위치에 영상·GIF·이미지를 겹쳐 올려요':'Add video|영상·GIF·이미지를 Video 줄의 재생 위치에 끼워 넣어요 · 레이어로 겹치려면 레이어 줄을 먼저 고르세요'}
   if(na&&!A.auto){A.auto=true;openTimeline()}
   const nc=S.clips.length;
   $('#tlSum').textContent=na?`${na} track${na>1?'s':''}${nc?` · ${nc} clip${nc>1?'s':''}`:''}${hasLinked()?' · 프레임 소리 연결됨':''}`:'소리 없음 · 소리 있는 영상이나 음악을 추가하세요';
   const curTrack=S.aTrack||(selClip()?.track);
-  tlHeads.innerHTML=`<div class="th-ruler" id="thT">${fmtS(playT())}</div>`+(tr.length?tr.map(t=>{if(t.kind==='video')return`<div class="th${audioFocus()?'':' on'}" data-id="video">${icon(ICO_FILM).replace('class="i"','class="i ic"')}<span class="nm" title="Video">Video</span>${hasLinked()?`<span class="vlk" data-tip="Linked|영상과 Frame audio가 연결돼 있어요. 나누거나 옮기면 소리도 같이 따라가요. Unlink하면 따로 편집해요."><svg class="i" viewBox="0 0 24 24" style="width:12px;height:12px">${ICO_LINK}</svg></span>`:''}</div>`;
+  tlHeads.innerHTML=`<div class="th-ruler" id="thT">${fmtS(playT())}</div>`+(tr.length?tr.map(t=>{if(t.kind==='vtrack'){const on=vFocus()&&(S.vTrack===t.id||selV()?.track===t.id);return`<div class="th${on?' on':''}${t.t.hide?' off':''}" data-id="${t.id}">${icon(ICO_FILM).replace('class="i"','class="i ic"')}<span class="nm" title="${esc(t.t.name)}">${esc(t.t.name)}</span><button type="button" class="tg${t.t.hide?' on':''}" data-a="hide" data-tip="${t.t.hide?'다시 보이기':'숨기기'}"><svg class="i" viewBox="0 0 24 24" style="width:13px;height:13px">${t.t.hide?'<path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 5.1A9.8 9.8 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.6 6.6C4.5 8 3 10 2 12c1 2.5 5 7 10 7 1.6 0 3.1-.4 4.4-1.1"/>':'<path d="M2 12c1-2.5 5-7 10-7s9 4.5 10 7c-1 2.5-5 7-10 7S3 14.5 2 12z"/><circle cx="12" cy="12" r="3"/>'}</svg></button></div>`}
+    if(t.kind==='video')return`<div class="th${audioFocus()?'':' on'}" data-id="video">${icon(ICO_FILM).replace('class="i"','class="i ic"')}<span class="nm" title="Video">Video</span>${hasLinked()?`<span class="vlk" data-tip="Linked|영상과 Frame audio가 연결돼 있어요. 나누거나 옮기면 소리도 같이 따라가요. Unlink하면 따로 편집해요."><svg class="i" viewBox="0 0 24 24" style="width:12px;height:12px">${ICO_LINK}</svg></span>`:''}</div>`;
     const o=t.kind==='linked'?S.linked:t.t;const nm=t.kind==='linked'?'Frame audio':t.t.name;
     const on=t.kind==='linked'?S.aSel==='linked':curTrack===t.id;
     return`<div class="th${on?' on':''}" data-id="${t.id}">${icon(t.kind==='linked'?ICO_LINK:ICO_WAVE).replace('class="i"','class="i ic"')}<span class="nm" title="${esc(nm)}">${esc(nm)}</span>`+
@@ -2105,6 +2243,13 @@ function renderTimeline(){
   const knob=(x,yy)=>{c.fillStyle='#FFD23F';c.strokeStyle='#1a1c22';c.lineWidth=1.5;c.beginPath();c.arc(x,yy,4.5,0,Math.PI*2);c.fill();c.stroke();c.lineWidth=1};
   const pctLabel=(x1,y,v,x0)=>{if(x1-x0<48)return;c.font=`800 10px ${F}`;c.textBaseline='bottom';const t=Math.round(v*100)+'%';const tw=c.measureText(t).width;c.fillStyle='#FFD23F';c.fillText(t,x1-tw-8,Math.max(y+15,volY(y,v)-3))};
   tr.forEach((t,r)=>{const y=RUL+r*ROW;
+    if(t.kind==='vtrack'){const th=ROW-10;
+      for(const vc of S.vclips){if(vc.track!==t.id)continue;const v=VS.get(vc.src);const x0=X(vc.start),x1=X(vc.start+vLen(vc));if(x1-x0<1)continue;const tw=Math.max(10,th*(v&&v.H?v.W/v.H:1));
+        c.save();c.beginPath();c.roundRect(x0,y+5,Math.max(2,x1-x0),th,6);c.fillStyle='#3a3550';c.fill();c.clip();if(t.t.hide)c.globalAlpha=.35;
+        if(v)for(let x=x0;x<x1;x+=tw){const st=vc.in+((x+Math.min(tw,x1-x)/2)-x0)/k;const im=thumbImg(vFrameAt(v,st));if(im)c.drawImage(im,x,y+5,tw,th);c.fillStyle='rgba(0,0,0,.25)';c.fillRect(Math.round(x+tw)-.5,y+5,1,th)}
+        c.globalAlpha=1;c.fillStyle='rgba(0,0,0,.45)';c.fillRect(x0,y+5,Math.min(x1-x0,c.measureText(vc.name).width+12),15);c.fillStyle='#fff';c.font=`600 10px ${F}`;c.textBaseline='middle';c.fillText(vc.name,x0+6,y+12.5);
+        c.restore();if(vc.id===S.vSel&&vFocus()){c.strokeStyle='#FF2F00';c.lineWidth=2;c.beginPath();c.roundRect(x0+1,y+6,Math.max(2,x1-x0-2),th-2,5);c.stroke();c.lineWidth=1}}
+      return}
     if(t.kind==='video'){const vs=videoSegs(),th=ROW-10,tw=Math.max(10,th*(S.W0&&S.H0?S.W0/S.H0:1));
       vs.forEach(sg=>{const x0=X(sg.start)+(sg.k?1.5:0),x1=X(sg.end)-(sg.k<vs.length-1?1.5:0);if(x1-x0<1)return;
         c.save();c.beginPath();c.roundRect(x0,y+5,Math.max(2,x1-x0),th,6);c.fillStyle='#2a2d36';c.fill();c.clip();
@@ -2112,7 +2257,7 @@ function renderTimeline(){
           if(im)c.drawImage(im,x,y+5,tw,th);c.fillStyle='rgba(0,0,0,.25)';c.fillRect(Math.round(x+tw)-.5,y+5,1,th)}
         c.restore()});
       /* frames picked in the list (or by clicking a piece) are outlined here */
-      if(!audioFocus()){const sel=[...S.sel].sort((a,b)=>a-b);let a=null,b=null;const out=()=>{if(a==null)return;const xa=X(S.starts[a]),xb=X(S.starts[b]+S.frames[b].delay);
+      if(!audioFocus()&&!vFocus()){const sel=[...S.sel].sort((a,b)=>a-b);let a=null,b=null;const out=()=>{if(a==null)return;const xa=X(S.starts[a]),xb=X(S.starts[b]+S.frames[b].delay);
           c.fillStyle='rgba(255,47,0,.22)';c.fillRect(xa,y+5,Math.max(2,xb-xa),th);c.strokeStyle='#FF2F00';c.lineWidth=2;c.beginPath();c.roundRect(xa+1,y+6,Math.max(2,xb-xa-2),th-2,5);c.stroke();c.lineWidth=1};
         for(const i of sel){if(i>=S.frames.length)continue;if(b!=null&&i===b+1)b=i;else{out();a=b=i}}out()}
       return}
@@ -2135,7 +2280,7 @@ function renderTimeline(){
         if(sel){if(cl.fadeIn>0)knob(x0+4,volY(y,cl.vol*(cl.fiL||0)));if(cl.fadeOut>0)knob(x1-4,volY(y,cl.vol*(cl.foL||0)));pctLabel(x1,y,cl.vol,x0)}
         if(x1-x0>70){c.save();c.beginPath();c.rect(x0+8,y,x1-x0-16,ROW);c.clip();c.font=`700 10.5px ${F}`;c.textBaseline='top';c.fillStyle=dim?'rgba(255,255,255,.4)':'rgba(255,255,255,.92)';c.fillText((cl.loop?'↻ ':'')+cl.name,x0+9,y+8);c.restore()}}}});
   /* editing frames: the sound rows go grey (the Video row stays in colour) */
-  if(!audioFocus()){const ya=RUL+tr.filter(t=>t.kind==='video').length*ROW;if(h>ya){c.save();c.globalCompositeOperation='saturation';c.fillStyle='#808080';c.fillRect(0,ya,w,h-ya);c.restore();
+  if(!audioFocus()){const ya=RUL+nv*ROW;if(h>ya){c.save();c.globalCompositeOperation='saturation';c.fillStyle='#808080';c.fillRect(0,ya,w,h-ya);c.restore();
     c.fillStyle='rgba(255,255,255,.45)';c.fillRect(0,ya,w,h-ya)}}
   if(ext>S.total+1){const xe=X(S.total);c.fillStyle='rgba(240,240,244,.78)';c.fillRect(xe,RUL,w-xe,h-RUL);c.setLineDash([3,3]);c.strokeStyle='#9a9aa8';c.beginPath();c.moveTo(Math.round(xe)+.5,0);c.lineTo(Math.round(xe)+.5,h);c.stroke();c.setLineDash([]);
     c.fillStyle='#9a9aa8';c.font=`700 10px ${F}`;c.textBaseline='middle';c.fillText('END',xe+4,RUL+ROW/2>h?RUL/2:RUL+11)}
@@ -2166,18 +2311,23 @@ $('#tlTog').onclick=()=>{A.open=!A.open;A.auto=true;$('#tl').classList.toggle('c
 $('#aMute').onclick=()=>{A.mute=!A.mute;if(A.gain)A.gain.gain.value=A.mute?0:1;setMuteIcon();toast(A.mute?'미리보기 소리를 껐어요 (저장에는 영향 없어요)':'미리보기 소리를 켰어요')};
 setMuteIcon();
 $('#aAdd').onclick=()=>openFile('audio','audio/*,video/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.opus,.mp4,.mov,.webm');
-$('#aTrackAdd').onclick=()=>audioFocus()?addTrack():openFile('vinsert');
+$('#vAdd').onclick=()=>openFile(vFocus()?'vlayer':'vinsert');
+$('#aTrackAdd').onclick=()=>audioFocus()?addTrack():addVTrack();
 tlHeads.addEventListener('click',e=>{blurPanel();const row=e.target.closest('.th[data-id]');if(!row)return;const id=row.dataset.id;const b=e.target.closest('[data-a]');
   if(b){const a=b.dataset.a;if(a==='unlink')return unlinkAudio();if(a==='relink')return relinkAudio();const o=trackObj(id);if(!o)return;commit(()=>{o[a]=!o[a]});return}
   if(id==='video'){clearAudioSel();renderTimeline();renderPanel();return}
+  if(S.vtracks.some(t=>t.id===id)){clearAudioSel();S.vTrack=id;renderTimeline();renderPanel();renderStage();return}
   if(id==='linked'){A.multi=new Set();S.aSel='linked';S.aTrack=null}else{A.multi=new Set();S.aSel=null;S.aTrack=id}renderTimeline();renderPanel()});
-tlHeads.addEventListener('contextmenu',e=>{const row=e.target.closest('.th[data-id]');if(!row||row.dataset.id==='linked'||row.dataset.id==='video')return;e.preventDefault();A.multi=new Set();S.aSel=null;S.aTrack=row.dataset.id;renderTimeline();renderPanel();openMenu(e.clientX,e.clientY,audioMenuDef())});
+tlHeads.addEventListener('contextmenu',e=>{const row=e.target.closest('.th[data-id]');if(row&&S.vtracks.some(t=>t.id===row.dataset.id)){e.preventDefault();clearAudioSel();S.vTrack=row.dataset.id;renderTimeline();renderPanel();return openMenu(e.clientX,e.clientY,vMenuDef(null))}
+  if(!row||row.dataset.id==='linked'||row.dataset.id==='video')return;e.preventDefault();A.multi=new Set();S.aSel=null;S.aTrack=row.dataset.id;renderTimeline();renderPanel();openMenu(e.clientX,e.clientY,audioMenuDef())});
 function seekTime(t){const i=frameAt(clamp(t,0,Math.max(0,S.total-1)));S.cur=i;ensureVisible(i);renderList();renderStage();updatePlayer();renderPanel()}
 /* what is under the pointer on the timeline canvas */
 function tlHit(px,py){
   const g=tlGeom;if(!g)return{};if(py<RUL)return{ruler:true};
   const row=Math.floor((py-RUL)/ROW),t=g.tr[row];if(!t)return{row};const y=RUL+row*ROW;
   if(t.kind==='video'){const T=(px-TPAD)/g.k;const sg=videoSegs().find(x=>T>=x.start&&T<x.end);return{row,t,video:true,seg:sg}}
+  if(t.kind==='vtrack'){const T=(px-TPAD)/g.k;const vc=[...S.vclips].reverse().find(c=>c.track===t.id&&T>=c.start-4/g.k&&T<=c.start+vLen(c)+4/g.k);let edge=null;
+    if(vc){const xa=g.X(vc.start),xb=g.X(vc.start+vLen(vc));if(Math.abs(px-xa)<=6&&xb-xa>14)edge='l';else if(Math.abs(px-xb)<=6&&xb-xa>14)edge='r'}return{row,t,vtrack:true,vc,edge}}
   const near=(x,yy,ax,ay)=>Math.abs(x-ax)<=7&&Math.abs(yy-ay)<=6;
   if(t.kind==='linked'){const T=(px-TPAD)/g.k;const segs=linkedSegs();const sg=segs.find(x=>T>=x.start&&T<x.end)||segs[segs.length-1];const fi=frameAt(clamp(T,0,Math.max(0,S.total-1)));
     if(!sg)return{row,t,linked:true};const m=S.linked.vol*sg.cfg.vol,xa=g.X(sg.start),xb=g.X(sg.end);
@@ -2218,6 +2368,8 @@ tlCv.addEventListener('pointerdown',e=>{
     const up=()=>{removeEventListener('pointermove',seek);removeEventListener('pointerup',up)};addEventListener('pointermove',seek);addEventListener('pointerup',up);return}
   const h=tlHit(px,py);const add=e.shiftKey||(IS_MAC?e.metaKey:e.ctrlKey);
   if(!h.t){clearAudioSel();renderTimeline();renderPanel();return}
+  if(h.vtrack){e.preventDefault();stopPlay();clearAudioSel();if(!h.vc){S.vTrack=h.t.id;renderTimeline();renderPanel();renderStage();return}
+    S.vSel=h.vc.id;renderTimeline();renderPanel();renderStage();vclipDrag(e,h.vc,h.edge,r);return}
   if(h.video){clearAudioSel();if(!h.seg){renderTimeline();renderPanel();return}
     e.preventDefault();stopPlay();const sg=h.seg,ids=segIdx(sg);
     if(add)ids.forEach(i=>S.sel.add(i));else S.sel=new Set(ids);S.anchor=sg.i0;if(S.cur<sg.i0||S.cur>sg.i1)S.cur=sg.i0;ensureVisible(sg.i0);
@@ -2268,6 +2420,7 @@ tlCv.addEventListener('contextmenu',e=>{e.preventDefault();blurPanel();if(!tlGeo
   if(h.ruler){const px=e.clientX-r.left;const i=S.frames.findIndex((f,k)=>f.cam&&Math.abs(tlGeom.X(S.starts[k])-px)<=7);if(i<0)return;
     return openMenu(e.clientX,e.clientY,{title:'키프레임',hint:`${i+1}번 프레임 · ${fmtS(S.starts[i])}`,cols:[[{h:'Zoom · Move',items:[{t:'이 키프레임으로 이동',f:()=>{goFrame(i);renderTimeline()}},
       {t:'키프레임 삭제',f:()=>commit(()=>{const keep=camTrack()[i];const nf={...S.frames[i]};delete nf.cam;S.frames[i]=nf;if(!camKeys())S.tf.cam=keep;CAMV++},`${i+1}번 프레임 키프레임을 지웠어요`)}]}]]})}
+  if(h.vtrack){clearAudioSel();if(h.vc)S.vSel=h.vc.id;else S.vTrack=h.t.id;renderTimeline();renderPanel();renderStage();return openMenu(e.clientX,e.clientY,vMenuDef(h.vc||null))}
   if(h.video){clearAudioSel();if(h.seg&&!S.sel.has(h.seg.i0)){S.sel=new Set(segIdx(h.seg));S.anchor=h.seg.i0;renderList()}renderTimeline();renderPanel();return openMenu(e.clientX,e.clientY,videoMenuDef(h.seg))}
   if(h.c){if(!isSelC(h.c))selectClip(h.c,false)}else if(h.t&&h.t.kind==='track'){A.multi=new Set();S.aSel=null;S.aTrack=h.t.id}else if(h.linked){A.multi=new Set();S.aSel='linked';S.aTrack=null;if(h.seg&&S.frames[h.seg.i0])A.segFid=S.frames[h.seg.i0].id}
   renderTimeline();renderPanel();openMenu(e.clientX,e.clientY,audioMenuDef())});
@@ -2420,7 +2573,9 @@ async function renderOut(rc,frames,i,W,H,o){
   const b=await getBmp(frames[i]);
   const x=rc.x;x.setTransform(1,0,0,1,0,0);x.globalCompositeOperation='source-over';x.clearRect(0,0,W,H);
   if(o.opaque){x.fillStyle='#ffffff';x.fillRect(0,0,W,H)}
-  x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';applyTransform(x,W,H,false,camTrack(frames)[i]);drawContain(x,b);x.setTransform(1,0,0,1,0,0);
+  const cam=camTrack(frames)[i];camFill(x,W,H,cam);
+  x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';applyTransform(x,W,H,false,cam);drawContain(x,b);x.setTransform(1,0,0,1,0,0);
+  if(S.vclips&&S.vclips.length){let t=0;if(o._starts)t=o._starts[i];else for(let k=0;k<i;k++)t+=frames[k].delay;await drawOverlays(x,W,H,t)}
   if(o.bar&&o._total){const end=(o._starts[i]+frames[i].delay)/o._total;const bh=Math.max(2,Math.round(Math.min(W,H)*0.012));x.fillStyle=o.barColor||'#FF2F00';x.fillRect(0,o.barPos==='top'?0:H-bh,Math.round(W*end),bh)}
 }
 const qColors=(q,red)=>clamp(Math.round((16+240*Math.pow(q/100,1.5))*(red?0.75:1)),4,256);
@@ -2493,7 +2648,7 @@ function lzwEncode(idx,mcs,thr,dist,ti,out){
    keep  : almost every pixel uses <=255 colours (a GIF with a small patch on top) -> those colours kept, the few others snap to the nearest
    quant : otherwise one palette is built from all frames */
 async function gifPalette(frames,W,H,o,job,phase){
-  if(frames.some(f=>f.alpha||aspectOff(f)))return{legacy:true};
+  if(frames.some(f=>f.alpha||aspectOff(f))||(camBg()==='transparent'&&camExposes(frames)))return{legacy:true};
   const G=await getGifenc();const rc=outCtx(W,H);prepFrames(frames,o);const n=W*H;
   const maxC=Math.min(255,qColors(o.q,o.reduce)),keepMax=o.q>=85&&!o.reduce?255:maxC;const cnt=new Map();let track=true,total=0;
   const step=Math.max(1,Math.floor(frames.length*n/1.2e6));const smp=new Uint8Array((Math.floor(frames.length*n/step)+frames.length+4)*4);let q=0,g=0;
@@ -2523,7 +2678,7 @@ function gifNear(st,k){let v=st.near.get(k);if(v!==undefined)return v;const r=k>
   for(let i=0;i<pal.length;i++){const c=pal[i];const d=(r-c[0])**2*2+(g-c[1])**2*4+(b-c[2])**2*3;if(d<bd){bd=d;best=i}}st.near.set(k,best);return best}
 /* the size estimate runs often: keep the palette while only Lossy / dithering change */
 let GP_CACHE={key:'',frames:null,pi:null};
-async function gifPaletteCached(frames,W,H,o,job,phase){const key=JSON.stringify([o.q,o.reduce,o.bar,o.barColor,o.barPos,W,H,frames.length,S.total,S.tf,camSig()]);
+async function gifPaletteCached(frames,W,H,o,job,phase){const key=JSON.stringify([o.q,o.reduce,o.bar,o.barColor,o.barPos,W,H,frames.length,S.total,S.tf,camSig(),S.vtracks,S.vclips]);
   if(GP_CACHE.key===key&&GP_CACHE.frames===frames&&GP_CACHE.pi)return GP_CACHE.pi;const pi=await gifPalette(frames,W,H,o,job,phase);GP_CACHE={key,frames,pi};return pi}
 /* one frame: find what changed, keep that box, map to the palette, LZW it */
 function gifFrame(st,px){
@@ -3035,12 +3190,13 @@ async function handleFiles(files,target){
   const items=await importFiles(files);if(!items.length)return;
   if(target==='layer')return addLayerItems(items);
   if(target==='vinsert')return insertToEditor(items);
+  if(target==='vlayer')return addVLayerItems(items);
   addToEditor(items);
 }
 function addToEditor(items){
   const fresh=S.isSample||!S.frames.length;const nf=items.flatMap(i=>i.frames);const lb=fresh?null:nextLabel();
   commit(()=>{
-    if(fresh){S.frames=[];S.W0=items[0].W;S.H0=items[0].H;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name=baseName(items[0].name);S.isSample=false;S.linked=LINKED_DEF()}
+    if(fresh){S.frames=[];S.W0=items[0].W;S.H0=items[0].H;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name=baseName(items[0].name);S.isSample=false;S.linked=LINKED_DEF();S.vtracks=[];S.vclips=[];S.vSel=null;S.vTrack=null}
     if(lb)nf.forEach(f=>{f.label=lb});
     const at=S.frames.length;S.frames.push(...nf);setSel([at],at);
   },fresh?`${nf.length}프레임을 불러왔어요`:`${nf.length}프레임을 뒤에 추가했어요${lb?` · ${LABELS[lb].t}로 표시`:''}`);
@@ -3067,6 +3223,8 @@ $('#editEmpty').onclick=()=>openFile('edit');
     loop:['Loop to end','끝까지 반복 (배경음) 켜기·끄기',''],del:['Delete','선택한 오디오 삭제','Del'],add:['Add audio','오디오 파일 불러오기','']};
   $$('[data-atool]').forEach(b=>{const t=tips[b.dataset.atool];b.dataset.tip=`${t[0]}|${t[1]}${t[2]?' · '+kb(t[2]):''}`;b.setAttribute('aria-label',t[1]);
     b.onclick=()=>{const k=b.dataset.atool,L=selClips(),c=selClip();
+      if(vFocus()){const v=selV();if(k==='copy')return vCopy(v);if(k==='paste')return vPaste();if(k==='dup')return vDup(v);if(k==='split')return vSplit(v);if(k==='trimIn')return vTrim(v,'in');if(k==='trimOut')return vTrim(v,'out');
+        if(k==='del')return v?vDelete(v):S.vTrack&&vTrackDelete(S.vTrack);if(k==='add')return openFile('vlayer');if(k==='loop')return toast('반복은 오디오 클립에서만 쓸 수 있어요');return}
       if(k==='copy')clipCopy(L);else if(k==='paste')clipPaste();else if(k==='dup')clipDuplicate(L);else if(k==='split'){S.aSel==='linked'?splitLinked():clipSplit(L,playT())}
       else if(k==='trimIn'){c&&clipTrim(c,'in',playT())}else if(k==='trimOut'){c&&clipTrim(c,'out',playT())}else if(k==='loop')clipLoop(L,!L.every(x=>x.loop));
       else if(k==='del')clipDelete(L);else if(k==='add')openFile('audio','audio/*,video/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.opus,.mp4,.mov,.webm')}})})();
@@ -3116,7 +3274,7 @@ $('#btnReset').onclick=async()=>{
     onMount:d=>{$('#rsOk',d).onchange=e=>{d.querySelector('[data-act="ok"]').disabled=!e.target.checked}}});
   if(r.act!=='ok')return;
   if(isL){lPush();L.layers=[];L.sel=null;L.sized=false;L.dur=null;L.W=1080;L.H=1080;L.t=0;lChanged();toast('Reset · 실행 취소로 되돌릴 수 있어요')}
-  else{commit(()=>{S.frames=[];S.W0=0;S.H0=0;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name='motion';S.isSample=false;S.clips=[];S.tracks=[];S.linkOff=false;S.linkedBak=null;S.linked=LINKED_DEF();S.aSel=null;S.aTrack=null;S.sel=new Set();S.cur=0},'Reset · 실행 취소로 되돌릴 수 있어요');S.view.fit=true;layoutStage()}
+  else{commit(()=>{S.frames=[];S.W0=0;S.H0=0;S.tf={rot:0,fh:false,fv:false,crop:null,outW:0,outH:0};S.name='motion';S.isSample=false;S.clips=[];S.tracks=[];S.vtracks=[];S.vclips=[];S.vSel=null;S.vTrack=null;S.linkOff=false;S.linkedBak=null;S.linked=LINKED_DEF();S.aSel=null;S.aTrack=null;S.sel=new Set();S.cur=0},'Reset · 실행 취소로 되돌릴 수 있어요');S.view.fit=true;layoutStage()}
 };
 
 /* ---------- How it works tour ---------- */
@@ -3231,6 +3389,14 @@ addEventListener('keydown',e=>{
     if(!e.altKey&&!mod&&c==='BracketRight')return go(()=>clipAlign(ac,'out',playT()));
     if(mod&&e.shiftKey&&c==='KeyD')return go(()=>clipSplit(selClips(),playT()));
   }
+  if(vFocus()){const v=selV();
+    if(e.key==='Delete'||(IS_MAC&&e.key==='Backspace'))return go(()=>v?vDelete(v):S.vTrack&&vTrackDelete(S.vTrack));
+    if(mod&&!e.shiftKey&&c==='KeyC')return go(()=>vCopy(v));
+    if(mod&&!e.shiftKey&&c==='KeyX')return go(()=>vCopy(v,true));
+    if(mod&&!e.shiftKey&&c==='KeyV')return go(()=>vPaste());
+    if(mod&&!e.shiftKey&&c==='KeyD')return go(()=>vDup(v));
+    if(mod&&e.shiftKey&&c==='KeyD')return go(()=>vSplit(v));
+    if(e.key==='Escape')return go(()=>{clearAudioSel();renderTimeline();renderPanel();renderStage()})}
   const s=()=>needSel();
   if(mod&&e.shiftKey&&c==='KeyD')return go(()=>splitVideo());
   if(mod&&e.shiftKey&&c==='KeyE')return go(exportSelPNG);
