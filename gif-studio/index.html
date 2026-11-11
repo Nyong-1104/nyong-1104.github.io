@@ -1738,9 +1738,10 @@ inner.addEventListener('pointerdown',e=>{
   const t=S.starts[S.cur]||0;const hit=S.vclips.length?vHit((e.clientX-cr.left)*k,(e.clientY-cr.top)*k,t):null;
   const redraw=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;renderStage()})};
   if(hit){const was=S.vSel;S.aSel=null;S.aTrack=null;A.multi=new Set();S.vSel=hit.id;S.vTrack=null;if(was!==hit.id){renderTimeline();renderPanel()}renderStage();
-    const c0={...hit};S.undo.push(snap());S.redo=[];inner.classList.add('panning');
-    const mv=ev=>{const dx=(ev.clientX-sx)*k,dy=(ev.clientY-sy)*k;if(!moved&&Math.abs(dx)+Math.abs(dy)<2)return;moved=true;const c=S.vclips.find(x=>x.id===hit.id);c.x=c0.x+dx/W;c.y=c0.y+dy/H;vBoxes();redraw()};
-    const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);inner.classList.remove('panning');if(!moved){S.undo.pop();return}changed();toast('레이어 위치를 옮겼어요')};
+    const p0=vProps(hit,t);let made=false;S.undo.push(snap());S.redo=[];inner.classList.add('panning');
+    const mv=ev=>{const dx=(ev.clientX-sx)*k,dy=(ev.clientY-sy)*k;if(!moved&&Math.abs(dx)+Math.abs(dy)<2)return;moved=true;const c=S.vclips.find(x=>x.id===hit.id);
+      if(vSetProps(c,{x:p0.x+dx/W,y:p0.y+dy/H},t))made=true;vBoxes();redraw()};
+    const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);inner.classList.remove('panning');if(!moved){S.undo.pop();return}changed();toast(made?`${fmtS(t)}에 키프레임을 만들었어요`:'레이어 위치를 옮겼어요')};
     addEventListener('pointermove',mv);addEventListener('pointerup',up);return}
   if(vFocus()){S.vSel=null;S.vTrack=null;renderTimeline();renderPanel();renderStage()}
   const cam=camTrack()[S.cur]||CAM0,c0={...cam};let made=false;S.undo.push(snap());S.redo=[];inner.classList.add('panning');
@@ -2017,21 +2018,38 @@ const VS=new Map();let VID=1;
 const vLen=c=>Math.max(1,c.out-c.in);
 const selV=()=>S.vSel?S.vclips.find(c=>c.id===S.vSel)||null:null;
 function vFrameAt(v,t){const st=v.starts;let lo=0,hi=st.length-1;t=clamp(t,0,v.dur-0.001);while(lo<hi){const m=(lo+hi+1)>>1;if(st[m]<=t)lo=m;else hi=m-1}return v.frames[lo]}
-function vBox(c,W,H){const v=VS.get(c.src);const bw=v?v.W:W,bh=v?v.H:H;const k=Math.min(W/bw,H/bh)*c.s;return{w:bw*k,h:bh*k,cx:W/2+c.x*W,cy:H/2+c.y*H}}
+/* ---- layer clip keyframes: c.keys = [{t, x,y,s,r,op}], t = time in the source (ms), so they stay with the picture when the clip moves or is trimmed ---- */
+const VPROPS=['x','y','s','r','op'];
+const vBase=c=>({x:c.x||0,y:c.y||0,s:c.s??1,r:c.r||0,op:c.op??1});
+const vKeys=c=>(c.keys||[]).slice().sort((a,b)=>a.t-b.t);
+const vSrcT=(c,t)=>clamp(c.in+(t-c.start),c.in,c.out);
+/* the clip's look at timeline time t */
+function vProps(c,t){const ks=vKeys(c);if(!ks.length)return vBase(c);const st=c.in+(t-c.start);
+  if(st<=ks[0].t)return{...ks[0]};const L=ks[ks.length-1];if(st>=L.t)return{...L};let k=0;while(ks[k+1].t<st)k++;
+  const a=ks[k],b=ks[k+1];let u=(st-a.t)/Math.max(1e-6,b.t-a.t);if(c.ease!=='linear')u=u*u*(3-2*u);
+  const o={t:st};for(const p of VPROPS)o[p]=p==='s'?a.s*Math.pow(b.s/a.s,u):a[p]+(b[p]-a[p])*u;return o}
+const vKeyAt=(c,st)=>(c.keys||[]).findIndex(k=>Math.abs(k.t-st)<0.5);
+/* change the look at timeline time t: with keyframes this writes (or makes) the keyframe at t. Returns true when a keyframe was made. */
+function vSetProps(c,patch,t){if(!(c.keys&&c.keys.length)){Object.assign(c,patch);return false}
+  const st=Math.round(vSrcT(c,t)),i=vKeyAt(c,st);const cur=vProps(c,c.start+(st-c.in));const nk={...cur,...patch,t:st};
+  c.keys=i>=0?c.keys.map((k,j)=>j===i?nk:k):[...c.keys,nk];return i<0}
+const vTime=()=>S.starts[S.cur]||0;
+const vCopyKeys=c=>c.keys?c.keys.map(k=>({...k})):undefined;
+function vBox(c,W,H,p=vBase(c)){const v=VS.get(c.src);const bw=v?v.W:W,bh=v?v.H:H;const k=Math.min(W/bw,H/bh)*p.s;return{w:bw*k,h:bh*k,cx:W/2+p.x*W,cy:H/2+p.y*H}}
 const vVisible=(c,t)=>{const T=S.vtracks.find(x=>x.id===c.track);return T&&!T.hide&&t>=c.start&&t<c.start+vLen(c)};
 /* draw every layer clip that is on at time t, lowest row first */
 async function drawOverlays(ctx,W,H,t,stale){
   for(let k=S.vtracks.length-1;k>=0;k--){const T=S.vtracks[k];if(T.hide)continue;
     for(const c of S.vclips){if(c.track!==T.id||t<c.start||t>=c.start+vLen(c))continue;const v=VS.get(c.src);if(!v)continue;
       let b;try{b=await getBmp(vFrameAt(v,c.in+(t-c.start)))}catch(e){continue}if(stale&&stale())return;
-      const{w,h,cx,cy}=vBox(c,W,H);ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=clamp(c.op,0,1);ctx.translate(cx,cy);if(c.r)ctx.rotate(c.r*Math.PI/180);
+      const p=vProps(c,t);const{w,h,cx,cy}=vBox(c,W,H,p);ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=clamp(p.op,0,1);ctx.translate(cx,cy);if(p.r)ctx.rotate(p.r*Math.PI/180);
       ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(b,-w/2,-h/2,w,h);ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1}}}
 /* outline of the picked layer clip on the preview (not saved) */
-function drawVSel(ctx,W,H,t){const c=selV();if(!c||!vFocus()||!vVisible(c,t))return;const{w,h,cx,cy}=vBox(c,W,H);const lw=Math.max(1.5,2/S.view.z);
-  ctx.save();ctx.translate(cx,cy);if(c.r)ctx.rotate(c.r*Math.PI/180);ctx.strokeStyle='#FF2F00';ctx.lineWidth=lw;ctx.setLineDash([6*lw,4*lw]);ctx.strokeRect(-w/2,-h/2,w,h);ctx.restore()}
+function drawVSel(ctx,W,H,t){const c=selV();if(!c||!vFocus()||!vVisible(c,t))return;const p=vProps(c,t);const{w,h,cx,cy}=vBox(c,W,H,p);const lw=Math.max(1.5,2/S.view.z);
+  ctx.save();ctx.translate(cx,cy);if(p.r)ctx.rotate(p.r*Math.PI/180);ctx.strokeStyle='#FF2F00';ctx.lineWidth=lw;ctx.setLineDash([6*lw,4*lw]);ctx.strokeRect(-w/2,-h/2,w,h);ctx.restore()}
 /* which layer clip is under an output point (top row first) */
 function vHit(px,py,t){const[W,H]=outSize();for(const T of S.vtracks){if(T.hide)continue;for(let i=S.vclips.length-1;i>=0;i--){const c=S.vclips[i];if(c.track!==T.id||!vVisible(c,t))continue;
-  const{w,h,cx,cy}=vBox(c,W,H);const a=-(c.r||0)*Math.PI/180,dx=px-cx,dy=py-cy;const lx=dx*Math.cos(a)-dy*Math.sin(a),ly=dx*Math.sin(a)+dy*Math.cos(a);if(Math.abs(lx)<=w/2&&Math.abs(ly)<=h/2)return c}}return null}
+  const p=vProps(c,t);const{w,h,cx,cy}=vBox(c,W,H,p);const a=-(p.r||0)*Math.PI/180,dx=px-cx,dy=py-cy;const lx=dx*Math.cos(a)-dy*Math.sin(a),ly=dx*Math.sin(a)+dy*Math.cos(a);if(Math.abs(lx)<=w/2&&Math.abs(ly)<=h/2)return c}}return null}
 function pickV(c){S.aSel=null;S.aTrack=null;A.multi=new Set();S.vSel=c?c.id:null;S.vTrack=c?null:S.vTrack}
 function addVTrack(){commit(()=>{const id='vt'+(VID++);S.vtracks.unshift({id,name:`Video ${S.vtracks.length+2}`,hide:false});S.vTrack=id;S.vSel=null;S.aSel=null;S.aTrack=null},'비디오 레이어를 추가했어요 · + Video로 영상을 올려 보세요')}
 /* + Video on a layer row: each file becomes a layer clip at the playhead (its sound goes in as an audio clip) */
@@ -2045,13 +2063,13 @@ function addVLayerItems(items){const T=Math.round(clamp(playT(),0,Math.max(0,S.t
     S.vSel=last.id;S.vTrack=null;S.aSel=null;S.aTrack=null},`${items.map(i=>i.name).join(', ')}을 ${fmtS(T)} 위치에 레이어로 올렸어요`);
   if(snd)toast('레이어 영상의 소리는 오디오 클립으로 같이 들어갔어요 · 필요 없으면 지우면 돼요')}
 function vSplit(c,T=playT()){if(!c)return toast('나눌 레이어 클립을 골라 주세요');const d=Math.round(T-c.start);if(d<20||d>vLen(c)-20)return toast('재생 위치를 클립 안쪽에 두고 나눠 주세요');
-  commit(()=>{const b={...c,id:'v'+(VID++),start:c.start+d,in:c.in+d};S.vclips.push(b);S.vclips.find(x=>x.id===c.id).out=c.in+d;S.vSel=b.id},`${fmtS(T)}에서 레이어 클립을 나눴어요`)}
+  commit(()=>{const b={...c,id:'v'+(VID++),start:c.start+d,in:c.in+d,keys:vCopyKeys(c)};S.vclips.push(b);S.vclips.find(x=>x.id===c.id).out=c.in+d;S.vSel=b.id},`${fmtS(T)}에서 레이어 클립을 나눴어요`)}
 function vDelete(c){if(!c)return;commit(()=>{S.vclips=S.vclips.filter(x=>x.id!==c.id);S.vSel=null;S.vTrack=c.track},'레이어 클립을 지웠어요')}
-function vCopy(c,cut){if(!c)return;A.vcb={...c};if(cut)vDelete(c);else toast('레이어 클립을 복사했어요')}
+function vCopy(c,cut){if(!c)return;A.vcb={...c,keys:vCopyKeys(c)};if(cut)vDelete(c);else toast('레이어 클립을 복사했어요')}
 function vPaste(){const cb=A.vcb;if(!cb)return toast('복사한 레이어 클립이 없어요');const tid=S.vTrack||selV()?.track||cb.track;
   commit(()=>{const tr=S.vtracks.some(t=>t.id===tid)?tid:(S.vtracks[0]||{}).id;if(!tr){const id='vt'+(VID++);S.vtracks.unshift({id,name:'Video 2',hide:false})}
-    const c={...cb,id:'v'+(VID++),track:tr||S.vtracks[0].id,start:Math.round(playT())};S.vclips.push(c);S.vSel=c.id;S.vTrack=null},`${fmtS(playT())} 위치에 붙여넣었어요`)}
-function vDup(c){if(!c)return;commit(()=>{const b={...c,id:'v'+(VID++),start:c.start+vLen(c)};S.vclips.push(b);S.vSel=b.id},'바로 뒤에 복제했어요')}
+    const c={...cb,id:'v'+(VID++),track:tr||S.vtracks[0].id,start:Math.round(playT()),keys:vCopyKeys(cb)};S.vclips.push(c);S.vSel=c.id;S.vTrack=null},`${fmtS(playT())} 위치에 붙여넣었어요`)}
+function vDup(c){if(!c)return;commit(()=>{const b={...c,id:'v'+(VID++),start:c.start+vLen(c),keys:vCopyKeys(c)};S.vclips.push(b);S.vSel=b.id},'바로 뒤에 복제했어요')}
 function vTrim(c,side,T=playT()){if(!c)return;const d=Math.round(T-c.start);if(d<=0||d>=vLen(c))return toast('재생 위치를 클립 안쪽에 두세요');
   commit(()=>{const x=S.vclips.find(o=>o.id===c.id);if(side==='in'){x.in+=d;x.start+=d}else x.out=x.in+d},side==='in'?'앞부분을 잘라냈어요':'뒷부분을 잘라냈어요')}
 function vTrackMove(id,d){const i=S.vtracks.findIndex(t=>t.id===id),j=i+d;if(i<0||j<0||j>=S.vtracks.length)return;commit(()=>{const a=S.vtracks.slice();[a[i],a[j]]=[a[j],a[i]];S.vtracks=a},d<0?'레이어를 앞으로 올렸어요':'레이어를 뒤로 내렸어요')}
@@ -2065,13 +2083,20 @@ function vPanelHTML(){const c=selV();const[W,H]=outSize();
       <label class="chk"><input type="checkbox" id="vtHide" ${T.hide?'checked':''}>숨기기</label>
       <div class="row-btns"><button type="button" class="btn" id="vtUp" ${i===0?'disabled':''}>앞으로 (위로)</button><button type="button" class="btn" id="vtDown" ${i===S.vtracks.length-1?'disabled':''}>뒤로 (아래로)</button></div>
       <button type="button" class="btn" id="vtDel" style="width:100%">레이어 삭제</button></div>`}
-  const v=VS.get(c.src);
-  return`<div class="sec"><h3>${icon(ICO_FILM)}<span class="nm1">${esc(c.name)}</span>${qh('Layer clip','미리보기에서 끌면 위치가 옮겨지고, X·Y 숫자도 같이 바뀌어요. 0, 0이 가운데예요.\n크기 100%는 화면에 꽉 맞는 크기예요.\n타임라인에서 끌면 시간 위치가 옮겨지고, 양 끝을 끌면 앞뒤를 자를 수 있어요.')}</h3>
+  const v=VS.get(c.src);const t=vTime(),p=vProps(c,t),inside=t>=c.start&&t<c.start+vLen(c);const ks=vKeys(c).filter(k=>k.t>=c.in&&k.t<=c.out),nk=ks.length;
+  const st=Math.round(vSrcT(c,t)),onKey=nk&&vKeyAt(c,st)>=0;const kt=k=>c.start+(k.t-c.in);
+  const prev=[...ks].reverse().find(k=>kt(k)<t-0.5),next=ks.find(k=>kt(k)>t+0.5);
+  return`<div class="sec"><h3>${icon(ICO_FILM)}<span class="nm1">${esc(c.name)}</span>${qh('Layer clip','미리보기에서 끌면 위치가 옮겨지고, X·Y 숫자도 같이 바뀌어요. 0, 0이 가운데예요.\n크기 100%는 화면에 꽉 맞는 크기예요.\n타임라인에서 끌면 시간 위치가 옮겨지고, 양 끝을 끌면 앞뒤를 자를 수 있어요.\n움직이게 하려면 재생 위치를 클립 안에 두고 ◇ Add keyframe을 누른 뒤, 다른 시간으로 가서 위치·크기·회전·불투명도를 바꾸세요. 그 시간에 키프레임이 자동으로 생겨요.\n키프레임은 클립에 붙어 있어서 클립을 옮기거나 나눠도 움직임이 그대로 따라가요.')}</h3>
     <div class="kv"><span>위치</span><b>${fmtS(c.start)} ~ ${fmtS(c.start+vLen(c))}</b></div>
     <div class="kv"><span>길이</span><b>${fmtS(vLen(c))}${v?` / 원본 ${fmtS(v.dur)}`:''}</b></div>
-    <div class="grid3"><label class="fld"><span>X (px)</span><input class="in" id="vcX" type="number" step="1" value="${Math.round(c.x*W)}"></label><label class="fld"><span>Y (px)</span><input class="in" id="vcY" type="number" step="1" value="${Math.round(c.y*H)}"></label><label class="fld"><span>회전 (°)</span><input class="in" id="vcR" type="number" step="1" value="${Math.round((c.r||0)*10)/10}"></label></div>
-    <div class="fld"><span class="vhead">크기<span class="vnum"><input class="in" id="vcSN" type="number" min="5" max="400" step="5" value="${Math.round(c.s*100)}">%</span></span><div class="srange"><input type="range" id="vcS" min="5" max="400" value="${Math.round(c.s*100)}"></div></div>
-    <div class="fld"><span class="vhead">불투명도<span class="vnum"><input class="in" id="vcON" type="number" min="0" max="100" step="5" value="${Math.round(c.op*100)}">%</span></span><div class="srange"><input type="range" id="vcO" min="0" max="100" value="${Math.round(c.op*100)}"></div></div>
+    ${nk?`<div class="kv"><span>지금 값</span><b>${inside?`${fmtS(t)}${onKey?' · ◆ 키프레임':' · 키프레임 사이'}`:'재생 위치가 클립 밖이에요'}</b></div>`:''}
+    <div class="grid3"><label class="fld"><span>X (px)</span><input class="in" id="vcX" type="number" step="1" value="${Math.round(p.x*W)}"></label><label class="fld"><span>Y (px)</span><input class="in" id="vcY" type="number" step="1" value="${Math.round(p.y*H)}"></label><label class="fld"><span>회전 (°)</span><input class="in" id="vcR" type="number" step="1" value="${Math.round((p.r||0)*10)/10}"></label></div>
+    <div class="fld"><span class="vhead">크기<span class="vnum"><input class="in" id="vcSN" type="number" min="5" max="400" step="5" value="${Math.round(p.s*100)}">%</span></span><div class="srange"><input type="range" id="vcS" min="5" max="400" value="${Math.round(p.s*100)}"></div></div>
+    <div class="fld"><span class="vhead">불투명도<span class="vnum"><input class="in" id="vcON" type="number" min="0" max="100" step="5" value="${Math.round(p.op*100)}">%</span></span><div class="srange"><input type="range" id="vcO" min="0" max="100" value="${Math.round(p.op*100)}"></div></div>
+    <div class="kfrow"><button type="button" class="btn" id="vkTog" ${inside?'':'disabled'} ${inside?'':'data-tip="재생 위치를 클립 안으로 옮기면 키프레임을 만들 수 있어요"'}>${onKey?'◆ Delete keyframe':'◇ Add keyframe'}</button><button type="button" class="btn" id="vkPrev" ${prev?'':'disabled'} data-tip="이전 키프레임">◀</button><button type="button" class="btn" id="vkNext" ${next?'':'disabled'} data-tip="다음 키프레임">▶</button></div>
+    ${nk?`<div class="kv"><span>키프레임</span><b>${nk}개</b></div>`:''}
+    ${nk>=2?`<label class="fld"><span>움직임</span><select class="in" id="vkEase"><option value="smooth"${c.ease!=='linear'?' selected':''}>부드럽게 (천천히 시작해서 천천히 멈춤)</option><option value="linear"${c.ease==='linear'?' selected':''}>일정하게</option></select></label>`:''}
+    ${nk?'<button type="button" class="btn" id="vkClear" style="width:100%">키프레임 모두 지우기</button>':''}
     <div class="row-btns"><button type="button" class="btn" id="vcCenter">가운데로</button><button type="button" class="btn" id="vcFit">화면에 맞추기</button></div>
     <div class="row-btns"><button type="button" class="btn" id="vcSplit">나누기</button><button type="button" class="btn" id="vcDel">삭제</button></div></div>`}
 function bindVPanel(){const c=selV();
@@ -2079,17 +2104,28 @@ function bindVPanel(){const c=selV();
     $('#vtName').onchange=e=>commit(()=>{S.vtracks.find(t=>t.id===T.id).name=e.target.value.trim()||T.name},'이름을 바꿨어요');
     $('#vtHide').onchange=e=>commit(()=>{S.vtracks.find(t=>t.id===T.id).hide=e.target.checked},e.target.checked?'레이어를 숨겼어요':'레이어를 다시 보여요');
     $('#vtUp').onclick=()=>vTrackMove(T.id,-1);$('#vtDown').onclick=()=>vTrackMove(T.id,1);$('#vtDel').onclick=()=>vTrackDelete(T.id);return}
-  const[W,H]=outSize();const set=(p,msg)=>commit(()=>Object.assign(S.vclips.find(x=>x.id===c.id),p),msg);
+  const[W,H]=outSize();const live=()=>S.vclips.find(x=>x.id===c.id);
+  const keyMsg=m=>(c.keys&&c.keys.length&&vKeyAt(c,Math.round(vSrcT(c,vTime())))<0)?`${fmtS(vTime())}에 키프레임을 만들었어요 (${m})`:m;
+  const set=(p,msg)=>{const m=keyMsg(msg);commit(()=>vSetProps(live(),p,vTime()),m)};
   const num=(id,fn,msg)=>{const e=$('#'+id);e.onchange=()=>{const v=+e.value;if(!isFinite(v))return;e.blur();set(fn(v),msg(v))};e.onkeydown=ev=>{if(ev.key==='Enter')e.onchange()}};
   num('vcX',v=>({x:v/W}),v=>`X ${Math.round(v)}px`);num('vcY',v=>({y:v/H}),v=>`Y ${Math.round(v)}px`);num('vcR',v=>({r:clamp(v,-360,360)}),v=>`회전 ${clamp(v,-360,360)}°`);
-  const slide=(rid,nid,key,lo,hi,msg)=>{const r=$('#'+rid),n=$('#'+nid);springRange(r);
-    r.oninput=()=>{if(!r._u){r._u=true;S.undo.push(snap());S.redo=[]}S.vclips.find(x=>x.id===c.id)[key]=+r.value/100;n.value=r.value;renderStage()};
-    r.onchange=()=>{r._u=false;r.blur();changed()};
+  const slide=(rid,nid,key,lo,hi,msg)=>{const r=$('#'+rid),n=$('#'+nid);springRange(r);let made=false;
+    r.oninput=()=>{if(!r._u){r._u=true;made=false;S.undo.push(snap());S.redo=[]}if(vSetProps(live(),{[key]:+r.value/100},vTime()))made=true;n.value=r.value;renderStage()};
+    r.onchange=()=>{r._u=false;r.blur();changed();if(made)toast(`${fmtS(vTime())}에 키프레임을 만들었어요`)};
     n.onchange=()=>{n.blur();const v=clamp(Math.round(+n.value||0),lo,hi);set({[key]:v/100},msg(v))}};
   slide('vcS','vcSN','s',5,400,v=>`크기 ${v}%`);slide('vcO','vcON','op',0,100,v=>`불투명도 ${v}%`);
   $('#vcCenter').onclick=()=>set({x:0,y:0},'가운데로 옮겼어요');$('#vcFit').onclick=()=>set({x:0,y:0,s:1,r:0},'화면에 맞췄어요');
-  $('#vcSplit').onclick=()=>vSplit(c);$('#vcDel').onclick=()=>vDelete(c)}
-function vBoxes(){const c=selV();if(!c||!$('#vcX'))return;const[W,H]=outSize();const put=(id,v)=>{const e=$('#'+id);if(e&&document.activeElement!==e)e.value=v};put('vcX',Math.round(c.x*W));put('vcY',Math.round(c.y*H))}
+  $('#vcSplit').onclick=()=>vSplit(c);$('#vcDel').onclick=()=>vDelete(c);
+  /* keyframes */
+  const kt=k=>c.start+(k.t-c.in);const ks=vKeys(c).filter(k=>k.t>=c.in&&k.t<=c.out);
+  $('#vkTog').onclick=()=>{const t=vTime(),st=Math.round(vSrcT(c,t));const i=vKeyAt(c,st);
+    if(i>=0)commit(()=>{const x=live();const keep=vProps(x,t);x.keys=x.keys.filter((_,j)=>j!==i);if(!x.keys.length){Object.assign(x,{x:keep.x,y:keep.y,s:keep.s,r:keep.r,op:keep.op});delete x.keys}},`${fmtS(t)} 키프레임을 지웠어요`);
+    else{const first=!(c.keys&&c.keys.length);commit(()=>{const x=live();const v=vProps(x,t);x.keys=[...(x.keys||[]),{t:st,x:v.x,y:v.y,s:v.s,r:v.r,op:v.op}]},first?`${fmtS(t)}에 첫 키프레임을 만들었어요 · 다른 시간으로 가서 위치·크기·회전·불투명도를 바꿔 보세요`:`${fmtS(t)}에 키프레임을 만들었어요`)}};
+  const jump=d=>{const t=vTime();const k=d<0?[...ks].reverse().find(k=>kt(k)<t-0.5):ks.find(k=>kt(k)>t+0.5);if(k){seekTime(kt(k));renderTimeline()}};
+  $('#vkPrev').onclick=()=>jump(-1);$('#vkNext').onclick=()=>jump(1);
+  const ez=$('#vkEase');if(ez)ez.onchange=()=>commit(()=>{live().ease=ez.value},ez.value==='linear'?'키프레임 사이를 일정하게 움직여요':'키프레임 사이를 부드럽게 움직여요');
+  const kc=$('#vkClear');if(kc)kc.onclick=()=>commit(()=>{const x=live();const keep=vProps(x,vTime());Object.assign(x,{x:keep.x,y:keep.y,s:keep.s,r:keep.r,op:keep.op});delete x.keys;delete x.ease},'키프레임을 모두 지웠어요 · 지금 값으로 고정돼요')}
+function vBoxes(){const c=selV();if(!c||!$('#vcX'))return;const[W,H]=outSize();const p=vProps(c,vTime());const put=(id,v)=>{const e=$('#'+id);if(e&&document.activeElement!==e)e.value=v};put('vcX',Math.round(p.x*W));put('vcY',Math.round(p.y*H))}
 /* drag a layer clip on the timeline: move (also to another layer row) or trim an end */
 function vclipDrag(e,c,edge,r){const g=tlGeom;S.undo.push(snap());S.redo=[];let moved=false;const c0={...c},sx=e.clientX,sy=e.clientY,v=VS.get(c.src);
   const marks=[0,S.total,playT(),...S.vclips.filter(o=>o.id!==c.id).flatMap(o=>[o.start,o.start+vLen(o)]),...videoSegs().map(x=>x.start)];
@@ -2248,7 +2284,10 @@ function renderTimeline(){
         c.save();c.beginPath();c.roundRect(x0,y+5,Math.max(2,x1-x0),th,6);c.fillStyle='#3a3550';c.fill();c.clip();if(t.t.hide)c.globalAlpha=.35;
         if(v)for(let x=x0;x<x1;x+=tw){const st=vc.in+((x+Math.min(tw,x1-x)/2)-x0)/k;const im=thumbImg(vFrameAt(v,st));if(im)c.drawImage(im,x,y+5,tw,th);c.fillStyle='rgba(0,0,0,.25)';c.fillRect(Math.round(x+tw)-.5,y+5,1,th)}
         c.globalAlpha=1;c.fillStyle='rgba(0,0,0,.45)';c.fillRect(x0,y+5,Math.min(x1-x0,c.measureText(vc.name).width+12),15);c.fillStyle='#fff';c.font=`600 10px ${F}`;c.textBaseline='middle';c.fillText(vc.name,x0+6,y+12.5);
-        c.restore();if(vc.id===S.vSel&&vFocus()){c.strokeStyle='#FF2F00';c.lineWidth=2;c.beginPath();c.roundRect(x0+1,y+6,Math.max(2,x1-x0-2),th-2,5);c.stroke();c.lineWidth=1}}
+        c.restore();if(vc.id===S.vSel&&vFocus()){c.strokeStyle='#FF2F00';c.lineWidth=2;c.beginPath();c.roundRect(x0+1,y+6,Math.max(2,x1-x0-2),th-2,5);c.stroke();c.lineWidth=1}
+        /* keyframes on the clip */
+        for(const kf of vc.keys||[]){if(kf.t<vc.in||kf.t>vc.out)continue;const kx=X(vc.start+kf.t-vc.in),ky=y+ROW-11;c.fillStyle='#FF2F00';c.strokeStyle='#fff';c.lineWidth=1.5;
+          c.beginPath();c.moveTo(kx,ky-5);c.lineTo(kx+5,ky);c.lineTo(kx,ky+5);c.lineTo(kx-5,ky);c.closePath();c.fill();c.stroke();c.lineWidth=1}}
       return}
     if(t.kind==='video'){const vs=videoSegs(),th=ROW-10,tw=Math.max(10,th*(S.W0&&S.H0?S.W0/S.H0:1));
       vs.forEach(sg=>{const x0=X(sg.start)+(sg.k?1.5:0),x1=X(sg.end)-(sg.k<vs.length-1?1.5:0);if(x1-x0<1)return;
@@ -2420,7 +2459,12 @@ tlCv.addEventListener('contextmenu',e=>{e.preventDefault();blurPanel();if(!tlGeo
   if(h.ruler){const px=e.clientX-r.left;const i=S.frames.findIndex((f,k)=>f.cam&&Math.abs(tlGeom.X(S.starts[k])-px)<=7);if(i<0)return;
     return openMenu(e.clientX,e.clientY,{title:'키프레임',hint:`${i+1}번 프레임 · ${fmtS(S.starts[i])}`,cols:[[{h:'Zoom · Move',items:[{t:'이 키프레임으로 이동',f:()=>{goFrame(i);renderTimeline()}},
       {t:'키프레임 삭제',f:()=>commit(()=>{const keep=camTrack()[i];const nf={...S.frames[i]};delete nf.cam;S.frames[i]=nf;if(!camKeys())S.tf.cam=keep;CAMV++},`${i+1}번 프레임 키프레임을 지웠어요`)}]}]]})}
-  if(h.vtrack){clearAudioSel();if(h.vc)S.vSel=h.vc.id;else S.vTrack=h.t.id;renderTimeline();renderPanel();renderStage();return openMenu(e.clientX,e.clientY,vMenuDef(h.vc||null))}
+  if(h.vtrack){clearAudioSel();if(h.vc)S.vSel=h.vc.id;else S.vTrack=h.t.id;
+    const vc=h.vc,px=e.clientX-r.left,kf=vc&&(vc.keys||[]).find(k=>k.t>=vc.in&&k.t<=vc.out&&Math.abs(tlGeom.X(vc.start+k.t-vc.in)-px)<=7);
+    renderTimeline();renderPanel();renderStage();
+    if(kf){const T=vc.start+kf.t-vc.in;return openMenu(e.clientX,e.clientY,{title:'키프레임',hint:`${vc.name} · ${fmtS(T)}`,cols:[[{h:'Layer clip',items:[{t:'이 키프레임으로 이동',f:()=>{seekTime(T);renderTimeline()}},
+      {t:'키프레임 삭제',f:()=>commit(()=>{const x=S.vclips.find(o=>o.id===vc.id);const keep=vProps(x,T);x.keys=x.keys.filter(k=>k!==kf&&Math.abs(k.t-kf.t)>=0.5);if(!x.keys.length){Object.assign(x,{x:keep.x,y:keep.y,s:keep.s,r:keep.r,op:keep.op});delete x.keys}},`${fmtS(T)} 키프레임을 지웠어요`)}]}]]})}
+    return openMenu(e.clientX,e.clientY,vMenuDef(h.vc||null))}
   if(h.video){clearAudioSel();if(h.seg&&!S.sel.has(h.seg.i0)){S.sel=new Set(segIdx(h.seg));S.anchor=h.seg.i0;renderList()}renderTimeline();renderPanel();return openMenu(e.clientX,e.clientY,videoMenuDef(h.seg))}
   if(h.c){if(!isSelC(h.c))selectClip(h.c,false)}else if(h.t&&h.t.kind==='track'){A.multi=new Set();S.aSel=null;S.aTrack=h.t.id}else if(h.linked){A.multi=new Set();S.aSel='linked';S.aTrack=null;if(h.seg&&S.frames[h.seg.i0])A.segFid=S.frames[h.seg.i0].id}
   renderTimeline();renderPanel();openMenu(e.clientX,e.clientY,audioMenuDef())});
