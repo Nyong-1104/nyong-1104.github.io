@@ -1428,10 +1428,10 @@ function syncFocus(){const f=audioFocus()?'audio':vFocus()?'vlayer':'frame';cons
 function camHTML(){if(!S.frames.length)return'';const cam=camTrack()[S.cur]||CAM0,zp=Math.round(cam.z*100),f=S.frames[S.cur],nk=S.frames.filter(x=>x.cam).length;
   const[W,H]=outSize();const bg=camBg();const moved=!camIdle(camClamp(S.tf.cam||CAM0));
   const prev=S.frames.findLastIndex((x,i)=>i<S.cur&&x.cam),next=S.frames.findIndex((x,i)=>i>S.cur&&x.cam);
-  return`<div class="sec" id="secCam"><h3>${icon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/>')}Zoom · Move${qh('Zoom · Move','출력 크기는 그대로 두고, 그 안에서 영상을 키우거나(최대 400%) 줄이고(최소 5%), 옮기고, 돌려요.\n미리보기를 드래그하면 위치가 옮겨지고 X·Y 숫자도 같이 바뀌어요. 같은 위치로 다시 맞추려면 숫자를 그대로 넣으면 돼요. 0, 0이 가운데예요.\n줄이거나 옮기거나 돌려서 비는 곳은 "빈 곳" 색으로 채워져요.\n시간에 따라 바꾸려면 ◇ Add keyframe을 누르고, 다른 프레임으로 가서 확대·위치·회전을 바꾸세요. 그 프레임에 키프레임이 자동으로 생기고, 사이는 자연스럽게 이어져요.\n키프레임은 프레임에 붙어 있어서 프레임을 옮기거나 속도를 바꿔도 같이 따라가요.')}</h3>
+  return`<div class="sec" id="secCam"><h3>${icon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/>')}Zoom · Move${qh('Zoom · Move','출력 크기는 그대로 두고, 그 안에서 영상을 키우거나(최대 400%) 줄이고(최소 5%), 옮기고, 돌려요.\n미리보기를 드래그하면 위치가 옮겨지고 X·Y 숫자도 같이 바뀌어요. 같은 위치로 다시 맞추려면 숫자를 그대로 넣으면 돼요. 0, 0이 가운데예요.\n줄이거나 옮기거나 돌려서 비는 곳은 Background 색으로 채워져요.\n시간에 따라 바꾸려면 ◇ Add keyframe을 누르고, 다른 프레임으로 가서 확대·위치·회전을 바꾸세요. 그 프레임에 키프레임이 자동으로 생기고, 사이는 자연스럽게 이어져요.\n키프레임은 프레임에 붙어 있어서 프레임을 옮기거나 속도를 바꿔도 같이 따라가요.')}</h3>
     <div class="fld"><span class="vhead">Zoom${nk?`<small>${f.cam?`◆ ${S.cur+1}번 키프레임`:`${S.cur+1}번 · 키프레임 사이`}</small>`:''}<span class="vnum"><input class="in" id="camZN" type="number" min="5" max="400" step="5" value="${zp}" aria-label="Zoom %">%</span></span><div class="srange"><input type="range" id="camZ" min="5" max="400" value="${zp}" aria-label="Zoom"></div></div>
     <div class="grid3"><label class="fld"><span>X (px)</span><input class="in" id="camX" type="number" step="1" value="${Math.round(cam.ox*W)}"></label><label class="fld"><span>Y (px)</span><input class="in" id="camY" type="number" step="1" value="${Math.round(cam.oy*H)}"></label><label class="fld"><span>회전 (°)</span><input class="in" id="camR" type="number" step="1" min="-360" max="360" value="${Math.round(cam.r*10)/10}"></label></div>
-    <div class="szrow"><span class="lbl2">빈 곳${qh('빈 곳','줄이거나 옮기거나 돌려서 영상이 덮지 않는 곳의 색이에요.\n투명은 GIF·WebP·PNG로 저장할 때만 투명하게 나오고, MP4·WebM은 흰색으로 채워져요.')}</span><span class="bgpick"><input type="color" id="camBg" value="${bg==='transparent'?'#000000':bg}" ${bg==='transparent'?'disabled':''} aria-label="빈 곳 색"><label class="chk"><input type="checkbox" id="camBgT" ${bg==='transparent'?'checked':''}>투명</label></span></div>
+    <div class="szrow"><span class="lbl2">Background${qh('Background','줄이거나 옮기거나 돌려서 영상이 덮지 않는 곳의 색이에요.\n투명은 GIF·WebP·PNG로 저장할 때만 투명하게 나오고, MP4·WebM은 흰색으로 채워져요.')}</span><span class="bgpick"><input type="color" id="camBg" value="${bg==='transparent'?'#000000':bg}" ${bg==='transparent'?'disabled':''} aria-label="Background"><label class="chk"><input type="checkbox" id="camBgT" ${bg==='transparent'?'checked':''}>투명</label></span></div>
     <p class="note">미리보기를 드래그하면 위치가 옮겨져요.${nk?' 다른 프레임에서 바꾸면 그 프레임에 키프레임이 생겨요.':''}</p>
     <div class="kfrow"><button type="button" class="btn" id="kfTog">${f.cam?'◆ Delete keyframe':'◇ Add keyframe'}</button><button type="button" class="btn" id="kfPrev" ${prev<0?'disabled':''} data-tip="이전 키프레임">◀</button><button type="button" class="btn" id="kfNext" ${next<0?'disabled':''} data-tip="다음 키프레임">▶</button></div>
     ${nk?`<div class="kv"><span>키프레임</span><b>${nk}개</b></div>`:''}
@@ -1445,11 +1445,12 @@ function bindCam(){const zr=$('#camZ'),zn=$('#camZN');if(!zr)return;springRange(
   const keyMsg=m=>camKeys()&&!S.frames[S.cur].cam?`${S.cur+1}번 프레임에 키프레임을 만들었어요 (${m})`:m;
   zr.oninput=()=>{if(!zr._u){zr._u=true;made=false;S.undo.push(snap());S.redo=[]}if(camSet({z:+zr.value/100}))made=true;zn.value=zr.value;renderStage()};
   zr.onchange=()=>{zr._u=false;zr.blur();changed();if(made)toast(`${S.cur+1}번 프레임에 키프레임을 만들었어요`)};
-  zn.onchange=()=>{zn.blur();const v=clamp(Math.round(+zn.value||100),5,400);commit(()=>camSet({z:v/100}),keyMsg(`확대 ${v}%`))};
-  const num=(id,fn,msg)=>{const e=$('#'+id);e.onchange=()=>{const v=+e.value;if(!isFinite(v))return;e.blur();commit(()=>camSet(fn(v)),keyMsg(msg(v)))};e.onkeydown=ev=>{if(ev.key==='Enter')e.onchange()}};
+  zn.onkeydown=ev=>{if(ev.key==='Enter')zn.blur()};
+  zn.onchange=()=>{const v=clamp(Math.round(+zn.value||100),5,400);commit(()=>camSet({z:v/100}),keyMsg(`확대 ${v}%`))};
+  const num=(id,fn,msg)=>{const e=$('#'+id);e.onchange=()=>{const v=+e.value;if(!isFinite(v))return;commit(()=>camSet(fn(v)),keyMsg(msg(v)))};e.onkeydown=ev=>{if(ev.key==='Enter')e.blur()}};
   num('camX',v=>({ox:v/W}),v=>`X ${Math.round(v)}px`);num('camY',v=>({oy:v/H}),v=>`Y ${Math.round(v)}px`);num('camR',v=>({r:clamp(v,-360,360)}),v=>`회전 ${clamp(v,-360,360)}°`);
-  $('#camBg').onchange=e=>commit(()=>{S.tf.camBg=e.target.value;CAMV++},'빈 곳 색을 바꿨어요');
-  $('#camBgT').onchange=e=>commit(()=>{S.tf.camBg=e.target.checked?'transparent':($('#camBg').value||'#000000');CAMV++},e.target.checked?'빈 곳을 투명으로 했어요':'빈 곳을 색으로 채워요');
+  $('#camBg').onchange=e=>commit(()=>{S.tf.camBg=e.target.value;CAMV++},'Background 색을 바꿨어요');
+  $('#camBgT').onchange=e=>commit(()=>{S.tf.camBg=e.target.checked?'transparent':($('#camBg').value||'#000000');CAMV++},e.target.checked?'Background를 투명으로 했어요':'Background를 색으로 채워요');
   $('#kfTog').onclick=()=>{const i=S.cur,f=S.frames[i];if(!f)return;
     if(f.cam)commit(()=>{const keep=camTrack()[i];const nf={...S.frames[i]};delete nf.cam;S.frames[i]=nf;if(!camKeys())S.tf.cam=keep;CAMV++},`${i+1}번 프레임 키프레임을 지웠어요`);
     else{const first=!camKeys();commit(()=>{S.frames[i]={...f,cam:camTrack()[i]};CAMV++},first?`${i+1}번 프레임에 첫 키프레임을 만들었어요 · 다른 프레임으로 가서 확대·위치·회전을 바꿔 보세요`:`${i+1}번 프레임에 키프레임을 만들었어요`)}};
@@ -1457,10 +1458,12 @@ function bindCam(){const zr=$('#camZ'),zn=$('#camZN');if(!zr)return;springRange(
   $('#kfPrev').onclick=()=>jump(-1);$('#kfNext').onclick=()=>jump(1);
   const ez=$('#kfEase');if(ez)ez.onchange=()=>commit(()=>{S.tf.camEase=ez.value;CAMV++},ez.value==='linear'?'키프레임 사이를 일정하게 움직여요':'키프레임 사이를 부드럽게 움직여요');
   const rs=$('#camReset');if(rs)rs.onclick=()=>commit(()=>{S.frames=S.frames.map(f=>{if(!f.cam)return f;const n={...f};delete n.cam;return n});delete S.tf.cam;delete S.tf.camEase;CAMV++},'Zoom · Move를 초기화했어요')}
+/* while a number box has focus the panel is not rebuilt (so ↑↓ keep stepping the value); rebuild once focus leaves the panel */
+$('#panel').addEventListener('focusout',e=>{if(!A.panelDirty)return;const t=e.relatedTarget;if(t&&$('#panel').contains(t))return;A.panelDirty=false;setTimeout(()=>{const a=document.activeElement;if(!(a&&$('#panel').contains(a)&&a.matches('input,select')))renderPanel()},0)});
 function renderPanel(){
   if(S.mode==='layer')return renderLayerPanel();
   const p=$('#panel');const[W,H]=outSize();const[RW,RH]=rotSize();
-  if(document.activeElement&&p.contains(document.activeElement)&&document.activeElement.matches('input,select'))return softPanel();
+  if(document.activeElement&&p.contains(document.activeElement)&&document.activeElement.matches('input,select')){A.panelDirty=true;return softPanel()}
   syncFocus();
   if(audioFocus()){p.innerHTML=audioPanelHTML();bindAudioPanel();return}
   if(vFocus()){p.innerHTML=vPanelHTML();bindVPanel();return}
@@ -2107,12 +2110,13 @@ function bindVPanel(){const c=selV();
   const[W,H]=outSize();const live=()=>S.vclips.find(x=>x.id===c.id);
   const keyMsg=m=>(c.keys&&c.keys.length&&vKeyAt(c,Math.round(vSrcT(c,vTime())))<0)?`${fmtS(vTime())}에 키프레임을 만들었어요 (${m})`:m;
   const set=(p,msg)=>{const m=keyMsg(msg);commit(()=>vSetProps(live(),p,vTime()),m)};
-  const num=(id,fn,msg)=>{const e=$('#'+id);e.onchange=()=>{const v=+e.value;if(!isFinite(v))return;e.blur();set(fn(v),msg(v))};e.onkeydown=ev=>{if(ev.key==='Enter')e.onchange()}};
+  const num=(id,fn,msg)=>{const e=$('#'+id);e.onchange=()=>{const v=+e.value;if(!isFinite(v))return;set(fn(v),msg(v))};e.onkeydown=ev=>{if(ev.key==='Enter')e.blur()}};
   num('vcX',v=>({x:v/W}),v=>`X ${Math.round(v)}px`);num('vcY',v=>({y:v/H}),v=>`Y ${Math.round(v)}px`);num('vcR',v=>({r:clamp(v,-360,360)}),v=>`회전 ${clamp(v,-360,360)}°`);
   const slide=(rid,nid,key,lo,hi,msg)=>{const r=$('#'+rid),n=$('#'+nid);springRange(r);let made=false;
     r.oninput=()=>{if(!r._u){r._u=true;made=false;S.undo.push(snap());S.redo=[]}if(vSetProps(live(),{[key]:+r.value/100},vTime()))made=true;n.value=r.value;renderStage()};
     r.onchange=()=>{r._u=false;r.blur();changed();if(made)toast(`${fmtS(vTime())}에 키프레임을 만들었어요`)};
-    n.onchange=()=>{n.blur();const v=clamp(Math.round(+n.value||0),lo,hi);set({[key]:v/100},msg(v))}};
+    n.onkeydown=ev=>{if(ev.key==='Enter')n.blur()};
+    n.onchange=()=>{const v=clamp(Math.round(+n.value||0),lo,hi);set({[key]:v/100},msg(v))}};
   slide('vcS','vcSN','s',5,400,v=>`크기 ${v}%`);slide('vcO','vcON','op',0,100,v=>`불투명도 ${v}%`);
   $('#vcCenter').onclick=()=>set({x:0,y:0},'가운데로 옮겼어요');$('#vcFit').onclick=()=>set({x:0,y:0,s:1,r:0},'화면에 맞췄어요');
   $('#vcSplit').onclick=()=>vSplit(c);$('#vcDel').onclick=()=>vDelete(c);
