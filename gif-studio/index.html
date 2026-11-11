@@ -1428,7 +1428,7 @@ function syncFocus(){const f=audioFocus()?'audio':vFocus()?'vlayer':'frame';cons
 function camHTML(){if(!S.frames.length)return'';const cam=camTrack()[S.cur]||CAM0,zp=Math.round(cam.z*100),f=S.frames[S.cur],nk=S.frames.filter(x=>x.cam).length;
   const[W,H]=outSize();const bg=camBg();const moved=!camIdle(camClamp(S.tf.cam||CAM0));
   const prev=S.frames.findLastIndex((x,i)=>i<S.cur&&x.cam),next=S.frames.findIndex((x,i)=>i>S.cur&&x.cam);
-  return`<div class="sec" id="secCam"><h3>${icon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/>')}Zoom · Move${qh('Zoom · Move','출력 크기는 그대로 두고, 그 안에서 영상을 키우거나(최대 400%) 줄이고(최소 5%), 옮기고, 돌려요.\n미리보기를 드래그하면 위치가 옮겨지고 X·Y 숫자도 같이 바뀌어요. 같은 위치로 다시 맞추려면 숫자를 그대로 넣으면 돼요. 0, 0이 가운데예요.\n줄이거나 옮기거나 돌려서 비는 곳은 Background 색으로 채워져요.\n시간에 따라 바꾸려면 ◇ Add keyframe을 누르고, 다른 프레임으로 가서 확대·위치·회전을 바꾸세요. 그 프레임에 키프레임이 자동으로 생기고, 사이는 자연스럽게 이어져요.\n키프레임은 프레임에 붙어 있어서 프레임을 옮기거나 속도를 바꿔도 같이 따라가요.')}</h3>
+  return`<div class="sec" id="secCam"><h3>${icon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6"/>')}Zoom · Move · Rotate${qh('Zoom · Move · Rotate','출력 크기는 그대로 두고, 그 안에서 영상을 키우거나(최대 400%) 줄이고(최소 5%), 옮기고, 돌려요.\n미리보기를 드래그하면 위치가 옮겨지고 X·Y 숫자도 같이 바뀌어요. 같은 위치로 다시 맞추려면 숫자를 그대로 넣으면 돼요. 0, 0이 가운데예요.\n줄이거나 옮기거나 돌려서 비는 곳은 Background 색으로 채워져요.\n시간에 따라 바꾸려면 ◇ Add keyframe을 누르고, 다른 프레임으로 가서 확대·위치·회전을 바꾸세요. 그 프레임에 키프레임이 자동으로 생기고, 사이는 자연스럽게 이어져요.\n키프레임은 프레임에 붙어 있어서 프레임을 옮기거나 속도를 바꿔도 같이 따라가요.')}</h3>
     <div class="fld"><span class="vhead">Zoom${nk?`<small>${f.cam?`◆ ${S.cur+1}번 키프레임`:`${S.cur+1}번 · 키프레임 사이`}</small>`:''}<span class="vnum"><input class="in" id="camZN" type="number" min="5" max="400" step="5" value="${zp}" aria-label="Zoom %">%</span></span><div class="srange"><input type="range" id="camZ" min="5" max="400" value="${zp}" aria-label="Zoom"></div></div>
     <div class="grid3"><label class="fld"><span>X (px)</span><input class="in" id="camX" type="number" step="1" value="${Math.round(cam.ox*W)}"></label><label class="fld"><span>Y (px)</span><input class="in" id="camY" type="number" step="1" value="${Math.round(cam.oy*H)}"></label><label class="fld"><span>회전 (°)</span><input class="in" id="camR" type="number" step="1" min="-360" max="360" value="${Math.round(cam.r*10)/10}"></label></div>
     <div class="szrow"><span class="lbl2">Background${qh('Background','줄이거나 옮기거나 돌려서 영상이 덮지 않는 곳의 색이에요.\n투명은 GIF·WebP·PNG로 저장할 때만 투명하게 나오고, MP4·WebM은 흰색으로 채워져요.')}</span><span class="bgpick"><input type="color" id="camBg" value="${bg==='transparent'?'#000000':bg}" ${bg==='transparent'?'disabled':''} aria-label="Background"><label class="chk"><input type="checkbox" id="camBgT" ${bg==='transparent'?'checked':''}>투명</label></span></div>
@@ -1436,7 +1436,7 @@ function camHTML(){if(!S.frames.length)return'';const cam=camTrack()[S.cur]||CAM
     <div class="kfrow"><button type="button" class="btn" id="kfTog">${f.cam?'◆ Delete keyframe':'◇ Add keyframe'}</button><button type="button" class="btn" id="kfPrev" ${prev<0?'disabled':''} data-tip="이전 키프레임">◀</button><button type="button" class="btn" id="kfNext" ${next<0?'disabled':''} data-tip="다음 키프레임">▶</button></div>
     ${nk?`<div class="kv"><span>키프레임</span><b>${nk}개</b></div>`:''}
     ${nk>=2?`<label class="fld"><span>움직임</span><select class="in" id="kfEase"><option value="smooth"${S.tf.camEase!=='linear'?' selected':''}>부드럽게 (천천히 시작해서 천천히 멈춤)</option><option value="linear"${S.tf.camEase==='linear'?' selected':''}>일정하게</option></select></label>`:''}
-    ${nk||moved?'<button type="button" class="btn" id="camReset" style="width:100%">Zoom · Move 초기화</button>':''}
+    ${nk||moved?'<button type="button" class="btn" id="camReset" style="width:100%">Zoom · Move · Rotate 초기화</button>':''}
   </div>`}
 /* write the current values into the Zoom · Move boxes (during a drag the panel itself is not rebuilt) */
 function camBoxes(){const c=camTrack()[S.cur];if(!c||!$('#camX'))return;const[W,H]=outSize();const put=(id,v)=>{const e=$('#'+id);if(e&&document.activeElement!==e)e.value=v};
@@ -1457,7 +1457,7 @@ function bindCam(){const zr=$('#camZ'),zn=$('#camZN');if(!zr)return;springRange(
   const jump=d=>{const i=d<0?S.frames.findLastIndex((x,k)=>k<S.cur&&x.cam):S.frames.findIndex((x,k)=>k>S.cur&&x.cam);if(i>=0){goFrame(i);renderTimeline()}};
   $('#kfPrev').onclick=()=>jump(-1);$('#kfNext').onclick=()=>jump(1);
   const ez=$('#kfEase');if(ez)ez.onchange=()=>commit(()=>{S.tf.camEase=ez.value;CAMV++},ez.value==='linear'?'키프레임 사이를 일정하게 움직여요':'키프레임 사이를 부드럽게 움직여요');
-  const rs=$('#camReset');if(rs)rs.onclick=()=>commit(()=>{S.frames=S.frames.map(f=>{if(!f.cam)return f;const n={...f};delete n.cam;return n});delete S.tf.cam;delete S.tf.camEase;CAMV++},'Zoom · Move를 초기화했어요')}
+  const rs=$('#camReset');if(rs)rs.onclick=()=>commit(()=>{S.frames=S.frames.map(f=>{if(!f.cam)return f;const n={...f};delete n.cam;return n});delete S.tf.cam;delete S.tf.camEase;CAMV++},'Zoom · Move · Rotate를 초기화했어요')}
 /* while a number box has focus the panel is not rebuilt (so ↑↓ keep stepping the value); rebuild once focus leaves the panel */
 $('#panel').addEventListener('focusout',e=>{if(!A.panelDirty)return;const t=e.relatedTarget;if(t&&$('#panel').contains(t))return;A.panelDirty=false;setTimeout(()=>{const a=document.activeElement;if(!(a&&$('#panel').contains(a)&&a.matches('input,select')))renderPanel()},0)});
 function renderPanel(){
@@ -1486,17 +1486,10 @@ function renderPanel(){
     return;
   }
   p.innerHTML=`
-  <div class="sec" id="secSize"><h3>${icon('<path d="M4 14v6h6M20 10V4h-6M4 20l7-7M20 4l-7 7"/>')}Size · Rotate</h3>
+  <div class="sec" id="secSize"><h3>${icon('<path d="M4 14v6h6M20 10V4h-6M4 20l7-7M20 4l-7 7"/>')}Size</h3>
     <div class="grid2"><label class="fld"><span>너비 (px)</span><input class="in" id="rzW" type="text" inputmode="numeric" autocomplete="off" value="${W}"></label><label class="fld"><span>높이 (px)</span><input class="in" id="rzH" type="text" inputmode="numeric" autocomplete="off" value="${H}"></label></div>
     <div class="szrow"><label class="chk"><input type="checkbox" id="rzKeep" ${rz.keep?'checked':''}>비율 유지</label><button type="button" class="btn xs" id="rzOrig" ${W===Math.round(cropRect().w)&&H===Math.round(cropRect().h)?'disabled':''} data-tip="원래 크기|크기를 원래대로 되돌려요 (크롭했다면 크롭한 영역의 원래 크기).\n크기는 원본을 기억하고 있어서, 작게 줄였다가 다시 키워도 화질이 깨지지 않아요.">원래 크기</button></div>
-    <div class="grid5">
-      <button type="button" class="btn" id="rotL" data-tip="Rotate left|왼쪽으로 90°">${icon('<path d="M4 4v6h6"/><path d="M4.6 14a8 8 0 1 0 1.9-8.1L4 10"/>')}</button>
-      <button type="button" class="btn" id="rotR" data-tip="Rotate right|오른쪽으로 90°">${icon('<path d="M20 4v6h-6"/><path d="M19.4 14a8 8 0 1 1-1.9-8.1L20 10"/>')}</button>
-      <button type="button" class="btn" id="rot180" data-tip="Rotate 180°|180° 회전" style="font-size:11px">180°</button>
-      <button type="button" class="btn" id="flipH" data-tip="Flip horizontal|좌우 반전">${icon('<path d="M12 3v18M8 7l-5 5 5 5zM16 7l5 5-5 5z"/>')}</button>
-      <button type="button" class="btn" id="flipV" data-tip="Flip vertical|상하 반전">${icon('<path d="M3 12h18M7 8l5-5 5 5zM7 16l5 5 5-5z"/>')}</button>
-    </div>
-    <p class="note">원본 ${S.W0}×${S.H0}${S.tf.rot?` · ${S.tf.rot}° 회전`:''}${S.tf.fh?' · 좌우 반전':''}${S.tf.fv?' · 상하 반전':''}</p>
+    <p class="note">원본 ${S.W0}×${S.H0}${S.tf.rot?` · ${S.tf.rot}° 회전`:''}${flipNote()}${S.tf.rot||S.tf.fh||S.tf.fv?' (Save에서 바꿔요)':''}</p>
   </div>
   <div class="sec" id="secCrop"><h3>${icon('<path d="M6 2v16h16M2 6h16v16"/>')}Crop</h3>
     ${S.tf.crop?`<div class="kv"><span>적용된 영역</span><b>${S.tf.crop.w}×${S.tf.crop.h}</b></div>`:''}
@@ -1529,8 +1522,6 @@ function renderPanel(){
   $('#rzH').oninput=e=>{const v=num(e.target);if(rz.keep&&v>0)$('#rzW').value=Math.max(1,Math.round(v/ratio));later()};
   ['rzW','rzH'].forEach(id=>{$('#'+id).onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();applyRz()}};$('#'+id).onblur=()=>{if(rz.t)applyRz()}});
   $('#rzOrig').onclick=()=>{clearTimeout(rz.t);commit(()=>{S.tf.outW=0;S.tf.outH=0},`원래 크기 ${Math.round(cr.w)}×${Math.round(cr.h)}로 되돌렸어요`);S.view.fit=true;layoutStage()};
-  $('#rotL').onclick=()=>rotate(-90);$('#rotR').onclick=()=>rotate(90);$('#rot180').onclick=()=>rotate(180);
-  $('#flipH').onclick=()=>flip('h');$('#flipV').onclick=()=>flip('v');
   bindCam();
   $('#crStart').onclick=startCrop;$('#crClear')&&($('#crClear').onclick=()=>commit(()=>{const f=outSize()[0]/cropRect().w;S.tf.crop=null;const[RW2,RH2]=rotSize();S.tf.outW=Math.round(RW2*f);S.tf.outH=Math.round(RH2*f)},'자르기를 해제했어요'));
   $('#pDelayApply').onclick=()=>{const ms=Math.round(+$('#pDelay').value);const x=needSel();if(x&&ms>=10)OPS.setDelay(x,ms)};
@@ -1547,6 +1538,8 @@ function rotate(d){commit(()=>{
   S.tf.rot=((S.tf.rot+d)%360+360)%360;
   if(Math.abs(d)===90){S.tf.outW=oh;S.tf.outH=ow}else{S.tf.outW=ow;S.tf.outH=oh}
 });S.view.fit=true;layoutStage()}
+/* flips as they look on screen (after a 90° turn the stored axes swap) */
+function flipNote(){const sw=S.tf.rot%180!==0;const h=sw?S.tf.fv:S.tf.fh,v=sw?S.tf.fh:S.tf.fv;return(h?' · 좌우 반전':'')+(v?' · 상하 반전':'')}
 function flip(ax){commit(()=>{const swap=S.tf.rot%180!==0;const realH=ax==='h'?!swap:swap;if(realH)S.tf.fh=!S.tf.fh;else S.tf.fv=!S.tf.fv;
   if(S.tf.crop){const[RW,RH]=rotSize();const c=S.tf.crop;if(ax==='h')c.x=RW-c.x-c.w;else c.y=RH-c.y-c.h}})}
 
@@ -2461,7 +2454,7 @@ tlCv.addEventListener('pointerdown',e=>{
 });
 tlCv.addEventListener('contextmenu',e=>{e.preventDefault();blurPanel();if(!tlGeom)return;const r=tlCv.getBoundingClientRect();const h=tlHit(e.clientX-r.left,e.clientY-r.top);
   if(h.ruler){const px=e.clientX-r.left;const i=S.frames.findIndex((f,k)=>f.cam&&Math.abs(tlGeom.X(S.starts[k])-px)<=7);if(i<0)return;
-    return openMenu(e.clientX,e.clientY,{title:'키프레임',hint:`${i+1}번 프레임 · ${fmtS(S.starts[i])}`,cols:[[{h:'Zoom · Move',items:[{t:'이 키프레임으로 이동',f:()=>{goFrame(i);renderTimeline()}},
+    return openMenu(e.clientX,e.clientY,{title:'키프레임',hint:`${i+1}번 프레임 · ${fmtS(S.starts[i])}`,cols:[[{h:'Zoom · Move · Rotate',items:[{t:'이 키프레임으로 이동',f:()=>{goFrame(i);renderTimeline()}},
       {t:'키프레임 삭제',f:()=>commit(()=>{const keep=camTrack()[i];const nf={...S.frames[i]};delete nf.cam;S.frames[i]=nf;if(!camKeys())S.tf.cam=keep;CAMV++},`${i+1}번 프레임 키프레임을 지웠어요`)}]}]]})}
   if(h.vtrack){clearAudioSel();if(h.vc)S.vSel=h.vc.id;else S.vTrack=h.t.id;
     const vc=h.vc,px=e.clientX-r.left,kf=vc&&(vc.keys||[]).find(k=>k.t>=vc.in&&k.t<=vc.out&&Math.abs(tlGeom.X(vc.start+k.t-vc.in)-px)<=7);
@@ -2874,12 +2867,13 @@ async function openSave(onlySel){
   const po={...o};let plan=null;
   /* exact size: after the settings settle, the real file is made in the background; Save then reuses it */
   const ex={job:null,res:null};
-  const exKey=()=>JSON.stringify([o.fmt,o.q,o.dither,o.reduce,o.lossy,o.loop,o.loopN,o.bar,o.barColor,o.barPos,o.scaleOn,o.sx,o.sy,o.audio,o.maxOn,o.maxMB,o.fitBy,o.maxOn&&plan&&plan.key===planKey()?[plan.adj,plan.keep||0]:null]);
+  const tfK=()=>[S.tf.rot,S.tf.fh,S.tf.fv];
+  const exKey=()=>JSON.stringify([...tfK(),o.fmt,o.q,o.dither,o.reduce,o.lossy,o.loop,o.loopN,o.bar,o.barColor,o.barPos,o.scaleOn,o.sx,o.sy,o.audio,o.maxOn,o.maxMB,o.fitBy,o.maxOn&&plan&&plan.key===planKey()?[plan.adj,plan.keep||0]:null]);
   const exStop=()=>{if(ex.job){ex.job.cancel=true;ex.job=null}};
-  const planKey=()=>JSON.stringify([o.fmt,o.q,o.dither,o.reduce,o.scaleOn,o.sx,o.sy,o.maxMB,o.fitBy,o.bar,o.audio,o.maxOn,o.lossy]);
+  const planKey=()=>JSON.stringify([...tfK(),o.fmt,o.q,o.dither,o.reduce,o.scaleOn,o.sx,o.sy,o.maxMB,o.fitBy,o.bar,o.audio,o.maxOn,o.lossy]);
   const PV={tok:0,i:0,playing:true,zoom:'fit',key:'',W:0,H:0,rc:null,st:null,vs:null,next:-1,start:0,wake:null,lag:false,d:null};
   const isVid=()=>po.fmt==='mp4'||po.fmt==='webm';
-  const pvKey=()=>JSON.stringify([po.fmt,po.q,po.dither,po.reduce,po.bar,po.barColor,po.barPos,po.bitrateMul||1,po.lossy||0,...outDims(po)]);
+  const pvKey=()=>JSON.stringify([...tfK(),po.fmt,po.q,po.dither,po.reduce,po.bar,po.barColor,po.barPos,po.bitrateMul||1,po.lossy||0,...outDims(po)]);
   const keyInt=()=>{prepFrames(frames,po);const fps=frames.length/Math.max(.001,po._total/1000);return Math.max(1,Math.round(fps*2))};
   const resetPipe=()=>{PV.st=null;if(PV.vs){PV.vs.close();PV.vs=null}PV.next=-1};
   const dropRes=r=>{if(r&&r.bmp&&r.bmp.close)r.bmp.close();if(r&&r.vf)r.vf.close()};
@@ -2905,7 +2899,7 @@ async function openSave(onlySel){
     prepFrames(frames,po);
     if(po.fmt==='gif'){
       /* the same two passes as the real save: one shared palette for the whole animation, then frame by frame */
-      const gk=JSON.stringify([po.q,po.reduce,po.bar,po.barColor,po.barPos,W,H]);
+      const gk=JSON.stringify([...tfK(),po.q,po.reduce,po.bar,po.barColor,po.barPos,W,H]);
       if(PV.gpKey!==gk){PV.gpKey=gk;PV.gp=null;const busy=$('#svBusy',PV.d);if(busy)busy.hidden=false;
         const gp=await gifPaletteCached(frames,W,H,po,null,k=>{if(busy&&PV.gpKey===gk)busy.textContent=`색상 분석 ${k}/${frames.length}`});
         if(busy)busy.hidden=true;if(PV.gpKey!==gk)return{raw:true};PV.gp=gp;pvNote()}
@@ -2985,6 +2979,12 @@ async function openSave(onlySel){
     <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
       <div class="card2"><div class="kv"><span>이미지 크기</span><b id="svDim"></b></div><div class="kv"><span>재생 시간</span><b>${(frames.reduce((a,f)=>a+f.delay,0)/1000).toFixed(2)}초 · ${frames.length}프레임</b></div><div class="kv"><span id="svEstLbl">예상 파일 크기</span><b class="est" id="svEst"><span class="spin"></span><small>계산 중</small></b></div></div>
       <div class="fld"><span>저장 포맷</span><div class="sortbar" id="svFmt">${fmtBtns}</div></div>
+      <div class="fld"><span>Rotate · Flip <small id="svRotNote" style="color:var(--mute);font-weight:500"></small>${qh('Rotate · Flip','영상 자체를 90° 단위로 돌리거나 뒤집어요. 90°를 돌리면 가로·세로가 바뀌어요.\n편집 화면에도 같이 반영되고, Ctrl+Z로 되돌릴 수 있어요.\n화면 안에서 비스듬히 기울이려면 Zoom · Move · Rotate의 회전(°)을 쓰세요.')}</span><div class="grid5" id="svRot">
+        <button type="button" class="btn" data-r="-90" data-tip="Rotate left|왼쪽으로 90°">${icon('<path d="M4 4v6h6"/><path d="M4.6 14a8 8 0 1 0 1.9-8.1L4 10"/>')}</button>
+        <button type="button" class="btn" data-r="90" data-tip="Rotate right|오른쪽으로 90°">${icon('<path d="M20 4v6h-6"/><path d="M19.4 14a8 8 0 1 1-1.9-8.1L20 10"/>')}</button>
+        <button type="button" class="btn" data-r="180" data-tip="Rotate 180°|180° 회전" style="font-size:11px">180°</button>
+        <button type="button" class="btn" data-f="h" data-tip="Flip horizontal|좌우 반전">${icon('<path d="M12 3v18M8 7l-5 5 5 5zM16 7l5 5-5 5z"/>')}</button>
+        <button type="button" class="btn" data-f="v" data-tip="Flip vertical|상하 반전">${icon('<path d="M3 12h18M7 8l5-5 5 5zM7 16l5 5 5-5z"/>')}</button></div></div>
       <label class="fld"><span>파일명</span><div style="display:flex;gap:6px;align-items:center"><input class="in" id="svName" type="text" value="${esc(o.name)}"><span id="svExt" style="color:var(--mute2);font-weight:600">.gif</span></div></label>
       <div class="grid2"><label class="fld"><span>반복</span><select class="in" id="svLoop"><option value="inf">무한 반복</option><option value="1">1회 재생</option><option value="2">2회</option><option value="3">3회</option><option value="5">5회</option></select></label>
         <div class="fld" id="svDitherRow"><span>&nbsp;</span><div class="chkq"><label class="chk"><input type="checkbox" id="svDither" ${o.dither?'checked':''}>디더링</label>${qh('디더링','색 수가 부족할 때 점을 섞어서 중간색처럼 보이게 해요.\n그라데이션의 줄무늬는 줄지만, 점 노이즈가 생기고 용량이 커져요.\n원래 GIF 색을 그대로 저장할 때(화질 85% 이상)는 쓰이지 않아요.')}</div></div></div>
@@ -3020,6 +3020,7 @@ async function openSave(onlySel){
       o.maxOn=g('svMaxOn').checked;o.maxMB=+g('svMax').value;o.name=g('svName').value};
     const refresh=()=>{if(!g('svQ'))return;read();Object.assign(po,o);if(plan&&o.maxOn&&plan.key===planKey())Object.assign(po,plan.adj);else plan=null;const[W,H]=outDims(o);syncScaleUI();showDim();g('svExt').textContent='.'+FORMATS[o.fmt].ext;
       $$('#svFmt button',d).forEach(b=>{b.classList.toggle('on',b.dataset.fmt===o.fmt);b.textContent=FORMATS[b.dataset.fmt].t+(support[b.dataset.fmt]===false?' ✕':'')});
+      g('svRotNote').textContent=S.tf.rot||S.tf.fh||S.tf.fv?`·${S.tf.rot?` ${S.tf.rot}°`:''}${flipNote()}`.replace('· ·','·'):'· 원래 방향';
       g('svBarOpts').hidden=!o.bar;const wasHidden=g('svScaleRow').hidden;g('svScaleRow').hidden=!o.scaleOn;if(wasHidden&&o.scaleOn)springs.forEach(s=>s.sync());g('svMaxRow').hidden=!o.maxOn;
       $$('#svFit button',d).forEach(b=>{b.classList.toggle('on',b.dataset.fit===o.fitBy);b.disabled=b.dataset.fit==='quality'&&o.fmt==='apng'});g('svFitRow').hidden=o.fmt==='mp4'||o.fmt==='webm';
       g('svDitherRow').style.visibility=o.fmt==='gif'?'visible':'hidden';g('svLoop').disabled=o.fmt==='mp4'||o.fmt==='webm';
@@ -3076,6 +3077,8 @@ async function openSave(onlySel){
     const setScale=(sx,sy,fromSlider)=>{o.sx=clamp(sx,1/BW,1);o.sy=clamp(sy,1/BH,1);if(!fromSlider){g('svScale').value=Math.round(Math.max(o.sx,o.sy)*100);springs[1]&&springs[1].sync()}o.scale=+g('svScale').value};
     springs=[springRange(g('svQ')),springRange(g('svScale')),springRange(g('svLossy'),v=>v?String(v):'Off')];
     g('svFmt').onclick=e=>{const b=e.target.closest('[data-fmt]');if(!b)return;o.fmt=b.dataset.fmt;refresh()};
+    /* turn / flip the whole video: same as before, now from here (the editor follows, Ctrl+Z undoes) */
+    g('svRot').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.r)rotate(+b.dataset.r);else flip(b.dataset.f);plan=null;PV.gpKey=null;checkVideo.k=null;refresh();if(!PV.playing)wakePv()};
     g('svQ').addEventListener('input',refresh);g('svLossy').addEventListener('input',refresh);
     g('svScale').addEventListener('input',()=>{const p=+g('svScale').value/100;setScale(p,p,true);refresh()});
     g('svSW').addEventListener('input',()=>{const w=+g('svSW').value;if(!(w>0))return;const sx=Math.min(w,BW)/BW;setScale(sx,g('svKeep').checked?sx:o.sy);refresh()});
@@ -3330,7 +3333,7 @@ const TOUR_ALL=[
   {el:'#dz',t:'Drop a file',d:'영상(MP4·WebM·MOV), GIF, 이미지를 끌어다 놓거나 눌러서 고르세요. 영상은 구간과 초당 프레임을 정해서 불러와요.'},
   {el:'#left',t:'Edit frames',d:'프레임을 고르고 오른쪽 클릭하면 복사·이동·삭제·짝/홀 선택 메뉴가 나와요. Shift·'+(IS_MAC?'⌘':'Ctrl')+' 클릭으로 여러 개를 고를 수 있어요.'},
   {el:'#tools',t:'Quick tools',d:'시간 설정, 속도 ±10%, 역재생, 왕복, 프레임 줄이기를 한 번에. 아이콘에 마우스를 올리면 설명이 떠요.'},
-  {el:'#secSize',el2:'#secCrop',t:'Size · Crop',d:'크기 조절, 회전·반전, 자르기를 여기서 해요. '+(IS_MAC?'⌘':'Ctrl')+'R을 누르면 너비(px) 칸으로 바로 가서 입력할 수 있어요.'},
+  {el:'#secSize',el2:'#secCrop',t:'Size · Crop',d:'크기 조절과 자르기를 여기서 해요. 영상 자체를 90° 돌리거나 뒤집는 건 Save 창에서 해요. '+(IS_MAC?'⌘':'Ctrl')+'R을 누르면 너비(px) 칸으로 바로 가서 입력할 수 있어요.'},
   {el:'#tl',t:'Audio',d:'영상 소리는 Frame audio로 들어와서 프레임과 같이 잘려요. + Audio로 음악을, + Track으로 빈 트랙을 올리고 막대를 오른쪽 클릭하면 잘라내기·복사·붙여넣기·나누기·끝까지 반복 메뉴가 나와요. 노란 선을 위아래로 끌면 볼륨이 바뀌어요. MP4·WebM으로 저장하면 소리가 같이 들어가요.'},
   {el:'#modes',t:'Layer',d:'틀 이미지(PNG·JPG) 위나 아래에 GIF·영상을 올려 위치와 크기를 맞춘 뒤 프레임으로 만들 수 있어요.'},
   {el:'#btnSave',t:'Save',d:'GIF·WebP·MP4·WebM·APNG로 저장해요. 예상 용량을 보면서 화질과 크기를 조절하고, 최대 용량에 맞춰 자동으로 줄일 수도 있어요.'},
