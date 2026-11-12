@@ -377,6 +377,7 @@ initCard('card3', 'front3', 'back3', 'open3');
 initCard('card4', 'front4', 'back4', 'open4');
 initCard('card5', 'front5', 'back5', 'open5');
 initCard('card6', 'front6', 'back6', 'open6');
+initCard('card7', 'front7', 'back7', 'open7');
 initCardDrag();
  
 document.body.addEventListener('click', e => {
