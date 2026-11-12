@@ -7,6 +7,7 @@
   --red:    #f54025;
   --cyan:   #2ad4ff;
   --pink:   #ff6eb4;
+  --blue:   #4d7cff;
   --black:  #000;
   --white:  #fff;
   --border: 4px;
@@ -167,6 +168,7 @@ body {
 .card--red .card-front    { background: var(--red); }
 .card--cyan .card-front   { background: var(--cyan); }
 .card--pink .card-front   { background: var(--pink); }
+.card--blue .card-front   { background: var(--blue); }
 
 .card--green .card-heading  { color: var(--black); }
 .card--purple .card-heading { color: var(--white); }
@@ -284,6 +286,10 @@ body {
 
 .poster-tilt-box--gif {
   clip-path: polygon(5% 3%, 97% 6%, 98% 92%, -5% 97%);
+}
+
+.poster-tilt-box--box {
+  clip-path: polygon(4% 5%, 98% 3%, 97% 94%, -6% 93%);
 }
 
 .poster-tilt-text {
@@ -470,7 +476,8 @@ body {
   .poster-tilt-box--webd,
   .poster-tilt-box--pop,
   .poster-tilt-box--imgsearch,
-  .poster-tilt-box--gif {
+  .poster-tilt-box--gif,
+  .poster-tilt-box--box {
     clip-path: polygon(4% 3%, 97% 1%, 98% 96%, 2% 98%);
   }
 
