@@ -878,6 +878,12 @@ const camSig=()=>JSON.stringify([S.tf.cam||null,S.tf.camEase||'',S.tf.camBg||'',
 /* does any frame leave part of the output uncovered? (zoomed out, moved or turned) */
 const camExposes=(frames=S.frames)=>camTrack(frames).some(c=>!camIdle(c)&&(c.z<1||c.r||c.ox||c.oy));
 const camBg=()=>S.tf.camBg||'#000000';
+/* an empty stretch of the Video row (left behind when a piece goes up to a layer) shows only the Background */
+function gapFill(ctx,W,H){ctx.setTransform(1,0,0,1,0,0);const bg=camBg();if(bg==='transparent')ctx.clearRect(0,0,W,H);else{ctx.fillStyle=bg;ctx.fillRect(0,0,W,H)}}
+let GAPBLOB=null,GAPTHUMB='';
+async function gapFrame(delay){if(!GAPBLOB){const c=document.createElement('canvas');c.width=c.height=2;GAPBLOB=await new Promise(r=>c.toBlob(r,'image/png'));
+    const t=document.createElement('canvas');t.width=64;t.height=48;const x=t.getContext('2d');x.fillStyle='#2a2d36';x.fillRect(0,0,64,48);x.strokeStyle='#5a5e6c';x.setLineDash([4,3]);x.strokeRect(4.5,4.5,55,39);GAPTHUMB=t.toDataURL('image/png')}
+  const f=mkFrame(GAPBLOB,Math.max(10,Math.round(delay)),S.W0,S.H0,false,GAPTHUMB);f.gap=true;f.label=undefined;return f}
 function camFill(ctx,W,H,cam){const bg=camBg();if(camIdle(cam)||bg==='transparent')return;ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle=bg;ctx.fillRect(0,0,W,H)}
 function applyTransform(ctx,W,H,cropSpace,cam){
   const[RW,RH]=rotSize();const c=cropSpace?{x:0,y:0,w:RW,h:RH}:cropRect();
@@ -1323,7 +1329,7 @@ async function renderStage(){
   const[W,H]=S.crop.active?rotSize():outSize();
   setCanvas(W,H);cx.setTransform(1,0,0,1,0,0);cx.clearRect(0,0,W,H);
   const cam=camTrack()[S.cur];if(!S.crop.active)camFill(cx,W,H,cam);
-  cx.imageSmoothingQuality='high';applyTransform(cx,W,H,S.crop.active,cam);drawContain(cx,bmp);cx.setTransform(1,0,0,1,0,0);
+  if(fr.gap)gapFill(cx,W,H);else{cx.imageSmoothingQuality='high';applyTransform(cx,W,H,S.crop.active,cam);drawContain(cx,bmp);cx.setTransform(1,0,0,1,0,0)}
   if(!S.crop.active&&S.vclips&&S.vclips.length){await drawOverlays(cx,W,H,S.starts[S.cur]||0,()=>tok!==stageTok);if(tok!==stageTok)return;drawVSel(cx,W,H,S.starts[S.cur]||0)}
   if(tok!==stageTok)return;
   inner.classList.toggle('camz',!S.crop.active);
@@ -2146,25 +2152,28 @@ function vclipDrag(e,c,edge,r){const g=tlGeom;S.undo.push(snap());S.redo=[];let 
     if(d&&d.toMain){S.undo.pop();Object.assign(c,c0);return layerToMain(c,d.j)}changed()};
   addEventListener('pointermove',mv);addEventListener('pointerup',up)}
 /* a piece of the main video goes up onto a layer: the main video closes up behind it; linked sound comes along as an audio clip */
-async function pieceToLayer(i0,i1,tid,start){const block=S.frames.slice(i0,i1+1);if(!block.length)return;const lk=hasLinked(block);
-  if(block.length===S.frames.length)return toast('영상 전체는 레이어로 옮길 수 없어요 · 나눈 조각을 옮겨 주세요');
+async function pieceToLayer(i0,i1,tid,start){const block=S.frames.slice(i0,i1+1);if(!block.length||block.every(f=>f.gap))return;const lk=hasLinked(block);
+  const gap=await gapFrame(block.reduce((a,f)=>a+f.delay,0));
   let abuf=null;if(lk){try{abuf=await buildMix(block,{clips:false,raw:true,keepGain:true})}catch(e){console.warn(e)}}
   const asrc=abuf?addSource('Layer sound',abuf):null;
   commit(()=>{const src='vs'+(VID++);let t=0;const fr=block.map(f=>{const n={...f};delete n.vCut;delete n.auSeg;delete n.cam;return n});const st=fr.map(f=>{const x=t;t+=f.delay;return x});
     VS.set(src,{frames:fr,starts:st,dur:t,W:S.W0,H:S.H0,name:'piece'});
     if(i1+1<S.frames.length&&!videoSegs().some(x=>x.i0===i1+1))cutFrames(i1+1);
-    S.frames.splice(i0,i1-i0+1);if(S.frames[0]){const f0={...S.frames[0]};delete f0.vCut;S.frames[0]=f0}
+    gap.vCut=true;if(lk)gap.auSeg={...SEG_DEF};S.frames.splice(i0,i1-i0+1,gap);
     const c={id:'v'+(VID++),track:tid,src,name:`Video ${i0+1}~${i1+1}`,start:start,in:0,out:t,x:0,y:0,s:1,r:0,op:1};S.vclips.push(c);
     if(asrc){const ac=newClip(asrc,c.name,abuf.duration*1000,audioTrackFor('Layer sound'));ac.start=start;S.clips.push(ac)}
-    S.sel=new Set([clamp(i0,0,S.frames.length-1)]);S.cur=clamp(Math.min(S.cur,S.frames.length-1),0,S.frames.length-1);S.aSel=null;S.aTrack=null;S.vSel=c.id;S.vTrack=null},
-    `조각을 ${fmtS(start)} 위치의 레이어로 올렸어요 · 본 영상은 그만큼 앞으로 당겨졌어요${asrc?' · 소리는 오디오 클립으로 따라갔어요':''}`)}
+    S.sel=new Set([i0]);S.cur=clamp(Math.min(S.cur,S.frames.length-1),0,S.frames.length-1);S.aSel=null;S.aTrack=null;S.vSel=c.id;S.vTrack=null},
+    `조각을 ${fmtS(start)} 위치의 레이어로 올렸어요 · 원래 자리는 빈 구간으로 남았어요${asrc?' · 소리는 오디오 클립으로 따라갔어요':''}`)}
 /* a layer clip goes down into the main video, before frame j (its sound stays where it is as an audio clip) */
 function layerToMain(c,j){const v=VS.get(c.src);if(!v)return;const fr=[];
   v.frames.forEach((f,k)=>{const a=v.starts[k],b=a+f.delay;if(b<=c.in+0.5||a>=c.out-0.5)return;const d=Math.round(Math.min(b,c.out)-Math.max(a,c.in));if(d<1)return;
     const n=cloneF(f,{delay:d});delete n.au;delete n.base;delete n.spd;delete n.vCut;delete n.auSeg;delete n.cam;fr.push(n)});
-  if(!fr.length)return;const n=S.frames.length;
-  commit(()=>{if(j<n&&j>0&&!videoSegs().some(x=>x.i0===j))cutFrames(j);if(j===0&&S.frames[0])S.frames[0]=cloneF(S.frames[0],{vCut:true});
-    fr[0].vCut=true;if(j<n&&S.frames[j]&&!S.frames[j].vCut)S.frames[j]=cloneF(S.frames[j],{vCut:true});
+  if(!fr.length)return;const n=S.frames.length;const len=fr.reduce((a,f)=>a+f.delay,0);
+  commit(()=>{
+    /* dropped at the start of an empty stretch: it fills the stretch (what is left of it stays empty) */
+    const g=S.frames[j];if(g&&g.gap){if(g.delay-len>=10)S.frames[j]=cloneF(g,{delay:g.delay-len,vCut:true});else S.frames.splice(j,1)}
+    if(j<S.frames.length&&j>0&&!videoSegs().some(x=>x.i0===j))cutFrames(j);if(j===0&&S.frames[0])S.frames[0]=cloneF(S.frames[0],{vCut:true});
+    fr[0].vCut=true;if(j<S.frames.length&&S.frames[j]&&!S.frames[j].vCut)S.frames[j]=cloneF(S.frames[j],{vCut:true});
     S.frames.splice(j,0,...fr);S.vclips=S.vclips.filter(x=>x.id!==c.id);S.vSel=null;S.vTrack=null;S.sel=new Set(fr.map((_,k)=>j+k));S.cur=j},
     `레이어 클립을 본 영상 ${fmtS(j>=n?S.total:S.starts[j])} 위치에 넣었어요${S.clips.length?' · 소리는 오디오 클립 자리에 그대로 있어요':''}`);ensureVisible(j)}
 function vMenuDef(c){const T=S.vtracks.find(t=>t.id===(c?c.track:S.vTrack));const i=T?S.vtracks.indexOf(T):-1;
@@ -2319,6 +2328,8 @@ function renderTimeline(){
       return}
     if(t.kind==='video'){const vs=videoSegs(),th=ROW-10,tw=Math.max(10,th*(S.W0&&S.H0?S.W0/S.H0:1));
       vs.forEach(sg=>{const x0=X(sg.start)+(sg.k?1.5:0),x1=X(sg.end)-(sg.k<vs.length-1?1.5:0);if(x1-x0<1)return;
+        if(S.frames.slice(sg.i0,sg.i1+1).every(f=>f.gap)){c.save();c.strokeStyle='#9a9aa8';c.setLineDash([5,4]);c.beginPath();c.roundRect(x0+.5,y+5.5,Math.max(2,x1-x0-1),th-1,6);c.stroke();c.setLineDash([]);
+          c.fillStyle='#9a9aa8';c.font=`500 10px ${F}`;c.textBaseline='middle';if(x1-x0>40)c.fillText('빈 구간',x0+8,y+ROW/2);c.restore();return}
         c.save();c.beginPath();c.roundRect(x0,y+5,Math.max(2,x1-x0),th,6);c.fillStyle='#2a2d36';c.fill();c.clip();
         for(let x=x0;x<x1;x+=tw){const T=clamp((x+Math.min(tw,x1-x)/2-TPAD)/k,sg.start,sg.end-0.001);const i=clamp(frameAt(T),sg.i0,sg.i1);const im=thumbImg(S.frames[i]);
           if(im)c.drawImage(im,x,y+5,tw,th);c.fillStyle='rgba(0,0,0,.25)';c.fillRect(Math.round(x+tw)-.5,y+5,1,th)}
@@ -2654,7 +2665,7 @@ async function renderOut(rc,frames,i,W,H,o){
   const x=rc.x;x.setTransform(1,0,0,1,0,0);x.globalCompositeOperation='source-over';x.clearRect(0,0,W,H);
   if(o.opaque){x.fillStyle='#ffffff';x.fillRect(0,0,W,H)}
   const cam=camTrack(frames)[i];camFill(x,W,H,cam);
-  x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';applyTransform(x,W,H,false,cam);drawContain(x,b);x.setTransform(1,0,0,1,0,0);
+  if(frames[i].gap)gapFill(x,W,H);else{x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';applyTransform(x,W,H,false,cam);drawContain(x,b);x.setTransform(1,0,0,1,0,0)}
   if(S.vclips&&S.vclips.length){let t=0;if(o._starts)t=o._starts[i];else for(let k=0;k<i;k++)t+=frames[k].delay;await drawOverlays(x,W,H,t)}
   if(o.bar&&o._total){const end=(o._starts[i]+frames[i].delay)/o._total;const bh=Math.max(2,Math.round(Math.min(W,H)*0.012));x.fillStyle=o.barColor||'#FF2F00';x.fillRect(0,o.barPos==='top'?0:H-bh,Math.round(W*end),bh)}
 }
@@ -2728,7 +2739,7 @@ function lzwEncode(idx,mcs,thr,dist,ti,out){
    keep  : almost every pixel uses <=255 colours (a GIF with a small patch on top) -> those colours kept, the few others snap to the nearest
    quant : otherwise one palette is built from all frames */
 async function gifPalette(frames,W,H,o,job,phase){
-  if(frames.some(f=>f.alpha||aspectOff(f))||(camBg()==='transparent'&&camExposes(frames)))return{legacy:true};
+  if(frames.some(f=>f.alpha||(!f.gap&&aspectOff(f)))||(camBg()==='transparent'&&(camExposes(frames)||frames.some(f=>f.gap))))return{legacy:true};
   const G=await getGifenc();const rc=outCtx(W,H);prepFrames(frames,o);const n=W*H;
   const maxC=Math.min(255,qColors(o.q,o.reduce)),keepMax=o.q>=85&&!o.reduce?255:maxC;const cnt=new Map();let track=true,total=0;
   const step=Math.max(1,Math.floor(frames.length*n/1.2e6));const smp=new Uint8Array((Math.floor(frames.length*n/step)+frames.length+4)*4);let q=0,g=0;
