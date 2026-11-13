@@ -1834,6 +1834,8 @@ let TID=1;
 const TRACK_DEF=name=>({id:'t'+(TID++),name,vol:1,mute:false,solo:false});
 function ensureTracks(){if(!S.tracks)S.tracks=[];for(const c of S.clips){if(!S.tracks.some(t=>t.id===c.track)){const t=TRACK_DEF(c.name||`Audio ${S.tracks.length+1}`);S.tracks.push(t);c.track=t.id}}}
 const trackOf=c=>S.tracks.find(t=>t.id===c.track);
+/* an audio track with this name (made if missing) for sound that comes with a video layer */
+function audioTrackFor(name){ensureTracks();let t=S.tracks.find(x=>x.name===name);if(!t){t=TRACK_DEF(name);S.tracks.push(t)}return t.id}
 const clipsOn=id=>S.clips.filter(c=>c.track===id);
 function tracks(){ensureTracks();const t=[];if(S.frames.length){S.vtracks.forEach(v=>t.push({kind:'vtrack',id:v.id,t:v}));t.push({kind:'video',id:'video'})}if(hasLinked())t.push({kind:'linked',id:'linked'});S.tracks.forEach(tr=>t.push({kind:'track',id:tr.id,t:tr}));return t}
 function trackObj(id){return id==='linked'?S.linked:S.tracks.find(t=>t.id===id)||S.vtracks.find(t=>t.id===id)||S.clips.find(c=>c.id===id)}
@@ -2054,7 +2056,7 @@ function addVLayerItems(items){const T=Math.round(clamp(playT(),0,Math.max(0,S.t
     let at=T,last=null;
     for(const it of items){const src='vs'+(VID++);let t=0;const st=it.frames.map(f=>{const x=t;t+=f.delay;return x});VS.set(src,{frames:it.frames,starts:st,dur:t,W:it.W,H:it.H,name:it.name});
       const c={id:'v'+(VID++),track:tid,src,name:baseName(it.name),start:at,in:0,out:t,x:0,y:0,s:1,r:0,op:1};S.vclips.push(c);last=c;
-      const fa=it.frames.find(f=>f.au);if(fa&&AS.has(fa.au.src)){ensureTracks();const ac=newClip(fa.au.src,baseName(it.name),AS.get(fa.au.src).dur,S.tracks[0].id);ac.start=at;S.clips.push(ac);snd=true}
+      const fa=it.frames.find(f=>f.au);if(fa&&AS.has(fa.au.src)){const ac=newClip(fa.au.src,baseName(it.name),AS.get(fa.au.src).dur,audioTrackFor('Layer sound'));ac.start=at;S.clips.push(ac);snd=true}
       at+=t}
     S.vSel=last.id;S.vTrack=null;S.aSel=null;S.aTrack=null},`${items.map(i=>i.name).join(', ')}을 ${fmtS(T)} 위치에 레이어로 올렸어요`);
   if(snd)toast('레이어 영상의 소리는 오디오 클립으로 같이 들어갔어요 · 필요 없으면 지우면 돼요')}
@@ -2129,13 +2131,42 @@ function vclipDrag(e,c,edge,r){const g=tlGeom;S.undo.push(snap());S.redo=[];let 
   const snapT=t=>{let best=t,bd=7/g.k;for(const m of marks){const d=Math.abs(m-t);if(d<bd){bd=d;best=m}}return best};
   tlCv.style.cursor=edge?'ew-resize':'grabbing';
   const mv=ev=>{const dx=ev.clientX-sx,dy=ev.clientY-sy;if(!moved&&Math.abs(dx)<3&&Math.abs(dy)<3)return;moved=true;const dt=dx/g.k,L0=vLen(c0);
-    if(!edge){const ns=c0.start+dt,a=snapT(ns),b=snapT(ns+L0)-L0;c.start=Math.max(0,Math.round(Math.abs(a-ns)<=Math.abs(b-ns)?a:b));
-      const t=g.tr[Math.floor((ev.clientY-r.top-RUL)/ROW)];if(t&&t.kind==='vtrack')c.track=t.id}
+    if(!edge){const t=g.tr[Math.floor((ev.clientY-r.top-RUL)/ROW)];
+      /* over the Video row: it will go into the main video (an orange line shows where) */
+      if(t&&t.kind==='video'&&S.frames.length){const px=ev.clientX-r.left,n=S.frames.length,edges=[...videoSegs().map(x=>x.i0),n],tAt=j=>j>=n?S.total:S.starts[j];
+        let j=null,bd=14;for(const q of edges){const d=Math.abs(g.X(tAt(q))-px);if(d<bd){bd=d;j=q}}
+        if(j==null){const T=clamp((px-TPAD)/g.k,0,Math.max(0,S.total-0.001));const i=frameAt(T);j=T<S.starts[i]+S.frames[i].delay/2?i:i+1}
+        Object.assign(c,{start:c0.start,track:c0.track});A.vdrag={px,off:px-g.X(c0.start+dt),w:L0*g.k,j,ok:true,toMain:true};renderTimeline();renderStage();return}
+      A.vdrag=null;const ns=c0.start+dt,a=snapT(ns),b=snapT(ns+L0)-L0;c.start=Math.max(0,Math.round(Math.abs(a-ns)<=Math.abs(b-ns)?a:b));
+      if(t&&t.kind==='vtrack')c.track=t.id}
     else if(edge==='l'){const d=clamp(snapT(c0.start+dt)-c0.start,Math.max(-c0.start,-c0.in),L0-20);c.start=Math.round(c0.start+d);c.in=Math.round(c0.in+d)}
     else{const d=clamp(snapT(c0.start+L0+dt)-(c0.start+L0),-(L0-20),(v?v.dur:c0.out)-c0.out);c.out=Math.round(c0.out+d)}
     renderTimeline();renderStage()};
-  const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);tlCv.style.cursor='';if(!moved){S.undo.pop();return}changed()};
+  const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);tlCv.style.cursor='';const d=A.vdrag;A.vdrag=null;if(!moved){S.undo.pop();return}
+    if(d&&d.toMain){S.undo.pop();Object.assign(c,c0);return layerToMain(c,d.j)}changed()};
   addEventListener('pointermove',mv);addEventListener('pointerup',up)}
+/* a piece of the main video goes up onto a layer: the main video closes up behind it; linked sound comes along as an audio clip */
+async function pieceToLayer(i0,i1,tid,start){const block=S.frames.slice(i0,i1+1);if(!block.length)return;const lk=hasLinked(block);
+  if(block.length===S.frames.length)return toast('영상 전체는 레이어로 옮길 수 없어요 · 나눈 조각을 옮겨 주세요');
+  let abuf=null;if(lk){try{abuf=await buildMix(block,{clips:false,raw:true,keepGain:true})}catch(e){console.warn(e)}}
+  const asrc=abuf?addSource('Layer sound',abuf):null;
+  commit(()=>{const src='vs'+(VID++);let t=0;const fr=block.map(f=>{const n={...f};delete n.vCut;delete n.auSeg;delete n.cam;return n});const st=fr.map(f=>{const x=t;t+=f.delay;return x});
+    VS.set(src,{frames:fr,starts:st,dur:t,W:S.W0,H:S.H0,name:'piece'});
+    if(i1+1<S.frames.length&&!videoSegs().some(x=>x.i0===i1+1))cutFrames(i1+1);
+    S.frames.splice(i0,i1-i0+1);if(S.frames[0]){const f0={...S.frames[0]};delete f0.vCut;S.frames[0]=f0}
+    const c={id:'v'+(VID++),track:tid,src,name:`Video ${i0+1}~${i1+1}`,start:start,in:0,out:t,x:0,y:0,s:1,r:0,op:1};S.vclips.push(c);
+    if(asrc){const ac=newClip(asrc,c.name,abuf.duration*1000,audioTrackFor('Layer sound'));ac.start=start;S.clips.push(ac)}
+    S.sel=new Set([clamp(i0,0,S.frames.length-1)]);S.cur=clamp(Math.min(S.cur,S.frames.length-1),0,S.frames.length-1);S.aSel=null;S.aTrack=null;S.vSel=c.id;S.vTrack=null},
+    `조각을 ${fmtS(start)} 위치의 레이어로 올렸어요 · 본 영상은 그만큼 앞으로 당겨졌어요${asrc?' · 소리는 오디오 클립으로 따라갔어요':''}`)}
+/* a layer clip goes down into the main video, before frame j (its sound stays where it is as an audio clip) */
+function layerToMain(c,j){const v=VS.get(c.src);if(!v)return;const fr=[];
+  v.frames.forEach((f,k)=>{const a=v.starts[k],b=a+f.delay;if(b<=c.in+0.5||a>=c.out-0.5)return;const d=Math.round(Math.min(b,c.out)-Math.max(a,c.in));if(d<1)return;
+    const n=cloneF(f,{delay:d});delete n.au;delete n.base;delete n.spd;delete n.vCut;delete n.auSeg;delete n.cam;fr.push(n)});
+  if(!fr.length)return;const n=S.frames.length;
+  commit(()=>{if(j<n&&j>0&&!videoSegs().some(x=>x.i0===j))cutFrames(j);if(j===0&&S.frames[0])S.frames[0]=cloneF(S.frames[0],{vCut:true});
+    fr[0].vCut=true;if(j<n&&S.frames[j]&&!S.frames[j].vCut)S.frames[j]=cloneF(S.frames[j],{vCut:true});
+    S.frames.splice(j,0,...fr);S.vclips=S.vclips.filter(x=>x.id!==c.id);S.vSel=null;S.vTrack=null;S.sel=new Set(fr.map((_,k)=>j+k));S.cur=j},
+    `레이어 클립을 본 영상 ${fmtS(j>=n?S.total:S.starts[j])} 위치에 넣었어요${S.clips.length?' · 소리는 오디오 클립 자리에 그대로 있어요':''}`);ensureVisible(j)}
 function vMenuDef(c){const T=S.vtracks.find(t=>t.id===(c?c.track:S.vTrack));const i=T?S.vtracks.indexOf(T):-1;
   return{title:c?c.name:(T?T.name:'Video layer'),hint:c?`${fmtS(c.start)} ~ ${fmtS(c.start+vLen(c))}`:'비디오 레이어',cols:[[
     {h:'Clip',items:[{t:'재생 위치에서 나누기',k:'mod+shift+D',f:()=>vSplit(c),dis:!c},{t:'잘라내기',k:'mod+X',f:()=>vCopy(c,true),dis:!c},{t:'복사',k:'mod+C',f:()=>vCopy(c),dis:!c},{t:'붙여넣기',k:'mod+V',f:()=>vPaste(),dis:!A.vcb},{t:'복제',k:'mod+D',f:()=>vDup(c),dis:!c},{t:'삭제',k:'Del',f:()=>vDelete(c),dis:!c}]},
@@ -2329,7 +2360,9 @@ function drawPlayhead(){
   tlx.setTransform(1,0,0,1,0,0);tlx.clearRect(0,0,tlCv.width,tlCv.height);tlx.drawImage(tlStatic,0,0);tlx.setTransform(dpr,0,0,dpr,0,0);
   const x=Math.round(X(T))+.5;tlx.strokeStyle='#FF2F00';tlx.lineWidth=1.5;tlx.beginPath();tlx.moveTo(x,4);tlx.lineTo(x,h);tlx.stroke();
   tlx.fillStyle='#FF2F00';tlx.beginPath();tlx.moveTo(x-5,0);tlx.lineTo(x+5,0);tlx.lineTo(x+5,6);tlx.lineTo(x,11);tlx.lineTo(x-5,6);tlx.closePath();tlx.fill();
-  const d=A.vdrag;if(d){const rows=['video','linked'].map(id=>tlGeom.tr.findIndex(t=>t.id===id)).filter(x=>x>=0);if(rows.length){const y0=RUL+Math.min(...rows)*ROW,y1=RUL+(Math.max(...rows)+1)*ROW;
+  const d=A.vdrag;if(d&&d.lrow!=null){const y0=RUL+d.lrow*ROW;tlx.globalAlpha=.5;tlx.fillStyle='#FF2F00';tlx.beginPath();tlx.roundRect(X(d.t),y0+5,Math.max(4,d.w),ROW-10,6);tlx.fill();tlx.globalAlpha=1;
+    tlx.strokeStyle='#FF2F00';tlx.lineWidth=2;tlx.beginPath();tlx.roundRect(X(d.t)+1,y0+6,Math.max(4,d.w)-2,ROW-12,5);tlx.stroke();tlx.lineWidth=1}
+  else if(d){const rows=['video','linked'].map(id=>tlGeom.tr.findIndex(t=>t.id===id)).filter(x=>x>=0);if(rows.length){const y0=RUL+Math.min(...rows)*ROW,y1=RUL+(Math.max(...rows)+1)*ROW;
     if(d.ok){const xj=X(d.j>=S.frames.length?S.total:S.starts[d.j]);tlx.fillStyle='#FF2F00';tlx.fillRect(Math.round(xj)-1.5,y0+1,3,y1-y0-2)}
     tlx.globalAlpha=.5;tlx.fillStyle=d.ok?'#FF2F00':'#9a9aa8';tlx.beginPath();tlx.roundRect(d.px-d.off,y0+5,Math.max(4,d.w),y1-y0-10,6);tlx.fill();tlx.globalAlpha=1}}
   const th=$('#thT');if(th)th.textContent=fmtS(T);
@@ -2470,8 +2503,14 @@ function segDrag(e,i0,i1,r){const g=tlGeom;const sx=e.clientX;let moved=false;co
   const tAt=j=>j>=n?S.total:S.starts[j];const edges=[...videoSegs().map(x=>x.i0),n];const off=e.clientX-r.left-g.X(S.starts[i0]),w=g.X(tAt(i1+1))-g.X(S.starts[i0]);
   const pick=px=>{let best=null,bd=1e9;for(const j of edges){const d=Math.abs(g.X(tAt(j))-px);if(d<bd){bd=d;best=j}}if(bd<=14)return best;
     const T=clamp((px-TPAD)/g.k,0,Math.max(0,S.total-0.001));const i=frameAt(T);return T<S.starts[i]+S.frames[i].delay/2?i:i+1};
-  const mv=ev=>{if(!moved&&Math.abs(ev.clientX-sx)<4)return;moved=true;const px=ev.clientX-r.left;const j=pick(px);A.vdrag={px,off,w,j,ok:!(j>=i0&&j<=i1+1)};tlCv.style.cursor='grabbing';drawPlayhead()};
-  const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);const d=A.vdrag;A.vdrag=null;tlCv.style.cursor='';if(moved&&d&&d.ok)moveVideo(i0,i1,d.j);else drawPlayhead()};
+  const sy=e.clientY,marks=()=>[0,playT(),...videoSegs().map(x=>x.start),...S.vclips.flatMap(o=>[o.start,o.start+vLen(o)])];
+  const mv=ev=>{if(!moved&&Math.abs(ev.clientX-sx)<4&&Math.abs(ev.clientY-sy)<4)return;moved=true;const px=ev.clientX-r.left;
+    /* over a video layer row: the piece goes up onto that layer */
+    const row=Math.floor((ev.clientY-r.top-RUL)/ROW),t=g.tr[row];
+    if(t&&t.kind==='vtrack'){let T=Math.max(0,(px-off-TPAD)/g.k);let bd=7/g.k;for(const m of marks()){if(Math.abs(m-T)<bd){bd=Math.abs(m-T);T=m}}A.vdrag={lrow:row,tid:t.id,t:Math.round(T),w};tlCv.style.cursor='grabbing';return drawPlayhead()}
+    const j=pick(px);A.vdrag={px,off,w,j,ok:!(j>=i0&&j<=i1+1)};tlCv.style.cursor='grabbing';drawPlayhead()};
+  const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);const d=A.vdrag;A.vdrag=null;tlCv.style.cursor='';
+    if(moved&&d&&d.lrow!=null)return pieceToLayer(i0,i1,d.tid,d.t);if(moved&&d&&d.ok)moveVideo(i0,i1,d.j);else drawPlayhead()};
   addEventListener('pointermove',mv);addEventListener('pointerup',up)}
 function videoMenuDef(sg){const vs=videoSegs();const i=frameAt(clamp(playT(),0,Math.max(0,S.total-1)));const lk=hasLinked();const idx=sg?segIdx(sg):[];
   return{title:'Video',hint:sg?`조각 ${sg.k+1} / ${vs.length}`:fmtS(playT())+' 위치',cols:[[
@@ -3263,7 +3302,7 @@ function insertToEditor(items){
     nf.forEach((f,k)=>{if(lb)f.label=lb;if(k===0){f.vCut=true;if(lk)f.auSeg={...SEG_DEF}}});
     S.frames.splice(j,0,...nf);setSel(nf.map((_,k)=>j+k),j);
     /* sound kept apart (Unlink): the new video's sound goes in as a clip at the same place */
-    if(S.linkOff&&nf[0].au&&AS.has(nf[0].au.src)){ensureTracks();const src=nf[0].au.src;const c=newClip(src,baseName(items[0].name),AS.get(src).dur,S.tracks[0].id);c.start=Math.round(at);S.clips.push(c)}
+    if(S.linkOff&&nf[0].au&&AS.has(nf[0].au.src)){const src=nf[0].au.src;const c=newClip(src,baseName(items[0].name),AS.get(src).dur,S.tracks[0]?S.tracks[0].id:audioTrackFor('Audio 1'));c.start=Math.round(at);S.clips.push(c)}
   },`${name} ${nf.length}프레임을 ${fmtS(at)} 위치에 넣었어요${lb?` · ${LABELS[lb].t}로 표시`:''}${S.linkOff&&S.clips.some(c=>c.start+clipLen(c)>at)?' · 따로 둔 오디오 클립은 위치 그대로예요':' · Video 줄에서 끌어서 옮길 수 있어요'}`);
   S.view.fit=true;layoutStage();ensureVisible(j)}
 const dz=$('#dz');
