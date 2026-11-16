@@ -90,6 +90,9 @@ input[type="range"]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;b
 .hint{margin:0;color:var(--mute);font-size:11.5px;line-height:1.55}
 .hint:empty{display:none}
 .warn{margin:0;color:var(--o);font-size:12px;font-weight:600;line-height:1.5}
+.btn.mini{padding:0 9px;min-height:30px;font-size:12px;flex:none}
+.btn.mini[aria-pressed="true"]{background:var(--o);border-color:var(--o);color:#fff}
+#stage.picking canvas{cursor:crosshair!important}
 .swatch{width:18px;height:18px;border-radius:5px;border:1px solid var(--line);flex:none}
 .list,#layers,#colors{display:flex;flex-direction:column;gap:6px}
 .item{border:1.5px solid var(--line);border-radius:12px;padding:6px 10px;display:flex;flex-direction:column;background:#fff}
@@ -256,6 +259,10 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
       <div id="map-wrap"><svg id="map" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="인식된 전개도"></svg></div>
       <div class="legend" id="map-legend"><span><i style="background:var(--cut)"></i>칼선</span><span><i style="background:var(--fold)"></i>안으로 접기</span><span><i style="background:var(--fold-out)"></i>밖으로 접기</span></div>
       <p class="hint" id="map-hint">접는선이나 면을 누르면 화면 오른쪽에 옵션 창이 뜹니다.</p>
+      <div id="side-box" hidden>
+        <p class="hint" id="side-note"></p>
+        <div class="seg"><button type="button" class="btn" id="side-flip">양면 뒤집기</button><button type="button" class="btn" id="side-mirror" aria-pressed="false">안쪽 좌우 반전</button></div>
+      </div>
       <div class="seg"><button type="button" class="btn" id="edit-open">선 고치기</button><button type="button" class="btn" id="angles-reset">접는 각도 초기화</button></div>
     </div>
   </details>
@@ -299,7 +306,14 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
       <div class="row srow"><label for="paper-size">무늬 크기</label><input type="range" id="paper-size" min="30" max="300" step="5" value="100"><output id="paper-size-out" for="paper-size">100%</output></div>
       <div class="row srow"><label for="thick">종이 두께</label><input type="range" id="thick" min="0" max="3" step="0.1" value="0.4"><output id="thick-out" for="thick">0.4mm</output></div>
       <div class="row srow"><label for="emboss-depth">형압 깊이</label><input type="range" id="emboss-depth" min="0" max="100" step="1" value="50"><output id="emboss-depth-out" for="emboss-depth">50%</output></div>
-      <div class="row"><label class="name" for="inside">종이 안쪽</label>
+      <div class="row"><label class="name" for="inside-mode">안쪽 면</label>
+        <select id="inside-mode"><option value="print" hidden>양면 인쇄</option><option value="paper" selected>종이 색 그대로</option><option value="solid">단색</option><option value="grad">그라데이션</option></select></div>
+      <div class="row" id="inside-c-row" hidden><span class="name" id="inside-c-label">색</span>
+        <input type="color" id="inside-c1" value="#f47bb0" aria-label="안쪽 면 색 1"><button type="button" class="btn mini" id="inside-pick1" aria-pressed="false">스포이드</button>
+        <input type="color" id="inside-c2" value="#ffe14d" aria-label="안쪽 면 색 2"><button type="button" class="btn mini" id="inside-pick2" aria-pressed="false">스포이드</button></div>
+      <div class="row srow" id="inside-angle-row" hidden><label for="inside-angle">방향</label><input type="range" id="inside-angle" min="0" max="355" step="5" value="0"><output id="inside-angle-out" for="inside-angle">0°</output></div>
+      <p class="hint" id="inside-hint" hidden></p>
+      <div class="row"><label class="name" for="inside">종이 종류</label>
         <select id="inside"><option value="#f4f3ef">백색</option><option value="#d9d4c7">아이보리</option><option value="#b58a5c">크라프트</option><option value="#a9a79f">회색 판지</option></select></div>
       <div class="row"><label class="name" for="finish">후가공 없는 곳</label>
         <select id="finish"><option value="0.9">무광</option><option value="0.55" selected>기본 종이</option><option value="0.12">유광</option></select></div>
@@ -609,7 +623,7 @@ function buildStructure(lines, opts = {}) {
 
   /* 3-1. 세그먼트화 */
   let segs = [];
-  const ends = [];
+  const ends = [], term = new Map();   // term: 열린 선의 맨 끝 세그먼트 → 1(시작 쪽이 선의 끝) | 2(끝 쪽이 선의 끝)
   lines.forEach((ln, li) => {
     const pts = ln.pts.filter((p, i) => i === 0 || Math.hypot(p[0] - ln.pts[i - 1][0], p[1] - ln.pts[i - 1][1]) > 1e-6);
     if (pts.length < 2) return;
@@ -620,6 +634,7 @@ function buildStructure(lines, opts = {}) {
     if (Math.hypot(a[0] - b[0], a[1] - b[1]) > tol) {
       ends.push({ x: a[0], y: a[1], dx: a[0] - pts[1][0], dy: a[1] - pts[1][1], own: first, type: ln.role });
       ends.push({ x: b[0], y: b[1], dx: b[0] - pts[pts.length - 2][0], dy: b[1] - pts[pts.length - 2][1], own: last, type: ln.role });
+      term.set(first, (term.get(first) || 0) | 1); term.set(last, (term.get(last) || 0) | 2);
     }
   });
   if (!segs.length) return { faces: [], hinges: [], edges: [], rootId: -1, bbox: null, warnings: ['선이 없습니다.'] };
@@ -629,13 +644,18 @@ function buildStructure(lines, opts = {}) {
   const bridges = [];
   for (const e of ends) {
     const L = Math.hypot(e.dx, e.dy) || 1; const ux = e.dx / L, uy = e.dy / L;
-    let touching = false, bestRay = null, bestNear = null;
+    let touching = false, corner = false, bestRay = null, bestNear = null;
     for (let i = 0; i < baseCount; i++) {
       if (i === e.own) continue;
       const s = segs[i];
       if (Math.min(s.x1, s.x2) - eps > e.x || Math.max(s.x1, s.x2) + eps < e.x || Math.min(s.y1, s.y2) - eps > e.y || Math.max(s.y1, s.y2) + eps < e.y) continue;
       const pr = distPointSeg(e.x, e.y, s);
-      if (pr.d <= tol) { touching = true; break; }
+      if (pr.d <= tol) {
+        // 다른 선의 '끝'과만 맞닿은 경우(끝과 끝이 만나 생긴 모서리)는 아직 어디에도 붙지 않았을 수 있다 → 연장은 계속 시도한다
+        const tm = term.get(i) || 0;
+        if (((tm & 1) && Math.hypot(e.x - s.x1, e.y - s.y1) <= tol) || ((tm & 2) && Math.hypot(e.x - s.x2, e.y - s.y2) <= tol)) { corner = true; continue; }
+        touching = true; break;
+      }
       if (pr.d <= eps && (!bestNear || pr.d < bestNear.d)) bestNear = pr;
       const sx = s.x2 - s.x1, sy = s.y2 - s.y1;
       const den = ux * sy - uy * sx;
@@ -646,7 +666,7 @@ function buildStructure(lines, opts = {}) {
       }
     }
     if (touching) continue;
-    const q = bestRay || bestNear;
+    const q = corner ? (bestRay && bestRay.t <= eps ? bestRay : null) : bestRay || bestNear;   // 모서리는 진행 방향으로 곧게 닿을 때만 잇는다
     if (q) bridges.push({ x1: e.x, y1: e.y, x2: q.qx, y2: q.qy, type: e.type, li: -1 });
   }
   segs = segs.concat(bridges);
@@ -816,6 +836,11 @@ function buildStructure(lines, opts = {}) {
 
   /* 3-9. 기준면(root) + 접기 트리 (접는선 BFS, 가장자리 조각은 붙임 처리) */
   let rootId = opts.rootId ?? -1;
+  if (opts.rootPoint) { // 이 점이 들어 있는 면을 기준으로 삼는다 (양면 뒤집기: 짝이 되는 전개도 쪽을 고를 때)
+    let hit = null;
+    for (const f of faces) if (!tiny(f) && foldN[f.id].length && pointInPoly(opts.rootPoint[0], opts.rootPoint[1], f.outer) && (!hit || f.area < hit.area)) hit = f;
+    if (hit) rootId = hit.id;
+  }
   if (rootId < 0 || rootId >= faces.length) {
     let best = null, main = null;
     if (opts.auto) { // 사양 표나 테두리 틀이 아닌, 접는 선이 있는 가장 넓은 조각을 전개도 본체로 본다
@@ -894,7 +919,7 @@ function buildStructure(lines, opts = {}) {
   const drawEdges = edges.filter((e) => e.alive).map((e) => ({ a: nodes[e.u], b: nodes[e.v], type: e.type }));
   // 선 고치기 화면용: 살아 있는 선(ok), 무시한 선(ignored), 면을 이루지 못해 버려진 선(loose)을 모두 돌려준다
   const mainComp = rootId >= 0 ? faces[rootId].comp : -1;
-  const allEdges = edges.map((e) => ({ a: nodes[e.u], b: nodes[e.v], type: e.type, state: e.alive ? 'ok' : e.ignored ? 'ignored' : 'loose', main: e.alive && find(e.u) === mainComp, edited: !!e.ov }));
+  const allEdges = edges.map((e) => ({ a: nodes[e.u], b: nodes[e.v], type: e.type, state: e.alive ? 'ok' : e.ignored ? 'ignored' : 'loose', main: e.alive && find(e.u) === mainComp, comp: e.alive ? find(e.u) : -1, edited: !!e.ov }));
   const childCount = new Map();
   hinges.forEach((h) => { if (!h.weld) childCount.set(h.parent, (childCount.get(h.parent) || 0) + 1); });
   hinges.forEach((h) => { h.leaf = !childCount.get(h.child); });
@@ -1023,8 +1048,10 @@ const defaultLights = () => [
 
 const S = {
   example: true, doc: null, fileName: '', pages: [], layers: [], colorRoles: new Map(), colorUser: new Map(),
+  twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null,   // 양면 인쇄: 짝이 되는 안쪽면, 바깥·안쪽 뒤집기
+  inside: { mode: 'paper', c1: '#f47bb0', c2: '#ffe14d', angle: 0, auto: true },   // 안쪽 면 표시 방식
   sheets: [],   // 후가공을 대지(쪽)로 나눠 둔 파일의 나머지 쪽 [{page, name, role, color, opacity, blend, emboss}]
-  lineMode: 'color', lineModeUser: null, edits: [], editUndo: [], noLayerAll: false, pickedLayer: '',   // 선 구분 방식, 직접 고친 선 [{x, y, role}]
+  lineMode: 'color', lineModeUser: null, edits: [], editUndo: [], noLayerAll: false, pickedLayer: '', guessedFold: '',   // 선 구분 방식, 직접 고친 선 [{x, y, role}]
   dielinePage: 1, struct: null, auto: new Map(), over: new Map(), dir: new Map(), t: 1, sel: null,
   uv: null, printCanvas: null, finishes: [], texBox: '', token: 0,
   lights: defaultLights(), reflectors: [], ambient: 100, paperCustom: null,
@@ -1358,6 +1385,37 @@ function applyTextures() {
   matFront.roughnessMap = matFront.metalnessMap = canvasTexture(orm, false);
   matFront.needsUpdate = true; dirty = true;
 }
+/* ---------- 안쪽 면: 양면 인쇄 / 종이 색 / 단색 / 그라데이션 ---------- */
+function applyInside() {
+  const I = S.inside, paper = $('inside').value;
+  if (matBack.map) { matBack.map.dispose(); matBack.map = null; }
+  const mode = I.mode === 'print' && !S.insideCanvas ? 'paper' : I.mode;
+  if (mode === 'print') { const t = canvasTexture(S.insideCanvas, true); t.channel = 2; matBack.map = t; matBack.color.set('#ffffff'); }
+  else if (mode === 'grad' && S.struct && S.struct.bbox) {
+    // 전개도(펼친 종이) 기준의 선형 그라데이션. 0° = 아래에서 위로, 90° = 안쪽에서 볼 때 왼쪽에서 오른쪽으로
+    const b = S.struct.bbox, w = b.maxX - b.minX, h = b.maxY - b.minY, N = 512, c = document.createElement('canvas'); c.width = c.height = N;
+    const g = c.getContext('2d'); g.setTransform(N / w, 0, 0, -N / h, 0, N);
+    const a = I.angle * D2R, dx = Math.sin(a), dy = Math.cos(a), L = Math.abs(w * dx) + Math.abs(h * dy) || 1;
+    const gr = g.createLinearGradient(w / 2 - dx * L / 2, h / 2 - dy * L / 2, w / 2 + dx * L / 2, h / 2 + dy * L / 2); gr.addColorStop(0, I.c1); gr.addColorStop(1, I.c2);
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    const t = canvasTexture(c, true); t.channel = 3; matBack.map = t; matBack.color.set('#ffffff');
+  } else matBack.color.set(mode === 'solid' ? I.c1 : paper);
+  matEdge.color.set(paper).multiplyScalar(0.9);   // 종이 단면은 종이 색 그대로
+  matBack.needsUpdate = true; dirty = true;
+}
+function syncInsideUI() {
+  const I = S.inside, has = !!S.twin;
+  $('inside-mode').querySelector('option[value="print"]').hidden = !has;
+  if (!has && I.mode === 'print') I.mode = 'paper';
+  $('inside-mode').value = I.mode;
+  $('inside-c-row').hidden = I.mode !== 'solid' && I.mode !== 'grad';
+  $('inside-c2').hidden = $('inside-pick2').hidden = I.mode !== 'grad';
+  $('inside-c-label').textContent = I.mode === 'grad' ? '시작 · 끝 색' : '색';
+  $('inside-angle-row').hidden = I.mode !== 'grad';
+  $('inside-c1').value = I.c1; $('inside-c2').value = I.c2; $('inside-angle').value = I.angle; $('inside-angle-out').textContent = I.angle + '°';
+  const hint = I.mode === 'print' ? '파일에 들어 있는 안쪽면 인쇄를 면의 뒷면에 입혔습니다.' : I.mode === 'grad' ? '펼친 종이 기준으로 칠합니다. 0°는 아래에서 위로, 90°는 안쪽에서 볼 때 왼쪽에서 오른쪽입니다.' : I.mode === 'solid' ? '스포이드를 누른 뒤 상자를 찍으면 그 자리의 인쇄 색을 가져옵니다.' : '';
+  $('inside-hint').textContent = hint; $('inside-hint').hidden = !hint;
+}
 let texTimer = 0;
 function queueTextures() { clearTimeout(texTimer); texTimer = setTimeout(applyTextures, 140); }
 
@@ -1471,12 +1529,18 @@ function buildMeshes() {
     for (const lp of [f.outer, ...f.holes]) { for (let i = 0; i < lp.length; i++) { const a = base + i, b = base + ((i + 1) % lp.length); if (edgeType.get(ek(pts[a], pts[b])) === 'cut') bnd.set(a < b ? a + '_' + b : b + '_' + a, [a, b]); } base += lp.length; }
     const bg = S.bulge.get(f.id); let zs = null;
     if (bg && bg.amt) { ({ pts, tris } = subdivide(pts, tris, bnd, 9)); zs = bulgeHeights(f, pts, bg); }
-    const pos = new Float32Array(pts.length * 3), uv = new Float32Array(pts.length * 2), nrm = new Float32Array(pts.length * 3);
-    pts.forEach((p, i) => { pos[i * 3] = p[0]; pos[i * 3 + 1] = p[1]; pos[i * 3 + 2] = zs ? zs[i] : 0; nrm[i * 3 + 2] = 1; const q = S.uv(p[0], p[1]); uv[i * 2] = q[0]; uv[i * 2 + 1] = q[1]; });
+    const pos = new Float32Array(pts.length * 3), uv = new Float32Array(pts.length * 2), nrm = new Float32Array(pts.length * 3), uvI = new Float32Array(pts.length * 2), uvP = new Float32Array(pts.length * 2);
+    const sb = S.struct.bbox, sw = sb.maxX - sb.minX || 1, sh = sb.maxY - sb.minY || 1;
+    pts.forEach((p, i) => {
+      pos[i * 3] = p[0]; pos[i * 3 + 1] = p[1]; pos[i * 3 + 2] = zs ? zs[i] : 0; nrm[i * 3 + 2] = 1; const q = S.uv(p[0], p[1]); uv[i * 2] = q[0]; uv[i * 2 + 1] = q[1];
+      uvP[i * 2] = 1 - (p[0] - sb.minX) / sw; uvP[i * 2 + 1] = (p[1] - sb.minY) / sh;                       // 안쪽에서 본 좌우로 펼친 좌표
+      const qi = S.uvIn ? S.uvIn(p[0], p[1]) : [uvP[i * 2], uvP[i * 2 + 1]]; uvI[i * 2] = qi[0]; uvI[i * 2 + 1] = qi[1];
+    });
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     g.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));
     g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+    g.setAttribute('uv2', new THREE.BufferAttribute(uvI, 2)); g.setAttribute('uv3', new THREE.BufferAttribute(uvP, 2));
     g.setIndex(tris.flat());
     if (zs) g.computeVertexNormals();
     const o = { front: new THREE.Mesh(g, matFront), back: new THREE.Mesh(g, matBack), wall: null, label: null };
@@ -1752,10 +1816,10 @@ function renderLayerUI() {
   if (S.example) { box.append(el('p', { class: 'hint', text: '파일을 올리면 레이어가 여기에 나옵니다. 후가공할 면적을 레이어로 따로 그려 두고 이름에 금박·은박·형압·유광·무광 등을 넣으면 자동으로 맞춥니다.' })); $('layer-note').textContent = ''; return; }
   if (!S.layers.length) { box.append(el('p', { class: 'hint', text: '레이어 정보가 없는 파일입니다. 마젠타·시안처럼 선명한 색 선을 칼선으로 읽었습니다.' })); $('layer-note').textContent = ''; return; }
   $('layer-note').textContent = `${S.layers.length}개` + (S.sheets.length ? ` · 대지 ${S.sheets.length}개` : '');
-  const sheetRoles = LAYER_ROLES.filter((r) => FINISH[r[0]] || r[0] === 'off');
+  const sheetRoles = [['inside', '안쪽면 인쇄'], ...LAYER_ROLES.filter((r) => FINISH[r[0]] || r[0] === 'off')];
   [...S.layers, ...S.sheets].forEach((ly, i) => {
     const id = 'layer-role-' + i;
-    if (ly.page && ly === S.sheets[0]) box.append(el('p', { class: 'hint', text: '이 파일은 대지(쪽)가 여러 개입니다. 인쇄면이 아닌 쪽에 그려진 그림을 후가공 면적으로 쓸 수 있습니다.' + (S.sheets.some((x) => x.from) ? ' 내용이 비어 있는 후가공 레이어 이름에 맞춰 골라 두었으니, 다르면 바꿔 주세요.' : '') }));
+    if (ly.page && ly === S.sheets[0]) box.append(el('p', { class: 'hint', text: '이 파일은 대지(쪽)가 여러 개입니다. 인쇄면이 아닌 쪽에 그려진 그림을 안쪽면 인쇄나 후가공 면적으로 쓸 수 있습니다.' + (S.sheets.some((x) => x.from) ? ' 내용이 비어 있는 후가공 레이어 이름에 맞춰 골라 두었으니, 다르면 바꿔 주세요.' : '') }));
     box.append(el('div', { class: 'row' }, el('label', { class: 'name', for: id, text: ly.name }), selectEl(id, ly.page ? sheetRoles : LAYER_ROLES, ly.role, (v) => { ly.role = v; if (FINISH[v] && FINISH[v].color) ly.color = FINISH[v].color; rebuild(true); })));
     const spec = FINISH[ly.role]; if (!spec) return;
     const sub = el('div', { class: 'item' });
@@ -1776,6 +1840,7 @@ function renderColorUI() {
   for (const b of $('line-mode').querySelectorAll('button')) { b.setAttribute('aria-pressed', String(!S.example && b.dataset.mode === S.lineMode)); b.disabled = S.example; }
   $('line-mode-note').textContent = S.example ? '칼선 레이어 안에서' : auto ? '모양으로 자동' : '선 색으로';
   $('line-mode-hint').textContent = S.example ? '' : (S.pickedLayer ? `칼선이라는 이름의 레이어가 없어 "${S.pickedLayer}" 레이어를 칼선으로 골랐습니다. ` : '')
+    + (!auto && S.guessedFold ? `규칙에 없는 색이지만 ${S.guessedFold} 선은 곧은 선뿐이고 안쪽에만 있어 접는 선으로 봤습니다. ` : '')
     + (auto ? '선 색이 나뉘어 있지 않아 모양으로 구분했습니다. 바깥 테두리는 자르는 선, 면과 면 사이의 선은 접는 선으로 봅니다. 떨어져 있는 표나 치수선은 빼고 가장 넓은 전개도만 씁니다.' : '선 색으로 구분합니다. 파랑·시안 계열은 안으로 접는 선, 노랑은 밖으로 접는 선, 그 밖은 자르는 선입니다.')
     + (S.edits.length ? ` 직접 고친 선 ${S.edits.length}개가 적용돼 있습니다.` : ' 틀린 곳은 전개도의 "선 고치기"에서 바꿀 수 있습니다.');
   $('edit-open').disabled = S.example || !st || !st.allEdges || !st.allEdges.length;
@@ -2053,7 +2118,8 @@ async function loadFile(file) {
       pages.push({ num: p, strokes, layerOps, ops: ol.fnArray.length });
     }
     if (S.doc) S.doc.destroy();
-    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], editUndo: [], noLayerAll: false, pickedLayer: '', sheets: [] });
+    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], editUndo: [], noLayerAll: false, pickedLayer: '', sheets: [], twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null });
+    S.inside.auto = true;
     const picked = autoPickDieline(layers, pages); if (picked) S.pickedLayer = picked.name;
     S.sheets = extraSheets(layers, pages);
     pose.base.identity(); pose.rx = pose.ry = pose.rz = 0; syncPoseUI();
@@ -2125,6 +2191,36 @@ async function renderLayers(doc, layers, pageNum, ids, bbox, maxPx) { // ids: �
   return { canvas: c, uv: (x, y) => { const p = base.convertToViewportPoint(x, y); return [(p[0] - x0) / w, 1 - (p[1] - y0) / h]; } };
 }
 
+/* ---------- 양면 인쇄: 짝이 되는 전개도 찾기 ---------- */
+// T: 바깥 전개도의 점 → 안쪽 전개도의 같은 자리. mirror면 x' = ax - x (좌우 뒤집힘), 아니면 x' = x + dx
+const applyT = (T, x, y) => (T.mirror ? [T.ax - x, y + T.dy] : [x + T.dx, y + T.dy]);
+const inverseT = (T) => (T.mirror ? { mirror: true, ax: T.ax, dy: -T.dy } : { mirror: false, dx: -T.dx, dy: -T.dy });
+const mirrorT = (T, b) => (T.mirror ? { mirror: false, dx: T.ax - b.minX - b.maxX, dy: T.dy } : { mirror: true, ax: b.minX + b.maxX + T.dx, dy: T.dy });
+const printPg0 = () => pickPage('print');
+function edgeBox(E) { let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity; for (const e of E) for (const q of [e.a, e.b]) { if (q[0] < x0) x0 = q[0]; if (q[0] > x1) x1 = q[0]; if (q[1] < y0) y0 = q[1]; if (q[1] > y1) y1 = q[1]; } return { x0, y0, x1, y1, w: x1 - x0, h: y1 - y0 }; }
+function matchT(main, mb, other, ob) { // 두 선 묶음이 같은 전개도인지: 좌우로 뒤집어 겹쳤을 때와 그대로 옮겨 겹쳤을 때 선이 얼마나 맞는지 본다
+  if (Math.abs(mb.w - ob.w) > 3 || Math.abs(mb.h - ob.h) > 3 || !other.length) return null;
+  const grid = new Set(); for (const e of main) grid.add(Math.round((e.a[0] + e.b[0]) / 2) + ',' + Math.round((e.a[1] + e.b[1]) / 2));
+  const has = (x, y) => { const rx = Math.round(x), ry = Math.round(y); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) if (grid.has((rx + i) + ',' + (ry + j))) return true; return false; };
+  const dy = ob.y0 - mb.y0, cand = [{ mirror: true, ax: mb.x0 + ob.x1, dy }, { mirror: false, dx: ob.x0 - mb.x0, dy }];
+  let best = null;
+  for (const T of cand) { const inv = inverseT(T); let hit = 0; for (const e of other) { const q = applyT(inv, (e.a[0] + e.b[0]) / 2, (e.a[1] + e.b[1]) / 2); if (has(q[0], q[1])) hit++; } const score = hit / other.length; if (!best || score > best.score + (T.mirror ? 0 : 0.02)) best = { T, score }; }
+  return best;
+}
+function compTwin(st, page) { // 같은 대지에 놓인 짝
+  const ok = st.allEdges.filter((e) => e.state === 'ok'), main = ok.filter((e) => e.main); if (!main.length) return null;
+  const groups = new Map(); for (const e of ok) if (!e.main) { let l = groups.get(e.comp); if (!l) groups.set(e.comp, (l = [])); l.push(e); }
+  const mb = edgeBox(main); let best = null;
+  for (const g of groups.values()) { const m = matchT(main, mb, g, edgeBox(g)); if (m && m.score >= 0.7 && (!best || m.score > best.score)) best = m; }
+  return best && { kind: 'comp', page, T: best.T, score: best.score };
+}
+function pageTwin(st, other) { // 다른 대지에 놓인 짝
+  const main = st.allEdges.filter((e) => e.state === 'ok' && e.main), om = other.allEdges.filter((e) => e.state === 'ok' && e.main);
+  if (!main.length || !om.length) return null;
+  const mb = edgeBox(main), ob = edgeBox(om), m = matchT(main, mb, om, ob);
+  return m || { T: { mirror: false, dx: ob.x0 - mb.x0, dy: ob.y0 - mb.y0 }, score: 0 };
+}
+
 /* ---------- 다시 계산 ---------- */
 async function rebuild(textures, refit) {
   const token = S.token;
@@ -2137,16 +2233,55 @@ async function rebuild(textures, refit) {
   const roles = new Map();
   if (dl) for (const s of dl.st) {
     const k = colorKey(s.rgb) + (s.dashed ? 'd' : '');
-    if (!roles.has(k)) roles.set(k, { hex: colorKey(s.rgb), dashed: s.dashed, count: 0, role: S.colorUser.get(k) || guessLineRole(s.rgb, s.dashed) });
-    roles.get(k).count += s.polylines.length;
+    if (!roles.has(k)) roles.set(k, { hex: colorKey(s.rgb), dashed: s.dashed, count: 0, role: S.colorUser.get(k) || guessLineRole(s.rgb, s.dashed), user: S.colorUser.has(k), straight: true, len: 0, box: [Infinity, Infinity, -Infinity, -Infinity] });
+    const c = roles.get(k); c.count += s.polylines.length;
+    for (const q of s.polylines) {
+      const a = q[0], b = q[q.length - 1], L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+      for (let i = 0; i < q.length; i++) {
+        const v = q[i]; if (i) c.len += Math.hypot(v[0] - q[i - 1][0], v[1] - q[i - 1][1]);
+        if (Math.abs((v[0] - a[0]) * (b[1] - a[1]) - (v[1] - a[1]) * (b[0] - a[0])) / L > 0.3) c.straight = false;
+        if (v[0] < c.box[0]) c.box[0] = v[0]; if (v[1] < c.box[1]) c.box[1] = v[1]; if (v[0] > c.box[2]) c.box[2] = v[0]; if (v[1] > c.box[3]) c.box[3] = v[1];
+      }
+    }
+  }
+  // 색 규칙(시안·노랑)에 맞는 접는선 색이 없을 때: 곧은 선뿐이고 다른 색 선들의 범위 안쪽에만 있는 색(예: 초록 오시선)을 접는 선으로 본다
+  S.guessedFold = '';
+  if (roles.size >= 2 && ![...roles.values()].some((c) => c.role === 'fold' || c.role === 'foldOut')) {
+    const live = [...roles.values()].filter((c) => c.role !== 'ignore'), longest = live.reduce((a, c) => (!a || c.len > a.len ? c : a), null);
+    for (const c of live) {
+      if (c.user || c === longest || !c.straight) continue;
+      const o = live.filter((x) => x !== c && !x.straight); if (!o.length) continue;
+      const bx = [Math.min(...o.map((x) => x.box[0])), Math.min(...o.map((x) => x.box[1])), Math.max(...o.map((x) => x.box[2])), Math.max(...o.map((x) => x.box[3]))];
+      if (c.box[0] >= bx[0] - 1 && c.box[1] >= bx[1] - 1 && c.box[2] <= bx[2] + 1 && c.box[3] <= bx[3] + 1) { c.role = 'fold'; S.guessedFold = c.hex; }
+    }
   }
   S.colorRoles = roles;
   // 접는선 색이 따로 없으면(선 색이 한 가지인 칼선) 색 대신 모양으로 나눈다
   S.lineMode = S.lineModeUser || ([...roles.values()].some((c) => c.role === 'fold' || c.role === 'foldOut') ? 'color' : 'auto');
   const auto = S.lineMode === 'auto';
-  const lines = [];
-  if (dl) for (const s of dl.st) { const r = roles.get(colorKey(s.rgb) + (s.dashed ? 'd' : '')).role; if (r !== 'ignore') for (const p of s.polylines) lines.push({ pts: p, role: auto ? 'cut' : r }); }
-  const st = buildStructure(lines, { gapTol: (+$('gap').value || 0) / PT2MM, auto, overrides: S.edits });
+  const linesOf = (strokes) => { const out = []; for (const s of strokes) { const c = roles.get(colorKey(s.rgb) + (s.dashed ? 'd' : '')), r = c ? c.role : guessLineRole(s.rgb, s.dashed); if (r !== 'ignore') for (const p of s.polylines) out.push({ pts: p, role: auto ? 'cut' : r }); } return out; };
+  const bopts = { gapTol: (+$('gap').value || 0) / PT2MM, auto, overrides: S.edits };
+  let st = buildStructure(dl ? linesOf(dl.st) : [], bopts);
+  /* 양면 인쇄 찾기: ① 같은 대지에 좌우가 뒤집힌 전개도가 하나 더 있는 경우 ② 다른 대지(쪽)에 안쪽면을 그려 둔 경우 */
+  let twin = st.bbox && dl ? compTwin(st, dl.pg.num) : null, outPage = null;
+  if (!twin && st.bbox) for (const sh of S.sheets) {
+    if (!sh.checked) { // 처음 한 번: 그 쪽의 전개도가 뒤집힌 모양이면 안쪽면으로 본다
+      sh.checked = true;
+      const ds = dielineStrokes(S.pages[sh.page - 1]), t = ds.length ? pageTwin(st, buildStructure(linesOf(ds), { gapTol: bopts.gapTol, auto })) : null;
+      sh.T = t ? t.T : { mirror: false, dx: 0, dy: 0 }; sh.hasDie = !!t;
+      if (t && t.T.mirror && t.score >= 0.7 && sh.role === 'off') sh.role = 'inside';
+    }
+    if (sh.role === 'inside') { twin = { kind: 'page', page: sh.page, T: sh.T, hasDie: sh.hasDie }; break; }
+  }
+  if (twin && S.flip) { // 바깥·안쪽을 바꾼다: 짝이 되는 전개도를 본체로 다시 읽는다
+    const root = st.faces.find((f) => f.id === st.rootId) || st.faces[0], rp = applyT(twin.T, root.center[0], root.center[1]), from = dl.pg.num;
+    if (twin.kind === 'comp' || twin.hasDie) st = buildStructure(twin.kind === 'comp' ? linesOf(dl.st) : linesOf(dielineStrokes(S.pages[twin.page - 1])), { ...bopts, rootPoint: rp });
+    outPage = twin.page; twin = { ...twin, page: twin.kind === 'comp' ? from : (pickPage('print') || dl.pg).num, T: inverseT(twin.T) };
+  }
+  if (twin && S.inMirror && st.bbox) twin = { ...twin, T: mirrorT(twin.T, st.bbox) };
+  S.twin = twin;
+  if (twin && S.inside.auto) { S.inside.mode = 'print'; S.inside.auto = false; }
+  if (twin) st.warnings = st.warnings.filter((w) => !/별도 조각/.test(w));
   const sig = (x) => (x && x.bbox ? [x.faces.length, x.hinges.length, x.rootId, Math.round(x.bbox.minX), Math.round(x.bbox.maxY)].join('/') : '');
   const changed = sig(st) !== sig(S.struct);
   if (changed) { // 구조가 달라져도 같은 자리의 접는선·면에 준 설정은 그대로 옮긴다
@@ -2170,13 +2305,19 @@ async function rebuild(textures, refit) {
   if (!st.faces.length) msgs.unshift(S.layers.length && !S.layers.some((l) => l.role === 'dieline') ? '칼선 레이어를 골라 주세요. 레이어 역할에서 칼선으로 지정하면 됩니다.' : '닫힌 칼선을 찾지 못했습니다. 선 색상 역할이나 "끊긴 선 이어 붙이기" 값을 조정해 보세요.');
   else if (!st.hinges.some((h) => !h.weld)) msgs.unshift(auto ? '접는 선을 찾지 못해 평면으로만 보입니다. 전개도의 "선 고치기"에서 접는 선을 직접 지정해 주세요.' : '접는선을 찾지 못해 평면으로만 보입니다. 선 구분에서 접는선 색을 지정하거나 "모양으로 자동"을 눌러 보세요.');
   setWarn(msgs.join(' '));
-  const boxKey = st.bbox ? [st.bbox.minX, st.bbox.minY, st.bbox.maxX, st.bbox.maxY].map(Math.round).join('/') : '';
+  const boxKey = (st.bbox ? [st.bbox.minX, st.bbox.minY, st.bbox.maxX, st.bbox.maxY].map(Math.round).join('/') : '') + (twin ? `|${twin.kind}${twin.page}${twin.T.mirror ? 'm' : 's'}${S.flip ? 'f' : ''}` : '');
   if (st.faces.length && (textures || !S.uv || boxKey !== S.texBox)) {
     const b = st.bbox, plainUv = (x, y) => [(x - b.minX) / (b.maxX - b.minX), (y - b.minY) / (b.maxY - b.minY)];
-    S.printCanvas = null; S.finishes = []; S.uv = null; S.texBox = boxKey;
+    S.printCanvas = null; S.finishes = []; S.uv = null; S.texBox = boxKey; S.insideCanvas = null; S.uvIn = null;
     try {
       const maxTex = Math.min(4096, renderer.capabilities.maxTextureSize);
-      const printPg = pickPage('print');
+      const printPg = outPage ? S.pages[outPage - 1] : pickPage('print');
+      if (twin) { // 안쪽면: 짝이 되는 자리의 인쇄를 그려 면의 뒷면에 입힌다
+        await busy('안쪽면 그리는 중…');
+        const T = twin.T, c1 = applyT(T, b.minX, b.minY), c2 = applyT(T, b.maxX, b.maxY);
+        const r = await renderLayers(S.doc, S.layers, twin.page, new Set(S.layers.filter((l) => l.role === 'print').map((l) => l.id)), { minX: Math.min(c1[0], c2[0]), minY: Math.min(c1[1], c2[1]), maxX: Math.max(c1[0], c2[0]), maxY: Math.max(c1[1], c2[1]) }, Math.min(4096, maxTex));
+        S.insideCanvas = r.canvas; S.uvIn = (x, y) => { const q = applyT(T, x, y); return r.uv(q[0], q[1]); };
+      }
       if (printPg) { await busy('인쇄면 그리는 중…'); const r = await renderLayers(S.doc, S.layers, printPg.num, new Set(S.layers.filter((l) => l.role === 'print').map((l) => l.id)), b, maxTex); S.printCanvas = r.canvas; S.uv = r.uv; }
       for (const l of S.layers) {
         if (!FINISH[l.role]) continue;
@@ -2196,6 +2337,9 @@ async function rebuild(textures, refit) {
     if (token !== S.token) return;
     applyTextures();
   }
+  syncInsideUI(); applyInside();
+  $('side-box').hidden = !twin; $('side-mirror').setAttribute('aria-pressed', String(S.inMirror));
+  if (twin) $('side-note').textContent = '양면 인쇄로 읽었습니다. ' + (twin.kind === 'comp' ? '같은 대지에 나란히 놓인 두 전개도 가운데 ' + (S.flip ? '반대쪽' : '한쪽') + '을 바깥면으로 썼습니다.' : `${outPage || (printPg0() || { num: 1 }).num}쪽을 바깥면, ${twin.page}쪽을 안쪽면으로 썼습니다.`) + ' 바깥과 안쪽이 바뀌어 보이면 "양면 뒤집기"를 누르세요.';
   buildMeshes(); applyPaper(); updateFold(); if (refit) fitCamera('right'); renderMap(); select(S.sel); updateChips();
   await busy('');
 }
@@ -2370,8 +2514,43 @@ $('paper-file').addEventListener('change', async (e) => {
     S.paperCustom = c; applyPaper();
   } catch (err) { console.error(err); setWarn('질감 이미지를 읽지 못했습니다. PNG나 JPG 파일을 올려 주세요.'); }
 });
-const setInside = (v) => { matBack.color.set(v); matEdge.color.set(v).multiplyScalar(0.9); dirty = true; };
-$('inside').addEventListener('change', (e) => setInside(e.target.value));
+const setInside = () => applyInside();
+$('inside').addEventListener('change', applyInside);
+$('inside-mode').addEventListener('change', (e) => { S.inside.mode = e.target.value; S.inside.auto = false; syncInsideUI(); applyInside(); });
+$('inside-c1').addEventListener('input', (e) => { S.inside.c1 = e.target.value; applyInside(); });
+$('inside-c2').addEventListener('input', (e) => { S.inside.c2 = e.target.value; applyInside(); });
+$('inside-angle').addEventListener('input', (e) => { S.inside.angle = +e.target.value; $('inside-angle-out').textContent = e.target.value + '°'; applyInside(); });
+$('side-flip').addEventListener('click', () => { if (!S.twin) return; S.flip = !S.flip; S.sel = null; rebuild(true, true); });
+$('side-mirror').addEventListener('click', () => { if (!S.twin) return; S.inMirror = !S.inMirror; rebuild(true); });
+/* 스포이드: 누른 뒤 상자를 찍으면 그 자리의 인쇄 색(조명 영향을 뺀 원래 색)을 가져온다 */
+let pickCb = null, pickBtn = null;
+const pickRay = new THREE.Raycaster();
+function endPick() { if (pickBtn) pickBtn.setAttribute('aria-pressed', 'false'); pickCb = pickBtn = null; stage.classList.remove('picking'); }
+function colorAt(cx, cy) {
+  const r = renderer.domElement.getBoundingClientRect();
+  pickRay.setFromCamera(new THREE.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1), camera);
+  const hit = pickRay.intersectObjects(model.children, false).find((h) => h.object.material === matFront || h.object.material === matBack);
+  if (!hit) return null;
+  const m = hit.object.material, hex = (c) => '#' + [c[0], c[1], c[2]].map((v) => v.toString(16).padStart(2, '0')).join('');
+  if (!m.map || !m.map.image) return '#' + m.color.getHexString();
+  const g = hit.object.geometry, at = g.getAttribute(m.map.channel === 2 ? 'uv2' : m.map.channel === 3 ? 'uv3' : 'uv'), ps = g.getAttribute('position'), f = hit.face;
+  const P = hit.object.worldToLocal(hit.point.clone()), v = (i) => new THREE.Vector3().fromBufferAttribute(ps, i), u = (i) => new THREE.Vector2().fromBufferAttribute(at, i);
+  const bc = THREE.Triangle.getBarycoord(P, v(f.a), v(f.b), v(f.c), new THREE.Vector3()); if (!bc) return null;
+  const uv = u(f.a).multiplyScalar(bc.x).add(u(f.b).multiplyScalar(bc.y)).add(u(f.c).multiplyScalar(bc.z));
+  const img = m.map.image, x = Math.max(0, Math.min(img.width - 1, Math.floor(uv.x * img.width))), y = Math.max(0, Math.min(img.height - 1, Math.floor((1 - uv.y) * img.height)));
+  return hex(img.getContext('2d').getImageData(x, y, 1, 1).data);
+}
+for (const n of [1, 2]) $('inside-pick' + n).addEventListener('click', (e) => {
+  const b = e.currentTarget; if (pickBtn === b) { endPick(); return; }
+  endPick(); pickBtn = b; b.setAttribute('aria-pressed', 'true'); stage.classList.add('picking');
+  pickCb = (hex) => { S.inside['c' + n] = hex; syncInsideUI(); applyInside(); };
+});
+renderer.domElement.addEventListener('pointerdown', (e) => {
+  if (!pickCb) return;
+  e.stopImmediatePropagation(); e.preventDefault();
+  const cb = pickCb, hex = colorAt(e.clientX, e.clientY); endPick(); if (hex) cb(hex);
+}, true);
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pickCb) endPick(); });
 $('thick').addEventListener('input', (e) => { $('thick-out').textContent = (+e.target.value).toFixed(1) + 'mm'; buildMeshes(); updateFold(); });
 const setEmboss = () => { const v = +$('emboss-depth').value; $('emboss-depth-out').textContent = v + '%'; embossU.value = (v / 100) * 0.03; dirty = true; }; // 100% = 1mm 깊이를 1.5배 과장
 $('emboss-depth').addEventListener('input', setEmboss);
@@ -2432,7 +2611,7 @@ $('map-modes').addEventListener('click', (e) => { const m = e.target.dataset && 
 }
 let rangeTick = 0;
 function paintRanges() { for (const r of document.querySelectorAll('input[type="range"]')) { const p = ((r.value - r.min) / (r.max - r.min || 1)) * 100 + '%'; if (r.dataset.p !== p) { r.dataset.p = p; r.style.setProperty('--p', p); } } }
-resize(); applyBg(); setEmboss(); setInside($('inside').value); buildEnv(); syncLights(); renderLightUI('light'); renderLightUI('reflector'); loadExample(); tick();
+resize(); applyBg(); setEmboss(); syncInsideUI(); applyInside(); buildEnv(); syncLights(); renderLightUI('light'); renderLightUI('reflector'); loadExample(); tick();
 window.__app = { S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, castStat, autoPickDieline, extraSheets }; // 점검용
 </script>
 </body>
