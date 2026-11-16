@@ -841,12 +841,14 @@ const mkFrame=(blob,delay,w,h,alpha,thumb)=>({id:FID++,blob,delay,w,h,alpha,thum
 const cloneF=(f,o={})=>({...f,id:FID++,...o});
 
 /* ---------- bitmap cache ---------- */
-const bmpCache=new Map();const BMP_MAX=48;
+const bmpCache=new Map();
+/* how many decoded pictures to keep: more for small videos (layers need several per frame), about 400MB at most */
+const bmpMax=()=>clamp(Math.floor(4e8/Math.max(1,(S.W0||320)*(S.H0||240)*4)),48,240);
 function getBmp(fr){
   let p=bmpCache.get(fr.blob);
   if(p){bmpCache.delete(fr.blob);bmpCache.set(fr.blob,p);return p}
   p=createImageBitmap(fr.blob);bmpCache.set(fr.blob,p);
-  while(bmpCache.size>BMP_MAX){const[k,v]=bmpCache.entries().next().value;bmpCache.delete(k);v.then(b=>setTimeout(()=>{try{b.close()}catch(e){}},3000)).catch(()=>{})}
+  const mx=bmpMax();while(bmpCache.size>mx){const[k,v]=bmpCache.entries().next().value;bmpCache.delete(k);v.then(b=>setTimeout(()=>{try{b.close()}catch(e){}},3000)).catch(()=>{})}
   return p;
 }
 
@@ -1334,14 +1336,14 @@ async function renderStage(){
   const tok=++stageTok;const fr=S.frames[S.cur];
   const empty=!fr;$('#editEmpty').hidden=!empty;inner.classList.toggle('empty',empty);
   if(!fr){setCanvas(10,10);cx.clearRect(0,0,10,10);layoutStage();return}
-  let bmp;try{bmp=await getBmp(fr)}catch(e){return}
+  const tt=S.starts[S.cur]||0,lay=!S.crop.active&&S.vclips&&S.vclips.length;
+  let bmp,ov=[];try{[bmp,ov]=await Promise.all([getBmp(fr),lay?prepOverlays(tt):[]])}catch(e){return}
   if(tok!==stageTok)return;
   const[W,H]=S.crop.active?rotSize():outSize();
   setCanvas(W,H);cx.setTransform(1,0,0,1,0,0);cx.clearRect(0,0,W,H);
   const cam=camTrack()[S.cur];if(!S.crop.active)camFill(cx,W,H,cam);
   if(fr.gap)gapFill(cx,W,H);else{cx.imageSmoothingQuality='high';applyTransform(cx,W,H,S.crop.active,cam);drawContain(cx,bmp);cx.setTransform(1,0,0,1,0,0)}
-  if(!S.crop.active&&S.vclips&&S.vclips.length){await drawOverlays(cx,W,H,S.starts[S.cur]||0,()=>tok!==stageTok);if(tok!==stageTok)return;drawVSel(cx,W,H,S.starts[S.cur]||0)}
-  if(tok!==stageTok)return;
+  if(lay){paintOverlays(cx,W,H,tt,ov);drawVSel(cx,W,H,tt)}
   inner.classList.toggle('camz',!S.crop.active);
   layoutStage();
 }
@@ -1409,7 +1411,7 @@ async function play(){
   while(S.playing&&tok===playTok){
     let t=clock();if(t>=S.total){startAt(0);t=0}
     A.playT=t;const i=frameAt(t);
-    if(i!==S.cur){S.cur=i;renderStage();updatePlayer(true);const nx=S.frames[i+1];if(nx)getBmp(nx).catch(()=>{})}
+    if(i!==S.cur){S.cur=i;renderStage();updatePlayer(true);const nx=S.frames[i+1];if(nx){getBmp(nx).catch(()=>{});prefetchOverlays(i+1)}}
     drawPlayhead();
     await new Promise(r=>requestAnimationFrame(r));
   }
@@ -2052,12 +2054,17 @@ const vCopyKeys=c=>c.keys?c.keys.map(k=>({...k})):undefined;
 function vBox(c,W,H,p=vBase(c)){const v=VS.get(c.src);const bw=v?v.W:W,bh=v?v.H:H;const k=Math.min(W/bw,H/bh)*p.s;return{w:bw*k,h:bh*k,cx:W/2+p.x*W,cy:H/2+p.y*H}}
 const vVisible=(c,t)=>{const T=S.vtracks.find(x=>x.id===c.track);return T&&!T.hide&&t>=c.start&&t<c.start+vLen(c)};
 /* draw every layer clip that is on at time t, lowest row first */
-async function drawOverlays(ctx,W,H,t,stale){
-  for(let k=S.vtracks.length-1;k>=0;k--){const T=S.vtracks[k];if(T.hide)continue;
-    for(const c of S.vclips){if(c.track!==T.id||t<c.start||t>=c.start+vLen(c))continue;const v=VS.get(c.src);if(!v)continue;
-      let b;try{b=await getBmp(vFrameAt(v,c.in+(t-c.start)))}catch(e){continue}if(stale&&stale())return;
-      const p=vProps(c,t);const{w,h,cx,cy}=vBox(c,W,H,p);ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=clamp(p.op,0,1);ctx.translate(cx,cy);if(p.r)ctx.rotate(p.r*Math.PI/180);
-      ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(b,-w/2,-h/2,w,h);ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1}}}
+/* the layer clips that are on at time t, lowest row first */
+function vOn(t){const out=[];for(let k=S.vtracks.length-1;k>=0;k--){const T=S.vtracks[k];if(T.hide)continue;
+  for(const c of S.vclips){if(c.track!==T.id||t<c.start||t>=c.start+vLen(c))continue;const v=VS.get(c.src);if(v)out.push({c,fr:vFrameAt(v,c.in+(t-c.start))})}}return out}
+/* decode every layer picture for time t first (so nothing half-drawn ever shows) */
+async function prepOverlays(t){const on=vOn(t);const bs=await Promise.all(on.map(o=>getBmp(o.fr).catch(()=>null)));return on.map((o,i)=>({c:o.c,b:bs[i]})).filter(o=>o.b)}
+function paintOverlays(ctx,W,H,t,list){for(const{c,b}of list){
+  const p=vProps(c,t);const{w,h,cx,cy}=vBox(c,W,H,p);ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=clamp(p.op,0,1);ctx.translate(cx,cy);if(p.r)ctx.rotate(p.r*Math.PI/180);
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(b,-w/2,-h/2,w,h);ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1}}
+async function drawOverlays(ctx,W,H,t){paintOverlays(ctx,W,H,t,await prepOverlays(t))}
+/* while playing: start decoding the next frame's layer pictures early */
+function prefetchOverlays(i){const t=S.starts[i];if(t==null||!S.vclips.length)return;for(const o of vOn(t))getBmp(o.fr).catch(()=>{})}
 /* outline of the picked layer clip on the preview (not saved) */
 function drawVSel(ctx,W,H,t){const c=selV();if(!c||!vFocus()||!vVisible(c,t))return;const p=vProps(c,t);const{w,h,cx,cy}=vBox(c,W,H,p);const lw=Math.max(1.5,2/S.view.z);
   ctx.save();ctx.translate(cx,cy);if(p.r)ctx.rotate(p.r*Math.PI/180);ctx.strokeStyle='#FF2F00';ctx.lineWidth=lw;ctx.setLineDash([6*lw,4*lw]);ctx.strokeRect(-w/2,-h/2,w,h);ctx.restore()}
@@ -2164,14 +2171,16 @@ function vclipDrag(e,c,edge,r){const g=tlGeom;S.undo.push(snap());S.redo=[];let 
 /* a piece of the main video goes up onto a layer: the main video closes up behind it; linked sound comes along as an audio clip */
 async function pieceToLayer(i0,i1,tid,start){const block=S.frames.slice(i0,i1+1);if(!block.length||block.every(f=>f.gap))return;const lk=hasLinked(block);
   await gapPrep();const gaps=block.map((f,k)=>{const g=gapFrameSync(f.delay);if(k===0)g.vCut=true;return g});
-  let abuf=null;if(lk){try{abuf=await buildMix(block,{clips:false,raw:true,keepGain:true})}catch(e){console.warn(e)}}
+  /* the layer keeps the whole video as its source and shows only this piece, so dragging its ends brings the cut parts back */
+  const all=S.frames.filter(f=>!f.gap);let off=0;for(let i=0;i<i0;i++)if(!S.frames[i].gap)off+=S.frames[i].delay;const dur=block.reduce((a,f)=>a+(f.gap?0:f.delay),0);
+  let abuf=null;if(lk){try{abuf=await buildMix(all,{clips:false,raw:true,keepGain:true})}catch(e){console.warn(e)}}
   const asrc=abuf?addSource('Layer sound',abuf):null;
-  commit(()=>{const src='vs'+(VID++);let t=0;const fr=block.map(f=>{const n={...f};delete n.vCut;delete n.auSeg;delete n.cam;return n});const st=fr.map(f=>{const x=t;t+=f.delay;return x});
+  commit(()=>{const src='vs'+(VID++);let t=0;const fr=all.map(f=>{const n={...f};delete n.vCut;delete n.auSeg;delete n.cam;return n});const st=fr.map(f=>{const x=t;t+=f.delay;return x});
     VS.set(src,{frames:fr,starts:st,dur:t,W:S.W0,H:S.H0,name:'piece'});
     if(i1+1<S.frames.length&&!videoSegs().some(x=>x.i0===i1+1))cutFrames(i1+1);
     if(lk)gaps[0].auSeg={...SEG_DEF};S.frames.splice(i0,i1-i0+1,...gaps);
-    const c={id:'v'+(VID++),track:tid,src,name:`Video ${i0+1}~${i1+1}`,start:start,in:0,out:t,x:0,y:0,s:1,r:0,op:1};S.vclips.push(c);
-    if(asrc){const ac=newClip(asrc,c.name,abuf.duration*1000,audioTrackFor('Layer sound'));ac.start=start;S.clips.push(ac)}
+    const c={id:'v'+(VID++),track:tid,src,name:`Video ${i0+1}~${i1+1}`,start:start,in:Math.round(off),out:Math.round(off+dur),x:0,y:0,s:1,r:0,op:1};S.vclips.push(c);
+    if(asrc){const ac=newClip(asrc,c.name,abuf.duration*1000,audioTrackFor('Layer sound'));ac.start=start;ac.in=Math.round(off);ac.out=Math.min(Math.round(abuf.duration*1000),Math.round(off+dur));S.clips.push(ac)}
     S.sel=new Set([i0]);S.cur=clamp(Math.min(S.cur,S.frames.length-1),0,S.frames.length-1);S.aSel=null;S.aTrack=null;S.vSel=c.id;S.vTrack=null},
     `조각을 ${fmtS(start)} 위치의 레이어로 올렸어요 · 원래 자리는 빈 구간으로 남았어요${asrc?' · 소리는 오디오 클립으로 따라갔어요':''}`)}
 /* a layer clip goes down into the main video, before frame j (its sound stays where it is as an audio clip) */
