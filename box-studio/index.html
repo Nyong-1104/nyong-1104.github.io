@@ -176,6 +176,30 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 .bar output{width:42px;text-align:right;font-weight:700;color:var(--o)}
 #busy{position:absolute;inset:0;z-index:30;display:grid;place-items:center;background:rgba(244,244,246,.7)}
 #busy div{background:#000;color:#fff;border-radius:999px;padding:12px 22px;font-weight:700;font-size:14px;letter-spacing:-.3px}
+#edit-dlg{place-items:stretch start;background:none;padding:14px;pointer-events:none}
+.dlg.edit-card{width:min(1040px,62vw);height:100%;padding:14px 18px 16px;pointer-events:auto;box-shadow:0 18px 60px rgba(10,10,20,.22),0 0 0 1px rgba(0,0,0,.06)}
+@media (max-width:900px){.dlg.edit-card{width:100%}}
+.edit-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.edit-bar .seg{flex:1;min-width:min(520px,100%);flex-wrap:nowrap}
+.edit-bar .btn i{display:inline-block;width:14px;height:3px;border-radius:2px;flex:none}
+.edit-bar .btn:disabled{opacity:.45;cursor:default}
+#edit-wrap{position:relative;flex:1;min-height:0;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+#edit-map{width:100%;height:100%;display:block;touch-action:none;cursor:crosshair;user-select:none}
+#edit-map .eface{fill:#f3f3f7;stroke:none}
+#edit-map path.ln,#edit-map path.hit,#edit-map path.halo{fill:none;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+#edit-map .ln{stroke-width:1.7px;pointer-events:none}
+#edit-map .ln.cut{stroke:var(--cut)}
+#edit-map .ln.fold{stroke:var(--fold)}
+#edit-map .ln.foldOut{stroke:var(--fold-out)}
+#edit-map .ln.other{opacity:.4}
+#edit-map .ln.ignored{stroke:#b4b4c0;stroke-dasharray:5 5}
+#edit-map .ln.loose{stroke:#b4b4c0}
+#edit-map .ln.sel{stroke-width:3.6px;opacity:1}
+#edit-map .halo{stroke:rgba(26,28,34,.2);stroke-width:11px;pointer-events:none}
+#edit-map .hit{stroke:transparent;stroke-width:13px;cursor:pointer}
+#edit-map .hit:hover{stroke:rgba(26,28,34,.1)}
+#edit-box{position:absolute;border:1px dashed var(--o);background:rgba(255,47,0,.08);pointer-events:none;border-radius:3px}
+#edit-legend i.dash{background:repeating-linear-gradient(90deg,#b4b4c0 0 4px,transparent 4px 7px)}
 .modal{position:fixed;inset:0;background:rgba(10,10,20,.4);display:grid;place-items:center;padding:24px;z-index:60}
 .dlg{background:#fff;border-radius:18px;box-shadow:0 24px 70px rgba(10,10,20,.22);padding:16px 20px 20px;width:min(360px,100%);display:flex;flex-direction:column;gap:10px}
 #shot{position:fixed;inset:0;background:rgba(10,10,20,.5);display:grid;place-items:center;padding:24px;z-index:50}
@@ -216,8 +240,10 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
   </details>
 
   <details class="sec">
-    <summary>선 색상 <span>칼선 레이어 안에서</span></summary>
+    <summary>선 구분 <span id="line-mode-note">칼선 레이어 안에서</span></summary>
     <div class="body">
+      <div class="seg" id="line-mode"><button type="button" class="btn" data-mode="auto">모양으로 자동</button><button type="button" class="btn" data-mode="color">선 색으로</button></div>
+      <p class="hint" id="line-mode-hint"></p>
       <div id="colors"></div>
       <div class="row"><label class="name" for="gap">끊긴 선 이어 붙이기</label><input type="number" id="gap" min="0" max="5" step="0.1" value="1.0"><span class="meta">mm</span></div>
     </div>
@@ -230,7 +256,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
       <div id="map-wrap"><svg id="map" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="인식된 전개도"></svg></div>
       <div class="legend" id="map-legend"><span><i style="background:var(--cut)"></i>칼선</span><span><i style="background:var(--fold)"></i>안으로 접기</span><span><i style="background:var(--fold-out)"></i>밖으로 접기</span></div>
       <p class="hint" id="map-hint">접는선이나 면을 누르면 화면 오른쪽에 옵션 창이 뜹니다.</p>
-      <button type="button" class="btn" id="angles-reset">접는 각도 전체 초기화</button>
+      <div class="seg"><button type="button" class="btn" id="edit-open">선 고치기</button><button type="button" class="btn" id="angles-reset">접는 각도 초기화</button></div>
     </div>
   </details>
 
@@ -333,6 +359,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
         <button type="button" class="btn" data-a="180">180°</button>
         <button type="button" class="btn" data-a="auto">자동</button>
       </div>
+      <button type="button" class="btn" id="sel-edit">이 선의 종류 바꾸기</button>
       <div class="seg" id="sel-face-btns">
         <button type="button" class="btn" id="sel-front">정면으로</button>
         <button type="button" class="btn" id="sel-bottom">바닥으로</button>
@@ -366,6 +393,26 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
   <div id="busy" hidden><div id="busy-text">불러오는 중…</div></div>
 </main>
 
+</div>
+
+<div id="edit-dlg" class="modal" hidden>
+  <div class="dlg edit-card" role="dialog" aria-modal="true" aria-labelledby="edit-title">
+    <div class="pop-head"><strong id="edit-title">선 고치기</strong><span id="edit-note"></span><button type="button" class="x" id="edit-close" aria-label="닫기">×</button></div>
+    <div class="edit-bar">
+      <div class="seg" id="edit-roles">
+        <button type="button" class="btn" data-role="cut"><i style="background:var(--cut)"></i>자르는 선</button>
+        <button type="button" class="btn" data-role="fold"><i style="background:var(--fold)"></i>접는 선 · 안으로</button>
+        <button type="button" class="btn" data-role="foldOut"><i style="background:var(--fold-out)"></i>접는 선 · 밖으로</button>
+        <button type="button" class="btn" data-role="ignore">무시</button>
+        <button type="button" class="btn" data-role="auto">자동으로</button>
+      </div>
+      <button type="button" class="btn" id="edit-undo">되돌리기</button>
+      <button type="button" class="btn" id="edit-reset">전부 처음으로</button>
+    </div>
+    <div id="edit-wrap"><svg id="edit-map" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="칼선 레이어의 모든 선"></svg><div id="edit-box" hidden></div></div>
+    <div class="legend" id="edit-legend"><span><i style="background:var(--cut)"></i>자르는 선</span><span><i style="background:var(--fold)"></i>안으로 접기</span><span><i style="background:var(--fold-out)"></i>밖으로 접기</span><span><i class="dash"></i>무시한 선</span><span><i style="background:#b4b4c0"></i>면을 이루지 못한 선</span></div>
+    <p class="hint" id="edit-hint">선을 누르거나 빈 곳에서 끌어 여러 개를 고른 뒤, 위에서 종류를 누르세요. Shift를 누르면 선택에 더합니다. 휠로 확대하고 Space를 누른 채 끌면 화면이 움직입니다. 바꾸면 오른쪽 상자에 바로 반영됩니다.</p>
+  </div>
 </div>
 
 <div id="exp-dlg" class="modal" hidden>
@@ -663,6 +710,15 @@ function buildStructure(lines, opts = {}) {
   }
   const edges = [...edgeMap.values()];
 
+  /* 3-4b. 사용자가 직접 고친 선 (선 가운데 점으로 찾는다). '무시'는 없는 선으로 친다 */
+  const ov = opts.overrides || [];
+  if (ov.length) for (const e of edges) {
+    const a = nodes[e.u], b = nodes[e.v], sg = { x1: a[0], y1: a[1], x2: b[0], y2: b[1] };
+    const x0 = Math.min(a[0], b[0]) - 0.6, x1 = Math.max(a[0], b[0]) + 0.6, y0 = Math.min(a[1], b[1]) - 0.6, y1 = Math.max(a[1], b[1]) + 0.6;
+    for (const o of ov) if (o.x >= x0 && o.x <= x1 && o.y >= y0 && o.y <= y1 && distPointSeg(o.x, o.y, sg).d <= 0.5) e.ov = o.role; // 나중에 고친 것이 우선
+    if (e.ov === 'ignore') { e.alive = false; e.ignored = true; }
+  }
+
   /* 3-5. 가지치기 + 면 추적 (자기 자신과 맞닿는 다리 간선 제거 반복) */
   let loops, loopOf;
   for (let iter = 0; iter < 12; iter++) {
@@ -728,6 +784,14 @@ function buildStructure(lines, opts = {}) {
   }
   faces.forEach((f) => { f.netArea = f.area - f.holes.reduce((a, h) => a + Math.abs(polyArea(h)), 0); });
 
+  /* 3-7b. 색 규칙이 없는 칼선: 모양으로 선 종류를 정한다 — 양쪽이 모두 면이면 접는 선, 한쪽이 바깥이면 자르는 선 */
+  if (opts.auto) edges.forEach((e, i) => {
+    if (!e.alive) return;
+    const fa = faceOfLoop.get(loopOf[i * 2]), fb = faceOfLoop.get(loopOf[i * 2 + 1]);
+    e.type = fa && fb && fa !== fb ? 'fold' : 'cut';
+  });
+  for (const e of edges) if (e.alive && e.ov) e.type = e.ov;
+
   /* 3-8. 인접 관계 */
   const pairKey = (a, b) => (a < b ? a + '_' + b : b + '_' + a);
   const foldAdj = new Map(), cutAdj = new Map();
@@ -753,8 +817,14 @@ function buildStructure(lines, opts = {}) {
   /* 3-9. 기준면(root) + 접기 트리 (접는선 BFS, 가장자리 조각은 붙임 처리) */
   let rootId = opts.rootId ?? -1;
   if (rootId < 0 || rootId >= faces.length) {
-    let best = null;
-    for (const f of faces) if (!tiny(f) && foldN[f.id].length && (!best || f.netArea > best.netArea)) best = f;
+    let best = null, main = null;
+    if (opts.auto) { // 사양 표나 테두리 틀이 아닌, 접는 선이 있는 가장 넓은 조각을 전개도 본체로 본다
+      const sum = new Map();
+      for (const f of faces) if (!tiny(f)) { const r = sum.get(f.comp) || { area: 0, fold: false }; r.area += f.netArea; if (foldN[f.id].length) r.fold = true; sum.set(f.comp, r); }
+      let top = null; for (const [c, r] of sum) { const sc = r.area * (r.fold ? 1 : 0.001); if (!top || sc > top.sc) top = { c, sc }; }
+      if (top) main = top.c;
+    }
+    for (const f of faces) if (!tiny(f) && foldN[f.id].length && (main === null || f.comp === main) && (!best || f.netArea > best.netArea)) best = f;
     if (!best) for (const f of faces) if (!best || f.netArea > best.netArea) best = f;
     rootId = best ? best.id : -1;
   }
@@ -784,7 +854,7 @@ function buildStructure(lines, opts = {}) {
       const dx = ax.p1[0] - ax.p0[0], dy = ax.p1[1] - ax.p0[1];
       const side = Math.sign(dx * (c[1] - ax.p0[1]) - dy * (c[0] - ax.p0[0])) || 1; // 자식면이 축의 왼쪽(+) / 오른쪽(-)
       const curved = !weld && ax.dev > Math.max(1, eps);
-      hinges.push({ id: hinges.length, parent, child, p0: ax.p0, p1: ax.p1, side, weld: !!weld, curved, len: rec.len, out: !weld && rec.outLen > rec.len / 2 });
+      hinges.push({ id: hinges.length, parent, child, p0: ax.p0, p1: ax.p1, side, weld: !!weld, curved, len: rec.len, out: !weld && rec.outLen > rec.len / 2, segs: rec.edges.map((ei) => [nodes[edges[ei].u], nodes[edges[ei].v]]) });
       inSheet.add(child);
     };
     inSheet.add(rootId);
@@ -813,7 +883,7 @@ function buildStructure(lines, opts = {}) {
       }
     }
     const otherFolded = faces.filter((f) => !inSheet.has(f.id) && f.comp !== faces[rootId].comp && foldN[f.id].length).length;
-    if (otherFolded) warnings.push('연결되지 않은 별도 조각이 있어 가장 큰 전개도만 조립했습니다.');
+    if (otherFolded && !opts.auto) warnings.push('연결되지 않은 별도 조각이 있어 가장 큰 전개도만 조립했습니다.');
     if (hinges.some((h) => h.curved)) warnings.push('곡선 접는선은 접지 않고 평면으로 두었습니다.');
   }
 
@@ -822,10 +892,22 @@ function buildStructure(lines, opts = {}) {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const f of sheetFaces) for (const p of f.outer) { if (p[0] < minX) minX = p[0]; if (p[0] > maxX) maxX = p[0]; if (p[1] < minY) minY = p[1]; if (p[1] > maxY) maxY = p[1]; }
   const drawEdges = edges.filter((e) => e.alive).map((e) => ({ a: nodes[e.u], b: nodes[e.v], type: e.type }));
+  // 선 고치기 화면용: 살아 있는 선(ok), 무시한 선(ignored), 면을 이루지 못해 버려진 선(loose)을 모두 돌려준다
+  const mainComp = rootId >= 0 ? faces[rootId].comp : -1;
+  const allEdges = edges.map((e) => ({ a: nodes[e.u], b: nodes[e.v], type: e.type, state: e.alive ? 'ok' : e.ignored ? 'ignored' : 'loose', main: e.alive && find(e.u) === mainComp, edited: !!e.ov }));
   const childCount = new Map();
   hinges.forEach((h) => { if (!h.weld) childCount.set(h.parent, (childCount.get(h.parent) || 0) + 1); });
   hinges.forEach((h) => { h.leaf = !childCount.get(h.child); });
-  return { faces: sheetFaces, hinges, edges: drawEdges, rootId, bbox: sheetFaces.length ? { minX, minY, maxX, maxY } : null, warnings };
+  if (opts.auto) { // 자동 구분에서는 날개 끝의 사선 접는 선(자동 바닥의 풀칠 삼각 날개)을 접지 않고 펴 둔다
+    const own = new Map(hinges.map((h) => [h.child, h]));
+    for (const h of hinges) {
+      const ph = own.get(h.parent); if (!h.leaf || h.weld || !ph) continue;
+      let d = Math.abs(Math.atan2(h.p1[1] - h.p0[1], h.p1[0] - h.p0[0]) - Math.atan2(ph.p1[1] - ph.p0[1], ph.p1[0] - ph.p0[0])) % (Math.PI / 2);
+      d = Math.min(d, Math.PI / 2 - d);
+      if (d > 12 * Math.PI / 180) h.diag = true;
+    }
+  }
+  return { faces: sheetFaces, hinges, edges: drawEdges, allEdges, auto: !!opts.auto, rootId, bbox: sheetFaces.length ? { minX, minY, maxX, maxY } : null, warnings };
 }
 
 /* ---------- 4. 접기 ---------- */
@@ -862,13 +944,13 @@ function computeFold(struct, angles, t = 1) {
 /** 기본 각도: 전부 90°, 붙임/곡선은 0°. 조립 시 다른 면과 겹쳐 포개지는 날개만 살짝 더 접어 안쪽으로 넣는다. */
 function defaultAngles(struct) {
   const ang = new Map();
-  for (const h of struct.hinges) ang.set(h.id, h.weld || h.curved ? 0 : h.out ? -90 : 90); // 음수 = 반대 방향(밖으로)
+  for (const h of struct.hinges) ang.set(h.id, h.weld || h.curved || h.diag ? 0 : h.out ? -90 : 90); // 음수 = 반대 방향(밖으로)
   const faceById = new Map(struct.faces.map((f) => [f.id, f]));
   const hingeOfChild = new Map(struct.hinges.map((h) => [h.child, h]));
   // 붙임으로 이어진 면은 한 덩어리로 본다
   const groupOf = new Map();
   for (const f of struct.faces) { let g = f.id; while (hingeOfChild.get(g) && hingeOfChild.get(g).weld) g = hingeOfChild.get(g).parent; groupOf.set(f.id, g); }
-  const movable = struct.hinges.filter((h) => h.leaf && !h.weld && !h.curved && !h.out);
+  const movable = struct.hinges.filter((h) => h.leaf && !h.weld && !h.curved && !h.out && !h.diag);
   const samples = (f) => {
     const c = f.center; const pts = [c];
     for (let i = 0; i < f.outer.length; i += Math.max(1, Math.floor(f.outer.length / 24))) {
@@ -941,6 +1023,8 @@ const defaultLights = () => [
 
 const S = {
   example: true, doc: null, fileName: '', pages: [], layers: [], colorRoles: new Map(), colorUser: new Map(),
+  sheets: [],   // 후가공을 대지(쪽)로 나눠 둔 파일의 나머지 쪽 [{page, name, role, color, opacity, blend, emboss}]
+  lineMode: 'color', lineModeUser: null, edits: [], editUndo: [], noLayerAll: false, pickedLayer: '',   // 선 구분 방식, 직접 고친 선 [{x, y, role}]
   dielinePage: 1, struct: null, auto: new Map(), over: new Map(), dir: new Map(), t: 1, sel: null,
   uv: null, printCanvas: null, finishes: [], texBox: '', token: 0,
   lights: defaultLights(), reflectors: [], ambient: 100, paperCustom: null,
@@ -1104,7 +1188,11 @@ let dirty = true, fitInfo = { r: 1, h: 1 };
 function resize() {
   const w = stage.clientWidth, h = stage.clientHeight;
   if (!w || !h) return;
-  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); dirty = true;
+  renderer.setSize(w, h, false); camera.aspect = w / h;
+  const dlg = document.getElementById('edit-dlg'), card = dlg && !dlg.hidden ? dlg.querySelector('.edit-card').getBoundingClientRect() : null, sr = stage.getBoundingClientRect();
+  const shift = card && card.right < sr.right - 160 ? Math.max(0, card.right - sr.left) / 2 : 0;   // 선 고치기 창이 열려 있으면 그 오른쪽 빈 자리 가운데로 상자를 옮긴다
+  if (shift) { const k = Math.max(0.5, Math.min(1, (w - 2 * shift) / w + 0.14)); camera.setViewOffset(w * k, h * k, w * k / 2 - (w / 2 + shift), h * k / 2 - h / 2, w, h); } else camera.clearViewOffset();   // 조금 줄여서 통째로 보이게
+  camera.updateProjectionMatrix(); dirty = true;
 }
 new ResizeObserver(resize).observe(stage);
 function tick() { controls.update(); if (castDirty && ground.visible) drawCastShadows(); if (dirty) { renderer.render(scene, camera); dirty = false; } if (rangeTick++ % 6 === 0) paintRanges(); requestAnimationFrame(tick); }
@@ -1663,10 +1751,12 @@ function renderLayerUI() {
   const box = $('layers'); box.replaceChildren();
   if (S.example) { box.append(el('p', { class: 'hint', text: '파일을 올리면 레이어가 여기에 나옵니다. 후가공할 면적을 레이어로 따로 그려 두고 이름에 금박·은박·형압·유광·무광 등을 넣으면 자동으로 맞춥니다.' })); $('layer-note').textContent = ''; return; }
   if (!S.layers.length) { box.append(el('p', { class: 'hint', text: '레이어 정보가 없는 파일입니다. 마젠타·시안처럼 선명한 색 선을 칼선으로 읽었습니다.' })); $('layer-note').textContent = ''; return; }
-  $('layer-note').textContent = `${S.layers.length}개`;
-  S.layers.forEach((ly, i) => {
+  $('layer-note').textContent = `${S.layers.length}개` + (S.sheets.length ? ` · 대지 ${S.sheets.length}개` : '');
+  const sheetRoles = LAYER_ROLES.filter((r) => FINISH[r[0]] || r[0] === 'off');
+  [...S.layers, ...S.sheets].forEach((ly, i) => {
     const id = 'layer-role-' + i;
-    box.append(el('div', { class: 'row' }, el('label', { class: 'name', for: id, text: ly.name }), selectEl(id, LAYER_ROLES, ly.role, (v) => { ly.role = v; if (FINISH[v] && FINISH[v].color) ly.color = FINISH[v].color; rebuild(true); })));
+    if (ly.page && ly === S.sheets[0]) box.append(el('p', { class: 'hint', text: '이 파일은 대지(쪽)가 여러 개입니다. 인쇄면이 아닌 쪽에 그려진 그림을 후가공 면적으로 쓸 수 있습니다.' + (S.sheets.some((x) => x.from) ? ' 내용이 비어 있는 후가공 레이어 이름에 맞춰 골라 두었으니, 다르면 바꿔 주세요.' : '') }));
+    box.append(el('div', { class: 'row' }, el('label', { class: 'name', for: id, text: ly.name }), selectEl(id, ly.page ? sheetRoles : LAYER_ROLES, ly.role, (v) => { ly.role = v; if (FINISH[v] && FINISH[v].color) ly.color = FINISH[v].color; rebuild(true); })));
     const spec = FINISH[ly.role]; if (!spec) return;
     const sub = el('div', { class: 'item' });
     if (spec.metal) {
@@ -1682,13 +1772,20 @@ function renderLayerUI() {
 }
 function renderColorUI() {
   const box = $('colors'); box.replaceChildren();
+  const auto = S.lineMode === 'auto' && !S.example, st = S.struct;
+  for (const b of $('line-mode').querySelectorAll('button')) { b.setAttribute('aria-pressed', String(!S.example && b.dataset.mode === S.lineMode)); b.disabled = S.example; }
+  $('line-mode-note').textContent = S.example ? '칼선 레이어 안에서' : auto ? '모양으로 자동' : '선 색으로';
+  $('line-mode-hint').textContent = S.example ? '' : (S.pickedLayer ? `칼선이라는 이름의 레이어가 없어 "${S.pickedLayer}" 레이어를 칼선으로 골랐습니다. ` : '')
+    + (auto ? '선 색이 나뉘어 있지 않아 모양으로 구분했습니다. 바깥 테두리는 자르는 선, 면과 면 사이의 선은 접는 선으로 봅니다. 떨어져 있는 표나 치수선은 빼고 가장 넓은 전개도만 씁니다.' : '선 색으로 구분합니다. 파랑·시안 계열은 안으로 접는 선, 노랑은 밖으로 접는 선, 그 밖은 자르는 선입니다.')
+    + (S.edits.length ? ` 직접 고친 선 ${S.edits.length}개가 적용돼 있습니다.` : ' 틀린 곳은 전개도의 "선 고치기"에서 바꿀 수 있습니다.');
+  $('edit-open').disabled = S.example || !st || !st.allEdges || !st.allEdges.length;
   if (!S.colorRoles.size) { box.append(el('p', { class: 'hint', text: S.example ? '예시 상자는 마젠타 칼선과 시안 접는선으로 그려져 있습니다. 노랑(Y100)은 밖으로 접는 선으로 읽습니다.' : '칼선 레이어에서 선을 찾지 못했습니다.' })); return; }
   let i = 0;
   for (const [k, c] of S.colorRoles) {
     const id = 'color-role-' + i++;
     const sw = el('span', { class: 'swatch' }); sw.style.background = c.hex;
     box.append(el('div', { class: 'row' }, sw, el('label', { class: 'name', for: id, text: c.hex.toUpperCase() + (c.dashed ? ' 점선' : '') }), el('span', { class: 'meta', text: c.count + '개' }),
-      selectEl(id, LINE_ROLES, c.role, (v) => { c.role = v; S.colorUser.set(k, v); rebuild(false); })));
+      selectEl(id, auto ? [['cut', '사용'], ['ignore', '무시']] : LINE_ROLES, auto ? (c.role === 'ignore' ? 'ignore' : 'cut') : c.role, (v) => { c.role = v; S.colorUser.set(k, v); rebuild(false); })));
   }
 }
 const curItem = { light: 0, reflector: 0 }; // 팝업에는 한 번에 하나만 펼쳐 보여 준다
@@ -1800,6 +1897,7 @@ function select(sel) {
   box.hidden = false;
   const isH = sel.type === 'hinge';
   for (const id of ['sel-angle-row', 'sel-dir', 'sel-angle-btns']) $(id).style.display = isH ? '' : 'none';
+  $('sel-edit').style.display = isH && !S.example ? '' : 'none';
   $('sel-face-btns').style.display = isH ? 'none' : ''; $('sel-bulge').style.display = isH ? 'none' : '';
   if (isH) { $('sel-title').textContent = '조립했을 때 접히는 각도'; syncSel(); }
   else { $('sel-title').textContent = '선택한 면'; const bg = S.bulge.get(sel.id) || { amt: 0, angle: 90 }; /* 기본은 세로로 휘는 아치 */ $('bulge-amt').value = bg.amt; $('bulge-amt-out').textContent = bg.amt + 'mm'; $('bulge-angle').value = bg.angle == null ? '' : bg.angle; }
@@ -1826,6 +1924,77 @@ function setSelAngle(mag, dir) {
   }
   syncSel(); updateFold(); updateChips(); if (S.label) { refreshWrap(); if (mapMode === 'wrap') renderMap(); }
 }
+/* ---------- 선 고치기: 칼선 레이어의 모든 선을 크게 보여 주고, 골라서 종류를 바꾼다 ---------- */
+let editChains = [], editSel = new Set(), editView = null, editSpace = false;
+function lineChains(st) { // 갈림길에서 갈림길까지를 한 줄로 묶는다 (곡선도 한 번에 고르도록)
+  const E = st.allEdges, adj = new Map();
+  const kind = (e) => (e.state === 'ok' ? e.type : e.state);
+  E.forEach((e, i) => { for (const n of [e.a, e.b]) { let l = adj.get(n); if (!l) adj.set(n, (l = [])); l.push(i); } });
+  const used = new Uint8Array(E.length), chains = [];
+  for (let i = 0; i < E.length; i++) {
+    if (used[i]) continue; used[i] = 1; const ids = [i];
+    for (const start of [E[i].a, E[i].b]) {
+      let n = start, cur = i;
+      for (;;) { const l = adj.get(n); if (l.length !== 2) break; const nx = l[0] === cur ? l[1] : l[0]; if (used[nx] || kind(E[nx]) !== kind(E[i]) || E[nx].main !== E[i].main) break; used[nx] = 1; ids.push(nx); cur = nx; n = E[nx].a === n ? E[nx].b : E[nx].a; }
+    }
+    chains.push({ ids, kind: kind(E[i]), main: E[i].main });
+  }
+  return chains;
+}
+const edgeKey = (e) => ((e.a[0] + e.b[0]) / 2).toFixed(2) + ',' + ((e.a[1] + e.b[1]) / 2).toFixed(2);
+function editFit() {
+  const E = S.struct.allEdges; let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const e of E) for (const q of [e.a, e.b]) { if (q[0] < x0) x0 = q[0]; if (q[0] > x1) x1 = q[0]; if (q[1] < y0) y0 = q[1]; if (q[1] > y1) y1 = q[1]; }
+  const pad = Math.max(x1 - x0, y1 - y0) * 0.04 + 4; editView = { x: x0 - pad, y: -y1 - pad, w: x1 - x0 + pad * 2, h: y1 - y0 + pad * 2 };
+}
+function renderEdit(keepKeys) {
+  const svg = $('edit-map'), st = S.struct; svg.replaceChildren();
+  if (!st || !st.allEdges) return;
+  const E = st.allEdges; editChains = lineChains(st);
+  if (keepKeys) { editSel = new Set(); editChains.forEach((c, ci) => { if (c.ids.some((i) => keepKeys.has(edgeKey(E[i])))) editSel.add(ci); }); }
+  if (!editView) editFit();
+  svg.setAttribute('viewBox', `${editView.x} ${editView.y} ${editView.w} ${editView.h}`);
+  const NS = 'http://www.w3.org/2000/svg';
+  const mk = (tag, attrs) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); return n; };
+  const g = mk('g', { transform: 'scale(1,-1)' }); svg.append(g);
+  const ring = (q) => 'M' + q.map((v) => v[0].toFixed(2) + ' ' + v[1].toFixed(2)).join('L') + 'Z';
+  for (const f of st.faces) g.append(mk('path', { d: ring(f.outer) + f.holes.map(ring).join(''), class: 'eface', 'fill-rule': 'evenodd' }));
+  const dOf = (c) => c.ids.map((i) => `M${E[i].a[0].toFixed(2)} ${E[i].a[1].toFixed(2)}L${E[i].b[0].toFixed(2)} ${E[i].b[1].toFixed(2)}`).join('');
+  const top = [];
+  editChains.forEach((c, ci) => {
+    const d = dOf(c), on = editSel.has(ci);
+    if (on) g.append(mk('path', { d, class: 'halo' }));
+    const ln = mk('path', { d, class: `ln ${c.kind}${c.kind !== 'ignored' && c.kind !== 'loose' && !c.main ? ' other' : ''}${on ? ' sel' : ''}` });
+    if (on) top.push(ln); else g.append(ln);
+    const hit = mk('path', { d, class: 'hit' }); hit.dataset.chain = ci; top.push(hit);
+  });
+  for (const n of top) g.append(n);
+  const folds = st.hinges.filter((x) => !x.weld).length;
+  $('edit-note').textContent = `면 ${st.faces.length}개 · 접는 선 ${folds}개` + (S.edits.length ? ` · 고친 선 ${S.edits.length}개` : '') + (editSel.size ? ` · ${editSel.size}줄 선택` : '');
+  for (const b of $('edit-roles').querySelectorAll('button')) b.disabled = !editSel.size;
+  $('edit-undo').disabled = !S.editUndo.length; $('edit-reset').disabled = !S.edits.length;
+}
+function openEdit(keys) {
+  if (S.example || !S.struct || !S.struct.allEdges) return;
+  editSel = new Set(); editView = null; $('edit-dlg').hidden = false; resize(); renderEdit(keys || new Set());
+}
+function closeEdit() { $('edit-dlg').hidden = true; $('edit-box').hidden = true; editSpace = false; resize(); }
+async function applyEdit(role) {
+  if (!editSel.size || S.example) return;
+  const E = S.struct.allEdges, picked = [];
+  for (const ci of editSel) for (const i of editChains[ci].ids) picked.push(E[i]);
+  S.editUndo.push(S.edits.slice()); if (S.editUndo.length > 60) S.editUndo.shift();
+  // 같은 선에 걸려 있던 예전 수정은 지우고 새로 적는다. '자동으로'는 지우기만 한다
+  S.edits = S.edits.filter((o) => !picked.some((e) => distPointSeg(o.x, o.y, { x1: e.a[0], y1: e.a[1], x2: e.b[0], y2: e.b[1] }).d <= 0.5));
+  if (role !== 'auto') for (const e of picked) S.edits.push({ x: (e.a[0] + e.b[0]) / 2, y: (e.a[1] + e.b[1]) / 2, role });
+  const keys = new Set(picked.map(edgeKey));
+  await rebuild(false); renderEdit(keys);
+}
+async function undoEdit(all) {
+  if (all) { if (!S.edits.length) return; S.editUndo.push(S.edits.slice()); S.edits = []; }
+  else { if (!S.editUndo.length) return; S.edits = S.editUndo.pop(); }
+  await rebuild(false); renderEdit(new Set());
+}
 function updateChips() {
   $('chip-example').hidden = !S.example;
   if (!S.struct || !S.struct.faces.length) { $('chip-size').hidden = $('chip-count').hidden = true; return; }
@@ -1842,6 +2011,7 @@ function busy(msg) { $('busy').hidden = !msg; if (msg) $('busy-text').textConten
 function guessLayerRole(name) {
   const n = name.toLowerCase();
   if (/칼선|도무송|톰슨|목형|재단선|die|cut|knife|keyline/.test(n)) return 'dieline';
+  if (/사양|스펙|spec|작업 ?지시|지시서|치수|dimension|메모|memo|가이드|guide|돔보|재단 ?표시|crop|trim ?mark|참고|안내/.test(n)) return 'off';   // 인쇄사양 표·치수선은 상자에 찍지 않는다
   if (/로즈/.test(n)) return 'rose';
   if (/은박|silver|실버/.test(n)) return 'silver';
   if (/금박|gold|골드/.test(n)) return 'gold';
@@ -1883,7 +2053,9 @@ async function loadFile(file) {
       pages.push({ num: p, strokes, layerOps, ops: ol.fnArray.length });
     }
     if (S.doc) S.doc.destroy();
-    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '' });
+    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], editUndo: [], noLayerAll: false, pickedLayer: '', sheets: [] });
+    const picked = autoPickDieline(layers, pages); if (picked) S.pickedLayer = picked.name;
+    S.sheets = extraSheets(layers, pages);
     pose.base.identity(); pose.rx = pose.ry = pose.rz = 0; syncPoseUI();
     $('file-name').textContent = file.name;
     $('file-sub').textContent = `${doc.numPages}쪽 · 다른 파일은 다시 눌러서`;
@@ -1894,10 +2066,39 @@ async function loadFile(file) {
     await busy('');
   }
 }
+function extraSheets(layers, pages) { // 인쇄·은박·실크를 대지(쪽)별로 따로 그려 둔 파일: 인쇄 레이어에 그림이 있는 나머지 쪽을 후가공 후보로 올린다
+  const printIds = layers.filter((l) => l.role === 'print').map((l) => l.id);
+  if (!printIds.length || pages.length < 2) return [];
+  const amount = (pg) => printIds.reduce((a, id) => a + Math.max(0, (pg.layerOps[id] || 0) - 2), 0);
+  let main = pages[0]; for (const pg of pages) if (amount(pg) > amount(main)) main = pg;
+  const cand = pages.filter((pg) => pg !== main && amount(pg) > 0);
+  // 이름은 후가공인데 어느 쪽에도 내용이 없는 레이어가 있으면, 그 후가공이 다른 대지에 그려져 있다고 본다
+  const empty = layers.filter((l) => FINISH[l.role] && !pages.some((pg) => (pg.layerOps[l.id] || 0) - 2 > 0));
+  return cand.map((pg, i) => {
+    const g = empty.length && (cand.length === 1 || cand.length === empty.length) ? empty[Math.min(i, empty.length - 1)] : null, role = g ? g.role : 'off';
+    return { page: pg.num, name: `${pg.num}쪽 대지`, from: g ? g.name : '', role, color: (FINISH[role] && FINISH[role].color) || '#eebe60', opacity: 100, blend: 'normal', emboss: 'none' };
+  });
+}
+function autoPickDieline(layers, pages) { // 칼선이라는 이름의 레이어가 없을 때: 접히는 전개도가 가장 넓게 나오는 레이어를 칼선으로 본다
+  if (!layers.length || layers.some((l) => l.role === 'dieline')) return null;
+  let best = null;
+  for (const l of layers) for (const pg of pages) {
+    const lines = []; let n = 0;
+    for (const st of pg.strokes) if (st.layer === l.id) for (const q of st.polylines) { lines.push({ pts: q, role: 'cut' }); n += q.length; }
+    if (lines.length < 4 || n > 20000) continue;
+    const st = buildStructure(lines, { gapTol: 1 / PT2MM, auto: true });
+    if (st.faces.length < 3 || st.hinges.filter((h) => !h.weld).length < 2) continue;
+    const area = st.faces.reduce((a, f) => a + f.area, 0);
+    if (!best || area > best.area) best = { l, area };
+  }
+  if (best) best.l.role = 'dieline';
+  return best && best.l;
+}
 function dielineStrokes(pg) {
   const ids = new Set(S.layers.filter((l) => l.role === 'dieline').map((l) => l.id));
   if (ids.size) return pg.strokes.filter((s) => ids.has(s.layer));
   if (S.layers.length) return [];
+  if (S.noLayerAll) return pg.strokes;   // 레이어가 없는 파일에서 색 있는 선만으로 안 될 때는 모든 선을 본다
   return pg.strokes.filter((s) => { const mx = Math.max(...s.rgb), mn = Math.min(...s.rgb); return mx > 0 && (mx - mn) / mx > 0.7; });
 }
 function pickPage(role) { // 해당 역할의 내용이 가장 많은 쪽
@@ -1930,8 +2131,9 @@ async function rebuild(textures, refit) {
   if (S.example) return;
   await busy('전개도 분석 중…');
   // 칼선이 가장 많이 들어 있는 쪽을 고른다
-  let dl = null;
-  for (const pg of S.pages) { const st = dielineStrokes(pg); const n = st.reduce((a, s) => a + s.polylines.length, 0); if (n && (!dl || n > dl.n)) dl = { n, pg, st }; }
+  const pickDl = () => { let r = null; for (const pg of S.pages) { const st = dielineStrokes(pg); const n = st.reduce((a, s) => a + s.polylines.length, 0); if (n && (!r || n > r.n)) r = { n, pg, st }; } return r; };
+  let dl = pickDl();
+  if (!S.layers.length && !S.noLayerAll && !dl) { S.noLayerAll = true; dl = pickDl(); }
   const roles = new Map();
   if (dl) for (const s of dl.st) {
     const k = colorKey(s.rgb) + (s.dashed ? 'd' : '');
@@ -1939,18 +2141,34 @@ async function rebuild(textures, refit) {
     roles.get(k).count += s.polylines.length;
   }
   S.colorRoles = roles;
+  // 접는선 색이 따로 없으면(선 색이 한 가지인 칼선) 색 대신 모양으로 나눈다
+  S.lineMode = S.lineModeUser || ([...roles.values()].some((c) => c.role === 'fold' || c.role === 'foldOut') ? 'color' : 'auto');
+  const auto = S.lineMode === 'auto';
   const lines = [];
-  if (dl) for (const s of dl.st) { const r = roles.get(colorKey(s.rgb) + (s.dashed ? 'd' : '')).role; if (r !== 'ignore') for (const p of s.polylines) lines.push({ pts: p, role: r }); }
-  const st = buildStructure(lines, { gapTol: (+$('gap').value || 0) / PT2MM });
+  if (dl) for (const s of dl.st) { const r = roles.get(colorKey(s.rgb) + (s.dashed ? 'd' : '')).role; if (r !== 'ignore') for (const p of s.polylines) lines.push({ pts: p, role: auto ? 'cut' : r }); }
+  const st = buildStructure(lines, { gapTol: (+$('gap').value || 0) / PT2MM, auto, overrides: S.edits });
   const sig = (x) => (x && x.bbox ? [x.faces.length, x.hinges.length, x.rootId, Math.round(x.bbox.minX), Math.round(x.bbox.maxY)].join('/') : '');
   const changed = sig(st) !== sig(S.struct);
-  if (changed) { S.over = new Map(); S.dir = new Map(); S.bulge = new Map(); S.sel = null; } // 구조가 달라지면 직접 고친 각도는 초기화
+  if (changed) { // 구조가 달라져도 같은 자리의 접는선·면에 준 설정은 그대로 옮긴다
+    const over = new Map(), dir = new Map(), bulge = new Map(), old = S.struct;
+    if (old && old.bbox && (S.over.size || S.dir.size || S.bulge.size)) {
+      const mid = (h) => [(h.p0[0] + h.p1[0]) / 2, (h.p0[1] + h.p1[1]) / 2];
+      for (const h of old.hinges) {
+        if (!S.over.has(h.id) && !S.dir.has(h.id)) continue;
+        const m = mid(h), n = st.hinges.find((x) => { const q = mid(x); return !x.weld && Math.hypot(q[0] - m[0], q[1] - m[1]) < 1.5 && Math.abs(x.len - h.len) < 3; });
+        if (!n) continue;
+        if (S.over.has(h.id)) over.set(n.id, S.over.get(h.id)); if (S.dir.has(h.id)) dir.set(n.id, S.dir.get(h.id));
+      }
+      for (const f of old.faces) { if (!S.bulge.has(f.id)) continue; const n = st.faces.find((x) => Math.hypot(x.center[0] - f.center[0], x.center[1] - f.center[1]) < 1.5 && Math.abs(x.area - f.area) < 0.02 * f.area + 1); if (n) bulge.set(n.id, S.bulge.get(f.id)); }
+    }
+    S.over = over; S.dir = dir; S.bulge = bulge; S.sel = null;
+  }
   S.struct = st; S.auto = defaultAngles(st); S.dielinePage = dl ? dl.pg.num : 1;
   if (changed && S.label && st.faces.length) { const home = st.faces.find((f) => f.id === st.rootId) || st.faces[0]; S.label.x = home.center[0]; S.label.y = home.center[1]; S.label.anchor = home.id; } // 전개도가 바뀌면 라벨을 정면 가운데로
   renderLayerUI(); renderColorUI();
   const msgs = st.warnings.slice();
   if (!st.faces.length) msgs.unshift(S.layers.length && !S.layers.some((l) => l.role === 'dieline') ? '칼선 레이어를 골라 주세요. 레이어 역할에서 칼선으로 지정하면 됩니다.' : '닫힌 칼선을 찾지 못했습니다. 선 색상 역할이나 "끊긴 선 이어 붙이기" 값을 조정해 보세요.');
-  else if (!st.hinges.some((h) => !h.weld)) msgs.unshift('접는선을 찾지 못해 평면으로만 보입니다. 선 색상에서 접는선 색을 지정해 주세요.');
+  else if (!st.hinges.some((h) => !h.weld)) msgs.unshift(auto ? '접는 선을 찾지 못해 평면으로만 보입니다. 전개도의 "선 고치기"에서 접는 선을 직접 지정해 주세요.' : '접는선을 찾지 못해 평면으로만 보입니다. 선 구분에서 접는선 색을 지정하거나 "모양으로 자동"을 눌러 보세요.');
   setWarn(msgs.join(' '));
   const boxKey = st.bbox ? [st.bbox.minX, st.bbox.minY, st.bbox.maxX, st.bbox.maxY].map(Math.round).join('/') : '';
   if (st.faces.length && (textures || !S.uv || boxKey !== S.texBox)) {
@@ -1966,6 +2184,12 @@ async function rebuild(textures, refit) {
         await busy(`후가공 입히는 중… (${l.name})`);
         const r = await renderLayers(S.doc, S.layers, pg.num, new Set([l.id]), b, Math.min(2048, maxTex));
         S.finishes.push({ set: l, ...coverageOf(r.canvas) }); if (!S.uv) S.uv = r.uv;
+      }
+      for (const sh of S.sheets) { // 다른 대지에 그려 둔 후가공
+        if (!FINISH[sh.role] || sh.page > S.pages.length) continue;
+        await busy(`후가공 입히는 중… (${sh.name})`);
+        const r = await renderLayers(S.doc, S.layers, sh.page, new Set(S.layers.filter((l) => l.role === 'print').map((l) => l.id)), b, Math.min(2048, maxTex));
+        S.finishes.push({ set: sh, ...coverageOf(r.canvas) }); if (!S.uv) S.uv = r.uv;
       }
     } catch (err) { console.error(err); msgs.push('인쇄면을 그리지 못해 흰 종이로 표시했습니다.'); setWarn(msgs.join(' ')); S.printCanvas = null; S.finishes = []; }
     if (!S.uv) S.uv = plainUv;
@@ -2050,6 +2274,66 @@ for (const ev of ['dragenter', 'dragover']) document.addEventListener(ev, (e) =>
 for (const ev of ['dragleave', 'drop']) document.addEventListener(ev, (e) => { e.preventDefault(); $('drop').classList.remove('over'); });
 document.addEventListener('drop', (e) => { const f = e.dataTransfer && e.dataTransfer.files[0]; if (f) loadFile(f); });
 $('gap').addEventListener('change', () => rebuild(false));
+$('line-mode').addEventListener('click', (e) => { const m = e.target.dataset && e.target.dataset.mode; if (m && !S.example && m !== S.lineMode) { S.lineModeUser = m; rebuild(false); } });
+$('edit-open').addEventListener('click', () => openEdit());
+$('sel-edit').addEventListener('click', () => { const h = S.sel && S.sel.type === 'hinge' && S.struct.hinges[S.sel.id]; openEdit(h && h.segs ? new Set(h.segs.map((q) => edgeKey({ a: q[0], b: q[1] }))) : null); });
+$('edit-close').addEventListener('click', closeEdit);
+$('edit-roles').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && !b.disabled) applyEdit(b.dataset.role); });
+$('edit-undo').addEventListener('click', () => undoEdit(false));
+$('edit-reset').addEventListener('click', () => undoEdit(true));
+window.addEventListener('keydown', (e) => {
+  if ($('edit-dlg').hidden) return;
+  if (e.key === 'Escape') closeEdit();
+  else if (e.code === 'Space') { editSpace = true; e.preventDefault(); }
+  else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undoEdit(false); }
+}, true);
+window.addEventListener('keyup', (e) => { if (e.code === 'Space') editSpace = false; });
+{ // 선 고치기 화면: 누르기 = 고르기, 끌기 = 묶어 고르기, Space+끌기·가운데 버튼 = 이동, 휠 = 확대
+  const svg = $('edit-map'), box = $('edit-box'); let drag = null;
+  const toDie = (cx, cy) => { const r = svg.getBoundingClientRect(), k = Math.max(editView.w / r.width, editView.h / r.height); // viewBox는 가운데 맞춤으로 들어간다
+    return [editView.x + editView.w / 2 + (cx - r.left - r.width / 2) * k, -(editView.y + editView.h / 2 + (cy - r.top - r.height / 2) * k), k]; };
+  svg.addEventListener('pointerdown', (e) => {
+    if (!editView) return;
+    svg.setPointerCapture(e.pointerId);
+    drag = { x: e.clientX, y: e.clientY, pan: editSpace || e.button === 1, view: { ...editView }, moved: false, chain: e.target.dataset && e.target.dataset.chain, shift: e.shiftKey };
+    e.preventDefault();
+  });
+  svg.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.moved && Math.hypot(dx, dy) < 4) return;
+    drag.moved = true;
+    if (drag.pan) { const k = toDie(0, 0)[2]; editView.x = drag.view.x - dx * k; editView.y = drag.view.y - dy * k; svg.setAttribute('viewBox', `${editView.x} ${editView.y} ${editView.w} ${editView.h}`); return; }
+    const r = $('edit-wrap').getBoundingClientRect();
+    box.hidden = false; box.style.left = Math.min(e.clientX, drag.x) - r.left + 'px'; box.style.top = Math.min(e.clientY, drag.y) - r.top + 'px'; box.style.width = Math.abs(dx) + 'px'; box.style.height = Math.abs(dy) + 'px';
+  });
+  const end = (e) => {
+    if (!drag) return; const d = drag; drag = null; box.hidden = true;
+    if (d.pan) return;
+    const E = S.struct.allEdges;
+    if (!d.shift) editSel = new Set();
+    if (d.moved) { // 묶어 고르기: 사각형에 조금이라도 걸친 줄
+      const a = toDie(d.x, d.y), b = toDie(e.clientX, e.clientY), x0 = Math.min(a[0], b[0]), x1 = Math.max(a[0], b[0]), y0 = Math.min(a[1], b[1]), y1 = Math.max(a[1], b[1]);
+      const touch = (p, q) => { // 선분이 사각형에 걸치는지 (Liang–Barsky)
+        let t0 = 0, t1 = 1; const dx = q[0] - p[0], dy = q[1] - p[1];
+        for (const [pp, qq] of [[-dx, p[0] - x0], [dx, x1 - p[0]], [-dy, p[1] - y0], [dy, y1 - p[1]]]) {
+          if (pp === 0) { if (qq < 0) return false; } else { const r = qq / pp; if (pp < 0) { if (r > t1) return false; if (r > t0) t0 = r; } else { if (r < t0) return false; if (r < t1) t1 = r; } }
+        }
+        return true;
+      };
+      editChains.forEach((c, ci) => { if (c.ids.some((i) => touch(E[i].a, E[i].b))) editSel.add(ci); });
+    } else if (d.chain != null) { const ci = +d.chain; if (d.shift && editSel.has(ci)) editSel.delete(ci); else editSel.add(ci); }
+    renderEdit();
+  };
+  svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', () => { drag = null; box.hidden = true; });
+  svg.addEventListener('wheel', (e) => {
+    if (!editView) return; e.preventDefault();
+    const p = toDie(e.clientX, e.clientY), f = Math.exp(Math.max(-1, Math.min(1, e.deltaY / 240)) * 0.6), px = p[0], py = -p[1];
+    const w = Math.max(20, Math.min(editView.w * f, 40000)), s = w / editView.w;
+    editView = { x: px - (px - editView.x) * s, y: py - (py - editView.y) * s, w, h: editView.h * s };
+    svg.setAttribute('viewBox', `${editView.x} ${editView.y} ${editView.w} ${editView.h}`);
+  }, { passive: false });
+}
 $('fold').addEventListener('input', (e) => { S.t = e.target.value / 100; $('fold-out').textContent = e.target.value + '%'; updateFold(); });
 let playing = 0;
 $('play').addEventListener('click', () => {
@@ -2149,7 +2433,7 @@ $('map-modes').addEventListener('click', (e) => { const m = e.target.dataset && 
 let rangeTick = 0;
 function paintRanges() { for (const r of document.querySelectorAll('input[type="range"]')) { const p = ((r.value - r.min) / (r.max - r.min || 1)) * 100 + '%'; if (r.dataset.p !== p) { r.dataset.p = p; r.style.setProperty('--p', p); } } }
 resize(); applyBg(); setEmboss(); setInside($('inside').value); buildEnv(); syncLights(); renderLightUI('light'); renderLightUI('reflector'); loadExample(); tick();
-window.__app = { S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, castStat }; // 점검용
+window.__app = { S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, castStat, autoPickDieline, extraSheets }; // 점검용
 </script>
 </body>
 </html>
