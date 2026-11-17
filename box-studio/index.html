@@ -141,7 +141,10 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 #sel-bulge{display:flex;flex-direction:column;gap:4px}
 
 .side-bottom{margin-top:auto;position:sticky;bottom:0;z-index:5;background:var(--side);border-top:1px solid var(--line2);margin-left:-24px;margin-right:-24px;padding:12px 24px 16px;display:flex;flex-direction:column;gap:8px}
-.foot{padding-top:18px;margin-top:4px;border-top:1px solid #e8e8ee;font-size:15px;color:#2a2c36;line-height:1.6;font-weight:700}
+.about{position:relative;display:flex;justify-content:flex-end;margin-top:-2px}
+.about-btn{width:20px;height:20px;border-radius:50%;border:1.5px solid #c9c9d2;background:none;color:#a3a3ae;font:700 11px/1 Georgia,'Times New Roman',serif;font-style:italic;cursor:pointer;padding:0;display:grid;place-items:center}
+.about-btn:hover,.about-btn[aria-expanded="true"]{border-color:var(--o);color:var(--o)}
+.foot{position:absolute;right:0;bottom:28px;z-index:30;white-space:nowrap;background:#fff;border:1px solid #e8e8ee;border-radius:12px;padding:12px 16px;box-shadow:0 10px 30px rgba(10,10,20,.16);font-size:15px;color:#2a2c36;line-height:1.6;font-weight:700}
 .foot a{color:#2a2c36;text-decoration:none;font-weight:700}
 .foot a:hover{color:#FF2F00}
 .foot .lic{color:#71717f;font-size:12px;margin-top:5px;line-height:1.5;font-weight:600}
@@ -323,7 +326,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
       <div class="row" id="paper-file-row" style="display:none"><label class="name" for="paper-file">질감 이미지 올리기</label><button type="button" class="btn small" id="paper-file-btn">이미지 선택</button><input type="file" id="paper-file" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0"></div>
       <div class="row srow"><label for="paper-strength">질감 세기</label><input type="range" id="paper-strength" min="0" max="100" step="1" value="30"><output id="paper-strength-out" for="paper-strength">30%</output></div>
       <div class="row srow"><label for="paper-size">무늬 크기</label><input type="range" id="paper-size" min="30" max="300" step="5" value="100"><output id="paper-size-out" for="paper-size">100%</output></div>
-      <div class="row srow"><label for="thick">종이 두께</label><input type="range" id="thick" min="0" max="3" step="0.1" value="0.4"><output id="thick-out" for="thick">0.4mm</output></div>
+      <div class="row srow"><label for="thick">종이 두께</label><input type="range" id="thick" min="0" max="8" step="0.1" value="0.4"><output id="thick-out" for="thick">0.4mm</output></div>
       <div class="row srow"><label for="emboss-depth">형압 깊이</label><input type="range" id="emboss-depth" min="0" max="100" step="1" value="50"><output id="emboss-depth-out" for="emboss-depth">50%</output></div>
       <div class="row"><label class="name" for="inside-mode">안쪽 면</label>
         <select id="inside-mode"><option value="print" hidden>양면 인쇄</option><option value="paper" selected>종이 색 그대로</option><option value="solid">단색</option><option value="grad">그라데이션</option></select></div>
@@ -342,8 +345,11 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
   <div class="side-bottom">
     <button type="button" class="btn primary" id="export">PNG 저장</button>
     <p class="hint" id="exp-note"></p>
-    <div class="foot"><a href="#" id="mail">cmy3544@gmail.com</a>
-      <div class="lic">MIT License &middot; Free to use with attribution</div></div>
+    <div class="about">
+      <button type="button" class="about-btn" id="about-btn" aria-expanded="false" aria-controls="about-pop" aria-label="만든 사람과 라이선스" title="만든 사람 · 라이선스">i</button>
+      <div class="foot" id="about-pop" hidden><a href="#" id="mail">cmy3544@gmail.com</a>
+        <div class="lic">MIT License &middot; Free to use with attribution</div></div>
+    </div>
   </div>
 </aside>
 
@@ -362,7 +368,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
     <button type="button" class="tool" id="btn-shadow" aria-pressed="true" aria-label="바닥 그림자" data-tip="바닥 그림자"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h7v10H7z"/><path d="M14 8l4 2.5v6L7 17"/><ellipse cx="13" cy="19.5" rx="8" ry="1.6"/></svg></button>
   </div>
   <div id="pie" hidden><div class="pie-ring"><i></i></div><div class="pie-tip">방향으로 마우스를 옮겨 누르세요 · Esc 취소</div></div>
-  <div class="keys" aria-hidden="true">~ 보기 방향 메뉴 · Space + 드래그 화면 이동<br>0 맞춤 · 1 정면 · 3 오른쪽 · 7 위 · 9 뒷면</div>
+  <div class="keys" aria-hidden="true">~ 보기 방향 메뉴 · Space + 드래그 화면 이동 · Shift + 드래그 상자 돌리기<br>0 맞춤 · 1 정면 · 3 오른쪽 · 7 위 · 9 뒷면 · Esc 선택·옵션 닫기</div>
   <div id="hud-b">
     <div class="bar">
       <label for="fold">펼침</label>
@@ -2562,6 +2568,12 @@ $('gap').addEventListener('change', () => rebuild(false));
     if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(txt);
     return new Promise((res, rej) => { const a = document.createElement('textarea'); a.value = txt; a.style.cssText = 'position:fixed;opacity:0'; document.body.append(a); a.select(); const ok = document.execCommand('copy'); a.remove(); ok ? res() : rej(new Error('copy')); });
   };
+  // 이메일과 라이선스는 평소에는 숨겨 두고, 구석의 ⓘ를 눌렀을 때만 작은 창으로 보여 준다
+  const aboutBtn = $('about-btn'), aboutPop = $('about-pop');
+  const showAbout = (on) => { aboutPop.hidden = !on; aboutBtn.setAttribute('aria-expanded', String(on)); };
+  aboutBtn.addEventListener('click', () => showAbout(aboutPop.hidden));
+  document.addEventListener('pointerdown', (e) => { if (!aboutPop.hidden && !e.target.closest('.about')) showAbout(false); });
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !aboutPop.hidden) { showAbout(false); e.stopImmediatePropagation(); } });
   $('mail').addEventListener('click', (e) => { e.preventDefault(); copyText('cmy3544@gmail.com').then(() => toast('Email address copied', '이메일 주소가 복사되었습니다')).catch(() => toast('Could not copy the email', '이메일을 복사하지 못했습니다')); });
 }
 $('line-mode').addEventListener('click', (e) => { const m = e.target.dataset && e.target.dataset.mode; if (m && !S.example && m !== S.lineMode) { S.lineModeUser = m; rebuild(false); } });
@@ -2573,7 +2585,7 @@ $('edit-undo').addEventListener('click', () => undoEdit(false));
 $('edit-reset').addEventListener('click', () => undoEdit(true));
 window.addEventListener('keydown', (e) => {
   if ($('edit-dlg').hidden) return;
-  if (e.key === 'Escape') closeEdit();
+  if (e.key === 'Escape') { closeEdit(); e.stopImmediatePropagation(); }
   else if (e.code === 'Space') { editSpace = true; e.preventDefault(); }
   else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undoEdit(false); }
 }, true);
@@ -2696,7 +2708,7 @@ renderer.domElement.addEventListener('pointerdown', (e) => {
   e.stopImmediatePropagation(); e.preventDefault();
   const cb = pickCb, hex = colorAt(e.clientX, e.clientY); endPick(); if (hex) cb(hex);
 }, true);
-window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pickCb) endPick(); });
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pickCb) { endPick(); e.stopImmediatePropagation(); } });
 $('thick').addEventListener('input', (e) => { $('thick-out').textContent = (+e.target.value).toFixed(1) + 'mm'; buildMeshes(); updateFold(); });
 const setEmboss = () => { const v = +$('emboss-depth').value; $('emboss-depth-out').textContent = v + '%'; embossU.value = (v / 100) * 0.03; dirty = true; }; // 100% = 1mm 깊이를 1.5배 과장
 $('emboss-depth').addEventListener('input', setEmboss);
@@ -2725,7 +2737,7 @@ $('export').addEventListener('click', () => { expSize(); $('exp-dlg').hidden = f
 $('exp-scale').addEventListener('change', expSize);
 $('exp-cancel').addEventListener('click', expClose);
 $('exp-dlg').addEventListener('pointerdown', (e) => { if (e.target === $('exp-dlg')) expClose(); });
-window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('exp-dlg').hidden) expClose(); });
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('exp-dlg').hidden) { expClose(); e.stopImmediatePropagation(); } });
 $('exp-go').addEventListener('click', () => { expClose(); exportPng().catch((err) => { console.error(err); $('exp-note').textContent = '이미지를 만들지 못했습니다. 크기를 낮춰 다시 시도해 주세요.'; }); });
 $('shot-close').addEventListener('click', () => { $('shot').hidden = true; });
 
@@ -2770,7 +2782,7 @@ for (const k of ['light', 'reflector', 'bg']) { // 화면 안 도구 막대로 �
   $('view-pie').addEventListener('click', () => { if (pieOpen) pieClose(false); else pieShow(true); });
   window.addEventListener('keyup', (e) => { if (e.code === 'Backquote' && pieOpen && performance.now() - pieT > 320 && pieIdx >= 0) pieClose(true); }); // 누른 채 방향을 잡고 떼어도 된다
   window.addEventListener('keydown', (e) => {
-    if (pieOpen && e.key === 'Escape') { pieClose(false); return; }
+    if (pieOpen && e.key === 'Escape') { pieClose(false); e.stopImmediatePropagation(); return; }
     if (typing(e) || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.code === 'Backquote') { e.preventDefault(); if (e.repeat) return; if (pieOpen) pieClose(false); else pieShow(false); return; }
     if (e.code === 'Space') { if (!overStage && !panKey) return; e.preventDefault(); if (!panKey) setPan(true); return; } // 마우스가 3D 화면 위에 있을 때만 가로챈다
@@ -2778,6 +2790,35 @@ for (const k of ['light', 'reflector', 'bg']) { // 화면 안 도구 막대로 �
   });
   window.addEventListener('keyup', (e) => { if (e.code === 'Space' && panKey) { e.preventDefault(); setPan(false); } });
   window.addEventListener('blur', () => setPan(false));
+  /* Shift + 드래그 = 상자를 제자리에서 돌린다 (조명과 그림자는 그대로 두고 상자만 도는 '제자리 회전'과 같다).
+     그냥 한 번 누르기(끌지 않음) = 선택 풀기. Space를 누른 채 화면을 옮기는 동안의 누르기는 선택을 풀지 않는다 */
+  let turn = null, tap = null;
+  canvas.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 || pieOpen) return;
+    if (e.shiftKey && !panKey && S.struct && S.struct.faces.length) {
+      e.stopImmediatePropagation(); e.preventDefault(); canvas.setPointerCapture(e.pointerId);
+      turn = { x: e.clientX, ry: pose.ry, id: e.pointerId }; canvas.style.cursor = 'ew-resize'; return;
+    }
+    tap = panKey ? null : { x: e.clientX, y: e.clientY };
+  }, true);
+  canvas.addEventListener('pointermove', (e) => {
+    if (!turn) return;
+    let v = turn.ry + (e.clientX - turn.x) * 0.5; v = ((v + 180) % 360 + 360) % 360 - 180;   // 화면 2px에 1°
+    pose.ry = Math.round(v); syncPoseUI(); updateFold();
+  });
+  const endTurn = (e) => {
+    if (turn) { try { canvas.releasePointerCapture(turn.id); } catch (_) { /* 이미 풀림 */ } turn = null; canvas.style.cursor = ''; return; }
+    if (tap && e.type === 'pointerup' && !panKey && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) < 5 && S.sel) select(null);
+    tap = null;
+  };
+  canvas.addEventListener('pointerup', endTurn); canvas.addEventListener('pointercancel', endTurn);
+  $('map').addEventListener('click', (e) => { if (e.target === e.currentTarget && S.sel) select(null); });   // 전개도의 빈 곳을 눌러도 풀린다
+  // Esc = 선택한 면·선의 옵션 창과 조명·반사판·배경 창을 닫는다 (다른 창이 Esc를 쓰는 중이면 그쪽이 먼저)
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || pieOpen || !$('edit-dlg').hidden || !$('exp-dlg').hidden || !$('about-pop').hidden || $('stage').classList.contains('picking')) return;
+    if (S.sel) select(null);
+    for (const k of ['light', 'reflector', 'bg']) if (!$('pop-' + k).hidden) { $('pop-' + k).hidden = true; $('btn-' + k).setAttribute('aria-pressed', 'false'); }
+  });
 }
 $('map-modes').addEventListener('click', (e) => { const m = e.target.dataset && e.target.dataset.map; if (m) setMapMode(m); });
 { // 로고: 글자에 마우스를 올리면 주황으로 튄다
