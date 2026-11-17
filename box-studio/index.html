@@ -1038,6 +1038,15 @@ function buildStructure(lines, opts = {}) {
         const t = (p[0] - cx) * dx + (p[1] - cy) * dy; tmin = Math.min(tmin, t); tmax = Math.max(tmax, t);
         dev = Math.max(dev, Math.abs((p[0] - cx) * -dy + (p[1] - cy) * dx));
       }
+      /* 계단 모양 접는 선(골판지 상자의 옆벽처럼 1~2mm씩 번갈아 어긋나게 그린 오시선): 거의 모든 길이가 한 방향으로 곧고
+         나머지는 그 사이를 잇는 짧은 턱뿐이면 곧은 접는 선으로 본다. 방향은 곧은 구간들의 방향으로 다시 맞춘다 */
+      let la = 0, lt = 0, ax2 = 0, ay2 = 0;
+      for (const ei of rec.edges) { const e = edges[ei], a = nodes[e.u], b = nodes[e.v], ex = b[0] - a[0], ey = b[1] - a[1], w = Math.hypot(ex, ey); if (w < 1e-9) continue; lt += w; if (Math.abs(ex * dy - ey * dx) <= w * 0.06) { const sg = ex * dx + ey * dy < 0 ? -1 : 1; la += w; ax2 += sg * ex; ay2 += sg * ey; } }
+      if (dev > 1 && lt > 0 && la >= 0.85 * lt) {
+        const n = Math.hypot(ax2, ay2) || 1, ux = ax2 / n, uy = ay2 / n; let t0 = Infinity, t1 = -Infinity, dv = 0;
+        for (const ei of rec.edges) for (const p of [nodes[edges[ei].u], nodes[edges[ei].v]]) { const t = (p[0] - cx) * ux + (p[1] - cy) * uy; t0 = Math.min(t0, t); t1 = Math.max(t1, t); dv = Math.max(dv, Math.abs((p[0] - cx) * -uy + (p[1] - cy) * ux)); }
+        return { p0: [cx + ux * t0, cy + uy * t0], p1: [cx + ux * t1, cy + uy * t1], dev: dv, stepped: true };
+      }
       return { p0: [cx + dx * tmin, cy + dy * tmin], p1: [cx + dx * tmax, cy + dy * tmax], dev };
     };
     const addChild = (parent, child, rec, weld) => {
@@ -1045,7 +1054,7 @@ function buildStructure(lines, opts = {}) {
       const c = interiorPoint(faces[child]);
       const dx = ax.p1[0] - ax.p0[0], dy = ax.p1[1] - ax.p0[1];
       const side = Math.sign(dx * (c[1] - ax.p0[1]) - dy * (c[0] - ax.p0[0])) || 1; // 자식면이 축의 왼쪽(+) / 오른쪽(-)
-      const curved = !weld && ax.dev > Math.max(1, eps);
+      const curved = !weld && ax.dev > (ax.stepped ? Math.max(11.4, eps * 1.5) : Math.max(1, eps));   // 계단 모양은 턱이 4mm 안쪽이면 접는다
       hinges.push({ id: hinges.length, parent, child, p0: ax.p0, p1: ax.p1, side, weld: !!weld, curved, len: rec.len, out: !weld && rec.outLen > rec.len / 2, segs: rec.edges.map((ei) => [nodes[edges[ei].u], nodes[edges[ei].v]]) });
       inSheet.add(child);
     };
@@ -1221,7 +1230,7 @@ const S = {
   twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null,   // 양면 인쇄: 짝이 되는 안쪽면, 바깥·안쪽 뒤집기
   inside: { mode: 'paper', c1: '#f47bb0', c2: '#ffe14d', angle: 0, auto: true },   // 안쪽 면 표시 방식
   sheets: [],   // 후가공을 대지(쪽)로 나눠 둔 파일의 나머지 쪽 [{page, name, role, color, opacity, blend, emboss}]
-  lineMode: 'color', lineModeUser: null, edits: [], moves: [], editUndo: [], noLayerAll: false, pickedLayer: '', guessedFold: '',   // 선 구분 방식, 직접 고친 선 [{x, y, role}]
+  lineMode: 'color', lineModeUser: null, edits: [], moves: [], editUndo: [], rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', guessedFold: '',   // 선 구분 방식, 직접 고친 선 [{x, y, role}]
   dielinePage: 1, struct: null, auto: new Map(), over: new Map(), dir: new Map(), t: 1, sel: null,
   uv: null, printCanvas: null, finishes: [], texBox: '', token: 0,
   lights: defaultLights(), reflectors: [], ambient: 100, paperCustom: null,
@@ -1913,10 +1922,22 @@ function setPose(base, rx = 0, ry = 0, rz = 0) {
   pose.base.copy(base); pose.rx = rx; pose.ry = ry; pose.rz = rz;
   syncPoseUI(); updateFold(); fitCamera('fit');
 }
+/* 정면의 위아래: 정면(기준면)의 전개도 아래쪽 변에 상자의 나머지 큰 덩어리(뒷벽 → 바닥 …)가 달려 있으면 그 면은 뚜껑이고,
+   뚜껑의 그림은 보통 경첩 쪽이 위가 되도록 그려 두므로 전개도 방향과는 위아래가 반대다. 그럴 때 세운 자세를 180° 돌려 준다 */
+function frontRoll(st) {
+  const R = st.faces.find((f) => f.id === st.rootId); if (!R) return 0;
+  const kids = new Map(); for (const h of st.hinges) { let l = kids.get(h.parent); if (!l) kids.set(h.parent, (l = [])); l.push(h); }
+  const area = new Map(st.faces.map((f) => [f.id, f.area])), sub = (id) => (area.get(id) || 0) + (kids.get(id) || []).reduce((a, h) => a + sub(h.child), 0);
+  let best = null; for (const h of kids.get(R.id) || []) { if (h.weld) continue; const a = sub(h.child); if (!best || a > best.a) best = { h, a }; }
+  if (!best || best.a < 1.2 * R.area) return 0;
+  const h = best.h, dx = Math.abs(h.p1[0] - h.p0[0]), dy = Math.abs(h.p1[1] - h.p0[1]);
+  return dx > dy * 3 && (h.p0[1] + h.p1[1]) / 2 < R.center[1] ? Math.PI : 0;
+}
 function posePreset(name) {
   const q = new THREE.Quaternion();
   if (name === 'lie') q.setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);       // 정면이 위를 보게
   else if (name === 'side') q.setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2);  // 옆면으로 눕힘
+  if (S.roll) q.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), S.roll));   // 뚜껑이 정면이면 위아래를 바로 세운다
   if (name === 'lean') setPose(q, 0, -25, 16); else setPose(q);
 }
 function faceToward(faceId, where) { // 조립된 상태에서 그 면의 바깥쪽이 정면(+Z) 또는 바닥(-Y)을 보게 돌린다
@@ -2600,11 +2621,11 @@ async function loadFile(file) {
     }
     layers = dedupeLayers(layers, pages);
     if (S.doc) S.doc.destroy();
-    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], moves: [], editUndo: [], noLayerAll: false, pickedLayer: '', sheets: [], twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null });
+    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], moves: [], editUndo: [], rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', sheets: [], twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null });
     S.inside.auto = true;
     const picked = autoPickDieline(layers, pages); if (picked) S.pickedLayer = picked.name;
     S.sheets = extraSheets(layers, pages);
-    pose.base.identity(); pose.rx = pose.ry = pose.rz = 0; syncPoseUI();
+    pose.base.identity(); pose.rx = pose.ry = pose.rz = 0; syncPoseUI(); S.poseFresh = true;
     $('file-name').textContent = file.name;
     $('file-sub').textContent = `${doc.numPages}쪽 · 다른 파일은 다시 눌러서`;
     await rebuild(true, true);
@@ -2716,6 +2737,38 @@ function pageTwin(st, other) { // 다른 대지에 놓인 짝
 }
 
 /* ---------- 다시 계산 ---------- */
+/* 정면 고르기: 가장 넓은 면과 크기가 거의 같은 면이 또 있으면(앞·뒤판, 뚜껑·바닥) 넓이만으로는 어느 쪽이 정면인지 알 수 없다.
+   ① 그림이 들어간 디자인 면은 색이 다양하고, 성분표·바코드가 있는 뒷면은 바탕색에 글자뿐이라 색 변화가 적다 → 색이 훨씬 다양한 쪽이 정면
+   ② 색으로 가려지지 않으면, 잔글씨가 빽빽한 쪽이 뒷면 → 잔무늬가 훨씬 적은 쪽이 정면. 둘 다 뚜렷하지 않으면 그대로 둔다 */
+function pickFront(st) {
+  if (!S.printCanvas || !S.uv || !st.faces.length) return null;
+  const R = st.faces.find((f) => f.id === st.rootId); if (!R) return null;
+  const cands = st.faces.filter((f) => f.area >= 0.9 * R.area && f.area <= 1.12 * R.area); if (cands.length < 2) return null;
+  const W = S.printCanvas.width, H = S.printCanvas.height, cv = document.createElement('canvas'), x = cv.getContext('2d', { willReadFrequently: true });
+  const score = (f) => {
+    const xs = f.outer.map((p) => p[0]), ys = f.outer.map((p) => p[1]), a = S.uv(Math.min(...xs), Math.min(...ys)), b = S.uv(Math.max(...xs), Math.max(...ys));
+    const x0 = Math.min(a[0], b[0]) * W, x1 = Math.max(a[0], b[0]) * W, y0 = (1 - Math.max(a[1], b[1])) * H, y1 = (1 - Math.min(a[1], b[1])) * H, sw = x1 - x0, sh = y1 - y0; if (sw < 8 || sh < 8) return null;
+    const k = Math.min(1, 420 / Math.max(sw, sh)), w = Math.max(8, Math.round(sw * k)), h = Math.max(8, Math.round(sh * k)); cv.width = w; cv.height = h;
+    x.fillStyle = '#fff'; x.fillRect(0, 0, w, h); x.drawImage(S.printCanvas, x0, y0, sw, sh, 0, 0, w, h);
+    const d = x.getImageData(0, 0, w, h).data, L = new Float32Array(w * h); for (let i = 0; i < w * h; i++) L[i] = 0.3 * d[i * 4] + 0.59 * d[i * 4 + 1] + 0.11 * d[i * 4 + 2];
+    let n = 0, m = 0, s1 = 0, s2 = 0, q1 = 0, q2 = 0; const mx = Math.round(w * 0.06), my = Math.round(h * 0.06);   // 가장자리(접는 선 근처)는 빼고 센다
+    for (let yy = my; yy < h - my - 1; yy++) for (let xx = mx; xx < w - mx - 1; xx++) {
+      const i = yy * w + xx; m++; if (Math.abs(L[i] - L[i + 1]) > 26 || Math.abs(L[i] - L[i + w]) > 26) n++;
+      const rg = d[i * 4] - d[i * 4 + 1], yb = 0.5 * (d[i * 4] + d[i * 4 + 1]) - d[i * 4 + 2]; s1 += rg; s2 += rg * rg; q1 += yb; q2 += yb * yb;
+    }
+    if (!m) return null;
+    return { edge: n / m, col: Math.sqrt(Math.max(0, s2 / m - (s1 / m) ** 2) + Math.max(0, q2 / m - (q1 / m) ** 2)) };   // 잔무늬 비율, 색의 퍼짐
+  };
+  const list = []; let rs = null;
+  for (const f of cands) { const sc = score(f); if (!sc) continue; list.push({ f, ...sc }); if (f === R) rs = sc; }
+  S._front = list.map((o) => o.f.id + ':' + o.col.toFixed(1) + '/' + o.edge.toFixed(3)).join(' ');
+  if (!rs || list.length < 2) return null;
+  const vivid = list.reduce((a, o) => (o.col > a.col ? o : a)), calm = list.reduce((a, o) => (o.edge < a.edge ? o : a));
+  let pick = null;
+  if (vivid.f !== R && vivid.col >= rs.col * 1.5 + 6) pick = vivid.f;                                    // ① 색이 훨씬 다양한 면
+  else if (calm.f !== R && rs.col < calm.col * 1.5 + 6 && rs.edge >= 0.012 && rs.edge >= calm.edge * 1.6 + 0.004) pick = calm.f;   // ② 색으로는 비슷할 때, 잔글씨가 훨씬 적은 면
+  return pick ? [pick.center[0], pick.center[1]] : null;
+}
 async function rebuild(textures, refit, soft) {
   const token = S.token;
   if (S.example) return;
@@ -2755,6 +2808,7 @@ async function rebuild(textures, refit, soft) {
   const auto = S.lineMode === 'auto';
   const linesOf = (strokes) => { const out = []; for (const s of strokes) { const c = roles.get(colorKey(s.rgb) + (s.dashed ? 'd' : '')), r = c ? c.role : guessLineRole(s.rgb, s.dashed); if (r !== 'ignore') for (const p of s.polylines) out.push({ pts: p, role: auto ? 'cut' : r }); } return out; };
   const bopts = { gapTol: (+$('gap').value || 0) / PT2MM, auto, overrides: S.edits, moves: S.moves };
+  if (S.rootAt) bopts.rootPoint = S.rootAt;   // 인쇄 내용으로 고른 정면
   S._dbg = { lines: dl ? linesOf(dl.st) : [], bopts };
   let st = buildStructure(dl ? linesOf(dl.st) : [], bopts);
   /* 양면 인쇄 찾기: ① 같은 대지에 좌우가 뒤집힌 전개도가 하나 더 있는 경우 ② 다른 대지(쪽)에 안쪽면을 그려 둔 경우 */
@@ -2795,6 +2849,8 @@ async function rebuild(textures, refit, soft) {
     S.over = over; S.dir = dir; S.bulge = bulge; S.sel = null;
   }
   S.struct = st; S.auto = defaultAngles(st); S.dielinePage = dl ? dl.pg.num : 1;
+  S.roll = S.example ? 0 : frontRoll(st);
+  if (S.poseFresh) { pose.base.setFromAxisAngle(new THREE.Vector3(0, 0, 1), S.roll); pose.rx = pose.ry = pose.rz = 0; }   // 새로 읽은 파일: 정면이 바로 서게
   if (changed && !soft && S.label && st.faces.length) { const home = st.faces.find((f) => f.id === st.rootId) || st.faces[0]; S.label.x = home.center[0]; S.label.y = home.center[1]; S.label.anchor = home.id; } // 전개도가 바뀌면 라벨을 정면 가운데로
   renderLayerUI(); renderColorUI();
   const msgs = st.warnings.slice();
@@ -2831,6 +2887,11 @@ async function rebuild(textures, refit, soft) {
     } catch (err) { console.error(err); msgs.push('인쇄면을 그리지 못해 흰 종이로 표시했습니다.'); setWarn(msgs.join(' ')); S.printCanvas = null; S.finishes = []; }
     if (!S.uv) S.uv = plainUv;
     if (token !== S.token) return;
+    if (!S.rootTried && !S.example && !S.flip) { // 파일을 처음 읽었을 때 한 번: 인쇄 내용을 보고 정면을 다시 고른다
+      S.rootTried = true; const at = pickFront(st);
+      if (at) { S.rootAt = at; applyTextures(); return rebuild(false, true); }
+    }
+    S.poseFresh = false;
     applyTextures();
   }
   syncInsideUI(); applyInside();
