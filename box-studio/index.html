@@ -89,6 +89,13 @@ input[type="range"]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;b
 .srow>output{width:44px;flex:none;text-align:right;font-size:12px;font-weight:600}
 .hint{margin:0;color:var(--mute);font-size:11.5px;line-height:1.55}
 .hint:empty{display:none}
+/* 긴 설명은 평소엔 숨기고, 해당 버튼·줄에 마우스를 1초 남짓 올려 두면 뜬다 (양면 뒤집기, 휘는 방향 각도) */
+.tip-late{position:relative}
+.tip-late::after{content:attr(data-tip);position:absolute;left:-2px;bottom:calc(100% + 9px);width:272px;box-sizing:border-box;z-index:40;background:#000;color:#fff;font-size:11.5px;font-weight:500;line-height:1.55;letter-spacing:0;text-align:left;white-space:normal;padding:9px 11px;border-radius:9px;box-shadow:0 8px 24px rgba(10,10,20,.22);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .15s,visibility 0s .15s}
+.row.tip-late::after{left:0;right:0;width:auto;top:calc(100% + 9px);bottom:auto}   /* 옵션 창 안의 줄은 아래쪽에: 위의 조절 칸을 가리지 않게 */
+.pop{position:relative}
+.pop:hover{z-index:2}
+.tip-late:hover::after,.tip-late:focus-visible::after{opacity:1;visibility:visible;transition:opacity .15s 1.2s,visibility 0s 1.2s}
 .warn{margin:0;color:var(--o);font-size:12px;font-weight:600;line-height:1.5}
 .lrow.has-opts{cursor:pointer;border-radius:9px;margin:0 -6px;padding:0 6px}
 .lrow.has-opts>.name{cursor:pointer}
@@ -240,6 +247,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 #edit-map .ln.loose{stroke:#b4b4c0}
 #edit-map .ln.sel{stroke-width:3.6px;opacity:1}
 #edit-map .halo{stroke:rgba(26,28,34,.2);stroke-width:11px;pointer-events:none}
+#edit-map path.ghost{fill:none;vector-effect:non-scaling-stroke;stroke:#9a9aa6;stroke-width:1px;stroke-dasharray:3 3;pointer-events:none}
 #edit-map .hit{stroke:transparent;stroke-width:13px;cursor:pointer}
 #edit-map .hit:hover{stroke:rgba(26,28,34,.1)}
 #edit-box{position:absolute;border:1px dashed var(--o);background:rgba(255,47,0,.08);pointer-events:none;border-radius:3px}
@@ -301,8 +309,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
       <div class="legend" id="map-legend"><span><i style="background:var(--cut)"></i>칼선</span><span><i style="background:var(--fold)"></i>안으로 접기</span><span><i style="background:var(--fold-out)"></i>밖으로 접기</span></div>
       <p class="hint" id="map-hint">접는선이나 면을 누르면 바로 옆에 옵션 창이 뜹니다.</p>
       <div id="side-box" hidden>
-        <p class="hint" id="side-note"></p>
-        <div class="seg"><button type="button" class="btn" id="side-flip">양면 뒤집기</button><button type="button" class="btn" id="side-mirror" aria-pressed="false">안쪽 좌우 반전</button></div>
+        <div class="seg"><button type="button" class="btn tip-late" id="side-flip" data-tip="">양면 뒤집기</button><button type="button" class="btn" id="side-mirror" aria-pressed="false">안쪽 좌우 반전</button></div>
       </div>
       <div class="seg"><button type="button" class="btn" id="edit-open">선 고치기</button><button type="button" class="btn" id="angles-reset">접는 각도 초기화</button></div>
     </div>
@@ -426,8 +433,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
       </div>
       <div id="sel-bulge">
         <div class="row srow"><label for="bulge-amt">부풀리기</label><input type="range" id="bulge-amt" min="-10" max="25" step="0.5" value="0"><output id="bulge-amt-out" for="bulge-amt">0mm</output></div>
-        <div class="row"><label class="name" for="bulge-angle">휘는 방향 각도</label><input type="number" id="bulge-angle" min="0" max="180" step="5" value="90" placeholder="가운데"><span class="meta">°</span></div>
-        <p class="hint">기본은 90°(세로로 휨)입니다. 0°는 가로, 각도를 지우면 가운데가 파우치처럼 부풉니다.</p>
+        <div class="row tip-late" data-tip="기본은 90°(세로로 휨)입니다. 0°는 가로, 각도를 지우면 가운데가 파우치처럼 부풉니다."><label class="name" for="bulge-angle">휘는 방향 각도</label><input type="number" id="bulge-angle" min="0" max="180" step="5" value="90" placeholder="가운데"><span class="meta">°</span></div>
       </div>
     </section>
     <section class="pop" id="pop-light" hidden aria-label="조명">
@@ -663,7 +669,65 @@ function interiorPoint(face) { // 면 내부의 한 점 (오목/구멍 대응: �
   return best ? [best.x, best.y] : [p[0][0], p[0][1]];
 }
 
+/* 사용자가 옮긴 선을 반영한 선 목록을 만든다.
+   한 번 그대로 분석해서(갈림길에서 갈림길까지의 조각을 얻어) 옮길 조각만 원래 선에서 떼어 내 평행 이동한다.
+   떼어 낸 조각의 끝은 이후의 '끊긴 끝 잇기'와 교차 계산이 이웃 선에 다시 붙여 준다 (얹혀 있던 선을 따라 미끄러지거나, 살짝 늘어나거나 잘린다). */
+function moveLines(lines, opts) {
+  const mv = opts.moves, pr = buildStructure(lines, { ...opts, moves: null, overrides: null, _probe: true });
+  if (!pr.segs) return { lines, overrides: opts.overrides };
+  const hit = new Map(), movedEdges = [], still = [], atNode = new Map();
+  const nodeRec = (id) => { let r = atNode.get(id); if (!r) atNode.set(id, (r = { fixed: false, ds: [] })); return r; };
+  for (const e of pr.edges) {
+    if (e.src == null || pr.segs[e.src].li < 0) { still.push(e); nodeRec(e.u).fixed = nodeRec(e.v).fixed = true; continue; }
+    const a = pr.nodes[e.u], b = pr.nodes[e.v], sg = { x1: a[0], y1: a[1], x2: b[0], y2: b[1] }; let mi = -1;
+    for (let k = 0; k < mv.length; k++) { const o = mv[k]; if (o.x >= Math.min(a[0], b[0]) - 0.4 && o.x <= Math.max(a[0], b[0]) + 0.4 && o.y >= Math.min(a[1], b[1]) - 0.4 && o.y <= Math.max(a[1], b[1]) + 0.4 && distPointSeg(o.x, o.y, sg).d <= 0.3) mi = k; }
+    if (mi < 0) { still.push(e); nodeRec(e.u).fixed = nodeRec(e.v).fixed = true; continue; }
+    if (Math.abs(mv[mi].dx) > 1e-6 || Math.abs(mv[mi].dy) > 1e-6) for (const id of [e.u, e.v]) { const r = nodeRec(id); if (!r.ds.some((d) => Math.abs(d.dx - mv[mi].dx) < 1e-6 && Math.abs(d.dy - mv[mi].dy) < 1e-6)) r.ds.push({ dx: mv[mi].dx, dy: mv[mi].dy, type: e.type }); }
+    let l = hit.get(e.src); if (!l) hit.set(e.src, (l = []));
+    l.push({ t0: Math.min(e.t0, e.t1), t1: Math.max(e.t0, e.t1), mi, dx: mv[mi].dx, dy: mv[mi].dy });
+    movedEdges.push({ sg, dx: mv[mi].dx, dy: mv[mi].dy });
+  }
+  if (!hit.size) return { lines, overrides: opts.overrides };
+  const byLine = new Map();
+  pr.segs.forEach((sgm, i) => { if (sgm.li >= 0) { let l = byLine.get(sgm.li); if (!l) byLine.set(sgm.li, (l = [])); l.push(i); } });
+  const out = [];
+  lines.forEach((ln, li) => {
+    const ids = byLine.get(li);
+    if (!ids || !ids.some((i) => hit.has(i))) { out.push(ln); return; }
+    let run = null;
+    const flush = () => { if (run && run.pts.length >= 2) out.push({ ...ln, pts: run.pts.map((q) => [q[0] + run.dx, q[1] + run.dy]), mdx: run.dx, mdy: run.dy, segMi: run.mis }); run = null; };
+    const add = (p0, p1, mi, dx, dy) => {
+      if (Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) < 1e-6) return;
+      const moved = mi >= 0, last = run && run.pts[run.pts.length - 1];
+      if (run && run.moved === moved && Math.abs(run.dx - dx) < 1e-9 && Math.abs(run.dy - dy) < 1e-9 && Math.hypot(last[0] - p0[0], last[1] - p0[1]) < 1e-6) { run.pts.push(p1); run.mis.push(mi); }
+      else { flush(); run = { pts: [p0, p1], mis: [mi], dx, dy, moved }; }
+    };
+    for (const i of ids) {
+      const sgm = pr.segs[i], hs = (hit.get(i) || []).sort((x, y) => x.t0 - y.t0); let t = 0;
+      const P = (u) => [sgm.x1 + (sgm.x2 - sgm.x1) * u, sgm.y1 + (sgm.y2 - sgm.y1) * u];
+      for (const h of hs) { if (h.t1 <= t + 1e-9) continue; if (h.t0 > t + 1e-9) add(P(t), P(h.t0), -1, 0, 0); add(P(Math.max(t, h.t0)), P(h.t1), h.mi, h.dx, h.dy); t = h.t1; }
+      if (t < 1 - 1e-9) add(P(t), P(1), -1, 0, 0);
+    }
+    flush();
+  });
+  /* 옮긴 선의 끝이 원래 다른 선과 만나던 자리(갈림길)에서 떨어져 나간 경우, 그 사이를 짧은 선으로 이어 준다 (계단 모양).
+     옮긴 끝이 여전히 다른 선 위에 있으면(얹힌 선을 따라 미끄러진 경우) 잇지 않는다 */
+  for (const [id, r] of atNode) {
+    if (!r.fixed || !r.ds.length) continue;
+    const J = pr.nodes[id];
+    for (const d of r.ds) {
+      const x = J[0] + d.dx, y = J[1] + d.dy; let on = false;
+      for (const e of still) { const a = pr.nodes[e.u], b = pr.nodes[e.v]; if (x < Math.min(a[0], b[0]) - 0.1 || x > Math.max(a[0], b[0]) + 0.1 || y < Math.min(a[1], b[1]) - 0.1 || y > Math.max(a[1], b[1]) + 0.1) continue; if (distPointSeg(x, y, { x1: a[0], y1: a[1], x2: b[0], y2: b[1] }).d <= 0.05) { on = true; break; } }
+      if (!on) out.push({ pts: [[J[0], J[1]], [x, y]], role: d.type });
+    }
+  }
+  // 선 종류를 직접 지정해 둔 자리도 옮긴 선을 따라가게 한다
+  const overrides = (opts.overrides || []).map((o) => { for (const m of movedEdges) if (distPointSeg(o.x, o.y, m.sg).d <= 0.5) return { ...o, x: o.x + m.dx, y: o.y + m.dy }; return o; });
+  return { lines: out, overrides };
+}
+
 function buildStructure(lines, opts = {}) {
+  if (opts.moves && opts.moves.length) { const r = moveLines(lines, opts); return buildStructure(r.lines, { ...opts, moves: null, overrides: r.overrides }); }
   const eps = opts.gapTol ?? 3;          // 끊긴 선 연결 허용치 (pt)
   const tol = 0.04, mergeTol = 0.08;
   const warnings = [];
@@ -684,7 +748,8 @@ function buildStructure(lines, opts = {}) {
       }
     }
     const first = segs.length;
-    for (let i = 0; i + 1 < pts.length; i++) segs.push({ x1: pts[i][0], y1: pts[i][1], x2: pts[i + 1][0], y2: pts[i + 1][1], type: ln.role, li });
+    const smi = ln.segMi && ln.segMi.length === pts.length - 1 ? ln.segMi : null;   // 옮긴 선 조각이면 어느 이동에서 왔는지
+    for (let i = 0; i + 1 < pts.length; i++) segs.push({ x1: pts[i][0], y1: pts[i][1], x2: pts[i + 1][0], y2: pts[i + 1][1], type: ln.role, li, mi: smi ? smi[i] : -1, mdx: ln.mdx || 0, mdy: ln.mdy || 0 });
     const last = segs.length - 1;
     const a = pts[0], b = pts[pts.length - 1];
     if (Math.hypot(a[0] - b[0], a[1] - b[1]) > tol) {
@@ -771,20 +836,20 @@ function buildStructure(lines, opts = {}) {
   const edgeMap = new Map();
   for (let i = 0; i < n; i++) {
     const s = segs[i]; const ts = splits[i].sort((a, b) => a - b);
-    let prev = null;
+    let prev = null, prevT = 0;
     for (const t of ts) {
       const id = nodeAt(s.x1 + (s.x2 - s.x1) * t, s.y1 + (s.y2 - s.y1) * t);
       if (prev !== null && id !== prev) {
         const key = prev < id ? prev + '_' + id : id + '_' + prev;
         const ex = edgeMap.get(key);
-        if (!ex) edgeMap.set(key, { u: Math.min(prev, id), v: Math.max(prev, id), type: s.type, alive: true });
-        else if (s.type === 'cut') ex.type = 'cut';
-        else if (s.type === 'foldOut' && ex.type === 'fold') ex.type = 'foldOut';
+        if (!ex) edgeMap.set(key, { u: Math.min(prev, id), v: Math.max(prev, id), type: s.type, alive: true, src: i, t0: prevT, t1: t, mi: s.mi != null ? s.mi : -1, mdx: s.mdx || 0, mdy: s.mdy || 0 });
+        else { if (s.type === 'cut') ex.type = 'cut'; else if (s.type === 'foldOut' && ex.type === 'fold') ex.type = 'foldOut'; if (s.mi >= 0 && ex.mi < 0) { ex.mi = s.mi; ex.mdx = s.mdx; ex.mdy = s.mdy; } }
       }
-      prev = id;
+      prev = id; prevT = t;
     }
   }
   const edges = [...edgeMap.values()];
+  if (opts._probe) return { segs, edges, nodes };   // 선 옮기기용: 갈림길로 나눈 조각까지만 필요하다
 
   /* 3-4b. 사용자가 직접 고친 선 (선 가운데 점으로 찾는다). '무시'는 없는 선으로 친다 */
   const ov = opts.overrides || [];
@@ -1014,7 +1079,8 @@ function buildStructure(lines, opts = {}) {
   const drawEdges = edges.filter((e) => e.alive).map((e) => ({ a: nodes[e.u], b: nodes[e.v], type: e.type }));
   // 선 고치기 화면용: 살아 있는 선(ok), 무시한 선(ignored), 면을 이루지 못해 버려진 선(loose)을 모두 돌려준다
   const mainComp = rootId >= 0 ? faces[rootId].comp : -1;
-  const allEdges = edges.map((e) => ({ a: nodes[e.u], b: nodes[e.v], type: e.type, state: e.alive ? 'ok' : e.ignored ? 'ignored' : 'loose', main: e.alive && find(e.u) === mainComp, comp: e.alive ? find(e.u) : -1, edited: !!e.ov }));
+  const allEdges = edges.map((e) => ({ a: nodes[e.u], b: nodes[e.v], type: e.type, state: e.alive ? 'ok' : e.ignored ? 'ignored' : 'loose', main: e.alive && find(e.u) === mainComp, comp: e.alive ? find(e.u) : -1, edited: !!e.ov,
+    mi: e.mi, moved: e.mi >= 0 && (Math.abs(e.mdx) > 1e-6 || Math.abs(e.mdy) > 1e-6), oa: [nodes[e.u][0] - e.mdx, nodes[e.u][1] - e.mdy], ob: [nodes[e.v][0] - e.mdx, nodes[e.v][1] - e.mdy] }));   // oa·ob = 옮기기 전 자리
   const childCount = new Map();
   hinges.forEach((h) => { if (!h.weld) childCount.set(h.parent, (childCount.get(h.parent) || 0) + 1); });
   hinges.forEach((h) => { h.leaf = !childCount.get(h.child); });
@@ -1148,7 +1214,7 @@ const S = {
   twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null,   // 양면 인쇄: 짝이 되는 안쪽면, 바깥·안쪽 뒤집기
   inside: { mode: 'paper', c1: '#f47bb0', c2: '#ffe14d', angle: 0, auto: true },   // 안쪽 면 표시 방식
   sheets: [],   // 후가공을 대지(쪽)로 나눠 둔 파일의 나머지 쪽 [{page, name, role, color, opacity, blend, emboss}]
-  lineMode: 'color', lineModeUser: null, edits: [], editUndo: [], noLayerAll: false, pickedLayer: '', guessedFold: '',   // 선 구분 방식, 직접 고친 선 [{x, y, role}]
+  lineMode: 'color', lineModeUser: null, edits: [], moves: [], editUndo: [], noLayerAll: false, pickedLayer: '', guessedFold: '',   // 선 구분 방식, 직접 고친 선 [{x, y, role}]
   dielinePage: 1, struct: null, auto: new Map(), over: new Map(), dir: new Map(), t: 1, sel: null,
   uv: null, printCanvas: null, finishes: [], texBox: '', token: 0,
   lights: defaultLights(), reflectors: [], ambient: 100, paperCustom: null,
@@ -1875,7 +1941,7 @@ function straightRuns(loop) { // 외곽선에서 길게 곧은 변만 추린다
   }
   return runs;
 }
-function computeWrap(anchorId) {
+function computeWrap(anchorId, at) {   // at = 기준면 좌표에서의 라벨 자리(없어도 된다)
   const st = S.struct, M = computeFold(st, effAngles(), 1), V = THREE.Vector3, info = new Map();
   for (const f of st.faces) {
     const m = new THREE.Matrix4().fromArray(M.get(f.id));
@@ -1895,33 +1961,68 @@ function computeWrap(anchorId) {
     }
     return best;
   };
+  /* 겹쳐 얹힌 면: 조립했을 때 F와 같은 쪽을 보면서 바로 앞이나 뒤에 붙어 있는 면 (뚜껑 앞날개 밑의 몸통 앞면 등).
+     변이 맞닿지 않아도 라벨이 그대로 이어지도록, F의 평면에 눌러 붙인 자리로 놓는다 */
+  const tolN = Math.max(10, thickPt() * 2.2 + 4);
+  const segHit = (a, b, c, d) => { const o = (p, q, r) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]); return o(a, b, c) * o(a, b, d) < 0 && o(c, d, a) * o(c, d, b) < 0; };
+  const polysTouch = (P, Q) => {
+    if (P.some((p) => pointInPoly(p[0], p[1], Q)) || Q.some((p) => pointInPoly(p[0], p[1], P))) return true;
+    for (let i = 0; i < P.length; i++) for (let j = 0; j < Q.length; j++) if (segHit(P[i], P[(i + 1) % P.length], Q[j], Q[(j + 1) % Q.length])) return true;
+    for (const p of P) for (let j = 0; j < Q.length; j++) { const q0 = Q[j], q1 = Q[(j + 1) % Q.length]; if (distPointSeg(p[0], p[1], { x1: q0[0], y1: q0[1], x2: q1[0], y2: q1[1] }).d <= 1.5) return true; }
+    return false;
+  };
+  const overlap = (F, G, TF, Fpoly) => {
+    if (G.n.dot(F.n) < 0.985) return null;
+    const toF = F.inv.clone().multiply(G.m), c = new V(G.f.center[0], G.f.center[1], 0).applyMatrix4(toF);
+    if (Math.abs(c.z) > tolN) return null;
+    const mp = (p) => { const w = new V(p[0], p[1], 0).applyMatrix4(toF); return affApply(TF, [w.x, w.y]); };
+    const q0 = mp([0, 0]), q1 = mp([1, 0]), q2 = mp([0, 1]);
+    const T = { a: q1[0] - q0[0], b: q1[1] - q0[1], c: q2[0] - q0[0], d: q2[1] - q0[1], tx: q0[0], ty: q0[1] };
+    const poly = G.f.outer.map((p) => affApply(T, p));
+    return polysTouch(poly, Fpoly) ? { T, poly, dz: c.z } : null;
+  };
+  const distTo = (poly) => { // 라벨 자리에서 그 면까지의 거리 (라벨에 가까운 길로 이어진 자리를 먼저 쓴다)
+    if (!at) return 0; if (pointInPoly(at[0], at[1], poly)) return 0;
+    let d = Infinity; for (let i = 0; i < poly.length; i++) { const p = poly[i], q = poly[(i + 1) % poly.length]; d = Math.min(d, distPointSeg(at[0], at[1], { x1: p[0], y1: p[1], x2: q[0], y2: q[1] }).d); }
+    return d;
+  };
   const frames = new Map([[anchorId, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }]]);
-  const placed = [{ id: anchorId, poly: info.get(anchorId).f.outer }];
-  let layer = [anchorId];
-  for (let depth = 0; depth < 2 && layer.length; depth++) { // 모서리를 두 번까지 넘는다 (정면 → 뚜껑 → 뒷면)
-    const next = [];
-    for (const fid of layer) {
-      const F = info.get(fid), TF = frames.get(fid), cands = [];
-      for (const G of info.values()) { if (frames.has(G.f.id)) continue; const sh = shared(F, G); if (sh) cands.push([G, sh]); }
-      cands.sort((x, y) => y[1].ov - x[1].ov);
-      for (const [G, sh] of cands) {
-        if (frames.has(G.f.id)) continue;
-        const phi = Math.atan2(new V().crossVectors(G.n, F.n).dot(sh.e), G.n.dot(F.n)); // 맞닿은 변을 축으로 G를 F의 평면까지 펴는 각도
-        const R = new THREE.Matrix4().makeTranslation(sh.P.x, sh.P.y, sh.P.z).multiply(new THREE.Matrix4().makeRotationAxis(sh.e, phi)).multiply(new THREE.Matrix4().makeTranslation(-sh.P.x, -sh.P.y, -sh.P.z));
-        const toF = F.inv.clone().multiply(R).multiply(G.m);
-        const mp = (p) => { const w = new V(p[0], p[1], 0).applyMatrix4(toF); return affApply(TF, [w.x, w.y]); };
-        const q0 = mp([0, 0]), q1 = mp([1, 0]), q2 = mp([0, 1]);
-        const T = { a: q1[0] - q0[0], b: q1[1] - q0[1], c: q2[0] - q0[0], d: q2[1] - q0[1], tx: q0[0], ty: q0[1] };
-        const Pf = sh.P.clone().applyMatrix4(F.inv), Qf = sh.P.clone().add(sh.e).applyMatrix4(F.inv), p0 = affApply(TF, [Pf.x, Pf.y]), p1 = affApply(TF, [Qf.x, Qf.y]);
-        const side = (p) => Math.sign((p1[0] - p0[0]) * (p[1] - p0[1]) - (p1[1] - p0[1]) * (p[0] - p0[0]));
-        const cG = affApply(T, G.f.center);
-        if (side(affApply(TF, F.f.center)) === side(cG)) continue;                 // 같은 쪽으로 겹쳐 들어가는 면(끼움 날개 등)은 제외
-        if (placed.some((pl) => pointInPoly(cG[0], cG[1], pl.poly))) continue;      // 이미 놓인 면 밑에 깔리는 면도 제외
-        frames.set(G.f.id, T); placed.push({ id: G.f.id, poly: G.f.outer.map((p) => affApply(T, p)) }); next.push(G.f.id);
-      }
+  const placed = [{ id: anchorId, poly: info.get(anchorId).f.outer, z: 0 }];
+  const cands = []; let seq = 0;
+  const expand = (fid, depth, z) => { // fid에서 넘어갈 수 있는 면을 후보로 올린다
+    const F = info.get(fid), TF = frames.get(fid), Fpoly = placed.find((pl) => pl.id === fid).poly;
+    for (const G of info.values()) {
+      if (frames.has(G.f.id)) continue;
+      const ov = overlap(F, G, TF, Fpoly);
+      if (ov) cands.push({ id: G.f.id, T: ov.T, poly: ov.poly, depth, z: z + ov.dz, kind: 'over', cost: distTo(ov.poly), seq: seq++ });
+      if (depth >= 2) continue;                                                  // 모서리는 두 번까지만 넘는다 (정면 → 뚜껑 → 뒷면)
+      const sh = shared(F, G); if (!sh) continue;
+      const phi = Math.atan2(new V().crossVectors(G.n, F.n).dot(sh.e), G.n.dot(F.n)); // 맞닿은 변을 축으로 G를 F의 평면까지 펴는 각도
+      const R = new THREE.Matrix4().makeTranslation(sh.P.x, sh.P.y, sh.P.z).multiply(new THREE.Matrix4().makeRotationAxis(sh.e, phi)).multiply(new THREE.Matrix4().makeTranslation(-sh.P.x, -sh.P.y, -sh.P.z));
+      const toF = F.inv.clone().multiply(R).multiply(G.m);
+      const mp = (p) => { const w = new V(p[0], p[1], 0).applyMatrix4(toF); return affApply(TF, [w.x, w.y]); };
+      const q0 = mp([0, 0]), q1 = mp([1, 0]), q2 = mp([0, 1]);
+      const T = { a: q1[0] - q0[0], b: q1[1] - q0[1], c: q2[0] - q0[0], d: q2[1] - q0[1], tx: q0[0], ty: q0[1] };
+      const Pf = sh.P.clone().applyMatrix4(F.inv), Qf = sh.P.clone().add(sh.e).applyMatrix4(F.inv), p0 = affApply(TF, [Pf.x, Pf.y]), p1 = affApply(TF, [Qf.x, Qf.y]);
+      const side = (p) => Math.sign((p1[0] - p0[0]) * (p[1] - p0[1]) - (p1[1] - p0[1]) * (p[0] - p0[0]));
+      const cG = affApply(T, G.f.center);
+      if (side(affApply(TF, F.f.center)) === side(cG)) continue;                 // 같은 쪽으로 겹쳐 들어가는 면(끼움 날개 등)은 제외
+      const poly = G.f.outer.map((p) => affApply(T, p));
+      cands.push({ id: G.f.id, T, poly, cG, depth: depth + 1, z, kind: 'edge', ov: sh.ov, cost: distTo(poly), seq: seq++ });
     }
-    layer = next;
+  };
+  expand(anchorId, 0, 0);
+  while (cands.length) {
+    // 라벨이 있으면 라벨에 가까운 자리부터, 없으면 예전처럼 가까운 단계 · 길게 맞닿은 변부터
+    cands.sort((x, y) => (at ? x.cost - y.cost : 0) || x.depth - y.depth || (y.ov || 0) - (x.ov || 0) || x.seq - y.seq);
+    const c = cands.shift();
+    if (frames.has(c.id)) continue;
+    if (c.kind === 'edge' && placed.some((pl) => pointInPoly(c.cG[0], c.cG[1], pl.poly))) continue;                      // 이미 놓인 면 밑에 깔리는 면은 제외
+    if (c.kind === 'over' && c.poly.every((p) => placed.some((pl) => pointInPoly(p[0], p[1], pl.poly)))) continue;       // 완전히 가려진 면(풀칠 날개 등)도 제외
+    frames.set(c.id, c.T); placed.push({ id: c.id, poly: c.poly, z: c.z });
+    expand(c.id, c.depth, c.z);
   }
+  placed.sort((x, y) => x.z - y.z);   // 지도에서는 밑에 깔린 면부터 그린다
   return { frames, placed };
 }
 function updateLabelUV() { // 각 면의 꼭짓점에 라벨 그림 좌표를 준다. 끌어 옮길 때는 이것만 다시 계산한다
@@ -1943,7 +2044,7 @@ function updateLabelUV() { // 각 면의 꼭짓점에 라벨 그림 좌표를 �
 function refreshWrap() {
   const L = S.label; if (!L || !S.struct || !S.struct.faces.length) return;
   if (!S.struct.faces.some((f) => f.id === L.anchor)) L.anchor = S.struct.rootId;
-  ({ frames: wrapFrames, placed: wrapPlaced } = computeWrap(L.anchor));
+  ({ frames: wrapFrames, placed: wrapPlaced } = computeWrap(L.anchor, [L.x, L.y]));
   updateLabelUV();
 }
 function setMapMode(m) { mapMode = m; for (const b of $('map-modes').querySelectorAll('button')) b.classList.toggle('on', b.dataset.map === m); renderMap(); }
@@ -2129,8 +2230,9 @@ function labelHandle(svg, g, ring, sw) { // 지도 위의 라벨: 끌어서 옮�
   const end = () => {
     if (!last) return; last = null; lp.classList.remove('drag');
     if (mapMode !== 'wrap') return;
-    const hit = wrapPlaced.find((pl) => pl.id !== L.anchor && pointInPoly(L.x, L.y, pl.poly)); // 다른 면 위에 내려놓으면 그 면이 새 기준면
-    if (!hit) return;
+    const top = wrapPlaced.filter((pl) => pointInPoly(L.x, L.y, pl.poly)).pop();          // 겹쳐 있으면 맨 위의 면
+    const hit = top && top.id !== L.anchor ? top : null;                                   // 다른 면 위에 내려놓으면 그 면이 새 기준면
+    if (!hit) { refreshWrap(); renderMap(); return; }                                      // 같은 면이면 라벨 자리에 맞춰 이어지는 면만 다시 고른다
     const T = wrapFrames.get(hit.id), det = T.a * T.d - T.b * T.c, dx = L.x - T.tx, dy = L.y - T.ty;
     L.x = (T.d * dx - T.c * dy) / det; L.y = (-T.b * dx + T.a * dy) / det;
     L.rot = Math.round(((L.rot - Math.atan2(T.b, T.a) / D2R + 540) % 360) - 180); L.anchor = hit.id;
@@ -2230,13 +2332,20 @@ function lineChains(st) { // 갈림길에서 갈림길까지를 한 줄로 묶�
     if (used[i]) continue; used[i] = 1; const ids = [i];
     for (const start of [E[i].a, E[i].b]) {
       let n = start, cur = i;
-      for (;;) { const l = adj.get(n); if (l.length !== 2) break; const nx = l[0] === cur ? l[1] : l[0]; if (used[nx] || kind(E[nx]) !== kind(E[i]) || E[nx].main !== E[i].main) break; used[nx] = 1; ids.push(nx); cur = nx; n = E[nx].a === n ? E[nx].b : E[nx].a; }
+      for (;;) { const l = adj.get(n); if (l.length !== 2) break; const nx = l[0] === cur ? l[1] : l[0]; if (used[nx] || kind(E[nx]) !== kind(E[i]) || E[nx].main !== E[i].main || (E[nx].mi ?? -1) !== (E[i].mi ?? -1)) break; /* 옮긴 선과 옮기지 않은 선은 따로 묶는다 */ used[nx] = 1; ids.push(nx); cur = nx; n = E[nx].a === n ? E[nx].b : E[nx].a; }
     }
     chains.push({ ids, kind: kind(E[i]), main: E[i].main });
   }
   return chains;
 }
-const edgeKey = (e) => ((e.a[0] + e.b[0]) / 2).toFixed(2) + ',' + ((e.a[1] + e.b[1]) / 2).toFixed(2);
+const edgeKeyCur = (e) => ((e.a[0] + e.b[0]) / 2).toFixed(2) + ',' + ((e.a[1] + e.b[1]) / 2).toFixed(2);
+const moveOf = (e) => (e.mi >= 0 ? S.moves[e.mi] : null);                                    // 이 선에 걸려 있는 이동 기록
+const edgeKey = (e) => { const m = moveOf(e); return m ? 'm' + m.id : edgeKeyCur(e); };       // 옮긴 선은 이동 기록으로 가리킨다 (다시 옮겨도 선택이 유지되게)
+const omid = (e) => [((e.oa || e.a)[0] + (e.ob || e.b)[0]) / 2, ((e.oa || e.a)[1] + (e.ob || e.b)[1]) / 2];
+const movedCount = () => S.moves.filter((o) => Math.abs(o.dx) > 1e-6 || Math.abs(o.dy) > 1e-6).length;
+let moveSeq = 0;
+const mmTxt = (dx, dy) => [[dx, '→', '←'], [dy, '↑', '↓']].filter(([v]) => Math.abs(v) > 1e-6).map(([v, p, n]) => (v > 0 ? p : n) + (Math.abs(v) * PT2MM).toFixed(1) + 'mm').join(' ');
+const editSnap = () => { S.editUndo.push({ e: S.edits.slice(), m: S.moves.map((o) => ({ ...o })) }); if (S.editUndo.length > 60) S.editUndo.shift(); };
 function editFit() {
   const E = S.struct.allEdges; let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
   for (const e of E) for (const q of [e.a, e.b]) { if (q[0] < x0) x0 = q[0]; if (q[0] > x1) x1 = q[0]; if (q[1] < y0) y0 = q[1]; if (q[1] > y1) y1 = q[1]; }
@@ -2246,7 +2355,7 @@ function renderEdit(keepKeys) {
   const svg = $('edit-map'), st = S.struct; svg.replaceChildren();
   if (!st || !st.allEdges) return;
   const E = st.allEdges; editChains = lineChains(st);
-  if (keepKeys) { editSel = new Set(); editChains.forEach((c, ci) => { if (c.ids.some((i) => keepKeys.has(edgeKey(E[i])))) editSel.add(ci); }); }
+  if (keepKeys) { editSel = new Set(); editChains.forEach((c, ci) => { if (c.ids.some((i) => keepKeys.has(edgeKey(E[i])) || keepKeys.has(edgeKeyCur(E[i])))) editSel.add(ci); }); }
   if (!editView) editFit();
   svg.setAttribute('viewBox', `${editView.x} ${editView.y} ${editView.w} ${editView.h}`);
   const NS = 'http://www.w3.org/2000/svg';
@@ -2256,6 +2365,7 @@ function renderEdit(keepKeys) {
   for (const f of st.faces) g.append(mk('path', { d: ring(f.outer) + f.holes.map(ring).join(''), class: 'eface', 'fill-rule': 'evenodd' }));
   const dOf = (c) => c.ids.map((i) => `M${E[i].a[0].toFixed(2)} ${E[i].a[1].toFixed(2)}L${E[i].b[0].toFixed(2)} ${E[i].b[1].toFixed(2)}`).join('');
   const top = [];
+  { const gd = E.filter((e) => e.moved).map((e) => `M${e.oa[0].toFixed(2)} ${e.oa[1].toFixed(2)}L${e.ob[0].toFixed(2)} ${e.ob[1].toFixed(2)}`).join(''); if (gd) g.append(mk('path', { d: gd, class: 'ghost' })); }   // 옮긴 선의 원래 자리
   editChains.forEach((c, ci) => {
     const d = dOf(c), on = editSel.has(ci);
     if (on) g.append(mk('path', { d, class: 'halo' }));
@@ -2265,11 +2375,46 @@ function renderEdit(keepKeys) {
   });
   for (const n of top) g.append(n);
   const folds = st.hinges.filter((x) => !x.weld).length;
-  $('edit-note').textContent = `면 ${st.faces.length}개 · 접는 선 ${folds}개` + (S.edits.length ? ` · 고친 선 ${S.edits.length}개` : '') + (editSel.size ? ` · ${editSel.size}줄 선택` : '');
-  $('edit-hint').textContent = editMsg || '선을 누르거나 빈 곳에서 끌어 여러 개를 고른 뒤, 위에서 종류를 누르세요. Shift를 누르면 선택에 더합니다. 휠로 확대하고 Space를 누른 채 끌면 화면이 움직입니다. 바꾸면 오른쪽 상자에 바로 반영됩니다.';
+  $('edit-note').textContent = `면 ${st.faces.length}개 · 접는 선 ${folds}개` + (S.edits.length ? ` · 고친 선 ${S.edits.length}개` : '') + (movedCount() ? ` · 옮긴 선 ${movedCount()}개` : '') + (editSel.size ? ` · ${new Set([...editSel].map((ci) => { const e = E[editChains[ci].ids[0]]; return e.mi >= 0 ? 'm' + e.mi : 'c' + ci; })).size}줄 선택` : '') + selMoveTxt();   // 옮기면서 여러 조각으로 나뉜 선은 한 줄로 센다
+  $('edit-hint').textContent = editMsg || '선을 누르거나 빈 곳에서 끌어 여러 개를 고른 뒤, 위에서 종류를 누르세요. Shift를 누르면 선택에 더합니다. 고른 선은 방향키로 0.2mm씩(Shift와 함께 1mm씩) 옮길 수 있습니다. 휠로 확대하고 Space를 누른 채 끌면 화면이 움직입니다. 바꾸면 오른쪽 상자에 바로 반영됩니다.';
   $('edit-hint').style.color = editMsg ? 'var(--o)' : '';
   for (const b of $('edit-roles').querySelectorAll('button')) b.disabled = !editSel.size;
-  $('edit-undo').disabled = !S.editUndo.length; $('edit-reset').disabled = !S.edits.length;
+  $('edit-undo').disabled = !S.editUndo.length; $('edit-reset').disabled = !S.edits.length && !movedCount();
+}
+function selMoveTxt() { // 고른 선이 모두 같은 만큼 옮겨져 있으면 그 거리를 보여 준다
+  if (!editSel.size || !S.struct) return '';
+  const E = S.struct.allEdges; let first = null, same = true;
+  for (const ci of editSel) for (const i of editChains[ci].ids) { const m = moveOf(E[i]) || E[i]._m, v = m ? [m.dx, m.dy] : [0, 0]; if (!first) first = v; else if (Math.abs(first[0] - v[0]) > 1e-6 || Math.abs(first[1] - v[1]) > 1e-6) same = false; }
+  if (!first) return '';
+  if (!same) return ' · 이동량이 서로 다름';
+  const t = mmTxt(first[0], first[1]); return t ? ' · 이동 ' + t : '';
+}
+/* 방향키로 고른 선 옮기기. 연달아 누르면 모아서 한 번에 다시 계산하고, 되돌리기는 한 묶음(연속 입력)을 한 번에 되돌린다 */
+let nudgeFaces = -1, nudgeTimer = 0, nudgeIdle = 0, nudgeOpen = false, nudgeBusy = false, nudgeAgain = false, nudgeKeys = new Set();
+async function nudgeFlush() {
+  if (nudgeBusy) { nudgeAgain = true; return; }
+  nudgeBusy = true;
+  const before = S.struct ? S.struct.faces.length : 0;
+  try { do { nudgeAgain = false; await rebuild(false, false, true); } while (nudgeAgain); } finally { nudgeBusy = false; }
+  if (nudgeFaces < 0) nudgeFaces = before;
+  editMsg = S.struct.faces.length !== nudgeFaces ? `선을 옮기면서 면이 ${nudgeFaces}개에서 ${S.struct.faces.length}개로 바뀌었습니다. 이웃한 선에서 떨어졌거나 다른 선을 넘어간 경우입니다. 의도한 것이 아니면 되돌리기(Ctrl+Z)를 누르세요.` : '';
+  if (!$('edit-dlg').hidden) renderEdit(nudgeKeys);
+}
+function nudgeEdit(dx, dy) {
+  if (!editSel.size || S.example || !S.struct) return;
+  const E = S.struct.allEdges;
+  if (!nudgeOpen) { editSnap(); nudgeOpen = true; nudgeFaces = nudgeBusy ? nudgeFaces : -1; }
+  clearTimeout(nudgeIdle); nudgeIdle = setTimeout(() => { nudgeOpen = false; }, 900);
+  nudgeKeys = new Set(); const done = new Set();
+  for (const ci of editSel) for (const i of editChains[ci].ids) {
+    const e = E[i]; let m = moveOf(e) || e._m;
+    if (!m) { const c = omid(e); S.moves.push((m = { id: ++moveSeq, x: c[0], y: c[1], dx: 0, dy: 0 })); e._m = m; }   // 다시 계산되기 전에 또 눌러도 같은 기록에 더해지게 붙여 둔다
+    nudgeKeys.add('m' + m.id);
+    if (done.has(m)) continue; done.add(m);                                                                            // 한 기록이 여러 조각에 걸려 있어도 한 번만 더한다
+    m.dx += dx; m.dy += dy;
+  }
+  $('edit-note').textContent = $('edit-note').textContent.replace(/ · (이동 [^·]*|이동량이 서로 다름)$/, '') + selMoveTxt();   // 거리는 바로 보여 주고
+  clearTimeout(nudgeTimer); nudgeTimer = setTimeout(nudgeFlush, 130);                                                                    // 선과 상자는 잠깐 모아서 다시 그린다
 }
 function openEdit(keys) {
   if (S.example || !S.struct || !S.struct.allEdges) return;
@@ -2280,10 +2425,10 @@ async function applyEdit(role) {
   if (!editSel.size || S.example) return;
   const E = S.struct.allEdges, picked = [];
   for (const ci of editSel) for (const i of editChains[ci].ids) picked.push(E[i]);
-  S.editUndo.push(S.edits.slice()); if (S.editUndo.length > 60) S.editUndo.shift();
+  editSnap(); nudgeOpen = false;
   // 같은 선에 걸려 있던 예전 수정은 지우고 새로 적는다. '자동으로'는 지우기만 한다
-  S.edits = S.edits.filter((o) => !picked.some((e) => distPointSeg(o.x, o.y, { x1: e.a[0], y1: e.a[1], x2: e.b[0], y2: e.b[1] }).d <= 0.5));
-  if (role !== 'auto') for (const e of picked) S.edits.push({ x: (e.a[0] + e.b[0]) / 2, y: (e.a[1] + e.b[1]) / 2, role });
+  S.edits = S.edits.filter((o) => !picked.some((e) => distPointSeg(o.x, o.y, { x1: (e.oa || e.a)[0], y1: (e.oa || e.a)[1], x2: (e.ob || e.b)[0], y2: (e.ob || e.b)[1] }).d <= 0.5));
+  if (role !== 'auto') for (const e of picked) { const c = omid(e); S.edits.push({ x: c[0], y: c[1], role }); }
   const keys = new Set(picked.map(edgeKey));
   await rebuild(false);
   // 회색(면을 이루지 못한) 선을 접는 선·자르는 선으로 지정하면 떠 있는 끝을 가까운 선까지 이어 붙인다. 그래도 안 되면 알려 준다
@@ -2293,9 +2438,10 @@ async function applyEdit(role) {
   renderEdit(keys);
 }
 async function undoEdit(all) {
-  if (all) { if (!S.edits.length) return; S.editUndo.push(S.edits.slice()); S.edits = []; }
-  else { if (!S.editUndo.length) return; S.edits = S.editUndo.pop(); }
-  editMsg = ''; await rebuild(false); renderEdit(new Set());
+  if (all) { if (!S.edits.length && !movedCount()) return; editSnap(); S.edits = []; S.moves = []; }
+  else { if (!S.editUndo.length) return; const u = S.editUndo.pop(); S.edits = u.e; S.moves = u.m; }
+  nudgeOpen = false; clearTimeout(nudgeTimer);
+  editMsg = ''; await rebuild(false, false, true); renderEdit(new Set());
 }
 function updateChips() {
   $('chip-example').hidden = !S.example;
@@ -2358,7 +2504,7 @@ async function loadFile(file) {
     }
     layers = dedupeLayers(layers, pages);
     if (S.doc) S.doc.destroy();
-    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], editUndo: [], noLayerAll: false, pickedLayer: '', sheets: [], twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null });
+    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], moves: [], editUndo: [], noLayerAll: false, pickedLayer: '', sheets: [], twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null });
     S.inside.auto = true;
     const picked = autoPickDieline(layers, pages); if (picked) S.pickedLayer = picked.name;
     S.sheets = extraSheets(layers, pages);
@@ -2474,7 +2620,7 @@ function pageTwin(st, other) { // 다른 대지에 놓인 짝
 }
 
 /* ---------- 다시 계산 ---------- */
-async function rebuild(textures, refit) {
+async function rebuild(textures, refit, soft) {
   const token = S.token;
   if (S.example) return;
   await busy('전개도 분석 중…');
@@ -2512,7 +2658,7 @@ async function rebuild(textures, refit) {
   S.lineMode = S.lineModeUser || ([...roles.values()].some((c) => c.role === 'fold' || c.role === 'foldOut') ? 'color' : 'auto');
   const auto = S.lineMode === 'auto';
   const linesOf = (strokes) => { const out = []; for (const s of strokes) { const c = roles.get(colorKey(s.rgb) + (s.dashed ? 'd' : '')), r = c ? c.role : guessLineRole(s.rgb, s.dashed); if (r !== 'ignore') for (const p of s.polylines) out.push({ pts: p, role: auto ? 'cut' : r }); } return out; };
-  const bopts = { gapTol: (+$('gap').value || 0) / PT2MM, auto, overrides: S.edits };
+  const bopts = { gapTol: (+$('gap').value || 0) / PT2MM, auto, overrides: S.edits, moves: S.moves };
   let st = buildStructure(dl ? linesOf(dl.st) : [], bopts);
   /* 양면 인쇄 찾기: ① 같은 대지에 좌우가 뒤집힌 전개도가 하나 더 있는 경우 ② 다른 대지(쪽)에 안쪽면을 그려 둔 경우 */
   let twin = st.bbox && dl ? compTwin(st, dl.pg.num) : null, outPage = null;
@@ -2534,7 +2680,8 @@ async function rebuild(textures, refit) {
   S.twin = twin;
   if (twin && S.inside.auto) { S.inside.mode = 'print'; S.inside.auto = false; }
   if (twin) st.warnings = st.warnings.filter((w) => !/별도 조각/.test(w));
-  const sig = (x) => (x && x.bbox ? [x.faces.length, x.hinges.length, x.rootId, Math.round(x.bbox.minX), Math.round(x.bbox.maxY)].join('/') : '');
+  const sig = (x) => (x && x.bbox ? [x.faces.length, x.hinges.length, x.rootId].concat(soft ? [] : [Math.round(x.bbox.minX), Math.round(x.bbox.maxY)]).join('/') : '');   // soft = 선을 조금 옮긴 것: 테두리가 달라져도 같은 구조로 본다
+  const near = soft ? 9 : 1.5;
   const changed = sig(st) !== sig(S.struct);
   if (changed) { // 구조가 달라져도 같은 자리의 접는선·면에 준 설정은 그대로 옮긴다
     const over = new Map(), dir = new Map(), bulge = new Map(), old = S.struct;
@@ -2542,16 +2689,16 @@ async function rebuild(textures, refit) {
       const mid = (h) => [(h.p0[0] + h.p1[0]) / 2, (h.p0[1] + h.p1[1]) / 2];
       for (const h of old.hinges) {
         if (!S.over.has(h.id) && !S.dir.has(h.id)) continue;
-        const m = mid(h), n = st.hinges.find((x) => { const q = mid(x); return !x.weld && Math.hypot(q[0] - m[0], q[1] - m[1]) < 1.5 && Math.abs(x.len - h.len) < 3; });
+        const m = mid(h), n = st.hinges.find((x) => { const q = mid(x); return !x.weld && Math.hypot(q[0] - m[0], q[1] - m[1]) < near && Math.abs(x.len - h.len) < 3 + (soft ? 9 : 0); });
         if (!n) continue;
         if (S.over.has(h.id)) over.set(n.id, S.over.get(h.id)); if (S.dir.has(h.id)) dir.set(n.id, S.dir.get(h.id));
       }
-      for (const f of old.faces) { if (!S.bulge.has(f.id)) continue; const n = st.faces.find((x) => Math.hypot(x.center[0] - f.center[0], x.center[1] - f.center[1]) < 1.5 && Math.abs(x.area - f.area) < 0.02 * f.area + 1); if (n) bulge.set(n.id, S.bulge.get(f.id)); }
+      for (const f of old.faces) { if (!S.bulge.has(f.id)) continue; const n = st.faces.find((x) => Math.hypot(x.center[0] - f.center[0], x.center[1] - f.center[1]) < near && Math.abs(x.area - f.area) < (soft ? 0.25 : 0.02) * f.area + 1); if (n) bulge.set(n.id, S.bulge.get(f.id)); }
     }
     S.over = over; S.dir = dir; S.bulge = bulge; S.sel = null;
   }
   S.struct = st; S.auto = defaultAngles(st); S.dielinePage = dl ? dl.pg.num : 1;
-  if (changed && S.label && st.faces.length) { const home = st.faces.find((f) => f.id === st.rootId) || st.faces[0]; S.label.x = home.center[0]; S.label.y = home.center[1]; S.label.anchor = home.id; } // 전개도가 바뀌면 라벨을 정면 가운데로
+  if (changed && !soft && S.label && st.faces.length) { const home = st.faces.find((f) => f.id === st.rootId) || st.faces[0]; S.label.x = home.center[0]; S.label.y = home.center[1]; S.label.anchor = home.id; } // 전개도가 바뀌면 라벨을 정면 가운데로
   renderLayerUI(); renderColorUI();
   const msgs = st.warnings.slice();
   if (!st.faces.length) msgs.unshift(S.layers.length && !S.layers.some((l) => l.role === 'dieline') ? '칼선 레이어를 골라 주세요. 레이어 역할에서 칼선으로 지정하면 됩니다.' : '닫힌 칼선을 찾지 못했습니다. 선 색상 역할이나 "끊긴 선 이어 붙이기" 값을 조정해 보세요.');
@@ -2591,7 +2738,7 @@ async function rebuild(textures, refit) {
   }
   syncInsideUI(); applyInside();
   $('side-box').hidden = !twin; $('side-mirror').setAttribute('aria-pressed', String(S.inMirror));
-  if (twin) $('side-note').textContent = '양면 인쇄로 읽었습니다. ' + (twin.kind === 'comp' ? '같은 대지에 나란히 놓인 두 전개도 가운데 ' + (S.flip ? '반대쪽' : '한쪽') + '을 바깥면으로 썼습니다.' : `${outPage || (printPg0() || { num: 1 }).num}쪽을 바깥면, ${twin.page}쪽을 안쪽면으로 썼습니다.`) + ' 바깥과 안쪽이 바뀌어 보이면 "양면 뒤집기"를 누르세요.';
+  if (twin) $('side-flip').dataset.tip = '양면 인쇄로 읽었습니다. ' + (twin.kind === 'comp' ? '같은 대지에 나란히 놓인 두 전개도 가운데 ' + (S.flip ? '반대쪽' : '한쪽') + '을 바깥면으로 썼습니다.' : `${outPage || (printPg0() || { num: 1 }).num}쪽을 바깥면, ${twin.page}쪽을 안쪽면으로 썼습니다.`) + ' 바깥과 안쪽이 바뀌어 보이면 "양면 뒤집기"를 누르세요.';
   buildMeshes(); applyPaper(); updateFold(); if (refit) fitCamera('right'); renderMap(); select(S.sel); updateChips();
   await busy('');
 }
@@ -2699,6 +2846,11 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { closeEdit(); e.stopImmediatePropagation(); }
   else if (e.code === 'Space') { editSpace = true; e.preventDefault(); }
   else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undoEdit(false); }
+  else if (/^Arrow/.test(e.key) && editSel.size && !e.ctrlKey && !e.metaKey && !e.altKey) { // 고른 선 옮기기: 0.2mm, Shift와 함께 1mm
+    e.preventDefault(); e.stopImmediatePropagation();
+    const d = (e.shiftKey ? 1 : 0.2) / PT2MM;
+    nudgeEdit(e.key === 'ArrowRight' ? d : e.key === 'ArrowLeft' ? -d : 0, e.key === 'ArrowUp' ? d : e.key === 'ArrowDown' ? -d : 0);
+  }
 }, true);
 window.addEventListener('keyup', (e) => { if (e.code === 'Space') editSpace = false; });
 { // 선 고치기 화면: 누르기 = 고르기, 끌기 = 묶어 고르기, Space+끌기·가운데 버튼 = 이동, 휠 = 확대
@@ -2736,7 +2888,7 @@ window.addEventListener('keyup', (e) => { if (e.code === 'Space') editSpace = fa
       };
       editChains.forEach((c, ci) => { if (c.ids.some((i) => touch(E[i].a, E[i].b))) editSel.add(ci); });
     } else if (d.chain != null) { const ci = +d.chain; if (before.has(ci) && (d.shift || before.size === 1)) editSel.delete(ci); else editSel.add(ci); }   // 고른 줄을 한 번 더 누르면 선택이 풀린다
-    renderEdit();
+    nudgeOpen = false; renderEdit();
   };
   svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', () => { drag = null; box.hidden = true; });
   svg.addEventListener('wheel', (e) => {
@@ -2983,9 +3135,8 @@ for (const k of ['light', 'reflector', 'bg']) { // 화면 안 도구 막대로 �
       if (!ok || (now - lastScroll < 350 && now - adjusting > 350)) { lastScroll = now; return; }
       e.preventDefault(); adjusting = now;
       const min = t.min === '' ? -Infinity : +t.min, max = t.max === '' ? Infinity : +t.max, step = +t.step > 0 ? +t.step : 1;
-      const span = isFinite(min) && isFinite(max) ? (max - min) / step : 0, mult = t.type === 'range' ? Math.max(1, Math.round(span / 50)) : 1;   // 범위가 넓은 슬라이더는 한 칸에 여러 단계씩
       const cur = t.value === '' ? (t.placeholder !== '' && !isNaN(+t.placeholder) ? +t.placeholder : isFinite(min) ? min : 0) : +t.value;
-      let nv = cur + (e.deltaY < 0 ? 1 : -1) * step * mult; nv = Math.min(max, Math.max(min, nv));
+      let nv = cur + (e.deltaY < 0 ? 1 : -1) * step;   // 한 칸에 한 단계 nv = Math.min(max, Math.max(min, nv));
       const dec = (String(step).split('.')[1] || '').length; nv = +nv.toFixed(dec);
       if (nv === cur && t.value !== '') return;
       t.value = nv; t.dispatchEvent(new Event('input', { bubbles: true }));
@@ -3030,7 +3181,7 @@ $('map-modes').addEventListener('click', (e) => { const m = e.target.dataset && 
 let rangeTick = 0;
 function paintRanges() { for (const r of document.querySelectorAll('input[type="range"]')) { const p = ((r.value - r.min) / (r.max - r.min || 1)) * 100 + '%'; if (r.dataset.p !== p) { r.dataset.p = p; r.style.setProperty('--p', p); } } }
 resize(); applyBg(); setEmboss(); syncInsideUI(); applyInside(); syncEdgeUI(); buildEnv(); syncLights(); renderLightUI('light'); renderLightUI('reflector'); loadExample(); tick();
-window.__app = { S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, camera, castStat, autoPickDieline, extraSheets }; // 점검용
+window.__app = { S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, refreshWrap, renderMap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, camera, castStat, autoPickDieline, extraSheets }; // 점검용
 </script>
 </body>
 </html>
