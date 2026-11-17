@@ -92,7 +92,8 @@ input[type="range"]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;b
 /* 긴 설명은 평소엔 숨기고, 해당 버튼·줄에 마우스를 1초 남짓 올려 두면 뜬다 (양면 뒤집기, 휘는 방향 각도) */
 .tip-late{position:relative}
 .tip-late::after{content:attr(data-tip);position:absolute;left:-2px;bottom:calc(100% + 9px);width:272px;box-sizing:border-box;z-index:40;background:#000;color:#fff;font-size:11.5px;font-weight:500;line-height:1.55;letter-spacing:0;text-align:left;white-space:normal;padding:9px 11px;border-radius:9px;box-shadow:0 8px 24px rgba(10,10,20,.22);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .15s,visibility 0s .15s}
-.row.tip-late::after{left:0;right:0;width:auto;top:calc(100% + 9px);bottom:auto}   /* 옵션 창 안의 줄은 아래쪽에: 위의 조절 칸을 가리지 않게 */
+.row.tip-late::after{left:0;right:0;width:auto;top:calc(100% + 9px);bottom:auto}
+.tip-late.below::after{top:calc(100% + 9px);bottom:auto;left:auto;right:-2px}   /* 옵션 창 안의 줄은 아래쪽에: 위의 조절 칸을 가리지 않게 */
 .pop{position:relative}
 .pop:hover{z-index:2}
 .tip-late:hover::after,.tip-late:focus-visible::after{opacity:1;visibility:visible;transition:opacity .15s 1.2s,visibility 0s 1.2s}
@@ -473,6 +474,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
         <button type="button" class="btn" data-role="ignore">무시</button>
         <button type="button" class="btn" data-role="auto">자동으로</button>
       </div>
+      <button type="button" class="btn tip-late below" id="edit-sym" aria-pressed="false" data-tip="켜 두면 방향키가 전개도 가운데를 기준으로 양쪽을 같은 만큼 움직입니다. → ↑ 는 벌리기, ← ↓ 는 좁히기. 끄고도 Alt를 누른 채 방향키를 누르면 같은 동작입니다.">대칭 이동</button>
       <button type="button" class="btn" id="edit-undo">되돌리기</button>
       <button type="button" class="btn" id="edit-reset">전부 처음으로</button>
     </div>
@@ -718,7 +720,7 @@ function moveLines(lines, opts) {
     for (const d of r.ds) {
       const x = J[0] + d.dx, y = J[1] + d.dy; let on = false;
       for (const e of still) { const a = pr.nodes[e.u], b = pr.nodes[e.v]; if (x < Math.min(a[0], b[0]) - 0.1 || x > Math.max(a[0], b[0]) + 0.1 || y < Math.min(a[1], b[1]) - 0.1 || y > Math.max(a[1], b[1]) + 0.1) continue; if (distPointSeg(x, y, { x1: a[0], y1: a[1], x2: b[0], y2: b[1] }).d <= 0.05) { on = true; break; } }
-      if (!on) out.push({ pts: [[J[0], J[1]], [x, y]], role: d.type });
+      if (!on) out.push({ pts: [[J[0], J[1]], [x, y]], role: 'cut', fixed: true });   // 이음 선은 언제나 자르는 선: 접는 선으로 두면 옆 면과 엉뚱하게 이어진다
     }
   }
   // 선 종류를 직접 지정해 둔 자리도 옮긴 선을 따라가게 한다
@@ -749,7 +751,7 @@ function buildStructure(lines, opts = {}) {
     }
     const first = segs.length;
     const smi = ln.segMi && ln.segMi.length === pts.length - 1 ? ln.segMi : null;   // 옮긴 선 조각이면 어느 이동에서 왔는지
-    for (let i = 0; i + 1 < pts.length; i++) segs.push({ x1: pts[i][0], y1: pts[i][1], x2: pts[i + 1][0], y2: pts[i + 1][1], type: ln.role, li, mi: smi ? smi[i] : -1, mdx: ln.mdx || 0, mdy: ln.mdy || 0 });
+    for (let i = 0; i + 1 < pts.length; i++) segs.push({ x1: pts[i][0], y1: pts[i][1], x2: pts[i + 1][0], y2: pts[i + 1][1], type: ln.role, li, mi: smi ? smi[i] : -1, mdx: ln.mdx || 0, mdy: ln.mdy || 0, fixed: !!ln.fixed });
     const last = segs.length - 1;
     const a = pts[0], b = pts[pts.length - 1];
     if (Math.hypot(a[0] - b[0], a[1] - b[1]) > tol) {
@@ -778,6 +780,10 @@ function buildStructure(lines, opts = {}) {
         touching = true; break;
       }
       if (pr.d <= eps && (!bestNear || pr.d < bestNear.d)) bestNear = pr;
+      { // 진행 방향으로 곧게 가다가 선의 끝점이나 같은 직선 위의 선에 닿는 경우 (아래 교차 계산은 끝점을 스치거나 평행하면 놓친다)
+        const ax = pr.qx - e.x, ay = pr.qy - e.y, al = ax * ux + ay * uy;
+        if (al > 1e-6 && al <= eps * 1.5 && Math.abs(ax * uy - ay * ux) <= tol && (!bestRay || al < bestRay.t)) bestRay = { t: al, qx: pr.qx, qy: pr.qy };
+      }
       const sx = s.x2 - s.x1, sy = s.y2 - s.y1;
       const den = ux * sy - uy * sx;
       if (Math.abs(den) > 1e-9) {
@@ -842,8 +848,8 @@ function buildStructure(lines, opts = {}) {
       if (prev !== null && id !== prev) {
         const key = prev < id ? prev + '_' + id : id + '_' + prev;
         const ex = edgeMap.get(key);
-        if (!ex) edgeMap.set(key, { u: Math.min(prev, id), v: Math.max(prev, id), type: s.type, alive: true, src: i, t0: prevT, t1: t, mi: s.mi != null ? s.mi : -1, mdx: s.mdx || 0, mdy: s.mdy || 0 });
-        else { if (s.type === 'cut') ex.type = 'cut'; else if (s.type === 'foldOut' && ex.type === 'fold') ex.type = 'foldOut'; if (s.mi >= 0 && ex.mi < 0) { ex.mi = s.mi; ex.mdx = s.mdx; ex.mdy = s.mdy; } }
+        if (!ex) edgeMap.set(key, { u: Math.min(prev, id), v: Math.max(prev, id), type: s.type, alive: true, src: i, t0: prevT, t1: t, mi: s.mi != null ? s.mi : -1, mdx: s.mdx || 0, mdy: s.mdy || 0, fixed: !!s.fixed });
+        else { if (s.type === 'cut') ex.type = 'cut'; else if (s.type === 'foldOut' && ex.type === 'fold') ex.type = 'foldOut'; if (s.mi >= 0 && ex.mi < 0) { ex.mi = s.mi; ex.mdx = s.mdx; ex.mdy = s.mdy; } if (s.fixed) ex.fixed = true; }
       }
       prev = id; prevT = t;
     }
@@ -931,6 +937,7 @@ function buildStructure(lines, opts = {}) {
     const fa = faceOfLoop.get(loopOf[i * 2]), fb = faceOfLoop.get(loopOf[i * 2 + 1]);
     e.type = fa && fb && fa !== fb ? 'fold' : 'cut';
   });
+  for (const e of edges) if (e.alive && e.fixed) e.type = 'cut';   // 선을 옮기면서 생긴 이음 선
   for (const e of edges) if (e.alive && e.ov) e.type = e.ov;
 
   /* 3-7c. 사용자가 접는 선·자르는 선이라고 지정했는데도 면을 나누지 못하고 버려진 선:
@@ -1861,14 +1868,14 @@ function updateFold() {
   if (!S.struct || !S.struct.faces.length) return;
   bakeBevel(); if (bevelKey !== 'off') bevelU.amt.value = S.t;   // 펼쳐 놓으면 평평하고, 접을수록 모서리가 둥글게 빛난다
   const pts = [], wb = worldBox(S.t, pts);
-  const t = thickPt(), lift = S.label && S.label.lift ? 0.3 / PT2MM : 0.02, T = new THREE.Matrix4();
+  const t = thickPt(), lift = labelLift(), T = new THREE.Matrix4();
   for (const [id, o] of faceObjs) {
     const m = wb.M.get(id); o.front.matrix.fromArray(m);
     o.back.matrix.fromArray(m).multiply(T.makeTranslation(0, 0, -t));      // 뒷면은 종이 두께만큼 안쪽에
     if (o.wall) o.wall.matrix.fromArray(m);
     if (o.label) o.label.matrix.fromArray(m).multiply(T.makeTranslation(0, 0, lift)); // 라벨은 표면 바로 위에
   }
-  lastM = wb.M; placeHighlight();
+  lastM = wb.M; placeHighlight(); updateLabelBridge(wb.M);
   model.position.set(-wb.c[0] * UNIT, -wb.c[1] * UNIT, -wb.c[2] * UNIT);           // 상자 중심을 기준으로 돌린다
   poseGroup.quaternion.copy(wb.q);
   poseGroup.position.set(-(wb.lo[0] + wb.hi[0]) / 2, -wb.lo[1], -(wb.lo[2] + wb.hi[2]) / 2); // 가장 낮은 점이 바닥에 닿게
@@ -1928,7 +1935,7 @@ function labelOutline() { // 전개도 좌표에서의 라벨 외곽선
 }
 // 라벨은 '놓인 면(기준면)'의 평면에 붙고, 가장자리를 넘으면 조립했을 때 실제로 맞닿는 면으로 꺾여 넘어간다.
 // wrapFrames: 면 id → 그 면의 전개도 좌표를 기준면 평면 좌표로 옮기는 변환. wrapPlaced: 조립 기준 지도에 그릴 면들
-let wrapFrames = new Map(), wrapPlaced = [], mapMode = 'flat';
+let wrapFrames = new Map(), wrapPlaced = [], wrapLinks = [], mapMode = 'flat';
 const affApply = (T, p) => [T.a * p[0] + T.c * p[1] + T.tx, T.b * p[0] + T.d * p[1] + T.ty];
 function straightRuns(loop) { // 외곽선에서 길게 곧은 변만 추린다
   const n = loop.length, runs = [];
@@ -1957,7 +1964,7 @@ function computeWrap(anchorId, at) {   // at = 기준면 좌표에서의 라벨 
       if (qa.addScaledVector(r.dir, -ta).length() > tol || qb.addScaledVector(r.dir, -tb).length() > tol) continue;
       const ov = Math.min(r.len, Math.max(ta, tb)) - Math.max(0, Math.min(ta, tb));
       if (ov < Math.max(6, 0.3 * Math.min(r.len, q.len))) continue;
-      if (!best || ov > best.ov) best = { ov, P: r.A, e: r.dir };
+      if (!best || ov > best.ov) best = { ov, P: r.A, e: r.dir, s0: Math.max(0, Math.min(ta, tb)), s1: Math.min(r.len, Math.max(ta, tb)) };
     }
     return best;
   };
@@ -1988,13 +1995,13 @@ function computeWrap(anchorId, at) {   // at = 기준면 좌표에서의 라벨 
   };
   const frames = new Map([[anchorId, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }]]);
   const placed = [{ id: anchorId, poly: info.get(anchorId).f.outer, z: 0 }];
-  const cands = []; let seq = 0;
+  const cands = [], links = []; let seq = 0;
   const expand = (fid, depth, z) => { // fid에서 넘어갈 수 있는 면을 후보로 올린다
     const F = info.get(fid), TF = frames.get(fid), Fpoly = placed.find((pl) => pl.id === fid).poly;
     for (const G of info.values()) {
       if (frames.has(G.f.id)) continue;
       const ov = overlap(F, G, TF, Fpoly);
-      if (ov) cands.push({ id: G.f.id, T: ov.T, poly: ov.poly, depth, z: z + ov.dz, kind: 'over', cost: distTo(ov.poly), seq: seq++ });
+      if (ov) cands.push({ id: G.f.id, from: fid, dz: ov.dz, T: ov.T, poly: ov.poly, depth, z: z + ov.dz, kind: 'over', cost: distTo(ov.poly), seq: seq++ });
       if (depth >= 2) continue;                                                  // 모서리는 두 번까지만 넘는다 (정면 → 뚜껑 → 뒷면)
       const sh = shared(F, G); if (!sh) continue;
       const phi = Math.atan2(new V().crossVectors(G.n, F.n).dot(sh.e), G.n.dot(F.n)); // 맞닿은 변을 축으로 G를 F의 평면까지 펴는 각도
@@ -2008,7 +2015,7 @@ function computeWrap(anchorId, at) {   // at = 기준면 좌표에서의 라벨 
       const cG = affApply(T, G.f.center);
       if (side(affApply(TF, F.f.center)) === side(cG)) continue;                 // 같은 쪽으로 겹쳐 들어가는 면(끼움 날개 등)은 제외
       const poly = G.f.outer.map((p) => affApply(T, p));
-      cands.push({ id: G.f.id, T, poly, cG, depth: depth + 1, z, kind: 'edge', ov: sh.ov, cost: distTo(poly), seq: seq++ });
+      cands.push({ id: G.f.id, from: fid, sh, T, poly, cG, depth: depth + 1, z, kind: 'edge', ov: sh.ov, cost: distTo(poly), seq: seq++ });
     }
   };
   expand(anchorId, 0, 0);
@@ -2020,10 +2027,11 @@ function computeWrap(anchorId, at) {   // at = 기준면 좌표에서의 라벨 
     if (c.kind === 'edge' && placed.some((pl) => pointInPoly(c.cG[0], c.cG[1], pl.poly))) continue;                      // 이미 놓인 면 밑에 깔리는 면은 제외
     if (c.kind === 'over' && c.poly.every((p) => placed.some((pl) => pointInPoly(p[0], p[1], pl.poly)))) continue;       // 완전히 가려진 면(풀칠 날개 등)도 제외
     frames.set(c.id, c.T); placed.push({ id: c.id, poly: c.poly, z: c.z });
+    links.push({ a: c.from, b: c.id, kind: c.kind, sh: c.sh, dz: c.dz });
     expand(c.id, c.depth, c.z);
   }
   placed.sort((x, y) => x.z - y.z);   // 지도에서는 밑에 깔린 면부터 그린다
-  return { frames, placed };
+  return { frames, placed, links };
 }
 function updateLabelUV() { // 각 면의 꼭짓점에 라벨 그림 좌표를 준다. 끌어 옮길 때는 이것만 다시 계산한다
   const L = S.label; if (!L) return;
@@ -2039,12 +2047,67 @@ function updateLabelUV() { // 각 면의 꼭짓점에 라벨 그림 좌표를 �
     }
     uv.needsUpdate = true;
   }
+  updateLabelBridge(lastM);
   dirty = true;
+}
+/* 라벨 이음 띠.
+   라벨은 면마다 표면에서 조금 띄워 그리기 때문에, 접힌 모서리를 넘는 자리에서는 두 면의 라벨 사이가 벌어져 상자 색이 한 줄 비친다.
+   또 날개 밑의 면으로 이어질 때는 날개 끝의 종이 두께가 그대로 보인다. 그 사이를 같은 라벨 그림으로 메우는 얇은 띠를 만든다 */
+let labelBridge = null;
+const labelLift = () => (S.label && S.label.lift ? 0.3 / PT2MM : 0.02);
+function updateLabelBridge(M) {
+  const L = S.label, st = S.struct;
+  if (!labelBridge) { labelBridge = new THREE.Mesh(new THREE.BufferGeometry(), matLabel); labelBridge.matrixAutoUpdate = false; labelBridge.frustumCulled = false; labelBridge.renderOrder = 2; labelBridge.receiveShadow = true; model.add(labelBridge); }
+  labelBridge.visible = false;
+  if (!L || !st || !M || !wrapLinks.length) return;
+  const V = THREE.Vector3, lift = labelLift(), pos = [], uv = [], nrm = [];
+  const cs = Math.cos(-L.rot * D2R), sn = Math.sin(-L.rot * D2R), k = 1 / L.scale;
+  const uvAt = (fid, x, y) => { const T = wrapFrames.get(fid), qx = T.a * x + T.c * y + T.tx - L.x, qy = T.b * x + T.d * y + T.ty - L.y; return [((cs * qx - sn * qy) * k) / L.w + 0.5, ((sn * qx + cs * qy) * k) / L.h + 0.5]; };
+  const mats = new Map(), mat = (id) => { let r = mats.get(id); if (!r && M.get(id)) { const m = new THREE.Matrix4().fromArray(M.get(id)); mats.set(id, (r = { m, inv: m.clone().invert(), n: new V(0, 0, 1).transformDirection(m) })); } return r; };
+  const faces = new Map(st.faces.map((f) => [f.id, f]));
+  const tri = (a, b, c, ua, ub, uc, n) => { for (const [q, u] of [[a, ua], [b, ub], [c, uc], [a, ua], [c, uc], [b, ub]]) { pos.push(q.x, q.y, q.z); uv.push(u[0], u[1]); nrm.push(n.x, n.y, n.z); } };   // 양쪽에서 다 보이게 두 방향으로
+  const quad = (a0, a1, b1, b0, u0, u1, n) => { tri(a0, a1, b1, u0, u1, u1, n); tri(a0, b1, b0, u0, u1, u0, n); };
+  const hingeKeys = new Map();   // 면마다 접는 선인 변
+  const sk = (p, q) => p[0] + ',' + p[1] + '>' + q[0] + ',' + q[1];
+  for (const h of st.hinges) if (!h.weld && h.segs) for (const fid of [h.parent, h.child]) { let l = hingeKeys.get(fid); if (!l) hingeKeys.set(fid, (l = new Set())); for (const sg of h.segs) { l.add(sk(sg[0], sg[1])); l.add(sk(sg[1], sg[0])); } }
+  for (const lk of wrapLinks) {
+    const F = mat(lk.a), G = mat(lk.b); if (!F || !G || !wrapFrames.has(lk.a) || !wrapFrames.has(lk.b)) continue;
+    if (lk.kind === 'edge') {
+      if (lift < 0.1 || F.n.dot(G.n) > 0.999) continue;                       // 띄우지 않았거나 펴져 있으면 벌어진 틈이 없다
+      const h = st.hinges.find((x) => !x.weld && x.segs && ((x.parent === lk.a && x.child === lk.b) || (x.parent === lk.b && x.child === lk.a)));
+      const runs = [];
+      if (h) for (const sg of h.segs) runs.push([sg[0], sg[1]]);
+      else if (S.t > 0.999 && lk.sh) { const q0 = lk.sh.P.clone().addScaledVector(lk.sh.e, lk.sh.s0).applyMatrix4(F.inv), q1 = lk.sh.P.clone().addScaledVector(lk.sh.e, lk.sh.s1).applyMatrix4(F.inv); runs.push([[q0.x, q0.y], [q1.x, q1.y]]); }   // 조립해야 맞닿는 변은 다 접혔을 때만
+      if (!runs.length) continue;
+      const cF = new V(faces.get(lk.a).center[0], faces.get(lk.a).center[1], 0).applyMatrix4(F.m), cG = new V(faces.get(lk.b).center[0], faces.get(lk.b).center[1], 0).applyMatrix4(G.m);
+      const mid = new V((runs[0][0][0] + runs[0][1][0]) / 2, (runs[0][0][1] + runs[0][1][1]) / 2, 0).applyMatrix4(F.m), v = cF.sub(mid).add(cG.sub(mid));
+      if (F.n.dot(v) + G.n.dot(v) >= 0) continue;                             // 안쪽으로 접힌 모서리는 라벨끼리 맞닿으므로 그대로 둔다
+      const nM = F.n.clone().add(G.n).normalize();
+      for (const [p0, p1] of runs) {
+        const Q0 = new V(p0[0], p0[1], 0).applyMatrix4(F.m), Q1 = new V(p1[0], p1[1], 0).applyMatrix4(F.m), u0 = uvAt(lk.a, p0[0], p0[1]), u1 = uvAt(lk.a, p1[0], p1[1]);
+        const at = (Q, n) => Q.clone().addScaledVector(n, lift);
+        quad(at(Q0, F.n), at(Q1, F.n), at(Q1, nM), at(Q0, nM), u0, u1, nM); quad(at(Q0, nM), at(Q1, nM), at(Q1, G.n), at(Q0, G.n), u0, u1, nM);
+      }
+    } else if (S.t > 0.999) {                                                 // 겹쳐 얹힌 면: 앞에 있는 면의 잘린 변에서 뒤의 면까지 내려가는 띠
+      const frontId = lk.dz < 0 ? lk.a : lk.b, backId = lk.dz < 0 ? lk.b : lk.a, Fr = mat(frontId), Bk = mat(backId), ff = faces.get(frontId), bf = faces.get(backId), hk = hingeKeys.get(frontId);
+      const down = (p) => { const Q = new V(p[0], p[1], 0).applyMatrix4(Fr.m), b = Q.clone().applyMatrix4(Bk.inv); return pointInPoly(b.x, b.y, bf.outer) ? { A: Q.addScaledVector(Fr.n, lift), B: new V(b.x, b.y, 0).applyMatrix4(Bk.m).addScaledVector(Bk.n, lift), u: uvAt(frontId, p[0], p[1]) } : null; };
+      for (let i = 0; i < ff.outer.length; i++) {
+        const p = ff.outer[i], q = ff.outer[(i + 1) % ff.outer.length]; if (hk && hk.has(sk(p, q))) continue;
+        const len = Math.hypot(q[0] - p[0], q[1] - p[1]), nseg = Math.max(1, Math.ceil(len / 20)); let prev = down(p);
+        for (let j = 1; j <= nseg; j++) { const r = [p[0] + (q[0] - p[0]) * j / nseg, p[1] + (q[1] - p[1]) * j / nseg], cur = down(r); if (prev && cur) quad(prev.A, cur.A, cur.B, prev.B, prev.u, cur.u, Fr.n); prev = cur; }
+      }
+    }
+  }
+  if (!pos.length) return;
+  const g = labelBridge.geometry;
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nrm, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setAttribute('uv1', new THREE.Float32BufferAttribute(uv, 2));
+  g.computeBoundingSphere(); labelBridge.visible = true; dirty = true;
 }
 function refreshWrap() {
   const L = S.label; if (!L || !S.struct || !S.struct.faces.length) return;
   if (!S.struct.faces.some((f) => f.id === L.anchor)) L.anchor = S.struct.rootId;
-  ({ frames: wrapFrames, placed: wrapPlaced } = computeWrap(L.anchor, [L.x, L.y]));
+  ({ frames: wrapFrames, placed: wrapPlaced, links: wrapLinks } = computeWrap(L.anchor, [L.x, L.y]));
   updateLabelUV();
 }
 function setMapMode(m) { mapMode = m; for (const b of $('map-modes').querySelectorAll('button')) b.classList.toggle('on', b.dataset.map === m); renderMap(); }
@@ -2376,7 +2439,7 @@ function renderEdit(keepKeys) {
   for (const n of top) g.append(n);
   const folds = st.hinges.filter((x) => !x.weld).length;
   $('edit-note').textContent = `면 ${st.faces.length}개 · 접는 선 ${folds}개` + (S.edits.length ? ` · 고친 선 ${S.edits.length}개` : '') + (movedCount() ? ` · 옮긴 선 ${movedCount()}개` : '') + (editSel.size ? ` · ${new Set([...editSel].map((ci) => { const e = E[editChains[ci].ids[0]]; return e.mi >= 0 ? 'm' + e.mi : 'c' + ci; })).size}줄 선택` : '') + selMoveTxt();   // 옮기면서 여러 조각으로 나뉜 선은 한 줄로 센다
-  $('edit-hint').textContent = editMsg || '선을 누르거나 빈 곳에서 끌어 여러 개를 고른 뒤, 위에서 종류를 누르세요. Shift를 누르면 선택에 더합니다. 고른 선은 방향키로 0.2mm씩(Shift와 함께 1mm씩) 옮길 수 있습니다. 휠로 확대하고 Space를 누른 채 끌면 화면이 움직입니다. 바꾸면 오른쪽 상자에 바로 반영됩니다.';
+  $('edit-hint').textContent = editMsg || '선을 누르거나 빈 곳에서 끌어 여러 개를 고른 뒤, 위에서 종류를 누르세요. Shift를 누르면 선택에 더합니다. 고른 선은 방향키로 0.2mm씩(Shift와 함께 1mm씩) 옮길 수 있고, 양면 파일은 짝 전개도의 같은 선도 함께 움직입니다. 휠로 확대하고 Space를 누른 채 끌면 화면이 움직입니다. 바꾸면 오른쪽 상자에 바로 반영됩니다.';
   $('edit-hint').style.color = editMsg ? 'var(--o)' : '';
   for (const b of $('edit-roles').querySelectorAll('button')) b.disabled = !editSel.size;
   $('edit-undo').disabled = !S.editUndo.length; $('edit-reset').disabled = !S.edits.length && !movedCount();
@@ -2386,11 +2449,28 @@ function selMoveTxt() { // 고른 선이 모두 같은 만큼 옮겨져 있으�
   const E = S.struct.allEdges; let first = null, same = true;
   for (const ci of editSel) for (const i of editChains[ci].ids) { const m = moveOf(E[i]) || E[i]._m, v = m ? [m.dx, m.dy] : [0, 0]; if (!first) first = v; else if (Math.abs(first[0] - v[0]) > 1e-6 || Math.abs(first[1] - v[1]) > 1e-6) same = false; }
   if (!first) return '';
-  if (!same) return ' · 이동량이 서로 다름';
+  if (!same) { // 크기는 같고 방향만 반대면 대칭 이동
+    let mx = null, my = null, sym = true;
+    for (const ci of editSel) for (const i of editChains[ci].ids) { const m = moveOf(E[i]) || E[i]._m, v = m ? [Math.abs(m.dx), Math.abs(m.dy)] : [0, 0]; if (mx === null) { mx = v[0]; my = v[1]; } else if (Math.abs(mx - v[0]) > 1e-6 || Math.abs(my - v[1]) > 1e-6) sym = false; }
+    return sym ? ' · 대칭 이동 ' + [[mx, '↔'], [my, '↕']].filter(([v]) => v > 1e-6).map(([v, c]) => c + (v * PT2MM).toFixed(1) + 'mm').join(' ') : ' · 이동량이 서로 다름';
+  }
   const t = mmTxt(first[0], first[1]); return t ? ' · 이동 ' + t : '';
 }
+/* 양면 인쇄 파일: 본 전개도와 짝 전개도(같은 대지에 나란히 놓인 것)의 자리 관계. 선을 옮길 때 짝의 같은 선도 함께 옮기는 데 쓴다 */
+function editTwin() {
+  const st = S.struct; if (!st || !st.allEdges) return null;
+  if (st._tw !== undefined) return st._tw;
+  const ok = st.allEdges.filter((e) => e.state === 'ok'), main = ok.filter((e) => e.main); let best = null;
+  if (main.length) {
+    const groups = new Map(); for (const e of ok) if (!e.main) { let l = groups.get(e.comp); if (!l) groups.set(e.comp, (l = [])); l.push(e); }
+    const mb = edgeBox(main);
+    for (const g of groups.values()) { const m = matchT(main, mb, g, edgeBox(g)); if (m && m.score >= 0.7 && (!best || m.score > best.score)) best = { T: m.T, score: m.score, box: edgeBox(g), mbox: mb }; }
+    if (!best) best = { T: null, mbox: mb };
+  }
+  return (st._tw = best);
+}
 /* 방향키로 고른 선 옮기기. 연달아 누르면 모아서 한 번에 다시 계산하고, 되돌리기는 한 묶음(연속 입력)을 한 번에 되돌린다 */
-let nudgeFaces = -1, nudgeTimer = 0, nudgeIdle = 0, nudgeOpen = false, nudgeBusy = false, nudgeAgain = false, nudgeKeys = new Set();
+let editSym = false, nudgeFaces = -1, nudgeTimer = 0, nudgeIdle = 0, nudgeOpen = false, nudgeBusy = false, nudgeAgain = false, nudgeKeys = new Set();
 async function nudgeFlush() {
   if (nudgeBusy) { nudgeAgain = true; return; }
   nudgeBusy = true;
@@ -2400,18 +2480,34 @@ async function nudgeFlush() {
   editMsg = S.struct.faces.length !== nudgeFaces ? `선을 옮기면서 면이 ${nudgeFaces}개에서 ${S.struct.faces.length}개로 바뀌었습니다. 이웃한 선에서 떨어졌거나 다른 선을 넘어간 경우입니다. 의도한 것이 아니면 되돌리기(Ctrl+Z)를 누르세요.` : '';
   if (!$('edit-dlg').hidden) renderEdit(nudgeKeys);
 }
-function nudgeEdit(dx, dy) {
+function nudgeEdit(dx, dy, sym) {   // sym: 전개도 가운데를 기준으로 양쪽을 같은 만큼 벌리거나(+) 좁힌다(-)
   if (!editSel.size || S.example || !S.struct) return;
-  const E = S.struct.allEdges;
+  const E = S.struct.allEdges, tw = editTwin(), emid = (e) => [(e.a[0] + e.b[0]) / 2, (e.a[1] + e.b[1]) / 2];
+  const inBox = (m, b) => b && m[0] >= b.x0 - 2 && m[0] <= b.x1 + 2 && m[1] >= b.y0 - 2 && m[1] <= b.y1 + 2;
+  const sideOf = (e) => { if (!tw) return null; const m = emid(e); return e.main || (!tw.box || !inBox(m, tw.box)) && inBox(m, tw.mbox) ? 'main' : inBox(m, tw.box) ? 'twin' : null; };
+  const picked = []; for (const ci of editSel) for (const i of editChains[ci].ids) picked.push(E[i]);
+  const ref = picked.some((e) => sideOf(e) === 'main') ? 'main' : 'twin';   // 화살표 방향 그대로 움직일 쪽 (본 전개도를 골랐으면 본 전개도)
+  const dFor = (e) => {
+    const s = sideOf(e);
+    if (sym) { const b = s === 'twin' ? tw.box : tw && tw.mbox; if (!b) return [dx, dy]; const m = emid(e), ox = m[0] - (b.x0 + b.x1) / 2, oy = m[1] - (b.y0 + b.y1) / 2; return [Math.abs(ox) > 0.5 ? Math.sign(ox) * dx : 0, Math.abs(oy) > 0.5 ? Math.sign(oy) * dy : 0]; }
+    return tw && tw.T && tw.T.mirror && s && s !== ref ? [-dx, dy] : [dx, dy];   // 좌우로 뒤집힌 짝은 좌우 방향만 반대로
+  };
+  const plan = new Map(); for (const e of picked) plan.set(e, dFor(e));
+  if (tw && tw.T) for (const e of picked) { // 짝 전개도의 같은 선
+    const s = sideOf(e); if (!s) continue;
+    const m = emid(e), q = applyT(s === 'main' ? tw.T : inverseT(tw.T), m[0], m[1]); let best = null;
+    for (const c of E) { const cs = sideOf(c); if (!cs || cs === s) continue; const d = distPointSeg(q[0], q[1], { x1: c.a[0], y1: c.a[1], x2: c.b[0], y2: c.b[1] }).d; if (d <= 1.5 && (!best || d < best.d)) best = { d, c }; }
+    if (best && !plan.has(best.c)) plan.set(best.c, dFor(best.c));
+  }
   if (!nudgeOpen) { editSnap(); nudgeOpen = true; nudgeFaces = nudgeBusy ? nudgeFaces : -1; }
   clearTimeout(nudgeIdle); nudgeIdle = setTimeout(() => { nudgeOpen = false; }, 900);
   nudgeKeys = new Set(); const done = new Set();
-  for (const ci of editSel) for (const i of editChains[ci].ids) {
-    const e = E[i]; let m = moveOf(e) || e._m;
+  for (const [e, d] of plan) {
+    let m = moveOf(e) || e._m;
     if (!m) { const c = omid(e); S.moves.push((m = { id: ++moveSeq, x: c[0], y: c[1], dx: 0, dy: 0 })); e._m = m; }   // 다시 계산되기 전에 또 눌러도 같은 기록에 더해지게 붙여 둔다
     nudgeKeys.add('m' + m.id);
     if (done.has(m)) continue; done.add(m);                                                                            // 한 기록이 여러 조각에 걸려 있어도 한 번만 더한다
-    m.dx += dx; m.dy += dy;
+    m.dx += d[0]; m.dy += d[1];
   }
   $('edit-note').textContent = $('edit-note').textContent.replace(/ · (이동 [^·]*|이동량이 서로 다름)$/, '') + selMoveTxt();   // 거리는 바로 보여 주고
   clearTimeout(nudgeTimer); nudgeTimer = setTimeout(nudgeFlush, 130);                                                                    // 선과 상자는 잠깐 모아서 다시 그린다
@@ -2659,6 +2755,7 @@ async function rebuild(textures, refit, soft) {
   const auto = S.lineMode === 'auto';
   const linesOf = (strokes) => { const out = []; for (const s of strokes) { const c = roles.get(colorKey(s.rgb) + (s.dashed ? 'd' : '')), r = c ? c.role : guessLineRole(s.rgb, s.dashed); if (r !== 'ignore') for (const p of s.polylines) out.push({ pts: p, role: auto ? 'cut' : r }); } return out; };
   const bopts = { gapTol: (+$('gap').value || 0) / PT2MM, auto, overrides: S.edits, moves: S.moves };
+  S._dbg = { lines: dl ? linesOf(dl.st) : [], bopts };
   let st = buildStructure(dl ? linesOf(dl.st) : [], bopts);
   /* 양면 인쇄 찾기: ① 같은 대지에 좌우가 뒤집힌 전개도가 하나 더 있는 경우 ② 다른 대지(쪽)에 안쪽면을 그려 둔 경우 */
   let twin = st.bbox && dl ? compTwin(st, dl.pg.num) : null, outPage = null;
@@ -2839,6 +2936,7 @@ $('edit-open').addEventListener('click', () => openEdit());
 $('sel-edit').addEventListener('click', () => { const h = S.sel && S.sel.type === 'hinge' && S.struct.hinges[S.sel.id]; openEdit(h && h.segs ? new Set(h.segs.map((q) => edgeKey({ a: q[0], b: q[1] }))) : null); });
 $('edit-close').addEventListener('click', closeEdit);
 $('edit-roles').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && !b.disabled) applyEdit(b.dataset.role); });
+$('edit-sym').addEventListener('click', (e) => { editSym = !editSym; e.currentTarget.setAttribute('aria-pressed', String(editSym)); e.currentTarget.blur(); });
 $('edit-undo').addEventListener('click', () => undoEdit(false));
 $('edit-reset').addEventListener('click', () => undoEdit(true));
 window.addEventListener('keydown', (e) => {
@@ -2846,10 +2944,10 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { closeEdit(); e.stopImmediatePropagation(); }
   else if (e.code === 'Space') { editSpace = true; e.preventDefault(); }
   else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undoEdit(false); }
-  else if (/^Arrow/.test(e.key) && editSel.size && !e.ctrlKey && !e.metaKey && !e.altKey) { // 고른 선 옮기기: 0.2mm, Shift와 함께 1mm
+  else if (/^Arrow/.test(e.key) && editSel.size && !e.ctrlKey && !e.metaKey) { // 고른 선 옮기기: 0.2mm, Shift와 함께 1mm. Alt 또는 '대칭 이동'이면 양쪽을 같은 만큼
     e.preventDefault(); e.stopImmediatePropagation();
     const d = (e.shiftKey ? 1 : 0.2) / PT2MM;
-    nudgeEdit(e.key === 'ArrowRight' ? d : e.key === 'ArrowLeft' ? -d : 0, e.key === 'ArrowUp' ? d : e.key === 'ArrowDown' ? -d : 0);
+    nudgeEdit(e.key === 'ArrowRight' ? d : e.key === 'ArrowLeft' ? -d : 0, e.key === 'ArrowUp' ? d : e.key === 'ArrowDown' ? -d : 0, e.altKey || editSym);
   }
 }, true);
 window.addEventListener('keyup', (e) => { if (e.code === 'Space') editSpace = false; });
