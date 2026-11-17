@@ -141,7 +141,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 #sel-bulge{display:flex;flex-direction:column;gap:4px}
 
 .side-bottom{margin-top:auto;position:sticky;bottom:0;z-index:5;background:var(--side);border-top:1px solid var(--line2);margin-left:-24px;margin-right:-24px;padding:12px 24px 16px;display:flex;flex-direction:column;gap:8px}
-.about{position:relative;display:flex;justify-content:flex-end;margin-top:-2px}
+.about{position:absolute;right:16px;bottom:16px;z-index:21}
 .about-btn{width:20px;height:20px;border-radius:50%;border:1.5px solid #c9c9d2;background:none;color:#a3a3ae;font:700 11px/1 Georgia,'Times New Roman',serif;font-style:italic;cursor:pointer;padding:0;display:grid;place-items:center}
 .about-btn:hover,.about-btn[aria-expanded="true"]{border-color:var(--o);color:var(--o)}
 .foot{position:absolute;right:0;bottom:28px;z-index:30;white-space:nowrap;background:#fff;border:1px solid #e8e8ee;border-radius:12px;padding:12px 16px;box-shadow:0 10px 30px rgba(10,10,20,.16);font-size:15px;color:#2a2c36;line-height:1.6;font-weight:700}
@@ -327,6 +327,12 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
       <div class="row srow"><label for="paper-strength">질감 세기</label><input type="range" id="paper-strength" min="0" max="100" step="1" value="30"><output id="paper-strength-out" for="paper-strength">30%</output></div>
       <div class="row srow"><label for="paper-size">무늬 크기</label><input type="range" id="paper-size" min="30" max="300" step="5" value="100"><output id="paper-size-out" for="paper-size">100%</output></div>
       <div class="row srow"><label for="thick">종이 두께</label><input type="range" id="thick" min="0" max="8" step="0.1" value="0.4"><output id="thick-out" for="thick">0.4mm</output></div>
+      <div class="row srow"><label for="bevel">모서리 둥글기</label><input type="range" id="bevel" min="0" max="3" step="0.1" value="0.6"><output id="bevel-out" for="bevel">0.6mm</output></div>
+      <div class="row"><label class="name" for="edge-mode">종이 단면</label>
+        <select id="edge-mode"><option value="paper" selected>종이 색 그대로</option><option value="color">색 지정</option><option value="flute">골판지 무늬</option></select></div>
+      <div class="row" id="edge-c-row" hidden><span class="name" id="edge-c-label">단면 색</span>
+        <input type="color" id="edge-color" value="#b98d5f" aria-label="종이 단면 색"><button type="button" class="btn mini" id="edge-pick" aria-pressed="false">스포이드</button></div>
+      <p class="hint" id="edge-hint" hidden></p>
       <div class="row srow"><label for="emboss-depth">형압 깊이</label><input type="range" id="emboss-depth" min="0" max="100" step="1" value="50"><output id="emboss-depth-out" for="emboss-depth">50%</output></div>
       <div class="row"><label class="name" for="inside-mode">안쪽 면</label>
         <select id="inside-mode"><option value="print" hidden>양면 인쇄</option><option value="paper" selected>종이 색 그대로</option><option value="solid">단색</option><option value="grad">그라데이션</option></select></div>
@@ -345,11 +351,6 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
   <div class="side-bottom">
     <button type="button" class="btn primary" id="export">PNG 저장</button>
     <p class="hint" id="exp-note"></p>
-    <div class="about">
-      <button type="button" class="about-btn" id="about-btn" aria-expanded="false" aria-controls="about-pop" aria-label="만든 사람과 라이선스" title="만든 사람 · 라이선스">i</button>
-      <div class="foot" id="about-pop" hidden><a href="#" id="mail">cmy3544@gmail.com</a>
-        <div class="lic">MIT License &middot; Free to use with attribution</div></div>
-    </div>
   </div>
 </aside>
 
@@ -367,8 +368,13 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
     <button type="button" class="tool" id="btn-bg" aria-pressed="false" aria-controls="pop-bg" aria-label="배경색" data-tip="배경색"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 15l4.5-4.5 4 4 3-3 5.5 5.5"/><circle cx="15.5" cy="9" r="1.4"/></svg></button>
     <button type="button" class="tool" id="btn-shadow" aria-pressed="true" aria-label="바닥 그림자" data-tip="바닥 그림자"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h7v10H7z"/><path d="M14 8l4 2.5v6L7 17"/><ellipse cx="13" cy="19.5" rx="8" ry="1.6"/></svg></button>
   </div>
+  <div class="about">
+    <button type="button" class="about-btn" id="about-btn" aria-expanded="false" aria-controls="about-pop" aria-label="만든 사람과 라이선스" title="만든 사람 · 라이선스">i</button>
+    <div class="foot" id="about-pop" hidden><a href="#" id="mail">cmy3544@gmail.com</a>
+      <div class="lic">MIT License &middot; Free to use with attribution</div></div>
+  </div>
   <div id="pie" hidden><div class="pie-ring"><i></i></div><div class="pie-tip">방향으로 마우스를 옮겨 누르세요 · Esc 취소</div></div>
-  <div class="keys" aria-hidden="true">~ 보기 방향 메뉴 · Space + 드래그 화면 이동 · Shift + 드래그 상자 돌리기<br>0 맞춤 · 1 정면 · 3 오른쪽 · 7 위 · 9 뒷면 · Esc 선택·옵션 닫기</div>
+  <div class="keys" aria-hidden="true">~ 보기 방향 메뉴 · Space + 드래그 화면 이동<br>Shift + 드래그 상자 돌리기 · Esc 선택·옵션 닫기<br>0 맞춤 · 1 정면 · 3 오른쪽 · 7 위 · 9 뒷면</div>
   <div id="hud-b">
     <div class="bar">
       <label for="fold">펼침</label>
@@ -1120,6 +1126,7 @@ const defaultLights = () => [
 const S = {
   example: true, doc: null, fileName: '', pages: [], layers: [], colorRoles: new Map(), colorUser: new Map(),
   layerOpen: null,   // 옵션을 펼쳐 둔 레이어
+  edge: { mode: 'paper', color: '#b98d5f' },   // 종이 단면(두께 면): 종이 색 / 색 지정 / 골판지 무늬
   twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null,   // 양면 인쇄: 짝이 되는 안쪽면, 바깥·안쪽 뒤집기
   inside: { mode: 'paper', c1: '#f47bb0', c2: '#ffe14d', angle: 0, auto: true },   // 안쪽 면 표시 방식
   sheets: [],   // 후가공을 대지(쪽)로 나눠 둔 파일의 나머지 쪽 [{page, name, role, color, opacity, blend, emboss}]
@@ -1270,9 +1277,32 @@ const BUMP_CHUNK = `
 	}
 #endif
 `;
+/* 모서리 둥글기(빛 방식): 접는 선 가까이에서 면의 방향(법선)을 이웃 면 쪽으로 조금씩 기울여, 꺾인 모서리가 둥글게 말린 것처럼 빛을 받게 한다.
+   전개도 좌표계에서 본 기울기(x, y)를 인쇄면과 같은 좌표의 그림(bevelMap)에 구워 두고, 조립 정도(bevelAmt)만큼 적용한다. 윤곽선은 그대로다 */
+const bevelCanvas = document.createElement('canvas'); bevelCanvas.width = bevelCanvas.height = 4;
+{ const g = bevelCanvas.getContext('2d'); g.fillStyle = 'rgb(128,128,128)'; g.fillRect(0, 0, 4, 4); }
+const bevelTex = new THREE.CanvasTexture(bevelCanvas); bevelTex.generateMipmaps = false; bevelTex.minFilter = THREE.LinearFilter;
+const bevelU = { map: { value: bevelTex }, amt: { value: 0 } };
+const BEVEL_VERT_PARS = 'varying vec2 vBevelUv;\nvarying vec3 vBevelT;\nvarying vec3 vBevelB;\n';
+const BEVEL_VERT = '\tvBevelUv = uv;\n\tvBevelT = normalize( mat3( modelViewMatrix ) * vec3( 1.0, 0.0, 0.0 ) );\n\tvBevelB = normalize( mat3( modelViewMatrix ) * vec3( 0.0, 1.0, 0.0 ) );\n';
+const BEVEL_FRAG_PARS = 'uniform sampler2D bevelMap;\nuniform float bevelAmt;\nvarying vec2 vBevelUv;\nvarying vec3 vBevelT;\nvarying vec3 vBevelB;\n';
+const BEVEL_FRAG = `
+	if ( bevelAmt > 0.0 ) {
+		vec2 bv = ( texture2D( bevelMap, vBevelUv ).rg * 255.0 - 128.0 ) / 127.0 * 2.0 * bevelAmt;
+		#ifdef FLIP_SIDED
+			bv = - bv;
+		#endif
+		normal = normalize( normal + normalize( vBevelT ) * bv.x + normalize( vBevelB ) * bv.y );
+	}
+`;
 function patchMaterial(m, bump) {
   m.onBeforeCompile = (sh) => {
     sh.uniforms.embossScale = embossU;
+    if (bump) { // 인쇄면·안쪽 면에만 모서리 둥글기를 넣는다
+      sh.uniforms.bevelMap = bevelU.map; sh.uniforms.bevelAmt = bevelU.amt;
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\n' + BEVEL_VERT_PARS).replace('#include <begin_vertex>', '#include <begin_vertex>\n' + BEVEL_VERT);
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + BEVEL_FRAG_PARS).replace('#include <normal_fragment_begin>', '#include <normal_fragment_begin>\n' + BEVEL_FRAG);
+    }
     // 환경맵의 확산광 제거 → 인쇄 색이 뜨지 않고 반사만 남는다
     let f = sh.fragmentShader.replace('#include <lights_fragment_maps>', THREE.ShaderChunk.lights_fragment_maps.replace('iblIrradiance += getIBLIrradiance( geometryNormal );', ''));
     if (bump) f = f.replace('#include <bumpmap_pars_fragment>', '').replace('#include <metalnessmap_pars_fragment>', '#include <metalnessmap_pars_fragment>\n' + BUMP_CHUNK);
@@ -1457,6 +1487,62 @@ function applyTextures() {
   matFront.roughnessMap = matFront.metalnessMap = canvasTexture(orm, false);
   matFront.needsUpdate = true; dirty = true;
 }
+let bevelKey = '';
+function bakeBevel() { // 접는 선마다 양쪽 면에 '기울기 띠'를 그린다. 선에서 가장 세고, 둥글기 폭만큼 떨어지면 0
+  const st = S.struct, r = (+$('bevel').value || 0) / PT2MM, ang = st && st.bbox && S.uv ? effAngles() : null;
+  const key = !ang || r <= 0 ? 'off' : [r.toFixed(2), st.faces.length, st.bbox.minX.toFixed(1), st.bbox.maxY.toFixed(1), S.texBox, S.example ? 'ex' : S.fileName].concat(st.hinges.map((h) => (h.weld || h.curved ? 0 : Math.round(ang.get(h.id) || 0)))).join('|');
+  if (key === bevelKey) return; bevelKey = key;
+  if (key === 'off') { bevelU.amt.value = 0; dirty = true; return; }
+  const N = Math.min(2048, renderer.capabilities.maxTextureSize), c = bevelCanvas; if (c.width !== N) { c.width = c.height = N; bevelTex.dispose(); }
+  const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.fillStyle = 'rgb(128,128,128)'; g.fillRect(0, 0, N, N);
+  const o = S.uv(0, 0), ux = S.uv(1, 0), uy = S.uv(0, 1);   // 전개도 좌표 → 그림 좌표 (인쇄면과 같은 자리)
+  g.setTransform((ux[0] - o[0]) * N, -(ux[1] - o[1]) * N, (uy[0] - o[0]) * N, -(uy[1] - o[1]) * N, o[0] * N, (1 - o[1]) * N);
+  const faces = new Map(st.faces.map((f) => [f.id, f]));
+  for (const h of st.hinges) {
+    if (h.weld || h.curved) continue;
+    const a = ang.get(h.id) || 0; if (Math.abs(a) < 2) continue;
+    const k = Math.min(2, Math.tan(Math.min(Math.abs(a), 175) / 2 * D2R)) / 2 * Math.sign(a);   // 선 위에서의 기울기(저장 범위 -1..1). 안으로 접으면 +, 밖으로 접으면 -
+    const dx = h.p1[0] - h.p0[0], dy = h.p1[1] - h.p0[1], L = Math.hypot(dx, dy) || 1, tx = dx / L, ty = dy / L, nx = -ty, ny = tx, mx = (h.p0[0] + h.p1[0]) / 2, my = (h.p0[1] + h.p1[1]) / 2;
+    for (const fid of [h.parent, h.child]) {
+      const f = faces.get(fid); if (!f) continue;
+      const sgn = pointInPoly(mx + nx * 0.6, my + ny * 0.6, f.outer) ? 1 : -1, ix = nx * sgn, iy = ny * sgn;   // 이 면의 안쪽 방향
+      const vx = -ix * k, vy = -iy * k;                                                                          // 이웃 면 쪽으로 기울인다
+      const gr = g.createLinearGradient(mx, my, mx + ix * r, my + iy * r);
+      gr.addColorStop(0, `rgb(${Math.round(128 + 127 * vx)},${Math.round(128 + 127 * vy)},128)`); gr.addColorStop(1, 'rgb(128,128,128)');
+      g.save(); g.beginPath(); f.outer.forEach((q, i) => (i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]))); g.closePath(); g.clip();
+      g.fillStyle = gr; g.beginPath();
+      g.moveTo(h.p0[0] - tx * r, h.p0[1] - ty * r); g.lineTo(h.p1[0] + tx * r, h.p1[1] + ty * r); g.lineTo(h.p1[0] + tx * r + ix * r, h.p1[1] + ty * r + iy * r); g.lineTo(h.p0[0] - tx * r + ix * r, h.p0[1] - ty * r + iy * r); g.closePath(); g.fill();
+      g.restore();
+    }
+  }
+  bevelTex.needsUpdate = true; dirty = true;
+}
+/* 종이 단면(두께 면): 종이 색 그대로 / 색 지정 / 골판지 무늬 */
+function fluteTile(hex) { // 골판지 단면 한 골: 위아래 라이너와 그 사이의 물결 골심지. 가로로 이어 붙는다
+  const W = 96, H = 48, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d'), col = new THREE.Color(hex), shade = (k) => '#' + col.clone().multiplyScalar(k).getHexString();
+  g.fillStyle = shade(0.42); g.fillRect(0, 0, W, H);                       // 골 사이의 빈 곳(그늘)
+  g.fillStyle = shade(1); g.fillRect(0, 0, W, 7); g.fillRect(0, H - 7, W, 7);   // 겉 라이너
+  g.strokeStyle = shade(0.86); g.lineWidth = 6; g.lineJoin = 'round'; g.beginPath();
+  for (let x = -8; x <= W + 8; x += 2) { const y = H / 2 - Math.cos((x / W) * Math.PI * 2) * (H / 2 - 9); if (x === -8) g.moveTo(x, y); else g.lineTo(x, y); }
+  g.stroke();
+  const t = canvasTexture(c, true); t.wrapS = THREE.RepeatWrapping; t.wrapT = THREE.ClampToEdgeWrapping; return t;
+}
+function applyEdge() {
+  const E = S.edge, paper = $('inside').value;
+  if (matEdge.map) { matEdge.map.dispose(); matEdge.map = null; }
+  if (E.mode === 'flute') { matEdge.map = fluteTile(E.color); matEdge.color.set('#ffffff'); }
+  else if (E.mode === 'color') matEdge.color.set(E.color);
+  else matEdge.color.set(paper).multiplyScalar(0.9);
+  matEdge.needsUpdate = true; dirty = true;
+}
+function syncEdgeUI() {
+  const E = S.edge, thin = (+$('thick').value || 0) < 0.05;
+  $('edge-mode').value = E.mode; $('edge-color').value = E.color;
+  $('edge-c-row').hidden = E.mode === 'paper'; $('edge-c-label').textContent = E.mode === 'flute' ? '골판지 색' : '단면 색';
+  const hint = E.mode === 'paper' ? '' : thin ? '단면은 종이 두께가 있어야 보입니다. 위의 "종이 두께"를 올려 주세요.' : E.mode === 'flute' ? '골 간격은 종이 두께에 맞춰집니다. 두께 1.5mm(E골) ~ 5mm(A골) 정도에서 잘 보입니다.' : '';
+  $('edge-hint').textContent = hint; $('edge-hint').hidden = !hint;
+}
 /* ---------- 안쪽 면: 양면 인쇄 / 종이 색 / 단색 / 그라데이션 ---------- */
 function applyInside() {
   const I = S.inside, paper = $('inside').value;
@@ -1472,7 +1558,7 @@ function applyInside() {
     g.fillStyle = gr; g.fillRect(0, 0, w, h);
     const t = canvasTexture(c, true); t.channel = 3; matBack.map = t; matBack.color.set('#ffffff');
   } else matBack.color.set(mode === 'solid' ? I.c1 : paper);
-  matEdge.color.set(paper).multiplyScalar(0.9);   // 종이 단면은 종이 색 그대로
+  applyEdge();
   matBack.needsUpdate = true; dirty = true;
 }
 function syncInsideUI() {
@@ -1649,14 +1735,16 @@ function buildMeshes() {
     if (zs) g.computeVertexNormals();
     const o = { front: new THREE.Mesh(g, matFront), back: new THREE.Mesh(g, matBack), wall: null, label: null };
     if (t > 0 && bnd.size) { // 종이 두께: 칼선 테두리를 따라 안쪽으로 t만큼 내려가는 단면
-      const wp = [], wn = [];
+      const wp = [], wn = [], wu = [], pitch = Math.max(t * 2.2, 3);   // 골판지 무늬의 골 간격은 두께의 2.2배쯤
       for (const [a, b] of bnd.values()) {
         const A = pts[a], B = pts[b], za = zs ? zs[a] : 0, zb = zs ? zs[b] : 0, dx = B[0] - A[0], dy = B[1] - A[1], l = Math.hypot(dx, dy) || 1, nx = dy / l, ny = -dx / l;
         wp.push(A[0], A[1], za, B[0], B[1], zb, B[0], B[1], zb - t, A[0], A[1], za, B[0], B[1], zb - t, A[0], A[1], za - t);
         for (let k = 0; k < 6; k++) wn.push(nx, ny, 0);
+        const ua = (A[0] * dx + A[1] * dy) / l / pitch, ub = ua + l / pitch;   // 변의 방향으로 잰 길이 → 같은 직선 위의 조각끼리 무늬가 이어진다
+        wu.push(ua, 1, ub, 1, ub, 0, ua, 1, ub, 0, ua, 0);
       }
       const wg = new THREE.BufferGeometry();
-      wg.setAttribute('position', new THREE.Float32BufferAttribute(wp, 3)); wg.setAttribute('normal', new THREE.Float32BufferAttribute(wn, 3));
+      wg.setAttribute('position', new THREE.Float32BufferAttribute(wp, 3)); wg.setAttribute('normal', new THREE.Float32BufferAttribute(wn, 3)); wg.setAttribute('uv', new THREE.Float32BufferAttribute(wu, 2));
       o.wall = new THREE.Mesh(wg, matEdge);
     }
     if (S.label) o.label = new THREE.Mesh(g, matLabel);
@@ -1687,6 +1775,7 @@ function worldBox(t, collect) { // 접힘 정도 t에서, 자세까지 적용한
 }
 function updateFold() {
   if (!S.struct || !S.struct.faces.length) return;
+  bakeBevel(); if (bevelKey !== 'off') bevelU.amt.value = S.t;   // 펼쳐 놓으면 평평하고, 접을수록 모서리가 둥글게 빛난다
   const pts = [], wb = worldBox(S.t, pts);
   const t = thickPt(), lift = S.label && S.label.lift ? 0.3 / PT2MM : 0.02, T = new THREE.Matrix4();
   for (const [id, o] of faceObjs) {
@@ -2698,18 +2787,19 @@ function colorAt(cx, cy) {
   const img = m.map.image, x = Math.max(0, Math.min(img.width - 1, Math.floor(uv.x * img.width))), y = Math.max(0, Math.min(img.height - 1, Math.floor((1 - uv.y) * img.height)));
   return hex(img.getContext('2d').getImageData(x, y, 1, 1).data);
 }
-for (const n of [1, 2]) $('inside-pick' + n).addEventListener('click', (e) => {
-  const b = e.currentTarget; if (pickBtn === b) { endPick(); return; }
-  endPick(); pickBtn = b; b.setAttribute('aria-pressed', 'true'); stage.classList.add('picking');
-  pickCb = (hex) => { S.inside['c' + n] = hex; syncInsideUI(); applyInside(); };
-});
+const armPick = (b, cb) => { if (pickBtn === b) { endPick(); return; } endPick(); pickBtn = b; b.setAttribute('aria-pressed', 'true'); stage.classList.add('picking'); pickCb = cb; };
+for (const n of [1, 2]) $('inside-pick' + n).addEventListener('click', (e) => armPick(e.currentTarget, (hex) => { S.inside['c' + n] = hex; syncInsideUI(); applyInside(); }));
+$('edge-pick').addEventListener('click', (e) => armPick(e.currentTarget, (hex) => { S.edge.color = hex; syncEdgeUI(); applyEdge(); }));
 renderer.domElement.addEventListener('pointerdown', (e) => {
   if (!pickCb) return;
   e.stopImmediatePropagation(); e.preventDefault();
   const cb = pickCb, hex = colorAt(e.clientX, e.clientY); endPick(); if (hex) cb(hex);
 }, true);
 window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pickCb) { endPick(); e.stopImmediatePropagation(); } });
-$('thick').addEventListener('input', (e) => { $('thick-out').textContent = (+e.target.value).toFixed(1) + 'mm'; buildMeshes(); updateFold(); });
+$('thick').addEventListener('input', (e) => { $('thick-out').textContent = (+e.target.value).toFixed(1) + 'mm'; buildMeshes(); updateFold(); syncEdgeUI(); });
+$('bevel').addEventListener('input', (e) => { $('bevel-out').textContent = (+e.target.value).toFixed(1) + 'mm'; updateFold(); dirty = true; });
+$('edge-mode').addEventListener('change', (e) => { S.edge.mode = e.target.value; syncEdgeUI(); applyEdge(); });
+$('edge-color').addEventListener('input', (e) => { S.edge.color = e.target.value; applyEdge(); });
 const setEmboss = () => { const v = +$('emboss-depth').value; $('emboss-depth-out').textContent = v + '%'; embossU.value = (v / 100) * 0.03; dirty = true; }; // 100% = 1mm 깊이를 1.5배 과장
 $('emboss-depth').addEventListener('input', setEmboss);
 for (const k of ['light', 'reflector']) $('gizmo-' + k).addEventListener('change', (e) => { showGizmo[k] = e.target.checked; gizmoGroup.visible = showGizmo.light || showGizmo.reflector; fitCamera('fit'); });
@@ -2827,7 +2917,7 @@ $('map-modes').addEventListener('click', (e) => { const m = e.target.dataset && 
 }
 let rangeTick = 0;
 function paintRanges() { for (const r of document.querySelectorAll('input[type="range"]')) { const p = ((r.value - r.min) / (r.max - r.min || 1)) * 100 + '%'; if (r.dataset.p !== p) { r.dataset.p = p; r.style.setProperty('--p', p); } } }
-resize(); applyBg(); setEmboss(); syncInsideUI(); applyInside(); buildEnv(); syncLights(); renderLightUI('light'); renderLightUI('reflector'); loadExample(); tick();
+resize(); applyBg(); setEmboss(); syncInsideUI(); applyInside(); syncEdgeUI(); buildEnv(); syncLights(); renderLightUI('light'); renderLightUI('reflector'); loadExample(); tick();
 window.__app = { S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, camera, castStat, autoPickDieline, extraSheets }; // 점검용
 </script>
 </body>
