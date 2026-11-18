@@ -52,8 +52,9 @@ main{flex:1;min-width:0;position:relative;background:var(--stage);overflow:hidde
 .lbl-tab.add{margin-left:auto;padding:4px 10px;border-radius:999px;border:1px solid #dcdce3;color:inherit;background:#fff}
 .lbl-tab.add.on{background:#000;color:#fff;border-color:#000}
 .drop[hidden]{display:none}
-.label-drop{padding:10px;gap:8px;cursor:default;align-items:stretch;justify-content:flex-start}
-.label-drop:hover{transform:none}
+.drop.label-drop{padding:10px;gap:8px;cursor:default;display:block;flex:none;height:auto;min-height:118px;text-align:left}
+.drop.label-drop[hidden]{display:none}
+.drop.label-drop:hover{transform:none}
 .label-drop .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:8px;width:100%}
 .label-drop .tile{position:relative;aspect-ratio:1;border-radius:10px;background:#1c1c20 center/contain no-repeat;border:1.5px solid rgba(255,255,255,.14);color:#fff;font:inherit;font-size:10.5px;font-weight:500;line-height:1.25;cursor:pointer;display:flex;align-items:flex-end;padding:0;overflow:hidden}
 .label-drop .tile.on{border-color:var(--o)}
@@ -61,7 +62,7 @@ main{flex:1;min-width:0;position:relative;background:var(--stage);overflow:hidde
 .label-drop .tile .del{position:absolute;right:3px;top:3px;width:20px;height:20px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;font-size:14px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
 .label-drop .tile .del:hover{background:var(--o)}
 .label-drop .tile.plus{align-items:center;justify-content:center;font-size:22px;font-weight:400;border-style:dashed;background:none;color:rgba(255,255,255,.7)}
-.label-drop .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:none;border:0;color:#fff;font:inherit;font-weight:700;cursor:pointer;min-height:98px}
+.label-drop .empty{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:none;border:0;color:#fff;font:inherit;font-weight:700;cursor:pointer;min-height:98px}
 .label-drop .empty small{color:rgba(255,255,255,.55);font-weight:500;font-size:12px;letter-spacing:0;line-height:1.5}
 .label-drop.over{background:var(--o)}
 #label-pop{position:absolute;z-index:18;width:248px}
@@ -226,6 +227,8 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 .keys-list kbd{display:inline-block;min-width:18px;padding:1px 5px;border:1px solid #d9d9e0;border-bottom-width:2px;border-radius:5px;background:#fafafb;font-family:inherit;font-size:11px;font-weight:600;line-height:1.4;text-align:center}
 #label-gizmo{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;overflow:visible}
 #label-gizmo .ol{fill:none;stroke:var(--o);stroke-width:1.5;stroke-dasharray:5 4;stroke-linejoin:round}
+#box-gizmo{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;overflow:visible}
+#box-gizmo path{fill:none;stroke:var(--o);stroke-width:1.5;stroke-linejoin:round}
 #label-gizmo .stem{stroke:var(--o);stroke-width:1.5}
 #label-gizmo .hd{fill:#fff;stroke:var(--o);stroke-width:1.6;pointer-events:auto;cursor:nwse-resize}
 #label-gizmo .rot{fill:var(--o);stroke:#fff;stroke-width:1.6;pointer-events:auto;cursor:grab}
@@ -392,6 +395,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
             <dt><kbd>1</kbd> <kbd>3</kbd> <kbd>7</kbd> <kbd>9</kbd></dt><dd>정면 · 오른쪽 · 위 · 뒷면에서 보기</dd>
             <dt><kbd>4</kbd> <kbd>2</kbd></dt><dd>왼쪽 · 아래에서 보기</dd>
             <dt><kbd>Space</kbd> + 끌기</dt><dd>화면 이동</dd>
+            <dt>상자 누르기</dt><dd>상자 선택 · 한 번 더 누르면 그 면이나 접는 선 선택 · 선택한 상자를 끌면 이동</dd>
             <dt><kbd>Shift</kbd> + 끌기</dt><dd>상자를 제자리에서 돌리기</dd>
             <dt>오른쪽 아래 구체</dt><dd>고리를 끌어 상자 돌리기 · 두 번 누르면 세우기</dd>
             <dt>마우스 휠</dt><dd>슬라이더 · 숫자 칸 위에서 값 조절</dd>
@@ -420,6 +424,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
     <div class="row"><label class="name" for="label-lift">두께감 주기</label><input type="checkbox" id="label-lift" checked></div>
     <button type="button" class="btn" id="label-del">이 라벨 지우기</button>
   </section>
+  <svg id="box-gizmo" xmlns="http://www.w3.org/2000/svg" style="display:none" aria-label="선택한 상자"><path/></svg>
   <svg id="label-gizmo" xmlns="http://www.w3.org/2000/svg" style="display:none" aria-label="라벨 손잡이"><path class="ol"/><line class="stem"/><circle class="hd" r="5.5" data-h="0"/><circle class="hd" r="5.5" data-h="1"/><circle class="hd" r="5.5" data-h="2"/><circle class="hd" r="5.5" data-h="3"/><circle class="rot" r="6.5"><title>끌어서 회전 (Shift = 15°씩)</title></circle></svg>
   <div id="pie" hidden><div class="pie-ring"><i></i></div><div class="pie-title"></div><div class="pie-tip"></div></div>
   <div id="hud-b">
@@ -1255,6 +1260,7 @@ const S = {
   dielinePage: 1, struct: null, auto: new Map(), over: new Map(), dir: new Map(), t: 1, sel: null,
   uv: null, printCanvas: null, finishes: [], texBox: '', token: 0,
   lights: defaultLights(), reflectors: [], ambient: 100, paperCustom: null,
+  pos: { x: 0, z: 0 },   // 바닥 위에서 상자를 옮긴 거리
   bulge: new Map(), labels: [], li: -1,   // 라벨 여러 장, li = 지금 고른 라벨
 };
 Object.defineProperty(S, 'label', { get() { return S.labels[S.li] || null; }, set(v) { if (v) { S.labels.push(v); S.li = S.labels.length - 1; } else if (S.labels[S.li]) removeLabel(S.li); } });   // S.label = 지금 고른 라벨
@@ -1277,6 +1283,7 @@ const camera = new THREE.PerspectiveCamera(28, 1, 0.05, 200);
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true; controls.dampingFactor = 0.08;
 controls.addEventListener('change', () => { dirty = true; });
+controls.addEventListener('end', () => { popPlace = true; });   // 화면을 돌리고 나면 라벨 옵션 창도 라벨 옆으로 다시 붙인다
 
 const hemi = new THREE.HemisphereLight(0xffffff, 0xf2f3f5, HEMI_UNIT); scene.add(hemi);
 const ground = new THREE.Group(); scene.add(ground);
@@ -1446,7 +1453,7 @@ function resize() {
   camera.updateProjectionMatrix(); dirty = true;
 }
 new ResizeObserver(resize).observe(stage);
-function tick() { controls.update(); if (labelSel) updateLabelGizmo(); if (castDirty && ground.visible) drawCastShadows(); if (dirty) { renderer.render(scene, camera); dirty = false; } if (rangeTick++ % 6 === 0) paintRanges(); requestAnimationFrame(tick); }
+function tick() { controls.update(); if (labelSel) updateLabelGizmo(); if (boxSel) updateBoxGizmo(); if (castDirty && ground.visible) drawCastShadows(); if (dirty) { renderer.render(scene, camera); dirty = false; } if (rangeTick++ % 6 === 0) paintRanges(); requestAnimationFrame(tick); }
 
 /* ---------- 조명 · 반사판 ---------- */
 let lightObjs = [], envRT = null, envTimer = 0;
@@ -1911,7 +1918,8 @@ function updateFold() {
   lastM = wb.M; placeHighlight(); for (const L of S.labels) updateLabelBridge(L, wb.M);
   model.position.set(-wb.c[0] * UNIT, -wb.c[1] * UNIT, -wb.c[2] * UNIT);           // 상자 중심을 기준으로 돌린다
   poseGroup.quaternion.copy(wb.q);
-  poseGroup.position.set(-(wb.lo[0] + wb.hi[0]) / 2, -wb.lo[1], -(wb.lo[2] + wb.hi[2]) / 2); // 가장 낮은 점이 바닥에 닿게
+  poseGroup.position.set(S.pos.x - (wb.lo[0] + wb.hi[0]) / 2, -wb.lo[1], S.pos.z - (wb.lo[2] + wb.hi[2]) / 2); // 가장 낮은 점이 바닥에 닿게 (옮긴 만큼 더해서)
+  blob.position.x = S.pos.x; blob.position.z = S.pos.z;
   poseGroup.updateMatrixWorld(true);
   { const o = poseGroup.position; castPolys = pts.map((P) => P.map((p) => [p[0] + o.x, p[1] + o.y, p[2] + o.z])); castDirty = true; }
   blob.scale.set(Math.max(0.04, wb.hi[0] - wb.lo[0]) * 1.42, Math.max(0.04, wb.hi[2] - wb.lo[2]) * 1.42, 1);
@@ -1924,7 +1932,7 @@ function fitCamera(view) {
   const sx = span(0), sy = span(1), sz = span(2);
   const r = Math.hypot(sx, sy, sz) / 2;
   fitInfo = { r, h: sy };
-  controls.target.set(0, sy / 2, 0);
+  controls.target.set(S.pos.x, sy / 2, S.pos.z);
   const dist = (r / Math.sin((camera.fov * Math.PI) / 360)) * (gizmoGroup.visible ? 2.5 : 1.28); // 조명 위치를 볼 땐 멀리서
   const dirs = { front: [0, 0.12, 1], left: [-0.8, 0.34, 1], right: [0.8, 0.34, 1], back: [0.6, 0.35, -1], top: [0.35, 1.25, 1], bottom: [0.35, -1.25, 1], fit: null };
   let d = Array.isArray(view) ? view : dirs[view || 'right'];
@@ -2027,8 +2035,23 @@ function computeWrap(anchorId, at) {   // at = 기준면 좌표에서의 라벨 
     info.set(f.id, { f, m, inv: m.clone().invert(), n: new V(0, 0, 1).transformDirection(m), runs });
   }
   const tol = 3.5; // 조립된 상태에서 두 변이 이만큼(pt) 안으로 겹치면 맞닿은 것으로 본다
+  const tolD = Math.max(8.5, thickPt() * 2 + 4);   // 두께 여유로 살짝 어긋나게 그린 칼선: 두 변이 '두 평면이 만나는 선'에서 이만큼 안에 있으면 맞닿은 것으로 본다
   const shared = (F, G) => {
     let best = null;
+    if (Math.abs(F.n.dot(G.n)) <= 0.985) {
+      /* 꺾여 만나는 두 면: 두 평면이 만나는 선을 축으로 삼는다. 변끼리 조금 떨어져 있어도(뚜껑이 몸통보다 살짝 크게 그려진 상자 등)
+         이 선을 축으로 펴면 라벨이 모서리를 따라 어긋나지 않고 그대로 이어진다 */
+      const e = new V().crossVectors(F.n, G.n).normalize(), cF = F.runs.length ? F.runs[0].A : null, cG = G.runs.length ? G.runs[0].A : null; if (!cF || !cG) return null;
+      const uF = new V().crossVectors(e, F.n), den = uF.dot(G.n); if (Math.abs(den) < 1e-6) return null;
+      const P0 = cF.clone().addScaledVector(uF, cG.clone().sub(cF).dot(G.n) / den);                    // 두 평면 위에 모두 있는 한 점
+      const near = (r) => { if (Math.abs(r.dir.dot(e)) < 0.9985) return null; const a = r.A.clone().sub(P0), b = r.B.clone().sub(P0), ta = a.dot(e), tb = b.dot(e); if (a.addScaledVector(e, -ta).length() > tolD || b.addScaledVector(e, -tb).length() > tolD) return null; return { lo: Math.min(ta, tb), hi: Math.max(ta, tb), at: (t) => r.A.clone().addScaledVector(e, t - ta) }; };
+      for (const r of F.runs) { const a = near(r); if (!a) continue; for (const q of G.runs) { const b = near(q); if (!b) continue;
+        const s0 = Math.max(a.lo, b.lo), s1 = Math.min(a.hi, b.hi), ov = s1 - s0;
+        if (ov < Math.max(6, 0.3 * Math.min(r.len, q.len))) continue;
+        if (!best || ov > best.ov) best = { ov, P: P0, e, s0, s1, F0: a.at(s0), F1: a.at(s1), G0: b.at(s0), G1: b.at(s1) };   // F0·F1, G0·G1 = 각 면의 실제 변 위의 점 (이음 띠용)
+      } }
+      return best;
+    }
     for (const r of F.runs) for (const q of G.runs) {
       if (Math.abs(r.dir.dot(q.dir)) < 0.9985) continue;
       const qa = q.A.clone().sub(r.A), qb = q.B.clone().sub(r.A), ta = qa.dot(r.dir), tb = qb.dot(r.dir);
@@ -2150,6 +2173,14 @@ function updateLabelBridge(L, M) {
       if (h) for (const sg of h.segs) runs.push([sg[0], sg[1]]);
       else if (S.t > 0.999 && lk.sh) { const q0 = lk.sh.P.clone().addScaledVector(lk.sh.e, lk.sh.s0).applyMatrix4(F.inv), q1 = lk.sh.P.clone().addScaledVector(lk.sh.e, lk.sh.s1).applyMatrix4(F.inv); runs.push([[q0.x, q0.y], [q1.x, q1.y]]); }   // 조립해야 맞닿는 변은 다 접혔을 때만
       if (!runs.length) continue;
+      if (!h && lk.sh.F0) { // 변끼리 조금 떨어져 만나는 모서리: 한 면의 변 → 두 평면이 만나는 선 → 다른 면의 변 순서로 덮는다 (사이로 상자가 비치지 않게)
+        const sh = lk.sh, nM = F.n.clone().add(G.n).normalize(), L0 = sh.P.clone().addScaledVector(sh.e, sh.s0), L1 = sh.P.clone().addScaledVector(sh.e, sh.s1);
+        const loc = (w, X) => { const q = w.clone().applyMatrix4(X.inv); return [q.x, q.y]; }, up = (w, n) => w.clone().addScaledVector(n, lift);
+        const f0 = loc(sh.F0, F), f1 = loc(sh.F1, F), l0 = loc(L0, F), l1 = loc(L1, F), g0 = loc(sh.G0, G), g1 = loc(sh.G1, G);
+        quad(up(sh.F0, F.n), up(sh.F1, F.n), up(L1, nM), up(L0, nM), uvAt(lk.a, f0[0], f0[1]), uvAt(lk.a, f1[0], f1[1]), F.n, nM, suv(f0), suv(f1), uvAt(lk.a, l0[0], l0[1]), uvAt(lk.a, l1[0], l1[1]));
+        quad(up(L0, nM), up(L1, nM), up(sh.G1, G.n), up(sh.G0, G.n), uvAt(lk.a, l0[0], l0[1]), uvAt(lk.a, l1[0], l1[1]), nM, G.n, suv(g0), suv(g1), uvAt(lk.b, g0[0], g0[1]), uvAt(lk.b, g1[0], g1[1]));
+        continue;
+      }
       const cF = new V(faces.get(lk.a).center[0], faces.get(lk.a).center[1], 0).applyMatrix4(F.m), cG = new V(faces.get(lk.b).center[0], faces.get(lk.b).center[1], 0).applyMatrix4(G.m);
       const mid = new V((runs[0][0][0] + runs[0][1][0]) / 2, (runs[0][0][1] + runs[0][1][1]) / 2, 0).applyMatrix4(F.m), v = cF.sub(mid).add(cG.sub(mid));
       if (F.n.dot(v) + G.n.dot(v) >= 0) continue;                             // 안쪽으로 접힌 모서리는 라벨끼리 맞닿으므로 그대로 둔다
@@ -2184,7 +2215,7 @@ function updateLabelBridge(L, M) {
   g.computeBoundingSphere(); labelBridge.visible = true; dirty = true;
 }
 /* ---------- 3D 화면에서 라벨 직접 다루기: 끌어 옮기기, 모서리 손잡이로 크기, 둥근 손잡이로 회전 ---------- */
-let labelSel = false, labelBusy = false, popSide = 1, popClosed = false;   // 고른 상태, 끄는 중, 옵션 창을 붙일 쪽, 옵션 창만 닫음
+let labelSel = false, labelBusy = false, labelMoving = false, popSide = 1, popClosed = false, popPlace = true;   // 고른 상태, 손잡이를 쓰는 중, 끌어 옮기는 중, 옵션 창을 붙일 쪽, 옵션 창만 닫음, 옵션 창 자리를 다시 잡을 차례
 function surfaceAt(cx, cy) { // 화면의 한 점 아래에 보이는 상자 겉면: 면 번호와 그 면의 전개도 좌표
   const r = renderer.domElement.getBoundingClientRect(), fronts = [];
   pickRay.setFromCamera(new THREE.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1), camera);
@@ -2236,9 +2267,11 @@ function updateLabelGizmo() {
   if (pts.length < 3 || cs.some((p) => !p) || !mid) { lg.style.display = 'none'; pop.hidden = true; return; }
   { // 옵션 창: 라벨을 누른 쪽(왼쪽·오른쪽)의 위에 붙인다. 끄는 동안에는 숨긴다
     const vis = pts.filter((p) => p.facing), use = vis.length ? vis : pts, xs = use.map((p) => p[0]), ys = use.map((p) => p[1]);
-    pop.hidden = labelBusy || popClosed; if (!pop.hidden) $('label-pop-name').textContent = L.name;
-    const w = pop.offsetWidth || 248, hgt = pop.offsetHeight || 190, x = popSide > 0 ? Math.max(...xs) + 34 : Math.min(...xs) - 34 - w;
-    pop.style.left = Math.max(8, Math.min(sr.width - w - 64, x)) + 'px'; pop.style.top = Math.max(64, Math.min(sr.height - hgt - 8, Math.min(...ys) - 6)) + 'px';
+    pop.hidden = labelMoving || popClosed; if (!pop.hidden) $('label-pop-name').textContent = L.name;
+    if (popPlace && !pop.hidden) {
+      const w = pop.offsetWidth || 248, hgt = pop.offsetHeight || 190, x = popSide > 0 ? Math.max(...xs) + 34 : Math.min(...xs) - 34 - w;
+      pop.style.left = Math.max(8, Math.min(sr.width - w - 64, x)) + 'px'; pop.style.top = Math.max(64, Math.min(sr.height - hgt - 8, Math.min(...ys) - 6)) + 'px'; popPlace = false;
+    }
   }
   lg.style.display = '';
   let d = '', pen = false;   // 상자 뒤쪽으로 넘어간 부분(보이지 않는 면)은 테두리와 손잡이를 그리지 않는다
@@ -2262,7 +2295,7 @@ function initLabel3D() {
     e.stopImmediatePropagation(); e.preventDefault(); canvas.setPointerCapture(e.pointerId);
     if (S.li !== g.i) { S.li = g.i; syncLabelUI(); renderLabelTiles(); }
     { const L = S.label, w = wrapToWorld([L.x, L.y]), r = canvas.getBoundingClientRect(); if (w) { w.project(camera); popSide = e.clientX >= (w.x * 0.5 + 0.5) * r.width + r.left ? 1 : -1; } }   // 라벨의 어느 쪽을 눌렀는지
-    labelSel = true; popClosed = false; labelBusy = true; drag = { id: e.pointerId, gx: g.gx, gy: g.gy }; canvas.style.cursor = 'move'; updateLabelGizmo();
+    labelSel = true; if (boxSel) { boxSel = false; updateBoxGizmo(); } popClosed = false; labelMoving = true; popPlace = true; drag = { id: e.pointerId, gx: g.gx, gy: g.gy }; canvas.style.cursor = 'move'; updateLabelGizmo();
   }, true);
   canvas.addEventListener('pointermove', (e) => {
     if (!drag) return;
@@ -2278,7 +2311,7 @@ function initLabel3D() {
     } else updateLabelUV();
     updateLabelGizmo();
   });
-  const end = () => { if (!drag) return; try { canvas.releasePointerCapture(drag.id); } catch (_) { /* 이미 풀림 */ } drag = null; labelBusy = false; canvas.style.cursor = ''; refreshWrap(); syncLabelUI(); updateLabelGizmo(); };
+  const end = () => { if (!drag) return; try { canvas.releasePointerCapture(drag.id); } catch (_) { /* 이미 풀림 */ } drag = null; labelMoving = false; popPlace = true; canvas.style.cursor = ''; refreshWrap(); syncLabelUI(); updateLabelGizmo(); };
   canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end);
   // 손잡이: 기준면의 평면 위에서 라벨 가운데까지의 거리(크기)와 방향(회전)을 잰다
   const lg = $('label-gizmo'); let hd = null;
@@ -2298,6 +2331,78 @@ function initLabel3D() {
   $('label-pop-x').addEventListener('click', () => { popClosed = true; updateLabelGizmo(); });
   lg.addEventListener('pointerup', hend); lg.addEventListener('pointercancel', hend);
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && labelSel && !drag && !hd) { labelSel = false; updateLabelGizmo(); } });
+}
+/* ---------- 3D 화면에서 상자 고르기 · 옮기기 ----------
+   상자를 한 번 누르면 상자 전체가 선택된다 (주황 테두리). 그 상태에서 면이나 접는 선을 누르면 전개도의 그 면·선이 선택되고,
+   끌면 상자가 바닥 위에서 움직인다. 빈 곳을 누르거나 Esc를 누르면 풀린다. 끌기만 하면(선택 전) 전처럼 화면이 돈다 */
+let boxSel = false;
+function updateBoxGizmo() {
+  const bg = $('box-gizmo');
+  if (!boxSel || !castPolys.length) { bg.style.display = 'none'; return; }
+  const r = renderer.domElement.getBoundingClientRect(), sr = $('stage').getBoundingClientRect(), v = new THREE.Vector3(), P = [];
+  for (const poly of castPolys) for (const p of poly) { v.set(p[0], p[1], p[2]).project(camera); if (v.z > 1) continue; P.push([(v.x * 0.5 + 0.5) * r.width + r.left - sr.left, (-v.y * 0.5 + 0.5) * r.height + r.top - sr.top]); }
+  if (P.length < 3) { bg.style.display = 'none'; return; }
+  P.sort((a, b) => a[0] - b[0] || a[1] - b[1]);   // 화면에 비친 꼭짓점들의 볼록 껍질 = 상자의 윤곽
+  const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]), lo = [], up = [];
+  for (const q of P) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+  for (let i = P.length - 1; i >= 0; i--) { const q = P[i]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+  const hull = lo.slice(0, -1).concat(up.slice(0, -1)); let cx = 0, cy = 0; for (const q of hull) { cx += q[0]; cy += q[1]; } cx /= hull.length; cy /= hull.length;
+  const d = hull.map((q, i) => { const dx = q[0] - cx, dy = q[1] - cy, l = Math.hypot(dx, dy) || 1; return (i ? 'L' : 'M') + (q[0] + (dx / l) * 5).toFixed(1) + ' ' + (q[1] + (dy / l) * 5).toFixed(1); }).join('') + 'Z';   // 상자에서 조금 띄워서
+  bg.firstElementChild.setAttribute('d', d); bg.style.display = '';
+}
+function setBoxSel(on) { if (boxSel === on) return; boxSel = on; if (!on && S.sel) select(null); updateBoxGizmo(); }
+function boxAt(cx, cy) { // 화면의 한 점 아래의 상자: 맞은 자리(세계 좌표)와, 면이면 그 면 번호·전개도 좌표
+  if (!lastM) return null;
+  const r = renderer.domElement.getBoundingClientRect();
+  pickRay.setFromCamera(new THREE.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1), camera);
+  const objs = []; for (const o of faceObjs.values()) { objs.push(o.front, o.back); if (o.wall) objs.push(o.wall); }
+  const hit = pickRay.intersectObjects(objs, false)[0]; if (!hit) return null;
+  let id = null, front = null; for (const [k, o] of faceObjs) if (o.front === hit.object || o.back === hit.object || o.wall === hit.object) { id = k; front = o.front; break; }
+  const l = front.worldToLocal(hit.point.clone());
+  return { id, x: l.x, y: l.y, point: hit.point.clone(), dist: hit.distance };
+}
+function pickPart(h) { // 누른 자리 가까이에 접는 선이 있으면 그 선, 아니면 그 면
+  const st = S.struct, px = (h.dist * 2 * Math.tan((camera.fov * Math.PI) / 360)) / (renderer.domElement.clientHeight || 1) / UNIT;   // 화면 1픽셀이 그 자리에서 몇 pt인지
+  let best = null;
+  for (const hg of st.hinges) {
+    if (hg.weld || (hg.parent !== h.id && hg.child !== h.id)) continue;
+    const ax = hg.p1[0] - hg.p0[0], ay = hg.p1[1] - hg.p0[1], t = Math.max(0, Math.min(1, ((h.x - hg.p0[0]) * ax + (h.y - hg.p0[1]) * ay) / (ax * ax + ay * ay || 1)));
+    const d = Math.hypot(h.x - hg.p0[0] - ax * t, h.y - hg.p0[1] - ay * t); if (d <= px * 9 && (!best || d < best.d)) best = { d, id: hg.id };
+  }
+  return best ? { type: 'hinge', id: best.id } : { type: 'face', id: h.id };
+}
+function initBox3D() {
+  let tap = null, drag = null;
+  const skip = (e) => e.button !== 0 || !S.struct || e.shiftKey || stage.classList.contains('picking') || canvas.style.cursor === 'grab';
+  canvas.addEventListener('pointerdown', (e) => {
+    tap = drag = null; if (skip(e)) return;
+    const h = boxAt(e.clientX, e.clientY);
+    if (!boxSel || !h) { tap = { x: e.clientX, y: e.clientY, h }; return; }   // 아직 고르지 않았거나 빈 곳: 화면 돌리기는 그대로 두고, 손을 뗄 때 '눌렀는지'만 본다
+    e.stopImmediatePropagation(); e.preventDefault(); canvas.setPointerCapture(e.pointerId);
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, h, moved: false, plane: new THREE.Plane(new THREE.Vector3(0, 1, 0), -h.point.y), p0: h.point, pos0: { ...S.pos } };
+  }, true);
+  canvas.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    if (!drag.moved) { if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 4) return; drag.moved = true; canvas.style.cursor = 'move'; }
+    const r = canvas.getBoundingClientRect();
+    pickRay.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+    const q = pickRay.ray.intersectPlane(drag.plane, new THREE.Vector3()); if (!q) return;   // 잡은 높이의 수평면 위에서 움직인 만큼
+    let dx = q.x - drag.p0.x, dz = q.z - drag.p0.z; const lim = (fitInfo ? fitInfo.r : 1) * 12, l = Math.hypot(drag.pos0.x + dx, drag.pos0.z + dz);
+    S.pos = { x: drag.pos0.x + dx, z: drag.pos0.z + dz }; if (l > lim) { S.pos.x *= lim / l; S.pos.z *= lim / l; }
+    updateFold(); updateBoxGizmo();
+  });
+  const end = (e) => {
+    if (drag) {
+      const d = drag; drag = null; try { canvas.releasePointerCapture(d.id); } catch (_) { /* 이미 풀림 */ } canvas.style.cursor = '';
+      if (!d.moved && e.type === 'pointerup') { const part = pickPart(d.h), same = S.sel && S.sel.type === part.type && S.sel.id === part.id; if (!same) select(part); }
+      updateBoxGizmo(); return;
+    }
+    if (!tap || e.type !== 'pointerup') { tap = null; return; }
+    const t = tap; tap = null; if (Math.hypot(e.clientX - t.x, e.clientY - t.y) >= 4) return;   // 끌었으면 화면 돌리기였다
+    setBoxSel(!!t.h);
+  };
+  canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end);
+  window.addEventListener('keydown', (e) => { if (e.key !== 'Escape' || !boxSel || drag || !$('edit-dlg').hidden) return; if (S.sel) select(null); else setBoxSel(false); });
 }
 function refreshWrap(L = S.label) {
   if (!L || !S.struct || !S.struct.faces.length) return; const rt = labelRT(L);
@@ -2324,7 +2429,7 @@ function histInputs() {
 }
 function histSnap() {
   return {
-    pose: [pose.base.x, pose.base.y, pose.base.z, pose.base.w, pose.rx, pose.ry, pose.rz].map((v) => +v.toFixed(5)),
+    pose: [pose.base.x, pose.base.y, pose.base.z, pose.base.w, pose.rx, pose.ry, pose.rz].map((v) => +v.toFixed(5)), pos: [+S.pos.x.toFixed(4), +S.pos.z.toFixed(4)],
     over: [...S.over], dir: [...S.dir], bulge: [...S.bulge].map(([k, v]) => [k, { ...v }]),
     edits: S.edits.map((o) => ({ ...o })), moves: S.moves.map((o) => ({ ...o })), flip: !!S.flip, inMirror: !!S.inMirror,
     inside: { ...S.inside }, edge: { ...S.edge }, lights: JSON.parse(JSON.stringify(S.lights)), reflectors: JSON.parse(JSON.stringify(S.reflectors)),
@@ -2356,14 +2461,14 @@ async function histApply(h) {
       await rebuild(tex, false, true); await idle();
     }
     // ③ 나머지 상태
-    pose.base.set(h.pose[0], h.pose[1], h.pose[2], h.pose[3]); pose.rx = h.pose[4]; pose.ry = h.pose[5]; pose.rz = h.pose[6];
+    pose.base.set(h.pose[0], h.pose[1], h.pose[2], h.pose[3]); pose.rx = h.pose[4]; pose.ry = h.pose[5]; pose.rz = h.pose[6]; S.pos = { x: h.pos[0], z: h.pos[1] };
     S.over = new Map(h.over); S.dir = new Map(h.dir); S.bulge = new Map(h.bulge.map(([k, v]) => [k, { ...v }]));
     S.inside = { ...h.inside }; S.edge = { ...h.edge }; S.lights = JSON.parse(JSON.stringify(h.lights)); S.reflectors = JSON.parse(JSON.stringify(h.reflectors));
     for (const L of S.labels) if (!h.labels.some((o) => o.L === L)) dropLabelMeshes(L);
     S.labels = h.labels.map((o) => Object.assign(o.L, { x: o.x, y: o.y, anchor: o.anchor, rot: o.rot, scale: o.scale, lift: o.lift }));
     S.li = S.labels.length ? Math.max(0, Math.min(S.li, S.labels.length - 1)) : -1; if (!S.label) labelSel = false;
     syncLights(); renderLightUI('light'); renderLightUI('reflector'); syncInsideUI(); applyInside(); syncEdgeUI(); applyEdge();
-    buildMeshes(); updateFold(); if (S.sel) syncSel(); updateChips(); renderMap(); renderLabelTiles(); syncLabelUI(); updateLabelGizmo(); dirty = true;
+    buildMeshes(); updateFold(); if (S.sel) syncSel(); updateChips(); renderMap(); renderLabelTiles(); syncLabelUI(); updateLabelGizmo(); updateBoxGizmo(); dirty = true;
   } finally { hist.applying = false; }
 }
 async function histGo(d) { // d = -1 되돌리기, +1 다시 하기
@@ -2399,7 +2504,7 @@ function renderLabelTiles() {
     const t = el('div', { class: 'tile' + (i === S.li && labelSel ? ' on' : ''), role: 'button', tabindex: '0', title: L.name }); t.style.backgroundImage = `url(${L.thumb})`;
     const x = el('button', { type: 'button', class: 'del', 'aria-label': L.name + ' 지우기', text: '×' });
     x.addEventListener('click', (e) => { e.stopPropagation(); removeLabel(i); applyLabel(); });
-    t.addEventListener('click', () => { S.li = i; labelSel = true; popClosed = false; applyLabel(); });
+    t.addEventListener('click', () => { S.li = i; labelSel = true; popClosed = false; popPlace = true; applyLabel(); });
     t.append(el('span', { text: L.name }), x); grid.append(t);
   });
   const add = el('button', { type: 'button', class: 'tile plus', 'aria-label': '라벨 더 올리기', text: '+' }); add.addEventListener('click', () => $('label-file').click()); grid.append(add);
@@ -2445,7 +2550,7 @@ async function loadLabel(file) {
     let home = S.struct.faces.find((f) => f.id === S.struct.rootId) || S.struct.faces[0]; // 정면 한가운데에 먼저 붙인다
     S.label = { name: file.name, art, w: box.maxX - box.minX, h: box.maxY - box.minY, poly: poly.map((q) => [q[0] - cx, q[1] - cy]), x: home.center[0], y: home.center[1], anchor: home.id, rot: home.id === S.struct.rootId && S.roll ? 180 : 0, scale: 1, lift: true };   // 뚜껑이 정면이면 그림과 같은 방향으로 세워 붙인다
     doc.destroy();
-    labelSel = true; popClosed = false; popSide = 1; applyLabel(); histSoon();   // 손잡이를 보여 주어 바로 옮길 수 있음을 알린다
+    labelSel = true; popClosed = false; popSide = 1; popPlace = true; applyLabel(); histSoon();   // 손잡이를 보여 주어 바로 옮길 수 있음을 알린다
   } catch (err) { console.error(err); setWarn(err && err.message ? err.message : '라벨 파일을 읽지 못했습니다.'); }
   await busy('');
 }
@@ -2837,7 +2942,7 @@ async function loadFile(file) {
     S.inside.auto = true;
     const picked = autoPickDieline(layers, pages); if (picked) S.pickedLayer = picked.name;
     S.sheets = extraSheets(layers, pages);
-    pose.base.identity(); pose.rx = pose.ry = pose.rz = 0; syncPoseUI(); S.poseFresh = true;
+    pose.base.identity(); pose.rx = pose.ry = pose.rz = 0; S.pos = { x: 0, z: 0 }; boxSel = false; syncPoseUI(); S.poseFresh = true;
     $('file-name').textContent = file.name;
     $('file-sub').textContent = `${doc.numPages}쪽 · 다른 파일은 다시 눌러서`;
     await rebuild(true, true);
@@ -3317,7 +3422,7 @@ $('side-mirror').addEventListener('click', () => { if (!S.twin) return; S.inMirr
 /* 스포이드: 누른 뒤 상자를 찍으면 그 자리의 인쇄 색(조명 영향을 뺀 원래 색)을 가져온다 */
 let pickCb = null, pickBtn = null;
 const pickRay = new THREE.Raycaster();
-initLabel3D();
+initLabel3D(); initBox3D();
 function endPick() { if (pickBtn) pickBtn.setAttribute('aria-pressed', 'false'); pickCb = pickBtn = null; stage.classList.remove('picking'); }
 function colorAt(cx, cy) {
   const r = renderer.domElement.getBoundingClientRect();
@@ -3555,7 +3660,7 @@ for (const k of ['light', 'reflector', 'bg']) { // 화면 안 도구 막대로 �
 let rangeTick = 0;
 function paintRanges() { for (const r of document.querySelectorAll('input[type="range"]')) { const p = ((r.value - r.min) / (r.max - r.min || 1)) * 100 + '%'; if (r.dataset.p !== p) { r.dataset.p = p; r.style.setProperty('--p', p); } } }
 resize(); applyBg(); setEmboss(); syncInsideUI(); applyInside(); syncEdgeUI(); buildEnv(); syncLights(); renderLightUI('light'); renderLightUI('reflector'); loadExample(); tick();
-window.__app = { hist, histGo, labelSelected: () => labelSel, surfaceAt, wrapToWorld, S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, refreshWrap, renderMap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, camera, castStat, autoPickDieline, extraSheets }; // 점검용
+window.__app = { hist, histGo, labelSelected: () => labelSel, boxSelected: () => boxSel, boxAt, surfaceAt, wrapToWorld, S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, refreshWrap, renderMap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, camera, castStat, autoPickDieline, extraSheets }; // 점검용
 </script>
 </body>
 </html>
