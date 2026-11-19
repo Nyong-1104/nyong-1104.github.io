@@ -1828,7 +1828,60 @@ function viewSelected() { // 고른 면(접는선이면 그 선이 붙은 면)�
   const n = new THREE.Vector3(0, 0, 1).transformDirection(o.front.matrixWorld);
   fitCamera([n.x, n.y, n.z + (Math.abs(n.y) > 0.98 ? 0.06 : 0)]);
 }
+/* ---------- 모서리 맞추기 ----------
+   칼선은 종이 두께만큼 여유를 두고 그린다 (뚜껑을 상자보다 0.5mm 작게, 옆벽 접는 선을 뚜껑 접는 선보다 조금 낮게 …).
+   실제 종이는 휘면서 그 틈이 닫히지만, 그린 그대로 접으면 뚜껑과 벽 사이가 벌어지고 모서리에 작은 뿔이 선다.
+   그래서 조립된 상태에서는, 직각으로 만나는 두 면의 가장자리가 '두 평면이 만나는 선'에서 1.6mm 안에 있으면 그 선까지 늘리거나 줄여서 붙인다.
+   끼워 넣는 날개(끝 날개)는 건드리지 않는다. 펼친 상태에서는 칼선 그대로다 */
+const SEAL_TOL = 4.6;   // pt (≈ 1.6mm)
+let sealMap = new Map(), sealKey = '';
+const outerOf = (f) => { const sl = sealMap.get(f.id); return sl ? sl.outer : f.outer; };
+function computeSeal() {
+  const st = S.struct, out = new Map(); if (!st || !st.faces.length) return out;
+  const M = computeFold(st, effAngles(), 1), hOf = new Map(st.hinges.map((h) => [h.child, h])), linked = new Set();
+  for (const h of st.hinges) { linked.add(h.parent + '_' + h.child); linked.add(h.child + '_' + h.parent); }
+  const F = [];
+  for (const f of st.faces) {
+    const h = hOf.get(f.id); if ((h && (h.leaf || h.weld || h.curved)) || S.bulge.has(f.id) || f.outer.length < 3) continue;
+    const m = M.get(f.id); F.push({ f, o: [m[12], m[13], m[14]], ux: [m[0], m[1], m[2]], uy: [m[4], m[5], m[6]], n: [m[8], m[9], m[10]] });
+  }
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2], cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const get = (X) => { let r = out.get(X.f.id); if (!r) out.set(X.f.id, (r = { outer: X.f.outer.map((q) => [q[0], q[1]]), lines: [] })); return r; };
+  for (let i = 0; i < F.length; i++) for (let j = i + 1; j < F.length; j++) {
+    const A = F[i], B = F[j]; if (linked.has(A.f.id + '_' + B.f.id) || Math.abs(dot(A.n, B.n)) > 0.02) continue;   // 직각으로 만나는 면끼리만
+    const D = cross(A.n, B.n), dl = Math.hypot(D[0], D[1], D[2]), d = [D[0] / dl, D[1] / dl, D[2] / dl];
+    const hA = dot(A.n, A.o), hB = dot(B.n, B.o), c1 = cross(B.n, D), c2 = cross(D, A.n), P = [0, 1, 2].map((k) => (hA * c1[k] + hB * c2[k]) / (dl * dl));   // 두 평면 위에 모두 있는 한 점
+    const side = (X) => { // 그 면의 좌표로 본 '만나는 선', 그리고 그 선에 나란히 붙어 있는 변들
+      const r = [P[0] - X.o[0], P[1] - X.o[1], P[2] - X.o[2]], p = [dot(r, X.ux), dot(r, X.uy)], e = [dot(d, X.ux), dot(d, X.uy)], O = X.f.outer, runs = [];
+      const sOf = (q) => (q[0] - p[0]) * e[0] + (q[1] - p[1]) * e[1], dOf = (q) => (q[0] - p[0]) * e[1] - (q[1] - p[1]) * e[0];
+      let dev = 0;
+      for (let k = 0; k < O.length; k++) {
+        const a = O[k], b = O[(k + 1) % O.length], len = Math.hypot(b[0] - a[0], b[1] - a[1]); if (len < 0.5) continue;
+        if (Math.abs((b[0] - a[0]) * e[1] - (b[1] - a[1]) * e[0]) / len > 0.05 || Math.abs(dOf(a)) > SEAL_TOL || Math.abs(dOf(b)) > SEAL_TOL) continue;
+        runs.push([Math.min(sOf(a), sOf(b)), Math.max(sOf(a), sOf(b))]); dev = Math.max(dev, Math.abs(dOf(a)), Math.abs(dOf(b)));
+      }
+      return { X, p, e, sOf, dOf, runs, dev };
+    };
+    const a = side(A); if (!a.runs.length) continue; const b = side(B); if (!b.runs.length) continue;
+    let ov = 0, lo = Infinity, hi = -Infinity;
+    for (const r of a.runs) for (const q of b.runs) { const s0 = Math.max(r[0], q[0]), s1 = Math.min(r[1], q[1]); if (s1 > s0) { ov += s1 - s0; lo = Math.min(lo, s0); hi = Math.max(hi, s1); } }
+    if (ov < 8.5) continue;                                 // 3mm 넘게 나란히 맞닿아 있어야 모서리로 본다
+    for (const sd of [a, b]) {
+      const r = get(sd.X); r.lines.push({ p: sd.p, e: sd.e, lo: lo - SEAL_TOL, hi: hi + SEAL_TOL });
+      sd.X.f.outer.forEach((q0, k) => { if (Math.abs(sd.dOf(q0)) > SEAL_TOL) return; const s0 = sd.sOf(q0); if (s0 < lo - SEAL_TOL || s0 > hi + SEAL_TOL) return;
+        const q = r.outer[k], dd = (q[0] - sd.p[0]) * sd.e[1] - (q[1] - sd.p[1]) * sd.e[0]; q[0] -= dd * sd.e[1]; q[1] += dd * sd.e[0]; });   // 선 위로 옮긴다
+    }
+  }
+  for (const [id, r] of out) { const f = st.faces.find((x) => x.id === id); if (!r.outer.some((q, k) => Math.abs(q[0] - f.outer[k][0]) + Math.abs(q[1] - f.outer[k][1]) > 0.02)) r.same = true; }
+  return out;
+}
+function refreshSeal() { // 달라졌으면 true (면을 다시 만들어야 한다)
+  const m = S.t > 0.999 ? computeSeal() : new Map();
+  const k = [...m].map(([id, r]) => id + ':' + r.outer.map((q) => q[0].toFixed(2) + ',' + q[1].toFixed(2)).join(' ')).join('|');
+  if (k === sealKey) return false; sealKey = k; sealMap = m; return true;
+}
 function buildMeshes() {
+  refreshSeal();
   for (const o of faceObjs.values()) { o.front.geometry.dispose(); if (o.wall) o.wall.geometry.dispose(); model.remove(o.front, o.back); if (o.wall) model.remove(o.wall); if (o.label) model.remove(o.label); }
   faceObjs = new Map();
   if (!S.struct) return;
@@ -1837,15 +1890,17 @@ function buildMeshes() {
   const ek = (a, b) => a[0] + ',' + a[1] + '>' + b[0] + ',' + b[1];
   for (const e of S.struct.edges) { edgeType.set(ek(e.a, e.b), e.type); edgeType.set(ek(e.b, e.a), e.type); }
   for (const f of S.struct.faces) {
-    const contour = f.outer.map((p) => new THREE.Vector2(p[0], p[1]));
+    const sl = sealMap.get(f.id), outer = sl ? sl.outer : f.outer, orig = f.outer.concat(...f.holes);
+    const onSeal = (q) => sl && sl.lines.some((ln) => { const s0 = (q[0] - ln.p[0]) * ln.e[0] + (q[1] - ln.p[1]) * ln.e[1]; return s0 >= ln.lo && s0 <= ln.hi && Math.abs((q[0] - ln.p[0]) * ln.e[1] - (q[1] - ln.p[1]) * ln.e[0]) < 0.05; });
+    const contour = outer.map((p) => new THREE.Vector2(p[0], p[1]));
     const holes = f.holes.map((h) => h.map((p) => new THREE.Vector2(p[0], p[1])));
-    let pts = f.outer.concat(...f.holes);
+    let pts = outer.concat(...f.holes);
     let tris = THREE.ShapeUtils.triangulateShape(contour, holes).map((q) => {
       const a = pts[q[0]], b = pts[q[1]], c = pts[q[2]];
       return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]) > 0 ? [q[0], q[1], q[2]] : [q[0], q[2], q[1]];
     });
     const bnd = new Map(); let base = 0;
-    for (const lp of [f.outer, ...f.holes]) { for (let i = 0; i < lp.length; i++) { const a = base + i, b = base + ((i + 1) % lp.length); if (edgeType.get(ek(pts[a], pts[b])) === 'cut') bnd.set(a < b ? a + '_' + b : b + '_' + a, [a, b]); } base += lp.length; }
+    for (const lp of [f.outer, ...f.holes]) { for (let i = 0; i < lp.length; i++) { const a = base + i, b = base + ((i + 1) % lp.length); if (edgeType.get(ek(orig[a], orig[b])) === 'cut' && !(onSeal(pts[a]) && onSeal(pts[b]))) bnd.set(a < b ? a + '_' + b : b + '_' + a, [a, b]); } base += lp.length; }
     const bg = S.bulge.get(f.id); let zs = null;
     if (bg && bg.amt) { ({ pts, tris } = subdivide(pts, tris, bnd, 9)); zs = bulgeHeights(f, pts, bg); }
     const pos = new Float32Array(pts.length * 3), uv = new Float32Array(pts.length * 2), nrm = new Float32Array(pts.length * 3), uvI = new Float32Array(pts.length * 2), uvP = new Float32Array(pts.length * 2);
@@ -1903,6 +1958,7 @@ function worldBox(t, collect) { // 접힘 정도 t에서, 자세까지 적용한
 }
 function updateFold() {
   if (!S.struct || !S.struct.faces.length) return;
+  if (refreshSeal()) { buildMeshes(); for (const L of S.labels) refreshWrap(L); }   // 모서리 맞춤이 달라졌다 (조립 ↔ 펼침, 접는 각도)
   bakeBevel(); if (bevelKey !== 'off') bevelU.amt.value = S.t;   // 펼쳐 놓으면 평평하고, 접을수록 모서리가 둥글게 빛난다
   const pts = [], wb = worldBox(S.t, pts);
   const t = thickPt(), lift = labelLift(), T = new THREE.Matrix4();
@@ -2031,7 +2087,7 @@ function computeWrap(anchorId, at) {   // at = 기준면 좌표에서의 라벨 
   const st = S.struct, M = computeFold(st, effAngles(), 1), V = THREE.Vector3, info = new Map();
   for (const f of st.faces) {
     const m = new THREE.Matrix4().fromArray(M.get(f.id));
-    const runs = straightRuns(f.outer).map(([a, b]) => { const A = new V(a[0], a[1], 0).applyMatrix4(m), B = new V(b[0], b[1], 0).applyMatrix4(m); return { A, len: A.distanceTo(B), dir: B.clone().sub(A).normalize(), B }; });
+    const runs = straightRuns(outerOf(f)).map(([a, b]) => { const A = new V(a[0], a[1], 0).applyMatrix4(m), B = new V(b[0], b[1], 0).applyMatrix4(m); return { A, len: A.distanceTo(B), dir: B.clone().sub(A).normalize(), B }; });
     info.set(f.id, { f, m, inv: m.clone().invert(), n: new V(0, 0, 1).transformDirection(m), runs });
   }
   const tol = 3.5; // 조립된 상태에서 두 변이 이만큼(pt) 안으로 겹치면 맞닿은 것으로 본다
@@ -2079,7 +2135,7 @@ function computeWrap(anchorId, at) {   // at = 기준면 좌표에서의 라벨 
     const mp = (p) => { const w = new V(p[0], p[1], 0).applyMatrix4(toF); return affApply(TF, [w.x, w.y]); };
     const q0 = mp([0, 0]), q1 = mp([1, 0]), q2 = mp([0, 1]);
     const T = { a: q1[0] - q0[0], b: q1[1] - q0[1], c: q2[0] - q0[0], d: q2[1] - q0[1], tx: q0[0], ty: q0[1] };
-    const poly = G.f.outer.map((p) => affApply(T, p));
+    const poly = outerOf(G.f).map((p) => affApply(T, p));
     return polysTouch(poly, Fpoly) ? { T, poly, dz: c.z } : null;
   };
   const distTo = (poly) => { // 라벨 자리에서 그 면까지의 거리 (라벨에 가까운 길로 이어진 자리를 먼저 쓴다)
@@ -2088,7 +2144,7 @@ function computeWrap(anchorId, at) {   // at = 기준면 좌표에서의 라벨 
     return d;
   };
   const frames = new Map([[anchorId, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }]]);
-  const placed = [{ id: anchorId, poly: info.get(anchorId).f.outer, z: 0 }];
+  const placed = [{ id: anchorId, poly: outerOf(info.get(anchorId).f), z: 0 }];
   const cands = [], links = []; let seq = 0;
   const expand = (fid, depth, z) => { // fid에서 넘어갈 수 있는 면을 후보로 올린다
     const F = info.get(fid), TF = frames.get(fid), Fpoly = placed.find((pl) => pl.id === fid).poly;
@@ -2108,7 +2164,7 @@ function computeWrap(anchorId, at) {   // at = 기준면 좌표에서의 라벨 
       const side = (p) => Math.sign((p1[0] - p0[0]) * (p[1] - p0[1]) - (p1[1] - p0[1]) * (p[0] - p0[0]));
       const cG = affApply(T, G.f.center);
       if (side(affApply(TF, F.f.center)) === side(cG)) continue;                 // 같은 쪽으로 겹쳐 들어가는 면(끼움 날개 등)은 제외
-      const poly = G.f.outer.map((p) => affApply(T, p));
+      const poly = outerOf(G.f).map((p) => affApply(T, p));
       cands.push({ id: G.f.id, from: fid, sh, T, poly, cG, depth: depth + 1, z, kind: 'edge', ov: sh.ov, cost: distTo(poly), seq: seq++ });
     }
   };
@@ -3660,7 +3716,7 @@ for (const k of ['light', 'reflector', 'bg']) { // 화면 안 도구 막대로 �
 let rangeTick = 0;
 function paintRanges() { for (const r of document.querySelectorAll('input[type="range"]')) { const p = ((r.value - r.min) / (r.max - r.min || 1)) * 100 + '%'; if (r.dataset.p !== p) { r.dataset.p = p; r.style.setProperty('--p', p); } } }
 resize(); applyBg(); setEmboss(); syncInsideUI(); applyInside(); syncEdgeUI(); buildEnv(); syncLights(); renderLightUI('light'); renderLightUI('reflector'); loadExample(); tick();
-window.__app = { hist, histGo, labelSelected: () => labelSel, boxSelected: () => boxSel, boxAt, surfaceAt, wrapToWorld, S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, refreshWrap, renderMap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, camera, castStat, autoPickDieline, extraSheets }; // 점검용
+window.__app = { hist, histGo, labelSelected: () => labelSel, boxSelected: () => boxSel, boxAt, faceObjs, lastM: () => lastM, effAngles, sealMap: () => sealMap, surfaceAt, wrapToWorld, S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, refreshWrap, renderMap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, camera, castStat, autoPickDieline, extraSheets }; // 점검용
 </script>
 </body>
 </html>
