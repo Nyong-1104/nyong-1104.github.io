@@ -2126,7 +2126,7 @@ function foldedBox(M) { // 조립된 모양의 크기 (pt, 자세 적용 전)
 /* ---------- 순서대로 접기 ----------
    켜면 접는 선이 단계마다 차례로 접힌다. 기본 순서는 구조에서 계산한다:
    세워 놓았을 때 세로인 접는 선(몸통) → 아래쪽(안에 깔리는 날개부터) → 위쪽. 단계는 막대 위의 칩에서 바꾼다 */
-const seqUI = { open: false, active: -1, hover: -1, names: [] };   // open = 순서변경 창이 열려 있다, active = 고른 단계
+const seqUI = { open: false, active: -1, hover: -1, mute: -1, names: [] };   // open = 순서변경 창이 열려 있다, active = 고른 단계
 function seqHinges() { const ang = effAngles(); return S.struct.hinges.filter((h) => !h.weld && Math.abs(ang.get(h.id) ?? 0) > 0.5); }
 function autoSteps() {
   const st = S.struct, H = seqHinges(), steps = []; steps.names = []; if (!H.length) return steps;
@@ -2173,8 +2173,8 @@ function renderSeq() {
   steps.forEach((st, i) => {
     const c = document.createElement('button'); c.type = 'button'; c.className = 'step'; c.draggable = true; c.dataset.i = i; c.setAttribute('aria-pressed', String(seqUI.active === i));
     c.innerHTML = `<b>${i + 1}</b>`; c.title = `${i + 1}단계 · 선 ${st.length}개 — 누른 뒤 접는 선을 누르면 그 선이 이 단계로 옵니다. 끌어서 다른 번호 위에 놓으면 합치고, 사이에 놓으면 순서가 바뀝니다`;
-    c.addEventListener('click', () => { seqUI.active = seqUI.active === i ? -1 : i; renderSeq(); });
-    c.addEventListener('pointerenter', () => { seqUI.hover = i; }); c.addEventListener('pointerleave', () => { if (seqUI.hover === i) seqUI.hover = -1; });
+    c.addEventListener('click', () => { const off = seqUI.active === i; seqUI.active = off ? -1 : i; if (off) { seqUI.hover = -1; seqUI.mute = i; } renderSeq(); });   // 다시 눌러 풀면 마우스가 그 번호 위에 있어도 강조를 바로 끈다
+    c.addEventListener('pointerenter', () => { if (seqUI.mute !== i) { seqUI.hover = i; updateSeqGizmo(); } }); c.addEventListener('pointerleave', () => { if (seqUI.mute === i) seqUI.mute = -1; if (seqUI.hover === i) { seqUI.hover = -1; updateSeqGizmo(); } });
     c.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', String(i)); e.dataTransfer.effectAllowed = 'move'; seqUI.drag = i; });
     c.addEventListener('dragend', () => { seqUI.drag = -1; seqMark(null); });
     box.append(c);
@@ -3672,6 +3672,7 @@ async function rebuild(textures, refit, soft) {
   syncInsideUI(); applyInside();
   $('side-box').hidden = !twin; $('side-mirror').setAttribute('aria-pressed', String(S.inMirror));
   if (twin) $('side-flip').dataset.tip = '양면 인쇄로 읽었습니다. ' + (twin.kind === 'comp' ? '같은 대지에 나란히 놓인 두 전개도 가운데 ' + (S.flip ? '반대쪽' : '한쪽') + '을 바깥면으로 썼습니다.' : `${outPage || (printPg0() || { num: 1 }).num}쪽을 바깥면, ${twin.page}쪽을 안쪽면으로 썼습니다.`) + ' 바깥과 안쪽이 바뀌어 보이면 "양면 뒤집기"를 누르세요.';
+  if (st.faces.length) S.poseFresh = false;   // 새 파일의 첫 자세는 한 번만 잡는다. 그 뒤 레이어·후가공·선 설정을 바꿔도 상자를 돌려 둔 자세는 그대로
   buildMeshes(); applyPaper(); updateFold(); if (refit) fitCamera('right'); renderMap(); select(S.sel); updateChips();
   await busy('');
 }
@@ -3847,7 +3848,8 @@ $('play').addEventListener('click', () => {
   if (foldBusy) { stopPlay(); return; }                                              // 재생 중에 누르면 일시정지
   const from = S.t > 0.004 && S.t < 0.996 ? S.t : 0;                                 // 중간에 멈춰 있으면 거기서 이어서, 아니면 처음부터
   const nSt = S.seq.on ? seqSteps().length : 1, dur = nSt > 1 ? Math.min(12000, 500 + 850 * nSt) : 1800, lin = nSt > 1 || from > 0;   // 순서대로면 단계 수만큼 길게, 단계 안에서 따로 부드럽게 움직인다
-  const id = ++playing, t0 = performance.now() - from * dur; foldBusy = true; setPlayUI(true); if (!from) fitCamera('fit', 0);
+  const id = ++playing, t0 = performance.now() - from * dur; foldBusy = true; setPlayUI(true);   // 시점은 지금 보고 있는 그대로 둔다
+  for (const k of ['light', 'reflector', 'bg']) { $('pop-' + k).hidden = true; $('btn-' + k).setAttribute('aria-pressed', 'false'); } syncGizmoVis();   // 조명·반사판 위치 표시가 상자를 가리지 않게 창을 닫는다
   const step = (now) => {
     if (id !== playing) return;
     const p = Math.min(1, (now - t0) / dur), e = lin ? p : p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
