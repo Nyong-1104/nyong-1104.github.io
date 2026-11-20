@@ -17,7 +17,7 @@
 :root{
   --o:#FF2F00;--oh:#CC2600;--ink:#1a1c22;--mute:#9a9aa8;--mute2:#6b6d78;
   --line:#e2e2ea;--line2:#efeff3;--field:#ededed;--side:#fafafa;--main:#ffffff;
-  --stage:#f4f4f6;--sel:#fff0eb;--glass:rgba(255,255,255,.72);
+  --stage:#f4f4f6;--sel:#fff0eb;--glass:rgba(var(--glass-rgb,255,255,255),var(--glass-ad,var(--glass-a,.72)));
   --cut:#e6007e;--fold:#0096d6;--fold-out:#d99a00;
   --font:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Malgun Gothic',sans-serif;
   --top:58px;
@@ -104,9 +104,9 @@ input[type="color"]{width:32px;height:32px;padding:0;border:2px solid var(--line
 input[type="range"]{-webkit-appearance:none;appearance:none;height:18px;background:transparent;--p:50%;flex:1;min-width:0;margin:0;cursor:pointer}
 input[type="range"]:focus{outline:none}
 input[type="range"]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px rgba(255,47,0,.22)}
-input[type="range"]::-webkit-slider-runnable-track{height:4px;border:0;border-radius:2px;background:linear-gradient(var(--o),var(--o)) 0 0/var(--p) 100% no-repeat,#e6e6ec}
+input[type="range"]::-webkit-slider-runnable-track{height:4px;border:0;border-radius:2px;background:linear-gradient(var(--o),var(--o)) 0 0/var(--p) 100% no-repeat,var(--track,rgba(26,28,44,.13))}
 input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;margin-top:-6px;border-radius:50%;background:var(--o);border:2px solid #fff;box-shadow:0 1px 4px rgba(20,20,30,.28)}
-input[type="range"]::-moz-range-track{height:4px;border:0;border-radius:2px;background:#e6e6ec}
+input[type="range"]::-moz-range-track{height:4px;border:0;border-radius:2px;background:var(--track,rgba(26,28,44,.13))}
 input[type="range"]::-moz-range-progress{height:4px;border-radius:2px;background:var(--o)}
 input[type="range"]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--o);border:2px solid #fff;box-shadow:0 1px 4px rgba(20,20,30,.28)}
 
@@ -217,7 +217,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 #box-pop .tab{display:flex;flex-direction:column;gap:8px}#box-pop .tab[hidden]{display:none}
 #box-tabs .btn{flex:1;padding:0 6px}
 #sel-box{position:absolute;z-index:18;width:264px}   /* 고른 면·선 옆에 */
-.pop{pointer-events:auto;flex:none;background:rgba(255,255,255,.42);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);border:1px solid rgba(0,0,0,.07);border-radius:16px;box-shadow:0 12px 40px rgba(10,10,20,.12);padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px}
+.pop{pointer-events:auto;flex:none;background:rgba(var(--pop-rgb,255,255,255),var(--pop-ad,var(--pop-a,.42)));-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);border:1px solid rgba(0,0,0,.07);border-radius:16px;box-shadow:0 12px 40px rgba(10,10,20,.12);padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px}
 #sel-box{border-color:var(--o)}
 .pop-head{display:flex;align-items:center;gap:8px;min-height:28px}
 .pop-head strong{flex:1;font-size:14px;font-weight:700;letter-spacing:-.3px}
@@ -325,7 +325,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 #edit-map path.jline{fill:none;stroke:var(--o);stroke-width:1.6px;stroke-dasharray:5 4;vector-effect:non-scaling-stroke;pointer-events:none}
 #edit-map.join,#edit-map.join .hit{cursor:cell}#edit-map.join .hit:hover{stroke:transparent}
 #edit-hint{min-height:36px}
-#edit-roles{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:3;display:flex;gap:6px;padding:6px;background:var(--glass);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);border:1px solid rgba(0,0,0,.08);border-radius:14px;box-shadow:0 8px 30px rgba(10,10,20,.16)}#edit-roles[hidden]{display:none}
+#edit-roles{--glass-rgb:255,255,255;--glass-ad:.72;position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:3;display:flex;gap:6px;padding:6px;background:var(--glass);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);border:1px solid rgba(0,0,0,.08);border-radius:14px;box-shadow:0 8px 30px rgba(10,10,20,.16)}#edit-roles[hidden]{display:none}
 #edit-roles .btn{flex:none;padding:6px 13px;white-space:nowrap}#edit-roles .btn.ico{width:46px;padding:0;display:grid;place-items:center}#edit-roles .btn.ico i{display:block;width:24px;height:4px;border-radius:2px}
 .edit-bar[hidden],#edit-legend[hidden],#img-side[hidden]{display:none}
 #edit-tabs{flex:none;flex-wrap:nowrap;margin-right:auto}#edit-tabs .btn{flex:none;padding:6px 14px;font-weight:700}
@@ -355,6 +355,16 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 #shot img{max-width:100%;height:auto;border-radius:8px;background:repeating-conic-gradient(#ebebef 0 25%,#fff 0 50%) 0 0/20px 20px}
 #shot figcaption{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--mute2)}
 
+/* 어두운 배경: 창은 비치는 그대로 두고 어두운 유리로 바꾸며, 글자와 바를 밝게 뒤집는다 (좁은 화면에서는 창이 불투명 흰색이라 쓰지 않는다) */
+@media (min-width:761px){
+  html.ui-dark{--pop-rgb:20,21,28;--pop-ad:.46;--glass-rgb:20,21,28;--glass-ad:.5}
+  html.ui-dark :is(.pop,.bar,#seq-row,.top){--ink:#fff;--mute:rgba(255,255,255,.64);--mute2:rgba(255,255,255,.84);--line:rgba(255,255,255,.2);--track:rgba(255,255,255,.3);color:#fff;border-color:rgba(255,255,255,.14)}
+  html.ui-dark :is(.pop,.bar,#seq-row) :is(.btn,select,input[type="number"],input[type="text"],.tabs button,.step){--ink:#1a1c22;--mute:#9a9aa8;--mute2:#6b6d78;--line:#e2e2ea;color:#1a1c22}
+  html.ui-dark .pop :is(.btn,select,input[type="number"],.tabs button){background:rgba(255,255,255,.9)}
+  html.ui-dark :is(.pop,.bar,#seq-row) .btn[aria-pressed="true"]{color:#fff;background:var(--o)}html.ui-dark .pop .tabs button.on{color:#fff;background:var(--o)}
+  html.ui-dark .pop .item{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16)}
+  html.ui-dark .lball .rim{fill:rgba(255,255,255,.1);stroke:rgba(255,255,255,.45)}html.ui-dark .lball .floor{stroke:rgba(255,255,255,.45)}html.ui-dark .lball .axis{stroke:rgba(255,255,255,.4)}html.ui-dark .lball .stem{stroke:rgba(255,255,255,.55)}
+}
 @media (max-width:760px){
   body{overflow:auto}
   .app{flex-direction:column;height:auto}
@@ -493,18 +503,19 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
       <div class="pop-head"><strong>조명</strong><span id="light-note"></span><button type="button" class="x" data-close="light" aria-label="조명 창 닫기">×</button></div>
       <div class="row srow"><label for="ambient">전체 밝기</label><input type="range" id="ambient" min="0" max="200" step="1" value="100"><output id="ambient-out" for="ambient">100%</output></div>
       <div id="light-list" class="list"></div>
-      <div class="row"><span class="hint name">유광은 조명이 정면 쪽(방향 0° 근처)일 때 잘 보입니다.</span><button type="button" class="btn small" id="light-reset">기본값</button></div>
+      <div class="row"><button type="button" class="btn small" id="light-reset">기본값</button><span class="name"></span><button type="button" class="btn small" id="light-del">삭제</button></div>
     </section>
     <section class="pop" id="pop-reflector" hidden aria-label="반사판">
       <div class="pop-head"><strong>반사판</strong><span id="reflector-note"></span><button type="button" class="x" data-close="reflector" aria-label="반사판 창 닫기">×</button></div>
       <div id="reflector-list" class="list"></div>
+      <div class="row"><span class="name"></span><button type="button" class="btn small" id="reflector-del">삭제</button></div>
 
     </section>
     <section class="pop" id="pop-bg" hidden aria-label="배경색">
       <div class="pop-head"><strong>배경</strong><button type="button" class="x" data-close="bg" aria-label="배경 창 닫기">×</button></div>
       <div class="row"><label class="name" for="bg">배경색</label>
-        <select id="bg"><option value="transparent">투명</option><option value="#ffffff">흰색</option><option value="#f4f4f6" selected>밝은 회색</option><option value="#1a1c22">검정</option><option value="custom">직접 고르기</option></select>
-        <input type="color" id="bg-color" value="#ffd3c4" aria-label="배경색 직접 고르기" hidden></div>
+        <select id="bg"><option value="transparent">투명</option><option value="#ffffff">흰색</option><option value="#f4f4f6" selected>밝은 회색</option><option value="#1a1c22">검정</option><option value="custom">사용자 지정</option></select>
+        <input type="color" id="bg-color" value="#ffd3c4" aria-label="배경색 사용자 지정" hidden></div>
     </section>
   </div>
   <section class="pop" id="sel-box" hidden aria-label="선택한 면·접는선 옵션">
@@ -1770,16 +1781,18 @@ function buildGizmos() {
   for (const d of lightObjs) {
     const L = d.userData, refl = !!L.reflector, pos = dirOf(L).multiplyScalar(R * distOf(L)).add(center);
     if (refl) ri++; else li++;
+    const kind = refl ? 'reflector' : 'light', idx = (refl ? ri : li) - 1, cur = curItem[kind] === idx;
     if (!showGizmo[refl ? 'reflector' : 'light'] || visOf(L)) continue;   // 숨기거나 꺼 둔 것은 3D 화면에 표시하지 않는다
     const z = sizeOf(L), w = (refl ? r * 0.75 : r * 0.36) * z, hh = (refl ? r * 0.9 : r * 0.36) * z;
     const geo = new THREE.PlaneGeometry(w, hh);
     const panel = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: L.color, side: THREE.DoubleSide, transparent: true, opacity: refl ? 0.6 : 0.95, toneMapped: false }));
     panel.position.copy(pos); panel.lookAt(center);
-    panel.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0x2a2e36, toneMapped: false })));
+    panel.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: cur ? 0xff2f00 : 0x2a2e36, toneMapped: false })));   // 지금 고른 것은 주황 테두리
+    panel.userData = { kind, idx };
     const ray = new THREE.Line(new THREE.BufferGeometry().setFromPoints([pos, center]), new THREE.LineDashedMaterial({ color: 0x8a909c, dashSize: r * 0.06, gapSize: r * 0.05, toneMapped: false }));
     ray.computeLineDistances();
     const sp = textSprite(refl ? `반사판 ${ri}` : `조명 ${li}`); sp.position.copy(pos).add(new THREE.Vector3(0, hh / 2 + r * 0.11, 0)); sp.scale.set(r * 0.52, r * 0.13, 1);
-    gizmoGroup.add(panel, ray, sp);
+    sp.userData = { kind, idx }; gizmoGroup.add(panel, ray, sp);
   }
   dirty = true;
 }
@@ -2805,7 +2818,7 @@ function initLabel3D() {
    상자를 한 번 누르면 상자 전체가 선택된다 (주황 테두리). 그 상태에서 면이나 접는 선을 누르면 전개도의 그 면·선이 선택되고,
    끌면 상자가 바닥 위에서 움직인다. 빈 곳을 누르거나 Esc를 누르면 풀린다. 끌기만 하면(선택 전) 전처럼 화면이 돈다 */
 let boxSel = false, axisLock = null;   // axisLock = 오른쪽 버튼으로 돌릴 때 고정할 축 ('x' | 'y' | 'z')
-function setAxisLock(k) { axisLock = k; for (const g of document.querySelectorAll('#gizmo-svg g[data-ax]')) g.classList.toggle('lock', g.dataset.ax === k); const n = $('gizmo-lock'); n.hidden = !k; if (k) { n.textContent = k.toUpperCase() + '축 고정'; n.dataset.ax = k; } }
+function setAxisLock(k) { axisLock = k; for (const g of document.querySelectorAll('#gizmo-svg g[data-ax]')) g.classList.toggle('lock', g.dataset.ax === k); const n = $('gizmo-lock'); n.hidden = !k; if (k) { n.textContent = k.toUpperCase() + '축'; n.dataset.ax = k; } }
 function updateBoxGizmo() {
   if (!boxSel && axisLock) setAxisLock(null);
   const bg = $('box-gizmo'), lit = !$('pop-light').hidden || !$('pop-reflector').hidden;   // 조명·반사판 창이 열려 있으면 상자는 골라지기만 하고 옵션 창은 뜨지 않는다
@@ -3147,6 +3160,7 @@ function renderLightUI(kind) {
   const list = kind === 'light' ? S.lights : S.reflectors, box = $(kind + '-list'), word = kind === 'light' ? '조명' : '반사판';
   box.replaceChildren();
   const i = curItem[kind] = Math.max(0, Math.min(curItem[kind], list.length - 1)), L = list[i];
+  $(kind + '-del').disabled = !L; $(kind + '-del').textContent = L ? `${word} ${i + 1} 삭제` : '삭제'; if (gizmoGroup.visible && fitInfo) buildGizmos();   // 3D 화면의 표시도 지금 고른 것에 맞춘다
   const tabs = el('div', { class: 'sortbar tabs' }), dots = [];
   list.forEach((x, k) => {
     const v = visOf(x), dot = el('i', { class: 'dot' + (v === 1 ? ' ghost' : v === 2 ? ' off' : '') }); dot.style.background = x.color; dots.push(dot);
@@ -3161,8 +3175,7 @@ function renderLightUI(kind) {
     const pre = `${kind}-${i}`;
     box.append(el('div', { class: 'item' },
       el('div', { class: 'row' }, el('strong', { class: 'name', text: `${word} ${i + 1}` + (kind === 'light' && i === 0 ? ' · 그림자 기준' : '') }),
-        el('input', { type: 'color', id: pre + '-color', value: L.color, 'aria-label': `${word} ${i + 1} 색`, oninput: (e) => { L.color = e.target.value; dots[i].style.background = L.color; updateLights(); } }),
-        el('button', { type: 'button', class: 'btn small', text: '삭제', onclick: () => { list.splice(i, 1); syncLights(); renderLightUI(kind); } })),
+        el('input', { type: 'color', id: pre + '-color', value: L.color, 'aria-label': `${word} ${i + 1} 색`, oninput: (e) => { L.color = e.target.value; dots[i].style.background = L.color; updateLights(); } })),
       lightBall(L, kind),
       sliderRow(pre + '-ds', '거리', 40, 300, 5, L.dist ?? 100, '%', (v) => { L.dist = v; updateLights(); }),
       sliderRow(pre + '-pw', kind === 'light' ? '밝기' : '세기', 0, 200, 1, L.power, '%', (v) => { L.power = v; updateLights(); }),
@@ -4063,6 +4076,11 @@ function bgTint(k = 1) { // 배경색이 기본 배경에 견주어 얼마나 �
 }
 function applyBg() {
   const v = $('bg').value; $('bg-color').hidden = v !== 'custom';
+  { // 배경 밝기에 맞춰 옵션 창과 막대를 바꾼다: 어두운 배경이면 어두운 유리 + 밝은 글자, 중간 회색이면 흰 유리를 조금 더 진하게
+    const c = v === 'transparent' ? [255, 255, 255] : hexRgb(v === 'custom' ? $('bg-color').value : v), lum = (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255, cl = (x, a, b) => Math.max(a, Math.min(b, x)), root = document.documentElement;
+    root.classList.toggle('ui-dark', lum < 0.5);
+    root.style.setProperty('--pop-a', cl(0.42 + (0.94 - lum) * 0.5, 0.42, 0.64).toFixed(2)); root.style.setProperty('--glass-a', cl(0.72 + (0.94 - lum) * 0.3, 0.72, 0.85).toFixed(2));
+  }
   hemi.groundColor.set(0xf2f3f5).multiply(bgTint(BG_GROUND)); hemi.color.set(0xffffff).multiply(bgTint(BG_SKY)); if (envRT) queueEnv();   // 바닥에서 되비친 빛과 주변 반사에 배경색이 조금 섞인다
   const col = v === 'custom' ? $('bg-color').value : v;
   if (v === 'transparent') { scene.background = null; stage.classList.add('checker'); }
@@ -4315,6 +4333,7 @@ $('sel-roll-l').addEventListener('click', () => { if (S.sel && S.sel.type === 'f
 $('sel-roll-r').addEventListener('click', () => { if (S.sel && S.sel.type === 'face') faceRoll(S.sel.id, -90); });
 $('angles-reset').addEventListener('click', () => { S.over = new Map(); S.dir = new Map(); if (S.sel && S.sel.type === 'hinge') syncSel(); updateFold(); updateChips(); for (const L of S.labels) refreshWrap(L); });
 $('ambient').addEventListener('input', (e) => { S.ambient = +e.target.value; $('ambient-out').textContent = S.ambient + '%'; updateLights(); });
+for (const kind of ['light', 'reflector']) $(kind + '-del').addEventListener('click', () => { const list = kind === 'light' ? S.lights : S.reflectors; if (!list.length) return; list.splice(curItem[kind], 1); syncLights(); renderLightUI(kind); });
 $('light-reset').addEventListener('click', () => { S.lights = defaultLights(); curItem.light = 0; S.ambient = 100; $('ambient').value = 100; $('ambient-out').textContent = '100%'; syncLights(); renderLightUI('light'); });
 $('paper').addEventListener('change', applyPaper);
 $('paper-strength').addEventListener('input', (e) => { $('paper-strength-out').textContent = e.target.value + '%'; matFront.bumpScale = matBack.bumpScale = (e.target.value / 100) * PAPER_HEIGHT; dirty = true; });
@@ -4339,6 +4358,12 @@ $('side-mirror').addEventListener('click', () => { if (!S.twin) return; S.inMirr
 /* 스포이드: 누른 뒤 상자를 찍으면 그 자리의 인쇄 색(조명 영향을 뺀 원래 색)을 가져온다 */
 let pickCb = null, pickBtn = null;
 const pickRay = new THREE.Raycaster();
+canvas.addEventListener('pointerdown', (e) => { // 3D 화면의 조명·반사판 표시를 누르면 창에서도 그것이 골라진다
+  if (e.button !== 0 || !gizmoGroup.visible || seqUI.open || stage.classList.contains('picking') || canvas.style.cursor === 'grab') return;
+  const r = canvas.getBoundingClientRect(); pickRay.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+  const hit = pickRay.intersectObjects(gizmoGroup.children.filter((o) => o.userData && o.userData.kind), false)[0]; if (!hit) return;
+  e.stopImmediatePropagation(); e.preventDefault(); const { kind, idx } = hit.object.userData; curItem[kind] = idx; renderLightUI(kind);
+}, true);
 initLabel3D(); initBox3D();
 window.addEventListener('keydown', (e) => { // Tab: 조명·반사판 창에서는 다음 번호로(+는 건너뛴다), 상자 옵션 창에서는 다음 탭으로. Shift+Tab은 거꾸로
   if (e.key !== 'Tab' || e.ctrlKey || e.metaKey || e.altKey) return; if (!$('edit-dlg').hidden || !$('exp-dlg').hidden) return;
