@@ -319,6 +319,23 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 #edit-map path.jline{fill:none;stroke:var(--o);stroke-width:1.6px;stroke-dasharray:5 4;vector-effect:non-scaling-stroke;pointer-events:none}
 #edit-map.join,#edit-map.join .hit{cursor:cell}#edit-map.join .hit:hover{stroke:transparent}
 #edit-hint{min-height:36px}
+.edit-bar[hidden],#edit-legend[hidden],#img-side[hidden]{display:none}
+#edit-tabs{flex:none;flex-wrap:nowrap;margin-right:auto}#edit-tabs .btn{flex:none;padding:6px 14px;font-weight:700}
+#edit-body{flex:1;min-height:0;display:flex;gap:10px}#edit-body #edit-wrap{min-width:0}
+#img-side{width:252px;flex:none;display:flex;flex-direction:column;gap:8px;min-height:0}
+#img-list{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:2px}
+.irow{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;font-size:12px}
+.irow.on{border-color:var(--o);box-shadow:0 0 0 2px rgba(255,60,0,.14)}.irow.off .nm,.irow.off img{opacity:.4}.irow.over{outline:2px dashed var(--o);outline-offset:1px}.irow.base{cursor:default;background:#fafafb}
+.irow img{width:30px;height:30px;object-fit:contain;border-radius:5px;background:repeating-conic-gradient(#e6e6ec 0 25%,#fff 0 50%) 0 0/10px 10px;flex:none}
+.irow .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}.irow .tag{flex:none;font-size:10.5px;font-weight:700;color:var(--o)}
+.irow button{display:grid;place-items:center;border:0;background:none;width:24px;height:24px;padding:0;cursor:pointer;color:var(--mute2);font-size:15px;line-height:1;border-radius:6px;flex:none}.irow button:hover{background:rgba(0,0,0,.06);color:#000}
+.iopts{display:flex;flex-direction:column;gap:7px;padding:9px 10px 10px;border:1px solid var(--line);border-radius:10px;background:#fafafb;font-size:12px}
+.iopts .r{display:flex;align-items:center;gap:8px}.iopts .r label{width:50px;flex:none;color:var(--mute2);font-weight:600}.iopts .r input[type=range]{flex:1;min-width:0}.iopts .r output{width:40px;text-align:right;font-weight:700;color:var(--o)}.iopts select{flex:1;min-width:0}.iopts .seg{flex:1;flex-wrap:nowrap}.iopts .seg .btn{flex:1}
+#edit-map.imgs{cursor:default}#edit-map .uimg{cursor:move}
+#edit-map path.isel{fill:none;stroke:var(--o);stroke-width:1.4px;vector-effect:non-scaling-stroke;pointer-events:none}
+#edit-map path.ih{fill:none;stroke:#fff;stroke-width:13px;stroke-linecap:round;vector-effect:non-scaling-stroke;cursor:nwse-resize}#edit-map path.ih.rot{cursor:grab}
+#edit-map path.ih2{fill:none;stroke:var(--o);stroke-width:8px;stroke-linecap:round;vector-effect:non-scaling-stroke;pointer-events:none}
+@media (max-width:900px){#edit-body{flex-direction:column}#img-side{width:100%;max-height:40%}}
 #edit-box{position:absolute;border:1px dashed var(--o);background:rgba(255,47,0,.08);pointer-events:none;border-radius:3px}
 #edit-legend i.dash{background:repeating-linear-gradient(90deg,#b4b4c0 0 4px,transparent 4px 7px)}
 .modal{position:fixed;inset:0;background:rgba(10,10,20,.4);display:grid;place-items:center;padding:24px;z-index:60}
@@ -333,7 +350,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
   .app{flex-direction:column;height:auto}
   main{order:-1;height:58vh;flex:none}
   .side{width:100%;border-right:0;overflow:visible}
-  .logo{font-size:44px}
+  .logo{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.subline{display:none}
   #hud-tr{overflow-x:auto;max-width:100%}
   #side-close,#side-open{display:none!important}.app.noside .side{display:flex}
   #tool-pops,#box-pop,#sel-box{position:fixed;left:12px!important;right:12px;top:auto!important;bottom:12px;width:auto;max-height:62vh;overflow-y:auto;z-index:40}
@@ -550,8 +567,8 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="edit-dlg" class="modal" hidden>
   <div class="dlg edit-card" role="dialog" aria-modal="true" aria-labelledby="edit-title">
-    <div class="pop-head"><strong id="edit-title">선 고치기</strong><span id="edit-note"></span><button type="button" class="x" id="edit-close" aria-label="닫기">×</button></div>
-    <div class="edit-bar">
+    <div class="pop-head"><div class="seg" id="edit-tabs"><button type="button" class="btn" id="edit-title" data-tab="line" aria-pressed="true">선 고치기</button><button type="button" class="btn" data-tab="img" aria-pressed="false">인쇄 이미지</button></div><span id="edit-note"></span><button type="button" class="x" id="edit-close" aria-label="닫기">×</button></div>
+    <div class="edit-bar" id="edit-line-bar">
       <div class="seg" id="edit-roles">
         <button type="button" class="btn" data-role="cut"><i style="background:var(--cut)"></i>자르는 선</button>
         <button type="button" class="btn" data-role="fold"><i style="background:var(--fold)"></i>접는 선 · 안으로</button>
@@ -564,7 +581,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
       <button type="button" class="btn" id="edit-undo">되돌리기</button>
       <button type="button" class="btn" id="edit-reset">전부 처음으로</button>
     </div>
-    <div id="edit-wrap"><svg id="edit-map" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="칼선 레이어의 모든 선"></svg><div id="edit-box" hidden></div></div>
+    <div id="edit-body"><div id="edit-wrap"><svg id="edit-map" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="칼선 레이어의 모든 선"></svg><div id="edit-box" hidden></div></div><aside id="img-side" hidden><button type="button" class="btn" id="img-add">+ 이미지 추가</button><input type="file" id="img-file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" multiple hidden><div id="img-list"></div></aside></div>
     <div class="legend" id="edit-legend"><span><i style="background:var(--cut)"></i>자르는 선</span><span><i style="background:var(--fold)"></i>안으로 접기</span><span><i style="background:var(--fold-out)"></i>밖으로 접기</span><span><i class="dash"></i>무시한 선</span><span><i style="background:#b4b4c0"></i>면을 이루지 못한 선 (끝이 떠 있음)</span></div>
     <p class="hint" id="edit-hint">선을 누르거나 빈 곳에서 끌어 여러 개를 고른 뒤, 위에서 종류를 누르세요. Shift를 누르면 선택에 더합니다. 휠로 확대하고 Space를 누른 채 끌면 화면이 움직입니다. 바꾸면 오른쪽 상자에 바로 반영됩니다.</p>
   </div>
@@ -1387,7 +1404,7 @@ const S = {
   twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null,   // 양면 인쇄: 짝이 되는 안쪽면, 바깥·안쪽 뒤집기
   inside: { mode: 'paper', c1: '#f47bb0', c2: '#ffe14d', angle: 0, auto: true },   // 안쪽 면 표시 방식
   sheets: [],   // 후가공을 대지(쪽)로 나눠 둔 파일의 나머지 쪽 [{page, name, role, color, opacity, blend, emboss}]
-  lineMode: 'color', lineModeUser: null, edits: [], adds: [], moves: [], editUndo: [], rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', guessedFold: '',   // 선 구분 방식, 직접 고친 선 [{x, y, role}]
+  lineMode: 'color', lineModeUser: null, edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false, rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', guessedFold: '',   // 선 구분 방식, 직접 고친 선 [{x, y, role}]
   dielinePage: 1, struct: null, auto: new Map(), over: new Map(), dir: new Map(), t: 1, sel: null,
   uv: null, printCanvas: null, finishes: [], texBox: '', token: 0,
   lights: defaultLights(), reflectors: [], ambient: 100, paperCustom: null,
@@ -1663,7 +1680,7 @@ const dirOf = (L) => new THREE.Vector3(Math.sin(L.az * D2R) * Math.cos(L.el * D2
 function buildEnv() { // 반사용 스튜디오: 어두운 돔 + 기본 조명판 + 사용자가 둔 조명·반사판. 유광·박에 비치는 모습이 된다
   const s = new THREE.Scene();
   const dome = new THREE.SphereGeometry(20, 48, 24), col = [], pos = dome.attributes.position;
-  for (let i = 0; i < pos.count; i++) { const v = 0.2 + 0.5 * (pos.getY(i) / 40 + 0.5); col.push(v, v, v); }
+  for (let i = 0; i < pos.count; i++) { const t = pos.getY(i) / 40 + 0.5, v = 0.2 + 0.5 * t, c = bgTint(0.1 + 0.75 * (1 - t)); col.push(v * c.r, v * c.g, v * c.b); }   // 아래쪽(바닥)일수록 배경색을 많이 띤다
   dome.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   s.add(new THREE.Mesh(dome, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide })));
   const board = (posv, w, h, color) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide })); m.position.copy(posv); m.lookAt(0, 0, 0); s.add(m); };
@@ -1774,7 +1791,7 @@ function blurCov(cov, w, h, r) { // 형압 가장자리를 비스듬하게(모�
 const embossOf = (f) => FINISH[f.set.role].emboss || (f.set.emboss === 'up' ? 1 : f.set.emboss === 'down' ? -1 : 0);
 function surfaceCanvases() { // 인쇄 + 후가공 → 색 지도, 형압 높이(R)·거칠기(G)·금속(B) 지도
   const base = Math.round(+$('finish').value * 255);
-  const fins = FINISH_ORDER.flatMap((role) => S.finishes.filter((f) => f.set.role === role));
+  const allFin = S.finishes.concat(imgFinishes()), fins = FINISH_ORDER.flatMap((role) => allFin.filter((f) => f.set.role === role));
   const orm = document.createElement('canvas');
   if (!fins.length) { orm.width = orm.height = 4; const x = orm.getContext('2d'); x.fillStyle = `rgb(128,${base},0)`; x.fillRect(0, 0, 4, 4); }
   else {
@@ -1795,13 +1812,14 @@ function surfaceCanvases() { // 인쇄 + 후가공 → 색 지도, 형압 높이
     }
     x.putImageData(img, 0, 0);
   }
-  let albedo = S.printCanvas;
+  const print = printWithImgs();   // 원본 인쇄 + 인쇄 이미지 탭에서 얹은 그림
+  let albedo = print;
   const foils = fins.filter((f) => FINISH[f.set.role].metal);
   if (foils.length) { // 박: 인쇄 위에 박 색을 덮거나(덮기) 인쇄에 곱한다(곱하기). 불투명도만큼 섞인다
     albedo = document.createElement('canvas');
-    albedo.width = S.printCanvas ? S.printCanvas.width : foils[0].w; albedo.height = S.printCanvas ? S.printCanvas.height : foils[0].h;
+    albedo.width = print ? print.width : foils[0].w; albedo.height = print ? print.height : foils[0].h;
     const x = albedo.getContext('2d');
-    if (S.printCanvas) x.drawImage(S.printCanvas, 0, 0); else { x.fillStyle = '#fff'; x.fillRect(0, 0, albedo.width, albedo.height); }
+    if (print) x.drawImage(print, 0, 0); else { x.fillStyle = '#fff'; x.fillRect(0, 0, albedo.width, albedo.height); }
     for (const f of foils) {
       const t = document.createElement('canvas'); t.width = f.w; t.height = f.h;
       const tx = t.getContext('2d'), img = tx.createImageData(f.w, f.h), d = img.data, col = hexRgb(f.set.color);
@@ -2831,11 +2849,12 @@ function histSnap() {
     over: [...S.over], dir: [...S.dir], bulge: [...S.bulge].map(([k, v]) => [k, { ...v }]),
     edits: S.edits.map((o) => ({ ...o })), adds: S.adds.map((o) => ({ ...o })), moves: S.moves.map((o) => ({ ...o })), flip: !!S.flip, inMirror: !!S.inMirror,
     inside: { ...S.inside }, edge: { ...S.edge }, lights: JSON.parse(JSON.stringify(S.lights)), reflectors: JSON.parse(JSON.stringify(S.reflectors)),
+    imgs: S.imgs.map((o) => ({ o, ...imgVals(o) })), printOff: !!S.printOff,
     labels: S.labels.map((L) => ({ L, id: L.uid || (L.uid = ++labelSeq), x: +L.x.toFixed(2), y: +L.y.toFixed(2), anchor: L.anchor, rot: L.rot, scale: +L.scale.toFixed(4), lift: !!L.lift })), li: S.li,
     inputs: histInputs(),
   };
 }
-const histKey = (h) => JSON.stringify({ ...h, labels: h.labels.map((o) => [o.id, o.x, o.y, o.anchor, o.rot, o.scale, o.lift]), li: h.labels.length ? 0 : -1 });   // 어느 라벨을 골랐는지는 변화로 치지 않는다
+const histKey = (h) => JSON.stringify({ ...h, imgs: (h.imgs || []).map(({ o, ...v }) => [o.id, v]), labels: h.labels.map((o) => [o.id, o.x, o.y, o.anchor, o.rot, o.scale, o.lift]), li: h.labels.length ? 0 : -1 });   // 어느 라벨을 골랐는지는 변화로 치지 않는다
 function histCommit() {
   hist.timer = 0; if (hist.applying || hist.busy || !S.struct) return;
   const h = histSnap(), k = histKey(h);
@@ -2862,6 +2881,7 @@ async function histApply(h) {
     pose.base.set(h.pose[0], h.pose[1], h.pose[2], h.pose[3]); pose.rx = h.pose[4]; pose.ry = h.pose[5]; pose.rz = h.pose[6]; S.pos = { x: h.pos[0], z: h.pos[1] }; S.seq = { on: true, steps: h.seq[1] && h.seq[1].map((a) => a.slice()) }; seqUI.active = -1;
     S.over = new Map(h.over); S.dir = new Map(h.dir); S.bulge = new Map(h.bulge.map(([k, v]) => [k, { ...v }]));
     S.inside = { ...h.inside }; S.edge = { ...h.edge }; S.lights = JSON.parse(JSON.stringify(h.lights)); S.reflectors = JSON.parse(JSON.stringify(h.reflectors));
+    { const hi = h.imgs || [], key = (l) => JSON.stringify(l.map(({ o, ...v }) => [o.id, v])); if (key(hi) !== key(S.imgs.map((o) => ({ o, ...imgVals(o) }))) || !!h.printOff !== !!S.printOff) { S.imgs = hi.map(({ o, ...v }) => Object.assign(o, v)); S.printOff = !!h.printOff; imgSel = -1; applyTextures(); } }
     for (const L of S.labels) if (!h.labels.some((o) => o.L === L)) dropLabelMeshes(L);
     S.labels = h.labels.map((o) => Object.assign(o.L, { x: o.x, y: o.y, anchor: o.anchor, rot: o.rot, scale: o.scale, lift: o.lift }));
     S.li = S.labels.length ? Math.max(0, Math.min(S.li, S.labels.length - 1)) : -1; if (!S.label) labelSel = false;
@@ -3013,7 +3033,7 @@ function renderColorUI() {
     + (!auto && S.guessedFold ? `규칙에 없는 색이지만 ${S.guessedFold} 선은 곧은 선뿐이고 안쪽에만 있어 접는 선으로 봤습니다. ` : '')
     + (auto ? '선 색이 나뉘어 있지 않아 모양으로 구분했습니다. 바깥 테두리는 자르는 선, 면과 면 사이의 선은 접는 선으로 봅니다. 떨어져 있는 표나 치수선은 빼고 가장 넓은 전개도만 씁니다.' : '선 색으로 구분합니다. 파랑·시안 계열은 안으로 접는 선, 노랑은 밖으로 접는 선, 그 밖은 자르는 선입니다.')
     + (S.edits.length ? ` 직접 고친 선 ${S.edits.length}개가 적용돼 있습니다.` : ' 틀린 곳은 전개도의 "선 고치기"에서 바꿀 수 있습니다.');
-  $('edit-open').disabled = S.example || !st || !st.allEdges || !st.allEdges.length;
+  $('edit-open').disabled = !st || !st.allEdges || !st.allEdges.length;
   if (!S.colorRoles.size) { box.append(el('p', { class: 'hint', text: S.example ? '예시 상자는 마젠타 칼선과 시안 접는선으로 그려져 있습니다. 노랑(Y100)은 밖으로 접는 선으로 읽습니다.' : '칼선 레이어에서 선을 찾지 못했습니다.' })); return; }
   let i = 0;
   for (const [k, c] of S.colorRoles) {
@@ -3130,7 +3150,7 @@ function select(sel) {
   box.hidden = false; requestAnimationFrame(placeSelPop);
   const isH = sel.type === 'hinge';
   for (const id of ['sel-angle-row', 'sel-dir', 'sel-angle-btns']) $(id).style.display = isH ? '' : 'none';
-  $('sel-edit').style.display = isH && !S.example ? '' : 'none';
+  $('sel-edit').style.display = isH ? '' : 'none';
   $('sel-face-btns').style.display = isH ? 'none' : ''; $('sel-roll').style.display = isH ? 'none' : ''; $('sel-bulge').style.display = isH ? 'none' : '';
   if (isH) { $('sel-title').textContent = '조립했을 때 접히는 각도'; syncSel(); }
   else { $('sel-title').textContent = '선택한 면'; const bg = S.bulge.get(sel.id) || { amt: 0, angle: 90 }; /* 기본은 세로로 휘는 아치 */ $('bulge-amt').value = bg.amt; $('bulge-amt-out').textContent = bg.amt + 'mm'; $('bulge-angle').value = bg.angle == null ? '' : bg.angle; }
@@ -3215,6 +3235,7 @@ function editFit() {
   const pad = Math.max(x1 - x0, y1 - y0) * 0.04 + 4; editView = { x: x0 - pad, y: -y1 - pad, w: x1 - x0 + pad * 2, h: y1 - y0 + pad * 2 };
 }
 function renderEdit(keepKeys) {
+  if (editTab === 'img') return renderImgTab();
   const svg = $('edit-map'), st = S.struct; svg.replaceChildren();
   if (!st || !st.allEdges) return;
   const E = st.allEdges; editChains = lineChains(st);
@@ -3291,7 +3312,7 @@ async function nudgeFlush() {
   if (!$('edit-dlg').hidden) renderEdit(nudgeKeys);
 }
 function nudgeEdit(dx, dy, sym) {   // sym: 전개도 가운데를 기준으로 양쪽을 같은 만큼 벌리거나(+) 좁힌다(-)
-  if (!editSel.size || S.example || !S.struct) return;
+  if (!editSel.size || !S.struct) return;
   const E = S.struct.allEdges, tw = editTwin(), emid = (e) => [(e.a[0] + e.b[0]) / 2, (e.a[1] + e.b[1]) / 2];
   const inBox = (m, b) => b && m[0] >= b.x0 - 2 && m[0] <= b.x1 + 2 && m[1] >= b.y0 - 2 && m[1] <= b.y1 + 2;
   const sideOf = (e) => { if (!tw) return null; const m = emid(e); return e.main || (!tw.box || !inBox(m, tw.box)) && inBox(m, tw.mbox) ? 'main' : inBox(m, tw.box) ? 'twin' : null; };
@@ -3323,8 +3344,148 @@ function nudgeEdit(dx, dy, sym) {   // sym: 전개도 가운데를 기준으로 
   clearTimeout(nudgeTimer); nudgeTimer = setTimeout(nudgeFlush, 130);                                                                    // 선과 상자는 잠깐 모아서 다시 그린다
 }
 function openEdit(keys) {
-  if (S.example || !S.struct || !S.struct.allEdges) return;
-  editSel = new Set(); editView = null; editMsg = ''; setJoin(false, true); $('edit-dlg').hidden = false; resize(); renderEdit(keys || new Set());
+  if (!S.struct || !S.struct.allEdges) return;
+  editSel = new Set(); editView = null; editMsg = ''; editTab = 'line'; imgSel = -1; syncEditTab(); setJoin(false, true); $('edit-dlg').hidden = false; resize(); renderEdit(keys || new Set());
+}
+/* ---------- 인쇄 이미지: 전개도 위에 그림을 얹어 인쇄나 후가공으로 쓴다 ---------- */
+let editTab = 'line', imgSel = -1, imgSeq = 0, imgUndoKey = '', imgDragI = -1;
+const IMG_USES = [['print', '인쇄']].concat(LAYER_ROLES.filter(([k]) => FINISH[k]));
+const EYE_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.8" fill="currentColor"/></svg>';
+const EYE_OFF_SVG = EYE_SVG.replace('</svg>', '<path d="M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>');
+function imgVals(o) { return { x: o.x, y: o.y, w: o.w, rot: o.rot, opacity: o.opacity, blend: o.blend, use: o.use, vis: o.vis }; }
+function imgSnap() { S.imgUndo.push({ list: S.imgs.map((o) => ({ o, ...imgVals(o) })), off: !!S.printOff }); if (S.imgUndo.length > 60) S.imgUndo.shift(); }
+function imgTouch(key) { if (imgUndoKey !== key) { imgSnap(); imgUndoKey = key; } }   // 바를 끄는 동안은 한 번만 기록한다
+function imgUndoGo() { const u = S.imgUndo.pop(); if (!u) return; S.imgs = u.list.map(({ o, ...v }) => Object.assign(o, v)); S.printOff = u.off; imgSel = -1; imgUndoKey = ''; renderEdit(); queueTextures(); }
+function texAffine(W, H) { // 전개도 좌표 → 인쇄 그림의 픽셀 (setTransform에 그대로 넣는다)
+  const p0 = S.uv(0, 0), px = S.uv(1, 0), py = S.uv(0, 1);
+  return [(px[0] - p0[0]) * W, -(px[1] - p0[1]) * H, (py[0] - p0[0]) * W, -(py[1] - p0[1]) * H, p0[0] * W, (1 - p0[1]) * H];
+}
+function uvInverse() { // 인쇄 그림의 (0~1) 자리 → 전개도 좌표. 미리 보기에서 원본 인쇄를 제자리에 놓는 데 쓴다
+  const p0 = S.uv(0, 0), px = S.uv(1, 0), py = S.uv(0, 1), ux = px[0] - p0[0], uy = py[0] - p0[0], vx = px[1] - p0[1], vy = py[1] - p0[1], det = ux * vy - uy * vx || 1;
+  const Xu = vy / det, Xv = -uy / det, X0 = (-vy * p0[0] + uy * p0[1]) / det, Yu = -vx / det, Yv = ux / det, Y0 = (vx * p0[0] - ux * p0[1]) / det;
+  return [Xu, Yu, -Xv, -Yv, X0 + Xv, Y0 + Yv];
+}
+function texSize() { // 원본 인쇄가 없을 때 쓸 그림 크기
+  if (S.printCanvas) return [S.printCanvas.width, S.printCanvas.height];
+  if (S.finishes.length) return [S.finishes[0].w, S.finishes[0].h];
+  const b = S.struct.bbox, k = 2048 / Math.max(b.maxX - b.minX, b.maxY - b.minY); return [Math.max(2, Math.round((b.maxX - b.minX) * k)), Math.max(2, Math.round((b.maxY - b.minY) * k))];
+}
+function drawImg(x, o, src) { const h = o.w * o.ph / o.pw; x.save(); x.translate(o.x, o.y); x.rotate(-o.rot * D2R); x.scale(1, -1); x.drawImage(src || o.img, -o.w / 2, -h / 2, o.w, h); x.restore(); }
+function printWithImgs() {
+  const on = S.imgs.filter((o) => o.vis && o.use === 'print');
+  if ((!on.length && !S.printOff) || !S.uv || !S.struct || !S.struct.bbox) return S.printCanvas;
+  const [W, H] = texSize(), c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+  if (S.printCanvas && !S.printOff) x.drawImage(S.printCanvas, 0, 0); else { x.fillStyle = '#fff'; x.fillRect(0, 0, W, H); }
+  x.setTransform(...texAffine(W, H)); x.imageSmoothingQuality = 'high';
+  for (const o of on) { x.globalAlpha = o.opacity / 100; x.globalCompositeOperation = o.blend === 'multiply' ? 'multiply' : 'source-over'; drawImg(x, o); }
+  return c;
+}
+function imgMask(o) { // 후가공 영역: 배경이 투명한 그림은 불투명한 부분, 배경이 있는 그림은 어두운 부분
+  if (o.alpha) return o.img;
+  if (!o._mask) { const k = Math.min(1, 1400 / Math.max(o.pw, o.ph)), c = document.createElement('canvas'); c.width = Math.max(1, Math.round(o.pw * k)); c.height = Math.max(1, Math.round(o.ph * k)); const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(o.img, 0, 0, c.width, c.height); const im = x.getImageData(0, 0, c.width, c.height), d = im.data; for (let i = 0; i < d.length; i += 4) { d[i + 3] = 255 - Math.min(d[i], d[i + 1], d[i + 2]); d[i] = d[i + 1] = d[i + 2] = 0; } x.putImageData(im, 0, 0); o._mask = c; }
+  return o._mask;
+}
+function imgFinishes() {
+  const on = S.imgs.filter((o) => o.vis && FINISH[o.use]); if (!on.length || !S.uv || !S.struct || !S.struct.bbox) return [];
+  let w, h; if (S.finishes.length) { w = S.finishes[0].w; h = S.finishes[0].h; } else { const [W, H] = texSize(), k = Math.min(1, 2048 / Math.max(W, H)); w = Math.round(W * k); h = Math.round(H * k); }
+  return on.map((o) => {
+    const key = [o.x, o.y, o.w, o.rot, w, h, S.texBox].join('/');
+    if (!o._fin || o._fin.key !== key) { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d', { willReadFrequently: true }); x.setTransform(...texAffine(w, h)); drawImg(x, o, imgMask(o)); const d = x.getImageData(0, 0, w, h).data, cov = new Uint8Array(w * h); for (let q = 0, i = 3; q < cov.length; q++, i += 4) cov[q] = d[i]; o._fin = { key, cov, w, h }; }
+    o._fin.set = { role: o.use, color: FINISH[o.use].color || '#ffffff', opacity: o.opacity, blend: o.blend, emboss: 'none' };
+    return o._fin;
+  });
+}
+async function addImgFiles(files) {
+  if (!S.struct || !S.struct.faces.length || !S.uv) return; let n = 0;
+  for (const file of files) {
+    if (!/^image\//.test(file.type)) { editMsg = `"${file.name}"은 그림 파일이 아닙니다. PNG·JPG·WebP를 올려 주세요.`; continue; }
+    const url = URL.createObjectURL(file), img = new Image(); img.src = url;
+    try { await img.decode(); } catch (err) { URL.revokeObjectURL(url); editMsg = `"${file.name}"을 읽지 못했습니다.`; continue; }
+    const pw = img.naturalWidth || 400, ph = img.naturalHeight || 400;
+    const t = document.createElement('canvas'), k = Math.min(1, 96 / Math.max(pw, ph)); t.width = Math.max(1, Math.round(pw * k)); t.height = Math.max(1, Math.round(ph * k));
+    const g = t.getContext('2d', { willReadFrequently: true }); g.drawImage(img, 0, 0, t.width, t.height); const d = g.getImageData(0, 0, t.width, t.height).data; let alpha = false; for (let i = 3; i < d.length; i += 4) if (d[i] < 250) { alpha = true; break; }
+    const st = S.struct, f = st.faces.find((q) => q.id === st.rootId) || st.faces[0]; let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; for (const q of f.outer) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }
+    const w = Math.min((x1 - x0) * 0.6, (y1 - y0) * 0.6 * pw / ph);   // 정면 한가운데에, 면의 60% 크기로
+    if (!n++) imgSnap();
+    S.imgs.push({ id: ++imgSeq, name: file.name, img, url, pw, ph, alpha, x: (x0 + x1) / 2, y: (y0 + y1) / 2, w, w0: w, rot: 0, opacity: 100, blend: 'normal', use: 'print', vis: true }); imgSel = S.imgs.length - 1;
+  }
+  if (n) editMsg = ''; renderEdit(); if (n) applyTextures();
+}
+function syncEditTab() { const im = editTab === 'img'; for (const b of $('edit-tabs').children) b.setAttribute('aria-pressed', String(b.dataset.tab === editTab)); $('edit-line-bar').hidden = im; $('edit-legend').hidden = im; $('img-side').hidden = !im; $('edit-map').classList.toggle('imgs', im); }
+function setEditTab(t) { if (t === editTab) return; editTab = t; setJoin(false, true); syncEditTab(); editMsg = ''; editSel = new Set(); imgSel = -1; renderEdit(new Set()); }
+function placeImg(im, o) { const h = o.w * o.ph / o.pw; for (const [k, v] of [['x', -o.w / 2], ['y', -h / 2], ['width', o.w], ['height', h], ['transform', `translate(${o.x.toFixed(3)} ${o.y.toFixed(3)}) rotate(${(-o.rot).toFixed(3)}) scale(1 -1)`]]) im.setAttribute(k, v); im.style.opacity = (FINISH[o.use] ? 0.5 : 1) * o.opacity / 100; im.style.mixBlendMode = !FINISH[o.use] && o.blend === 'multiply' ? 'multiply' : ''; }
+function drawImgSel() { // 고른 그림의 테두리와 손잡이 (모서리 = 크기, 위쪽 = 회전)
+  const ov = document.getElementById('img-ov'); if (!ov) return; ov.replaceChildren(); const o = S.imgs[imgSel]; if (!o || !o.vis || !editView) return;
+  const NS = 'http://www.w3.org/2000/svg', mk = (cls, d, h) => { const n = document.createElementNS(NS, 'path'); n.setAttribute('class', cls); n.setAttribute('d', d); if (h) n.dataset.h = h; return n; };
+  const r = $('edit-map').getBoundingClientRect(), k = Math.max(editView.w / (r.width || 1), editView.h / (r.height || 1)), hw = o.w / 2, hh = o.w * o.ph / o.pw / 2, top = -hh - 26 * k, f = (v) => v.toFixed(2);
+  ov.setAttribute('transform', `translate(${o.x.toFixed(3)} ${o.y.toFixed(3)}) rotate(${(-o.rot).toFixed(3)}) scale(1 -1)`);
+  ov.append(mk('isel', `M${f(-hw)} ${f(-hh)}H${f(hw)}V${f(hh)}H${f(-hw)}ZM0 ${f(-hh)}V${f(top)}`));
+  for (const [x, y, h] of [[-hw, -hh, 'c'], [hw, -hh, 'c'], [hw, hh, 'c'], [-hw, hh, 'c'], [0, top, 'r']]) { const d = `M${f(x)} ${f(y)}h0.01`; ov.append(mk('ih' + (h === 'r' ? ' rot' : ''), d, h), mk('ih2', d)); }
+}
+function updImg() { const o = S.imgs[imgSel], im = document.getElementById('uimg' + imgSel); if (o && im) placeImg(im, o); drawImgSel(); }
+function printPreviewUrl() { // 미리 보기용으로 줄인 원본 인쇄
+  if (!S._pv || S._pv.src !== S.printCanvas) { const c = S.printCanvas, k = Math.min(1, 1600 / Math.max(c.width, c.height)), t = document.createElement('canvas'); t.width = Math.round(c.width * k); t.height = Math.round(c.height * k); const x = t.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, t.width, t.height); x.drawImage(c, 0, 0, t.width, t.height); S._pv = { src: c, url: t.toDataURL('image/jpeg', 0.84) }; }
+  return S._pv.url;
+}
+function renderImgTab() {
+  const svg = $('edit-map'), st = S.struct; svg.replaceChildren(); renderImgList();
+  $('edit-note').textContent = `이미지 ${S.imgs.length}개`;
+  $('edit-hint').textContent = editMsg || (S.imgs.length ? '이미지를 끌어 옮기고, 모서리 점으로 크기를, 위쪽 점으로 회전을 바꿉니다(Shift를 누르면 15°씩). 방향키는 0.2mm씩 옮기고, Delete는 지웁니다.' : '"이미지 추가"를 누르거나 그림 파일을 이 창에 끌어다 놓으세요. 전개도 위에 올라가고 3D 상자에 바로 나옵니다.');
+  $('edit-hint').style.color = editMsg ? 'var(--o)' : '';
+  if (!st || !st.allEdges) return;
+  if (!editView) editFit(); svg.setAttribute('viewBox', `${editView.x} ${editView.y} ${editView.w} ${editView.h}`);
+  const NS = 'http://www.w3.org/2000/svg', mk = (tag, attrs) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); return n; };
+  const g = mk('g', { transform: 'scale(1,-1)' }); svg.append(g);
+  const ring = (q) => 'M' + q.map((v) => v[0].toFixed(2) + ' ' + v[1].toFixed(2)).join('L') + 'Z';
+  for (const f of st.faces) g.append(mk('path', { d: ring(f.outer) + f.holes.map(ring).join(''), class: 'eface', 'fill-rule': 'evenodd' }));
+  if (S.printCanvas && S.uv && !S.printOff) { const im = mk('image', { width: 1, height: 1, preserveAspectRatio: 'none', transform: `matrix(${uvInverse().join(' ')})` }); im.setAttribute('href', printPreviewUrl()); im.style.pointerEvents = 'none'; g.append(im); }
+  S.imgs.forEach((o, i) => { if (!o.vis) return; const im = mk('image', { class: 'uimg', preserveAspectRatio: 'none' }); im.setAttribute('href', o.url); im.dataset.i = i; im.id = 'uimg' + i; placeImg(im, o); g.append(im); });
+  const by = {}; for (const e of st.allEdges) { if (e.state !== 'ok') continue; (by[e.type] = by[e.type] || []).push(`M${e.a[0].toFixed(2)} ${e.a[1].toFixed(2)}L${e.b[0].toFixed(2)} ${e.b[1].toFixed(2)}`); }
+  for (const k in by) g.append(mk('path', { d: by[k].join(''), class: 'ln ' + k }));
+  const ov = mk('g', {}); ov.id = 'img-ov'; g.append(ov); drawImgSel();
+}
+function renderImgList() {
+  const box = $('img-list'); box.textContent = '';
+  const row = (cls, i, html) => { const r = document.createElement('div'); r.className = 'irow' + cls; r.dataset.i = i; r.innerHTML = html; box.append(r); return r; };
+  for (let i = S.imgs.length - 1; i >= 0; i--) { // 위에 있는 그림이 목록에서도 위
+    const o = S.imgs[i], r = row((i === imgSel ? ' on' : '') + (o.vis ? '' : ' off'), i, `<button type="button" data-a="vis" title="${o.vis ? '숨기기' : '보이기'}">${o.vis ? EYE_SVG : EYE_OFF_SVG}</button><img alt="" draggable="false"><span class="nm"></span><span class="tag"></span><button type="button" data-a="del" title="지우기">×</button>`);
+    r.draggable = true; r.querySelector('img').src = o.url; r.querySelector('.nm').textContent = o.name; r.querySelector('.nm').title = o.name; r.querySelector('.tag').textContent = o.use === 'print' ? '' : ((IMG_USES.find(([k]) => k === o.use) || ['', ''])[1].split(' ')[0]);
+    if (i === imgSel) { const pct = Math.round(o.w / o.w0 * 100), d = document.createElement('div'); d.className = 'iopts';
+      d.innerHTML = `<div class="r"><label>크기</label><input type="range" data-k="size" min="5" max="400" step="1" value="${Math.min(400, pct)}"><output>${pct}%</output></div>`
+        + `<div class="r"><label>회전</label><input type="range" data-k="rot" min="-180" max="180" step="1" value="${Math.round(o.rot)}"><output>${Math.round(o.rot)}°</output></div>`
+        + `<div class="r"><label>불투명도</label><input type="range" data-k="opacity" min="0" max="100" step="1" value="${o.opacity}"><output>${o.opacity}%</output></div>`
+        + `<div class="r"><label>섞기</label><div class="seg"><button type="button" class="btn mini" data-b="normal" aria-pressed="${o.blend !== 'multiply'}">보통</button><button type="button" class="btn mini" data-b="multiply" aria-pressed="${o.blend === 'multiply'}">곱하기</button></div></div>`
+        + `<div class="r"><label>쓰임</label><select data-k="use">${IMG_USES.map(([k, n]) => `<option value="${k}"${k === o.use ? ' selected' : ''}>${n}</option>`).join('')}</select></div>`;
+      box.append(d); }
+  }
+  if (S.printCanvas) row(' base' + (S.printOff ? ' off' : ''), 'base', `<button type="button" data-a="vis" title="${S.printOff ? '보이기' : '숨기기'}">${S.printOff ? EYE_OFF_SVG : EYE_SVG}</button><span class="nm">원본 인쇄</span>`);
+}
+{ // 인쇄 이미지 목록: 누르기·끌어서 순서 바꾸기·설정
+  const box = $('img-list'), rowOf = (e) => { const r = e.target.closest && e.target.closest('.irow'); return r && box.contains(r) ? r : null; };
+  box.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-b]'), o = S.imgs[imgSel];
+    if (b && o) { if (o.blend !== b.dataset.b) { imgSnap(); o.blend = b.dataset.b; renderEdit(); queueTextures(); } return; }
+    const r = rowOf(e); if (!r) return; const a = (e.target.closest('button') || {}).dataset; const act = a && a.a;
+    if (r.dataset.i === 'base') { if (act === 'vis') { imgSnap(); S.printOff = !S.printOff; renderEdit(); queueTextures(); } return; }
+    const i = +r.dataset.i;
+    if (act === 'vis') { imgSnap(); S.imgs[i].vis = !S.imgs[i].vis; renderEdit(); queueTextures(); }
+    else if (act === 'del') { imgSnap(); S.imgs.splice(i, 1); imgSel = -1; renderEdit(); queueTextures(); }
+    else { imgSel = imgSel === i ? -1 : i; renderEdit(); }
+  });
+  box.addEventListener('input', (e) => {
+    const k = e.target.dataset.k, o = S.imgs[imgSel]; if (!k || !o) return; const v = e.target.value, out = e.target.parentNode.querySelector('output');
+    imgTouch(k + o.id);
+    if (k === 'size') { o.w = o.w0 * v / 100; out.textContent = v + '%'; } else if (k === 'rot') { o.rot = +v; out.textContent = v + '°'; } else if (k === 'opacity') { o.opacity = +v; out.textContent = v + '%'; } else if (k === 'use') o.use = v;
+    updImg(); queueTextures();
+  });
+  box.addEventListener('change', (e) => { imgUndoKey = ''; if (e.target.dataset.k === 'use') renderEdit(); });
+  box.addEventListener('dragstart', (e) => { const r = rowOf(e); if (!r || r.dataset.i === 'base') { e.preventDefault(); return; } imgDragI = +r.dataset.i; e.dataTransfer.setData('text/plain', 'img'); e.dataTransfer.effectAllowed = 'move'; });
+  box.addEventListener('dragover', (e) => { if (imgDragI < 0) return; const r = rowOf(e); for (const n of box.querySelectorAll('.irow.over')) n.classList.remove('over'); if (!r || r.dataset.i === 'base' || +r.dataset.i === imgDragI) return; e.preventDefault(); r.classList.add('over'); });
+  box.addEventListener('drop', (e) => { const r = rowOf(e), from = imgDragI; imgDragI = -1; if (from < 0 || !r || r.dataset.i === 'base') return; e.preventDefault(); const to = +r.dataset.i; if (to === from) return; imgSnap(); const o = S.imgs.splice(from, 1)[0]; S.imgs.splice(to, 0, o); imgSel = to; renderEdit(); queueTextures(); });
+  box.addEventListener('dragend', () => { imgDragI = -1; for (const n of box.querySelectorAll('.irow.over')) n.classList.remove('over'); });
+  $('edit-tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-tab]'); if (b) { setEditTab(b.dataset.tab); b.blur(); } });
+  $('img-add').addEventListener('click', () => $('img-file').click());
+  $('img-file').addEventListener('change', (e) => { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) addImgFiles(fs); });
 }
 function setJoin(on, quiet) { editJoin = on; joinFrom = null; $('edit-join').setAttribute('aria-pressed', String(on)); $('edit-map').classList.toggle('join', on); if (quiet) return; editMsg = ''; if (on) editSel = new Set(); renderEdit(); }
 async function addJoin(a, b) { // 두 점 사이에 선을 새로 넣고 전개도를 다시 읽는다
@@ -3339,7 +3500,7 @@ async function addJoin(a, b) { // 두 점 사이에 선을 새로 넣고 전개�
 }
 function closeEdit() { setJoin(false, true); $('edit-dlg').hidden = true; $('edit-box').hidden = true; editSpace = false; resize(); }
 async function applyEdit(role) {
-  if (!editSel.size || S.example) return;
+  if (!editSel.size) return;
   const E = S.struct.allEdges, picked = [];
   for (const ci of editSel) for (const i of editChains[ci].ids) picked.push(E[i]);
   editSnap(); nudgeOpen = false;
@@ -3428,7 +3589,7 @@ async function loadFile(file) {
     layers = dedupeLayers(layers, pages);
     if (S.doc) S.doc.destroy();
     S.seq.steps = null; seqUI.active = -1;
-    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], adds: [], moves: [], editUndo: [], rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', sheets: [], twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null });
+    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false, rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', sheets: [], twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null });
     S.inside.auto = true;
     const picked = autoPickDieline(layers, pages); if (picked) S.pickedLayer = picked.name;
     S.sheets = extraSheets(layers, pages);
@@ -3600,7 +3761,16 @@ function pickFront(st) {
 }
 async function rebuild(textures, refit, soft) {
   const token = S.token;
-  if (S.example) return;
+  if (S.example) { // 예시 상자: 그려 둔 선에 고친 내용을 얹어 다시 읽는다
+    if (!S.exLines) return;
+    const st = buildStructure(S.exLines.concat(S.adds.map((o) => ({ pts: [[o.ax, o.ay], [o.bx, o.by]], role: o.role }))), { gapTol: 3, overrides: S.edits, moves: S.moves, rootPoint: S.exRoot });
+    const sig = (x) => (x && x.bbox ? [x.faces.length, x.hinges.length, x.rootId].join('/') : '');
+    if (sig(st) !== sig(S.struct)) { S.over = new Map(); S.dir = new Map(); S.bulge = new Map(); S.sel = null; if (st.faces.length) { const home = st.faces.find((f) => f.id === st.rootId) || st.faces[0]; for (const L of S.labels) { L.x = home.center[0]; L.y = home.center[1]; L.anchor = home.id; } } }
+    S.struct = st; S.auto = defaultAngles(st);
+    setWarn(st.faces.length ? '' : '닫힌 칼선이 없습니다. 선 고치기에서 되돌려 주세요.');
+    renderColorUI(); buildMeshes(); applyPaper(); updateFold(); if (refit) fitCamera('right'); renderMap(); select(S.sel); updateChips();
+    return;
+  }
   await busy('전개도 분석 중…');
   // 칼선이 가장 많이 들어 있는 쪽을 고른다
   const pickDl = () => { let r = null; for (const pg of S.pages) { const st = dielineStrokes(pg); const n = st.reduce((a, s) => a + s.polylines.length, 0); if (n && (!r || n > r.n)) r = { n, pg, st }; } return r; };
@@ -3761,7 +3931,7 @@ function loadExample() {
     { set: set('emboss'), ...mask((x) => { x.translate(x2 + W / 2, H * 0.14); x.scale(1, -1); x.font = '600 16px "IBM Plex Sans KR", sans-serif'; x.textAlign = 'center'; x.fillText('FRONT', 0, 0); }) },
     { set: set('gloss'), ...mask((x) => { x.translate(x2 + W / 2, H * 0.66); x.scale(1, -1); x.font = '600 28px "IBM Plex Sans KR", sans-serif'; x.textAlign = 'center'; x.fillText('SAMPLE BOX', 0, 0); }) },
   ];
-  Object.assign(S, { example: true, struct: st, auto: defaultAngles(st), over: new Map(), dir: new Map(), sel: null, printCanvas: c, finishes,
+  Object.assign(S, { example: true, struct: st, auto: defaultAngles(st), over: new Map(), dir: new Map(), sel: null, printCanvas: c, finishes, exLines: lines, exRoot: [x2 + W / 2, H / 2], edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false,
     uv: (x, y) => [(x - b.minX) / bw, (y - b.minY) / bh], colorRoles: new Map() });
   renderLayerUI(); renderColorUI(); applyTextures(); buildMeshes(); applyPaper(); updateFold(); fitCamera('right'); renderMap(); updateChips();
   histReset();
@@ -3797,8 +3967,15 @@ async function exportPng() {
 }
 
 /* ---------- 이벤트 ---------- */
+const BG_BASE = new THREE.Color('#f4f4f6'), BG_GROUND = 0.38, BG_SKY = 0.09;   // 기본 배경(밝은 회색)일 때는 지금까지와 똑같이 보이게 그 색을 기준으로 삼는다
+function bgTint(k = 1) { // 배경색이 기본 배경에 견주어 얼마나 물들어 있는지 (k = 묻어나는 세기). 투명 배경은 물들이지 않는다
+  const v = $('bg').value; if (v === 'transparent') return new THREE.Color(1, 1, 1);
+  const c = new THREE.Color(v === 'custom' ? $('bg-color').value : v), f = (a, b) => 1 + (Math.min(1.05, a / b) - 1) * k;
+  return new THREE.Color(f(c.r, BG_BASE.r), f(c.g, BG_BASE.g), f(c.b, BG_BASE.b));
+}
 function applyBg() {
   const v = $('bg').value; $('bg-color').hidden = v !== 'custom';
+  hemi.groundColor.set(0xf2f3f5).multiply(bgTint(BG_GROUND)); hemi.color.set(0xffffff).multiply(bgTint(BG_SKY)); if (envRT) queueEnv();   // 바닥에서 되비친 빛과 주변 반사에 배경색이 조금 섞인다
   const col = v === 'custom' ? $('bg-color').value : v;
   if (v === 'transparent') { scene.background = null; stage.classList.add('checker'); }
   else { scene.background = new THREE.Color(col); stage.classList.remove('checker'); }
@@ -3809,7 +3986,8 @@ $('file').addEventListener('change', (e) => { const f = e.target.files[0]; if (f
 const dragHasFiles = (e) => !!e.dataTransfer && [...(e.dataTransfer.types || [])].includes('Files');   // 파일을 끌어 올 때만 (순서변경의 번호를 끌 때는 올리기 칸이 반응하지 않게)
 for (const ev of ['dragenter', 'dragover']) document.addEventListener(ev, (e) => { if (!dragHasFiles(e)) return; e.preventDefault(); $(dropMode === 'label' ? 'label-drop' : 'drop').classList.add('over'); });
 for (const ev of ['dragleave', 'drop']) document.addEventListener(ev, (e) => { if (dragHasFiles(e)) e.preventDefault(); ($('drop').classList.remove('over'), $('label-drop').classList.remove('over')); });
-document.addEventListener('drop', async (e) => { const fs = e.dataTransfer ? [...e.dataTransfer.files] : []; if (!fs.length) return; if (dropMode === 'label') { for (const f of fs) await loadLabel(f); } else loadFile(fs[0]); });
+document.addEventListener('drop', async (e) => { const fs = e.dataTransfer ? [...e.dataTransfer.files] : []; if (!fs.length) return; if (!$('edit-dlg').hidden) { if (editTab === 'img') await addImgFiles(fs); return; }   // 선 고치기 창이 열려 있으면 인쇄 이미지로만 받는다
+  if (dropMode === 'label') { for (const f of fs) await loadLabel(f); } else loadFile(fs[0]); });
 $('gap').addEventListener('change', () => rebuild(false));
 $('gap2').addEventListener('input', (e) => { $('gap2-out').textContent = (+e.target.value).toFixed(1) + 'mm'; });
 $('gap2').addEventListener('change', (e) => { $('gap').value = e.target.value; rebuild(false); });
@@ -3839,6 +4017,15 @@ $('edit-undo').addEventListener('click', () => undoEdit(false));
 $('edit-reset').addEventListener('click', () => undoEdit(true));
 window.addEventListener('keydown', (e) => {
   if ($('edit-dlg').hidden) return;
+  if (editTab === 'img') { // 인쇄 이미지 탭
+    const side = e.target && e.target.closest && e.target.closest('#img-side'), o = S.imgs[imgSel];
+    if (e.key === 'Escape') { if (imgSel >= 0) { imgSel = -1; renderEdit(); } else closeEdit(); e.stopImmediatePropagation(); }
+    else if (e.code === 'Space' && !side) { editSpace = true; e.preventDefault(); }
+    else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); imgUndoGo(); }
+    else if (o && !side && /^Arrow/.test(e.key) && !e.ctrlKey && !e.metaKey) { e.preventDefault(); e.stopImmediatePropagation(); const d = (e.shiftKey ? 1 : 0.2) / PT2MM; imgTouch('key' + o.id); o.x += e.key === 'ArrowRight' ? d : e.key === 'ArrowLeft' ? -d : 0; o.y += e.key === 'ArrowUp' ? d : e.key === 'ArrowDown' ? -d : 0; updImg(); queueTextures(); }
+    else if (o && !side && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); imgSnap(); S.imgs.splice(imgSel, 1); imgSel = -1; renderEdit(); queueTextures(); }
+    return;
+  }
   if (e.key === 'Escape') { if (editJoin) { if (joinFrom) { joinFrom = null; editMsg = ''; renderEdit(); } else setJoin(false); } else closeEdit(); e.stopImmediatePropagation(); }
   else if (e.code === 'Space') { editSpace = true; e.preventDefault(); }
   else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undoEdit(false); }
@@ -3853,8 +4040,27 @@ window.addEventListener('keyup', (e) => { if (e.code === 'Space') editSpace = fa
   const svg = $('edit-map'), box = $('edit-box'); let drag = null;
   const toDie = (cx, cy) => { const r = svg.getBoundingClientRect(), k = Math.max(editView.w / r.width, editView.h / r.height); // viewBox는 가운데 맞춤으로 들어간다
     return [editView.x + editView.w / 2 + (cx - r.left - r.width / 2) * k, -(editView.y + editView.h / 2 + (cy - r.top - r.height / 2) * k), k]; };
+  let idrag = null;   // 인쇄 이미지 탭: 그림 옮기기·크기·회전
+  const imgDown = (e) => {
+    const t = e.target, h = t.dataset && t.dataset.h, i = t.dataset && t.dataset.i != null ? +t.dataset.i : -1;
+    if (!h && i < 0) { if (imgSel >= 0) { imgSel = -1; renderEdit(); } return; }
+    if (!h && i !== imgSel) { imgSel = i; renderEdit(); }
+    const o = S.imgs[imgSel]; if (!o) return; svg.setPointerCapture(e.pointerId); const q = toDie(e.clientX, e.clientY);
+    idrag = { mode: h || 'm', p: q, x: o.x, y: o.y, w: o.w, rot: o.rot, d0: Math.hypot(q[0] - o.x, q[1] - o.y) || 1, a0: Math.atan2(q[0] - o.x, q[1] - o.y) / D2R, moved: false };
+  };
+  svg.addEventListener('pointermove', (e) => {
+    if (!idrag) return; const o = S.imgs[imgSel]; if (!o) { idrag = null; return; } const q = toDie(e.clientX, e.clientY);
+    if (!idrag.moved) { if (Math.hypot(q[0] - idrag.p[0], q[1] - idrag.p[1]) / q[2] < 3) return; idrag.moved = true; imgSnap(); }
+    if (idrag.mode === 'm') { o.x = idrag.x + q[0] - idrag.p[0]; o.y = idrag.y + q[1] - idrag.p[1]; }
+    else if (idrag.mode === 'c') o.w = Math.max(3, idrag.w * Math.hypot(q[0] - o.x, q[1] - o.y) / idrag.d0);
+    else { let r = idrag.rot + Math.atan2(q[0] - o.x, q[1] - o.y) / D2R - idrag.a0; if (e.shiftKey) r = Math.round(r / 15) * 15; o.rot = ((r % 360) + 540) % 360 - 180; }
+    updImg(); queueTextures();
+  });
+  const imgUp = () => { if (!idrag) return; const m = idrag.moved; idrag = null; if (m) { renderImgList(); queueTextures(); } };
+  svg.addEventListener('pointerup', imgUp); svg.addEventListener('pointercancel', imgUp);
   svg.addEventListener('pointerdown', (e) => {
     if (!editView) return;
+    if (editTab === 'img' && !(editSpace || e.button === 1)) { e.preventDefault(); imgDown(e); return; }
     svg.setPointerCapture(e.pointerId);
     drag = { x: e.clientX, y: e.clientY, pan: editSpace || e.button === 1, view: { ...editView }, moved: false, chain: e.target.dataset && e.target.dataset.chain, shift: e.shiftKey };
     e.preventDefault();
@@ -3914,6 +4120,7 @@ window.addEventListener('keyup', (e) => { if (e.code === 'Space') editSpace = fa
     const w = Math.max(20, Math.min(editView.w * f, 40000)), s = w / editView.w;
     editView = { x: px - (px - editView.x) * s, y: py - (py - editView.y) * s, w, h: editView.h * s };
     svg.setAttribute('viewBox', `${editView.x} ${editView.y} ${editView.w} ${editView.h}`);
+    if (editTab === 'img') drawImgSel();
   }, { passive: false });
 }
 $('fold').addEventListener('input', (e) => { stopPlay(); S.t = e.target.value / 100; $('fold-out').textContent = e.target.value + '%'; updateFold(); });
