@@ -333,7 +333,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 #img-side{width:252px;flex:none;display:flex;flex-direction:column;gap:8px;min-height:0}
 #img-list{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:2px}
 .irow{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;font-size:12px}
-.irow.on{border-color:var(--o);box-shadow:0 0 0 2px rgba(255,60,0,.14)}.irow.off .nm,.irow.off img{opacity:.4}.irow.over{outline:2px dashed var(--o);outline-offset:1px}.irow.base{cursor:default;background:#fafafb}
+.irow.on{border-color:var(--o);box-shadow:0 0 0 2px rgba(255,60,0,.14)}.irow.off .nm,.irow.off img{opacity:.4}.irow.over{outline:2px dashed var(--o);outline-offset:1px}.irow.base{cursor:default;background:#fafafb}.irow.fin{cursor:grab;background:#fafafb}.irow .fsw{width:30px;height:30px;border-radius:5px;flex:none;border:1px solid var(--line);box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)}
 .irow img{width:30px;height:30px;object-fit:contain;border-radius:5px;background:repeating-conic-gradient(#e6e6ec 0 25%,#fff 0 50%) 0 0/10px 10px;flex:none}
 .irow .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}.irow .tag{flex:none;font-size:10.5px;font-weight:700;color:var(--o)}
 .irow button{display:grid;place-items:center;border:0;background:none;width:24px;height:24px;padding:0;cursor:pointer;color:var(--mute2);font-size:15px;line-height:1;border-radius:6px;flex:none}.irow button:hover{background:rgba(0,0,0,.06);color:#000}
@@ -1459,7 +1459,7 @@ const S = {
   twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null,   // 양면 인쇄: 짝이 되는 안쪽면, 바깥·안쪽 뒤집기
   inside: { mode: 'paper', c1: '#f47bb0', c2: '#ffe14d', angle: 0, auto: true },   // 안쪽 면 표시 방식
   sheets: [],   // 후가공을 대지(쪽)로 나눠 둔 파일의 나머지 쪽 [{page, name, role, color, opacity, blend, emboss}]
-  lineMode: 'color', lineModeUser: null, edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false, rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', guessedFold: '',   // 선 구분 방식, 직접 고친 선 [{x, y, role}]
+  lineMode: 'color', lineModeUser: null, edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false, finPos: null, rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', guessedFold: '',   // 선 구분 방식, 직접 고친 선 [{x, y, role}]
   dielinePage: 1, struct: null, auto: new Map(), over: new Map(), dir: new Map(), t: 1, sel: null,
   uv: null, printCanvas: null, finishes: [], texBox: '', token: 0,
   lights: defaultLights(), reflectors: [], ambient: 100, paperCustom: null,
@@ -1849,6 +1849,16 @@ const embossOf = (f) => FINISH[f.set.role].emboss || (f.set.emboss === 'up' ? 1 
 function surfaceCanvases() { // 인쇄 + 후가공 → 색 지도, 형압 높이(R)·거칠기(G)·금속(B) 지도
   const base = Math.round(+$('finish').value * 255);
   const allFin = S.finishes.concat(imgFinishes()), fins = FINISH_ORDER.flatMap((role) => allFin.filter((f) => f.set.role === role));
+  // 후가공보다 위에 쌓인 인쇄 그림은 그 자리의 후가공을 덮는다 (곱하기로 섞는 그림은 비쳐 보이므로 덮지 않는다)
+  const canMap = !!(S.uv && S.struct && S.struct.bbox), fp = finAt(), isTop = (o) => o.vis && o.use === 'print' && o.opacity > 0, knockMemo = new Map();
+  const knockFrom = (k, w, h) => { // k번째 그림부터 위쪽 그림들이 덮는 정도 (0~255)
+    if (!canMap || !S.imgs.some((o, i) => i >= k && isTop(o) && o.blend !== 'multiply')) return null;
+    const key = k + '/' + w + '/' + h; if (knockMemo.has(key)) return knockMemo.get(key);
+    const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d', { willReadFrequently: true }); x.setTransform(...texAffine(w, h));
+    S.imgs.forEach((o, i) => { if (i >= k && isTop(o) && o.blend !== 'multiply') { x.globalAlpha = o.opacity / 100; drawImg(x, o); } });
+    const d = x.getImageData(0, 0, w, h).data, m = new Uint8Array(w * h); for (let q = 0, i = 3; q < m.length; q++, i += 4) m[q] = d[i]; knockMemo.set(key, m); return m;
+  };
+  const covOf = (f) => { const m = knockFrom(f.img ? S.imgs.indexOf(f.img) + 1 : fp, f.w, f.h); if (!m) return f.cov; const out = new Uint8Array(f.cov.length); for (let p = 0; p < out.length; p++) out[p] = f.cov[p] * (255 - m[p]) / 255; return out; };
   const orm = document.createElement('canvas');
   if (!fins.length) { orm.width = orm.height = 4; const x = orm.getContext('2d'); x.fillStyle = `rgb(128,${base},0)`; x.fillRect(0, 0, 4, 4); }
   else {
@@ -1859,7 +1869,8 @@ function surfaceCanvases() { // 인쇄 + 후가공 → 색 지도, 형압 높이
       const spec = FINISH[f.set.role], op = f.set.opacity / 100 / 255;
       if (spec.rough !== undefined) {
         const r = spec.rough * 255, m = spec.metal ? 255 : 0;
-        for (let p = 0, i = 0; p < f.cov.length; p++, i += 4) { const c = f.cov[p]; if (!c) continue; const a = c * op; d[i + 1] += (r - d[i + 1]) * a; d[i + 2] += (m - d[i + 2]) * a; }
+        const cv = covOf(f);
+        for (let p = 0, i = 0; p < cv.length; p++, i += 4) { const c = cv[p]; if (!c) continue; const a = c * op; d[i + 1] += (r - d[i + 1]) * a; d[i + 2] += (m - d[i + 2]) * a; }
       }
       const e = embossOf(f);
       if (e) { // 양각은 높이를 올리고 음각은 내린다
@@ -1869,7 +1880,20 @@ function surfaceCanvases() { // 인쇄 + 후가공 → 색 지도, 형압 높이
     }
     x.putImageData(img, 0, 0);
   }
-  const print = printWithImgs();   // 원본 인쇄 + 인쇄 이미지 탭에서 얹은 그림
+  const isFoil = (f) => FINISH[f.set.role].metal, fileFoils = FINISH_ORDER.flatMap((role) => S.finishes.filter((f) => f.set.role === role && isFoil(f)));
+  if (canMap && S.imgs.some((o, i) => isTop(o) && ((i >= fp && fileFoils.length) || S.imgs.some((q, j) => j < i && q.vis && FINISH[q.use] && FINISH[q.use].metal)))) { // 박 위에 올라간 그림이 있으면 쌓인 순서대로 칠한다
+    const [W, H] = texSize(), c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'), A = texAffine(W, H), reset = () => { x.setTransform(1, 0, 0, 1, 0, 0); x.globalAlpha = 1; x.globalCompositeOperation = 'source-over'; };
+    if (S.printCanvas && !S.printOff) x.drawImage(S.printCanvas, 0, 0); else { x.fillStyle = '#fff'; x.fillRect(0, 0, W, H); }
+    const foil = (f) => { const t = document.createElement('canvas'); t.width = f.w; t.height = f.h; const tx = t.getContext('2d'), img = tx.createImageData(f.w, f.h), d = img.data, col = hexRgb(f.set.color); for (let p = 0, i = 0; p < f.cov.length; p++, i += 4) { d[i] = col[0]; d[i + 1] = col[1]; d[i + 2] = col[2]; d[i + 3] = f.cov[p]; } tx.putImageData(img, 0, 0); reset(); x.globalAlpha = f.set.opacity / 100; x.globalCompositeOperation = f.set.blend === 'multiply' ? 'multiply' : 'source-over'; x.drawImage(t, 0, 0, W, H); reset(); };
+    for (let i = 0; i <= S.imgs.length; i++) {
+      if (i === fp) fileFoils.forEach(foil);
+      const o = S.imgs[i]; if (!o || !o.vis) continue;
+      if (o.use === 'print') { x.setTransform(...A); x.imageSmoothingQuality = 'high'; x.globalAlpha = o.opacity / 100; x.globalCompositeOperation = o.blend === 'multiply' ? 'multiply' : 'source-over'; drawImg(x, o); reset(); }
+      else if (FINISH[o.use] && FINISH[o.use].metal && o._fin) foil(o._fin);
+    }
+    return { albedo: c, orm };
+  }
+  const print = printWithImgs();   // 원본 인쇄 + 얹은 그림
   let albedo = print;
   const foils = fins.filter((f) => FINISH[f.set.role].metal);
   if (foils.length) { // 박: 인쇄 위에 박 색을 덮거나(덮기) 인쇄에 곱한다(곱하기). 불투명도만큼 섞인다
@@ -2912,7 +2936,7 @@ function histSnap() {
     over: [...S.over], dir: [...S.dir], bulge: [...S.bulge].map(([k, v]) => [k, { ...v }]),
     edits: S.edits.map((o) => ({ ...o })), adds: S.adds.map((o) => ({ ...o })), moves: S.moves.map((o) => ({ ...o })), flip: !!S.flip, inMirror: !!S.inMirror,
     inside: { ...S.inside }, edge: { ...S.edge }, lights: JSON.parse(JSON.stringify(S.lights)), reflectors: JSON.parse(JSON.stringify(S.reflectors)),
-    imgs: S.imgs.map((o) => ({ o, ...imgVals(o) })), printOff: !!S.printOff,
+    imgs: S.imgs.map((o) => ({ o, ...imgVals(o) })), printOff: !!S.printOff, finPos: finAt(),
     labels: S.labels.map((L) => ({ L, id: L.uid || (L.uid = ++labelSeq), x: +L.x.toFixed(2), y: +L.y.toFixed(2), anchor: L.anchor, rot: L.rot, scale: +L.scale.toFixed(4), lift: !!L.lift, off: !!L.off })), li: S.li,
     inputs: histInputs(),
   };
@@ -2944,7 +2968,7 @@ async function histApply(h) {
     pose.base.set(h.pose[0], h.pose[1], h.pose[2], h.pose[3]); pose.rx = h.pose[4]; pose.ry = h.pose[5]; pose.rz = h.pose[6]; S.pos = { x: h.pos[0], z: h.pos[1] }; S.seq = { on: true, steps: h.seq[1] && h.seq[1].map((a) => a.slice()) }; seqUI.active = -1;
     S.over = new Map(h.over); S.dir = new Map(h.dir); S.bulge = new Map(h.bulge.map(([k, v]) => [k, { ...v }]));
     S.inside = { ...h.inside }; S.edge = { ...h.edge }; S.lights = JSON.parse(JSON.stringify(h.lights)); S.reflectors = JSON.parse(JSON.stringify(h.reflectors));
-    { const hi = h.imgs || [], key = (l) => JSON.stringify(l.map(({ o, ...v }) => [o.id, v])); if (key(hi) !== key(S.imgs.map((o) => ({ o, ...imgVals(o) }))) || !!h.printOff !== !!S.printOff) { S.imgs = hi.map(({ o, ...v }) => Object.assign(o, v)); S.printOff = !!h.printOff; imgSel = -1; applyTextures(); } }
+    { const hi = h.imgs || [], key = (l) => JSON.stringify(l.map(({ o, ...v }) => [o.id, v])); const hfp = h.finPos == null ? hi.length : h.finPos; if (key(hi) !== key(S.imgs.map((o) => ({ o, ...imgVals(o) }))) || !!h.printOff !== !!S.printOff || hfp !== finAt()) { S.imgs = hi.map(({ o, ...v }) => Object.assign(o, v)); S.printOff = !!h.printOff; S.finPos = hfp; imgSel = -1; applyTextures(); } }
     for (const L of S.labels) if (!h.labels.some((o) => o.L === L)) dropLabelMeshes(L);
     S.labels = h.labels.map((o) => Object.assign(o.L, { x: o.x, y: o.y, anchor: o.anchor, rot: o.rot, scale: o.scale, lift: o.lift, off: !!o.off }));
     S.li = S.labels.length ? Math.max(0, Math.min(S.li, S.labels.length - 1)) : -1; if (!S.label) labelSel = false;
@@ -3415,14 +3439,16 @@ function openEdit(keys) {
   editSel = new Set(); editView = null; editMsg = ''; imgSel = -1; setJoin(false, true); $('edit-dlg').hidden = false; resize(); renderEdit(keys || new Set());
 }
 /* ---------- 인쇄 이미지: 전개도 위에 그림을 얹어 인쇄나 후가공으로 쓴다 ---------- */
-let fixOrder = [], imgSel = -1, imgSeq = 0, imgUndoKey = '', imgDragI = -1;
+let fixOrder = [], imgSel = -1, imgSeq = 0, imgUndoKey = '', imgDragI = null;
 const IMG_USES = [['print', '인쇄']].concat(LAYER_ROLES.filter(([k]) => FINISH[k]));
 const EYE_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.8" fill="currentColor"/></svg>';
 const EYE_OFF_SVG = EYE_SVG.replace('</svg>', '<path d="M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>');
 function imgVals(o) { return { x: o.x, y: o.y, w: o.w, h: o.h, rot: o.rot, opacity: o.opacity, blend: o.blend, use: o.use, vis: o.vis, dark: !!o.dark }; }
-function imgSnap() { fixOrder.push('i'); if (fixOrder.length > 150) fixOrder.shift(); $('edit-undo').disabled = false; S.imgUndo.push({ list: S.imgs.map((o) => ({ o, ...imgVals(o) })), off: !!S.printOff }); if (S.imgUndo.length > 60) S.imgUndo.shift(); }
+function finAt() { return S.finPos == null || S.finPos > S.imgs.length ? S.imgs.length : Math.max(0, S.finPos); }   // 원본 후가공 바로 위에 오는 그림의 번호. 처음에는 모든 그림이 후가공 아래
+function imgRemove(i) { const fp = finAt(); S.imgs.splice(i, 1); S.finPos = i < fp ? fp - 1 : fp; }
+function imgSnap() { fixOrder.push('i'); if (fixOrder.length > 150) fixOrder.shift(); $('edit-undo').disabled = false; S.imgUndo.push({ list: S.imgs.map((o) => ({ o, ...imgVals(o) })), off: !!S.printOff, fp: finAt() }); if (S.imgUndo.length > 60) S.imgUndo.shift(); }
 function imgTouch(key) { if (imgUndoKey !== key) { imgSnap(); imgUndoKey = key; } }   // 바를 끄는 동안은 한 번만 기록한다
-function imgUndoGo() { const u = S.imgUndo.pop(); if (!u) return; S.imgs = u.list.map(({ o, ...v }) => Object.assign(o, v)); S.printOff = u.off; imgSel = -1; imgUndoKey = ''; renderEdit(); queueTextures(); }
+function imgUndoGo() { const u = S.imgUndo.pop(); if (!u) return; S.imgs = u.list.map(({ o, ...v }) => Object.assign(o, v)); S.printOff = u.off; S.finPos = u.fp == null ? null : u.fp; imgSel = -1; imgUndoKey = ''; renderEdit(); queueTextures(); }
 function fixUndo() { // 가장 마지막에 한 일부터: 선을 고친 것이면 선을, 그림을 만진 것이면 그림을 되돌린다
   while (fixOrder.length) { const k = fixOrder.pop(); if (k === 'e' && S.editUndo.length) return undoEdit(false); if (k === 'i' && S.imgUndo.length) return imgUndoGo(); }
   if (S.editUndo.length) return undoEdit(false); if (S.imgUndo.length) imgUndoGo();
@@ -3462,7 +3488,7 @@ function imgFinishes() {
   return on.map((o) => {
     const key = [o.x, o.y, o.w, o.h, o.rot, !!o.dark, w, h, S.texBox].join('/');
     if (!o._fin || o._fin.key !== key) { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d', { willReadFrequently: true }); x.setTransform(...texAffine(w, h)); drawImg(x, o, imgMask(o)); const d = x.getImageData(0, 0, w, h).data, cov = new Uint8Array(w * h); for (let q = 0, i = 3; q < cov.length; q++, i += 4) cov[q] = d[i]; o._fin = { key, cov, w, h }; }
-    o._fin.set = { role: o.use, color: FINISH[o.use].color || '#ffffff', opacity: o.opacity, blend: o.blend, emboss: 'none' };
+    o._fin.img = o; o._fin.set = { role: o.use, color: FINISH[o.use].color || '#ffffff', opacity: o.opacity, blend: o.blend, emboss: 'none' };
     return o._fin;
   });
 }
@@ -3478,7 +3504,7 @@ async function addImgFiles(files) {
     const st = S.struct, f = st.faces.find((q) => q.id === st.rootId) || st.faces[0]; let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; for (const q of f.outer) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }
     const w = Math.min((x1 - x0) * 0.6, (y1 - y0) * 0.6 * pw / ph);   // 정면 한가운데에, 면의 60% 크기로
     if (!n++) imgSnap();
-    S.imgs.push({ id: ++imgSeq, name: file.name, img, url, pw, ph, alpha, x: (x0 + x1) / 2, y: (y0 + y1) / 2, w, h: w * ph / pw, dark: false, rot: 0, opacity: 100, blend: 'normal', use: 'print', vis: true }); imgSel = S.imgs.length - 1; editSel = new Set(); if (editJoin) setJoin(false, true);
+    { const fp = finAt(); S.imgs.splice(fp, 0, { id: ++imgSeq, name: file.name, img, url, pw, ph, alpha, x: (x0 + x1) / 2, y: (y0 + y1) / 2, w, h: w * ph / pw, dark: false, rot: 0, opacity: 100, blend: 'normal', use: 'print', vis: true }); S.finPos = fp + 1; imgSel = fp; } editSel = new Set(); if (editJoin) setJoin(false, true);
   }
   if (n) editMsg = ''; renderEdit(); if (n) applyTextures();
 }
@@ -3508,7 +3534,14 @@ function printPreviewUrl() { // 미리 보기용으로 줄인 원본 인쇄
 function renderImgList() {
   const box = $('img-list'); box.textContent = '';
   const row = (cls, i, html) => { const r = document.createElement('div'); r.className = 'irow' + cls; r.dataset.i = i; r.innerHTML = html; box.append(r); return r; };
-  for (let i = S.imgs.length - 1; i >= 0; i--) { // 위에 있는 그림이 목록에서도 위
+  const fp = finAt(), fins = S.finishes || [];
+  for (let i = S.imgs.length - 1; i >= -1; i--) { // 위에 있는 그림이 목록에서도 위
+    if (i === fp - 1 && fins.length) { // 파일에 들어 있던 후가공: 이 줄보다 위에 있는 그림은 후가공을 덮는다
+      const f0 = fins.find((f) => FINISH[f.set.role].metal) || fins[0], col = FINISH[f0.set.role].metal ? f0.set.color : (FIN_TINT[f0.set.role] || ['#b9bcc6'])[0], names = [...new Set(fins.map((f) => ((LAYER_ROLES.find(([k]) => k === f.set.role) || ['', ''])[1]).split(' ')[0]))].join(' · ');
+      const r = row(' fin', 'fin', `<i class="fsw" style="background:${col}"></i><span class="nm">원본 후가공</span><span class="tag"></span>`); r.draggable = true; r.querySelector('.tag').textContent = names;
+      r.title = '파일에 들어 있던 후가공입니다. 이 줄보다 위에 있는 그림은 후가공을 덮고, 아래에 있는 그림은 후가공 밑에 깔립니다. 줄을 끌어서 순서를 바꿉니다.';
+    }
+    if (i < 0) break;
     const o = S.imgs[i], r = row((i === imgSel ? ' on' : '') + (o.vis ? '' : ' off'), i, `<button type="button" data-a="vis" title="${o.vis ? '숨기기' : '보이기'}">${o.vis ? EYE_SVG : EYE_OFF_SVG}</button><img alt="" draggable="false"><span class="nm"></span><span class="tag"></span><button type="button" data-a="del" title="지우기">×</button>`);
     r.draggable = true; r.querySelector('img').src = o.url; r.querySelector('.nm').textContent = o.name; r.querySelector('.nm').title = o.name; r.querySelector('.tag').textContent = o.use === 'print' ? '' : ((IMG_USES.find(([k]) => k === o.use) || ['', ''])[1].split(' ')[0]);
     if (i === imgSel) { const d = document.createElement('div'); d.className = 'iopts';
@@ -3528,9 +3561,10 @@ function renderImgList() {
     if (b && o) { if (o.blend !== b.dataset.b) { imgSnap(); o.blend = b.dataset.b; renderEdit(); queueTextures(); } return; }
     const r = rowOf(e); if (!r) return; const a = (e.target.closest('button') || {}).dataset; const act = a && a.a;
     if (r.dataset.i === 'base') { if (act === 'vis') { imgSnap(); S.printOff = !S.printOff; renderEdit(); queueTextures(); } return; }
+    if (r.dataset.i === 'fin') return;
     const i = +r.dataset.i;
     if (act === 'vis') { imgSnap(); S.imgs[i].vis = !S.imgs[i].vis; renderEdit(); queueTextures(); }
-    else if (act === 'del') { imgSnap(); S.imgs.splice(i, 1); imgSel = -1; renderEdit(); queueTextures(); }
+    else if (act === 'del') { imgSnap(); imgRemove(i); imgSel = -1; renderEdit(); queueTextures(); }
     else { imgSel = imgSel === i ? -1 : i; if (imgSel >= 0) { editSel = new Set(); if (editJoin) setJoin(false, true); } renderEdit(); }
   });
   box.addEventListener('input', (e) => {
@@ -3540,10 +3574,17 @@ function renderImgList() {
     queueTextures();
   });
   box.addEventListener('change', () => { imgUndoKey = ''; });
-  box.addEventListener('dragstart', (e) => { const r = rowOf(e); if (!r || r.dataset.i === 'base') { e.preventDefault(); return; } imgDragI = +r.dataset.i; e.dataTransfer.setData('text/plain', 'img'); e.dataTransfer.effectAllowed = 'move'; });
-  box.addEventListener('dragover', (e) => { if (imgDragI < 0) return; const r = rowOf(e); for (const n of box.querySelectorAll('.irow.over')) n.classList.remove('over'); if (!r || r.dataset.i === 'base' || +r.dataset.i === imgDragI) return; e.preventDefault(); r.classList.add('over'); });
-  box.addEventListener('drop', (e) => { const r = rowOf(e), from = imgDragI; imgDragI = -1; if (from < 0 || !r || r.dataset.i === 'base') return; e.preventDefault(); const to = +r.dataset.i; if (to === from) return; imgSnap(); const o = S.imgs.splice(from, 1)[0]; S.imgs.splice(to, 0, o); imgSel = to; renderEdit(); queueTextures(); });
-  box.addEventListener('dragend', () => { imgDragI = -1; for (const n of box.querySelectorAll('.irow.over')) n.classList.remove('over'); });
+  // 끌어서 순서 바꾸기: 그림들과 '원본 후가공' 줄이 한 줄로 쌓여 있다고 본다
+  box.addEventListener('dragstart', (e) => { const r = rowOf(e); if (!r || r.dataset.i === 'base') { e.preventDefault(); return; } imgDragI = r.dataset.i; e.dataTransfer.setData('text/plain', 'img'); e.dataTransfer.effectAllowed = 'move'; });
+  box.addEventListener('dragover', (e) => { if (imgDragI == null) return; const r = rowOf(e); for (const n of box.querySelectorAll('.irow.over')) n.classList.remove('over'); if (!r || r.dataset.i === 'base' || r.dataset.i === imgDragI) return; e.preventDefault(); r.classList.add('over'); });
+  box.addEventListener('drop', (e) => {
+    const r = rowOf(e), from = imgDragI; imgDragI = null; if (from == null || !r || r.dataset.i === 'base') return; e.preventDefault(); const to = r.dataset.i; if (to === from) return;
+    const seq = S.imgs.slice(), has = (S.finishes || []).length > 0; if (has) seq.splice(finAt(), 0, 'fin');
+    const at = (k) => (k === 'fin' ? seq.indexOf('fin') : seq.indexOf(S.imgs[+k])), fi = at(from), ti = at(to); if (fi < 0 || ti < 0) return;
+    imgSnap(); const sel = S.imgs[imgSel], it = seq.splice(fi, 1)[0]; seq.splice(ti, 0, it);
+    if (has) S.finPos = seq.indexOf('fin'); S.imgs = seq.filter((v) => v !== 'fin'); imgSel = it !== 'fin' ? S.imgs.indexOf(it) : sel ? S.imgs.indexOf(sel) : -1; renderEdit(); queueTextures();
+  });
+  box.addEventListener('dragend', () => { imgDragI = null; for (const n of box.querySelectorAll('.irow.over')) n.classList.remove('over'); });
   $('img-add').addEventListener('click', () => $('img-file').click());
   $('img-file').addEventListener('change', (e) => { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) addImgFiles(fs); });
 }
@@ -3650,7 +3691,7 @@ async function loadFile(file) {
     layers = dedupeLayers(layers, pages);
     if (S.doc) S.doc.destroy();
     S.seq.steps = null; seqUI.active = -1;
-    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false, rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', sheets: [], twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null });
+    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false, finPos: null, rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', sheets: [], twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null });
     S.inside.auto = true;
     const picked = autoPickDieline(layers, pages); if (picked) S.pickedLayer = picked.name;
     S.sheets = extraSheets(layers, pages);
@@ -3992,7 +4033,7 @@ function loadExample() {
     { set: set('emboss'), ...mask((x) => { x.translate(x2 + W / 2, H * 0.14); x.scale(1, -1); x.font = '600 16px "IBM Plex Sans KR", sans-serif'; x.textAlign = 'center'; x.fillText('FRONT', 0, 0); }) },
     { set: set('gloss'), ...mask((x) => { x.translate(x2 + W / 2, H * 0.66); x.scale(1, -1); x.font = '600 28px "IBM Plex Sans KR", sans-serif'; x.textAlign = 'center'; x.fillText('SAMPLE BOX', 0, 0); }) },
   ];
-  Object.assign(S, { example: true, struct: st, auto: defaultAngles(st), over: new Map(), dir: new Map(), sel: null, printCanvas: c, finishes, exLines: lines, exRoot: [x2 + W / 2, H / 2], edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false,
+  Object.assign(S, { example: true, struct: st, auto: defaultAngles(st), over: new Map(), dir: new Map(), sel: null, printCanvas: c, finishes, exLines: lines, exRoot: [x2 + W / 2, H / 2], edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false, finPos: null,
     uv: (x, y) => [(x - b.minX) / bw, (y - b.minY) / bh], colorRoles: new Map() });
   renderLayerUI(); renderColorUI(); applyTextures(); buildMeshes(); applyPaper(); updateFold(); fitCamera('right'); renderMap(); updateChips();
   histReset();
@@ -4088,7 +4129,7 @@ window.addEventListener('keydown', (e) => {
   else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); fixUndo(); }
   else if (side) return;   // 오른쪽 목록의 바·선택 칸은 제 할 일을 한다
   else if (o && arrow) { e.preventDefault(); e.stopImmediatePropagation(); const d = (e.shiftKey ? 1 : 0.2) / PT2MM; imgTouch('key' + o.id); o.x += e.key === 'ArrowRight' ? d : e.key === 'ArrowLeft' ? -d : 0; o.y += e.key === 'ArrowUp' ? d : e.key === 'ArrowDown' ? -d : 0; updImg(); queueTextures(); }   // 고른 그림 옮기기
-  else if (o && del) { e.preventDefault(); e.stopImmediatePropagation(); imgSnap(); S.imgs.splice(imgSel, 1); imgSel = -1; renderEdit(); queueTextures(); }
+  else if (o && del) { e.preventDefault(); e.stopImmediatePropagation(); imgSnap(); imgRemove(imgSel); imgSel = -1; renderEdit(); queueTextures(); }
   else if (del && editSel.size) { e.preventDefault(); e.stopImmediatePropagation(); applyEdit('ignore'); }   // 고른 선 지우기
   else if (arrow && editSel.size) { // 고른 선 옮기기: 0.2mm, Shift와 함께 1mm
     e.preventDefault(); e.stopImmediatePropagation();
