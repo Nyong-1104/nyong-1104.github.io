@@ -95,11 +95,34 @@ main{flex:1;min-width:0;position:relative;background:var(--stage);overflow:hidde
 .btn.primary{background:var(--o);color:#fff;border:0;border-radius:12px;min-height:44px;width:100%;font-size:16px;font-weight:700;letter-spacing:-.3px}
 .btn.primary:hover{background:var(--oh)}
 select,input[type="number"]{background:var(--field);border:2px solid var(--field);border-radius:9px;padding:4px 8px;min-height:32px;font-size:12.5px;outline:none;transition:.15s}
-select:focus,input[type="number"]:focus{border-color:var(--o);background:#fff}
-select{min-width:104px;max-width:150px;cursor:pointer}
+select:focus,input[type="number"]:focus{border-color:var(--o);background-color:#fff}
+select{min-width:104px;max-width:150px;cursor:pointer;-webkit-appearance:none;appearance:none;padding-right:26px;font-weight:600;text-overflow:ellipsis;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%231a1c22' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center}
+select.dd-open{border-color:var(--o);background-color:#fff}
+/* 드롭박스 목록·색 고르기 창: 브라우저 기본 창 대신 쓰는 흰 카드 (둥근 모서리, 주황 한 색) */
+.dd-menu,.cpick{position:fixed;z-index:200;box-sizing:border-box;background:rgba(255,255,255,.97);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);box-shadow:0 16px 44px rgba(10,10,20,.2),0 0 0 1px rgba(0,0,0,.07);color:#1a1c22;animation:dd-in .14s cubic-bezier(.2,.8,.3,1);transform-origin:top center;-webkit-user-select:none;user-select:none}
+.dd-menu.up,.cpick.up{transform-origin:bottom center}
+@keyframes dd-in{from{opacity:0;transform:translateY(-4px) scale(.98)}}
+.dd-menu{padding:5px;border-radius:13px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;font-size:12.5px}
+.dd-opt{display:flex;align-items:center;gap:12px;min-height:32px;padding:0 10px;border-radius:8px;cursor:pointer;font-weight:500;white-space:nowrap}
+.dd-opt.act{background:var(--sel)}.dd-opt.on{color:var(--o);font-weight:700}.dd-opt.dis{opacity:.4;cursor:default}
+.dd-opt.on::after{content:"";margin-left:auto;width:12px;height:12px;flex:none;background:var(--o);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4l2.7 2.7L10 3.4' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4l2.7 2.7L10 3.4' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat}
+.cpick{width:236px;padding:12px;border-radius:16px;display:flex;flex-direction:column;gap:10px;font-size:12px}
+.cp-sv{position:relative;height:136px;border-radius:10px;cursor:crosshair;touch-action:none;background:linear-gradient(to top,#000,rgba(0,0,0,0)),linear-gradient(to right,#fff,rgba(255,255,255,0)),var(--h,#f00);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.cp-hue{position:relative;height:12px;margin:2px 0;border-radius:6px;cursor:pointer;touch-action:none;background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.cp-sv i,.cp-hue i{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:3px solid #fff;box-sizing:border-box;box-shadow:0 1px 5px rgba(10,10,20,.4),0 0 0 1px rgba(0,0,0,.08);pointer-events:none}
+.cp-sv i{background:var(--c)}.cp-hue i{top:50%;background:var(--h)}
+.cp-row{display:flex;align-items:center;gap:8px}
+.cp-now{width:32px;height:32px;border-radius:9px;flex:none;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.13)}
+.cp-hex{flex:1;min-width:0;height:32px;box-sizing:border-box;border:2px solid var(--field);background:var(--field);border-radius:9px;padding:0 10px;font:inherit;font-size:12.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;outline:none;color:#1a1c22;-webkit-user-select:text;user-select:text;transition:.15s}.cp-hex:focus{border-color:var(--o);background:#fff}
+.cp-eye{width:32px;height:32px;flex:none;display:grid;place-items:center;border:2px solid var(--line);background:#fff;border-radius:9px;cursor:pointer;padding:0;color:#1a1c22;transition:.15s}.cp-eye:hover{border-color:#c4c4d0}.cp-eye:focus-visible,.cp-sw button:focus-visible{outline:2px solid var(--o);outline-offset:2px}
+.cp-cap{font-size:10.5px;font-weight:700;color:var(--mute);margin:2px 0 -5px}
+.cp-sw{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
+.cp-sw button{aspect-ratio:1;border:0;padding:0;border-radius:7px;cursor:pointer;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);transition:transform .12s}.cp-sw button:hover{transform:scale(1.1)}.cp-sw button.on{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--o)}
 input[type="number"]{width:70px}
 input[type="checkbox"]{accent-color:var(--o);width:16px;height:16px;margin:0;flex:none}
-input[type="color"]{width:32px;height:32px;padding:0;border:2px solid var(--line);border-radius:9px;background:#fff;flex:none}
+input[type="color"]{width:32px;height:32px;padding:0;border:2px solid var(--line);border-radius:9px;background:#fff;flex:none;cursor:pointer;-webkit-appearance:none;appearance:none;overflow:hidden;transition:border-color .15s}
+input[type="color"]::-webkit-color-swatch-wrapper{padding:2px}input[type="color"]::-webkit-color-swatch{border:0;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}input[type="color"]::-moz-color-swatch{border:0;border-radius:6px}
+input[type="color"]:hover{border-color:#c4c4d0}input[type="color"].cp-open,input[type="color"]:focus-visible{border-color:var(--o);outline:none}
 /* sliders: 주황으로 채워지는 트랙 */
 input[type="range"]{-webkit-appearance:none;appearance:none;height:18px;background:transparent;--p:50%;flex:1;min-width:0;margin:0;cursor:pointer}
 input[type="range"]:focus{outline:none}
@@ -225,7 +248,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 .x{border:0;background:none;font-size:22px;line-height:1;color:var(--mute);width:28px;height:28px;border-radius:8px;flex:none}
 .x:hover{color:var(--o)}
 .pop .item{background:rgba(255,255,255,.5);border-color:rgba(0,0,0,.08)}
-.pop select,.pop input[type="number"]{background:rgba(255,255,255,.75);border-color:rgba(0,0,0,.08)}
+.pop select,.pop input[type="number"]{background-color:rgba(255,255,255,.75);border-color:rgba(0,0,0,.08)}
 .pop .btn{background:rgba(255,255,255,.75)}
 .pop .btn[aria-pressed="true"]{background:var(--o)}
 .tabs button{flex:0 0 auto;min-width:44px;padding:6px 11px;display:inline-flex;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,.75)}
@@ -360,7 +383,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
   html.ui-dark{--pop-rgb:20,21,28;--pop-ad:.46;--glass-rgb:20,21,28;--glass-ad:.5}
   html.ui-dark :is(.pop,.bar,#seq-row,.top){--ink:#fff;--mute:rgba(255,255,255,.64);--mute2:rgba(255,255,255,.84);--line:rgba(255,255,255,.2);--track:rgba(255,255,255,.3);color:#fff;border-color:rgba(255,255,255,.14)}
   html.ui-dark :is(.pop,.bar,#seq-row) :is(.btn,select,input[type="number"],input[type="text"],.tabs button,.step){--ink:#1a1c22;--mute:#9a9aa8;--mute2:#6b6d78;--line:#e2e2ea;color:#1a1c22}
-  html.ui-dark .pop :is(.btn,select,input[type="number"],.tabs button){background:rgba(255,255,255,.9)}
+  html.ui-dark .pop :is(.btn,select,input[type="number"],.tabs button){background-color:rgba(255,255,255,.9)}
   html.ui-dark :is(.pop,.bar,#seq-row) .btn[aria-pressed="true"]{color:#fff;background:var(--o)}html.ui-dark .pop .tabs button.on{color:#fff;background:var(--o)}
   html.ui-dark .pop .item{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16)}
   html.ui-dark .lball .rim{fill:rgba(255,255,255,.1);stroke:rgba(255,255,255,.45)}html.ui-dark .lball .floor{stroke:rgba(255,255,255,.45)}html.ui-dark .lball .axis{stroke:rgba(255,255,255,.4)}html.ui-dark .lball .stem{stroke:rgba(255,255,255,.55)}
@@ -632,6 +655,99 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 <script type="module">
 import * as THREE from './vendor/three.module.min.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
+
+/* =====================================================================
+ * 드롭박스 목록·색 고르기: 브라우저 기본 창을 막고 사이트 모양의 창을 띄운다.
+ * select와 input[type=color]는 그대로 두고(값·이벤트·숨김 처리가 전과 같다) 누를 때 뜨는 창만 바꾼다.
+ * 다른 단축키보다 먼저 받아야 하므로 맨 앞에서 등록한다.
+ * ===================================================================== */
+{
+  const fine = () => matchMedia('(hover:hover) and (pointer:fine)').matches;   // 터치 화면에서는 드롭박스만 기기 기본 창을 그대로 쓴다
+  const fire = (n, type) => n.dispatchEvent(new Event(type, { bubbles: true }));
+  const place = (el, r, gap) => { // 누른 칸 바로 아래, 자리가 없으면 위
+    const w = el.offsetWidth, h = el.offsetHeight, vw = innerWidth, vh = innerHeight, up = r.bottom + gap + h > vh - 8 && r.top - gap - h >= 8;
+    el.style.left = Math.max(8, Math.min(vw - w - 8, r.left)) + 'px'; el.style.top = Math.max(8, up ? r.top - gap - h : Math.min(r.bottom + gap, vh - h - 8)) + 'px'; el.classList.toggle('up', up);
+  };
+  // ----- 드롭박스 -----
+  let ddSel = null, ddMenu = null, ddAct = -1;
+  const ddClose = (focus) => { if (!ddMenu) return; ddMenu.remove(); ddMenu = null; const s = ddSel; ddSel = null; if (s) { s.classList.remove('dd-open'); if (focus && s.isConnected) s.focus(); } };
+  const ddMark = (scroll) => { [...ddMenu.children].forEach((n, i) => n.classList.toggle('act', i === ddAct)); const a = ddMenu.children[ddAct]; if (a && scroll) a.scrollIntoView({ block: 'nearest' }); };
+  const ddPick = (i) => { const s = ddSel, o = s && s.options[i]; if (!o || o.disabled) return; const changed = s.selectedIndex !== i; ddClose(true); if (!changed || !s.isConnected) return; s.selectedIndex = i; fire(s, 'input'); fire(s, 'change'); };
+  const ddOpen = (s) => {
+    ddClose(); cpClose();
+    const m = document.createElement('div'); m.className = 'dd-menu'; m.setAttribute('role', 'listbox');
+    [...s.options].forEach((o, i) => { const b = document.createElement('div'); b.className = 'dd-opt' + (i === s.selectedIndex ? ' on' : '') + (o.disabled ? ' dis' : ''); b.setAttribute('role', 'option'); b.setAttribute('aria-selected', String(i === s.selectedIndex)); b.dataset.i = i; b.textContent = o.textContent; m.append(b); });
+    document.body.append(m); ddMenu = m; ddSel = s; ddAct = s.selectedIndex; s.classList.add('dd-open');
+    const r = s.getBoundingClientRect(); m.style.minWidth = Math.max(r.width, 128) + 'px'; m.style.maxHeight = Math.max(140, Math.min(360, Math.max(innerHeight - r.bottom, r.top) - 16)) + 'px';
+    place(m, r, 5); ddMark(true);
+    m.addEventListener('pointermove', (e) => { const b = e.target.closest('.dd-opt'); if (b && +b.dataset.i !== ddAct) { ddAct = +b.dataset.i; ddMark(false); } });
+    m.addEventListener('click', (e) => { const b = e.target.closest('.dd-opt'); if (b) ddPick(+b.dataset.i); });
+  };
+  // ----- 색 고르기 -----
+  const PRESETS = ['#ffffff', '#f4f4f6', '#1a1c22', '#ff2f00', '#ffd3c4', '#f7e3a1', '#cfe8d5', '#cfe1ff'];
+  let recent = []; try { recent = JSON.parse(localStorage.getItem('bms-colors') || '[]').filter((c) => /^#[0-9a-f]{6}$/.test(c)).slice(0, 8); } catch (e) { recent = []; }
+  const toHsv = (hex) => { const n = parseInt(hex.slice(1), 16), r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255, mx = Math.max(r, g, b), d = mx - Math.min(r, g, b); let h = 0; if (d) { h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; if (h < 0) h += 360; } return { h, s: mx ? d / mx : 0, v: mx }; };
+  const toHex = (h, s, v) => { const f = (n) => { const k = (n + h / 60) % 6; return v - v * s * Math.max(0, Math.min(k, 4 - k, 1)); }; return '#' + [f(5), f(3), f(1)].map((x) => Math.round(x * 255).toString(16).padStart(2, '0')).join(''); };
+  const c01 = (x) => Math.max(0, Math.min(1, x));
+  let cp = null;
+  function cpClose() {
+    if (!cp) return; const c = cp; cp = null; c.el.remove(); c.input.classList.remove('cp-open');
+    if (!c.input.isConnected || c.input.value === c.start) return;
+    recent = [c.input.value].concat(recent.filter((x) => x !== c.input.value)).slice(0, 8); try { localStorage.setItem('bms-colors', JSON.stringify(recent)); } catch (e) { /* 저장이 막힌 곳에서는 이번에만 기억한다 */ }
+    fire(c.input, 'change');
+  }
+  const cpOpen = (input) => {
+    ddClose(); if (cp && cp.input === input) { cpClose(); return; } cpClose();
+    const el = document.createElement('div'); el.className = 'cpick'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', '색 고르기');
+    const sws = (list) => list.map((c) => `<button type="button" data-c="${c}" style="--c:${c}" title="${c.toUpperCase()}" aria-label="${c.toUpperCase()}"></button>`).join('');
+    el.innerHTML = '<div class="cp-sv"><i></i></div><div class="cp-hue"><i></i></div>'
+      + '<div class="cp-row"><span class="cp-now"></span><input type="text" class="cp-hex" maxlength="7" spellcheck="false" autocomplete="off" aria-label="색 코드">'
+      + (window.EyeDropper ? '<button type="button" class="cp-eye" title="화면에서 색 뽑기" aria-label="화면에서 색 뽑기"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.2 4.2l2.6 2.6M10.1 3.3l1-1a1.6 1.6 0 012.6 2.6l-1 1M10.9 7.7l-5.6 5.6-2.9.6.6-2.9 5.6-5.6"/></svg></button>' : '') + '</div>'
+      + `<div class="cp-sw">${sws(PRESETS)}</div>` + (recent.length ? `<div class="cp-cap">최근 쓴 색</div><div class="cp-sw">${sws(recent)}</div>` : '');
+    document.body.append(el);
+    const st = toHsv(input.value), sv = el.querySelector('.cp-sv'), hue = el.querySelector('.cp-hue'), hexIn = el.querySelector('.cp-hex');
+    cp = { el, input, start: input.value }; input.classList.add('cp-open');
+    const paint = (keepText) => { const hex = toHex(st.h, st.s, st.v); el.style.setProperty('--c', hex); el.style.setProperty('--h', toHex(st.h, 1, 1)); sv.firstElementChild.style.left = st.s * 100 + '%'; sv.firstElementChild.style.top = (1 - st.v) * 100 + '%'; hue.firstElementChild.style.left = st.h / 360 * 100 + '%'; if (!keepText) hexIn.value = hex.toUpperCase(); for (const b of el.querySelectorAll('.cp-sw button')) b.classList.toggle('on', b.dataset.c === hex); return hex; };
+    const push = (keepText) => { const hex = paint(keepText); if (!input.isConnected) { cpClose(); return; } if (input.value !== hex) { input.value = hex; fire(input, 'input'); } };
+    const setHex = (hex, keepText) => { const n = toHsv(hex); if (!n.s || !n.v) n.h = st.h; Object.assign(st, n); push(keepText); };   // 회색·검정에서는 색상 바 자리를 그대로 둔다
+    const drag = (node, fn) => { node.addEventListener('pointerdown', (e) => { e.preventDefault(); node.setPointerCapture(e.pointerId); fn(e); }); node.addEventListener('pointermove', (e) => { if (node.hasPointerCapture(e.pointerId)) fn(e); }); };
+    drag(sv, (e) => { const r = sv.getBoundingClientRect(); st.s = c01((e.clientX - r.left) / r.width); st.v = 1 - c01((e.clientY - r.top) / r.height); push(); });
+    drag(hue, (e) => { const r = hue.getBoundingClientRect(); st.h = c01((e.clientX - r.left) / r.width) * 359.99; push(); });
+    const typed = () => { let t = hexIn.value.trim().replace(/^#/, '').toLowerCase(); if (/^[0-9a-f]{3}$/.test(t)) t = t.replace(/./g, '$&$&'); return /^[0-9a-f]{6}$/.test(t) ? '#' + t : null; };
+    hexIn.addEventListener('input', () => { const t = typed(); if (t && hexIn.value.replace(/^#/, '').trim().length === 6) setHex(t, true); });
+    cp.enter = () => { const t = typed(); if (t) setHex(t); else paint(); hexIn.select(); };   // Enter: 친 색 코드를 넣고 표기를 다듬는다
+    hexIn.addEventListener('blur', () => { const t = typed(); if (t) setHex(t); else paint(); });
+    el.addEventListener('click', (e) => {
+      const b = e.target.closest('.cp-sw button'); if (b) { setHex(b.dataset.c); return; }
+      if (e.target.closest('.cp-eye')) new window.EyeDropper().open().then((r) => { if (cp && cp.el === el && /^#[0-9a-f]{6}$/i.test(r.sRGBHex)) setHex(r.sRGBHex.toLowerCase()); }).catch(() => { /* 취소 */ });
+    });
+    paint(); place(el, input.getBoundingClientRect(), 6);
+  };
+  // ----- 누르기·키보드 -----
+  document.addEventListener('pointerdown', (e) => { const t = e.target; if (ddMenu && !ddMenu.contains(t) && t !== ddSel) ddClose(); if (cp && !cp.el.contains(t) && t !== cp.input) cpClose(); }, true);
+  document.addEventListener('mousedown', (e) => { const s = e.target; if (!s || s.tagName !== 'SELECT' || s.multiple || s.disabled || e.button !== 0 || !fine()) return; e.preventDefault(); s.focus(); if (ddSel === s) ddClose(); else ddOpen(s); }, true);
+  document.addEventListener('click', (e) => { const t = e.target; if (t && t.tagName === 'INPUT' && t.type === 'color') { e.preventDefault(); if (!t.disabled) cpOpen(t); } }, true);
+  document.addEventListener('wheel', (e) => { if (ddMenu && !ddMenu.contains(e.target)) ddClose(); }, { capture: true, passive: true });
+  window.addEventListener('resize', () => { ddClose(); cpClose(); });
+  window.addEventListener('blur', () => ddClose());
+  window.addEventListener('keydown', (e) => {
+    if (ddMenu) {
+      const n = ddSel.options.length, step = (d) => { let i = ddAct; for (let k = 0; k < n; k++) { i = (i + d + n) % n; if (!ddSel.options[i].disabled) break; } ddAct = i; ddMark(true); };
+      if (e.key === 'Tab') { ddClose(); return; }
+      if (e.key === 'ArrowDown') step(1); else if (e.key === 'ArrowUp') step(-1); else if (e.key === 'Home') { ddAct = -1; step(1); } else if (e.key === 'End') { ddAct = 0; step(-1); }
+      else if (e.key === 'Enter' || e.key === ' ') ddPick(ddAct); else if (e.key === 'Escape') ddClose(true); else return;
+      e.preventDefault(); e.stopImmediatePropagation(); return;
+    }
+    if (cp) {
+      if (e.key === 'Escape') { cpClose(); e.preventDefault(); e.stopImmediatePropagation(); }
+      else if (cp.el.contains(e.target)) { if (e.key === 'Enter' && e.target.classList.contains('cp-hex')) cp.enter(); e.stopImmediatePropagation(); }   // 색 코드를 치는 동안 화면의 단축키(Delete, 방향키 등)가 먹지 않게
+      else if (e.key === 'Tab') cpClose();
+      return;
+    }
+    const s = e.target;
+    if (s && s.tagName === 'SELECT' && !s.multiple && !s.disabled && fine() && !e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown' || e.key === 'ArrowUp')) { e.preventDefault(); e.stopImmediatePropagation(); ddOpen(s); }
+  }, true);
+}
 
 /* =====================================================================
  * Dieline core — 칼선 구조 인식 엔진 (DOM/three.js 비의존, Node에서도 동작)
@@ -3109,8 +3225,8 @@ function openLayer(ly, row) { // 후가공 줄을 누르면 그 줄의 옵션만
   S.layerOpen = ly;
   for (const n of $('layers').querySelectorAll('.lrow')) { const on = !!ly && n === row; n.classList.toggle('open', on); if (n._sub) n._sub.hidden = !on; }
 }
-document.addEventListener('pointerdown', (e) => { // 목록 밖을 누르면 접는다 (3D 화면을 돌려 보는 동안은 그대로 둔다)
-  if (!S.layerOpen || !e.target.closest || e.target.closest('#layers') || e.target.closest('#stage')) return;
+document.addEventListener('click', (e) => { // 목록 밖을 누르면 접는다 (3D 화면을 돌려 보는 동안은 그대로 둔다). 누르는 순간에 접으면 패널이 밀려 누르려던 버튼이 빗나가므로, 눌린 뒤에 접는다
+  if (!S.layerOpen || !e.target.closest || e.target.closest('#layers') || e.target.closest('#stage') || e.target.closest('.dd-menu, .cpick')) return;
   openLayer(null, null);
 });
 function renderColorUI() {
