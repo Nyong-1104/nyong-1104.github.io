@@ -334,7 +334,9 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
 #edit-map.imgs{cursor:default}#edit-map .uimg{cursor:move}
 #edit-map path.isel{fill:none;stroke:var(--o);stroke-width:1.4px;vector-effect:non-scaling-stroke;pointer-events:none}
 #edit-map path.ih{fill:none;stroke:#fff;stroke-width:13px;stroke-linecap:round;vector-effect:non-scaling-stroke;cursor:nwse-resize}#edit-map path.ih.rot{cursor:grab}
-#edit-map path.ih2{fill:none;stroke:var(--o);stroke-width:8px;stroke-linecap:round;vector-effect:non-scaling-stroke;pointer-events:none}
+#edit-map path.ih2{fill:none;stroke:var(--o);stroke-width:8px;stroke-linecap:round;vector-effect:non-scaling-stroke;pointer-events:none}#edit-map path.ih2.side{stroke-width:6px}
+#edit-map path.iguide{fill:none;stroke:#00a2ff;stroke-width:1px;vector-effect:non-scaling-stroke;pointer-events:none}
+#edit-map.pan,#edit-map.pan *{cursor:grab!important}#edit-map.panning,#edit-map.panning *{cursor:grabbing!important}
 @media (max-width:900px){#edit-body{flex-direction:column}#img-side{width:100%;max-height:40%}}
 #edit-box{position:absolute;border:1px dashed var(--o);background:rgba(255,47,0,.08);pointer-events:none;border-radius:3px}
 #edit-legend i.dash{background:repeating-linear-gradient(90deg,#b4b4c0 0 4px,transparent 4px 7px)}
@@ -577,6 +579,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
         <button type="button" class="btn" data-role="auto">자동으로</button>
       </div>
       <button type="button" class="btn tip-late below" id="edit-sym" aria-pressed="false" data-tip="켜 두면 방향키가 전개도 가운데를 기준으로 양쪽을 같은 만큼 움직입니다. → ↑ 는 벌리기, ← ↓ 는 좁히기. 끄고도 Alt를 누른 채 방향키를 누르면 같은 동작입니다.">대칭 이동</button>
+      <button type="button" class="btn tip-late below" id="edit-follow" aria-pressed="true" data-tip="켜 두면 접는 선을 옮길 때 그 선 너머에 달린 면과 날개가 함께 움직여서, 면의 크기가 바뀝니다. 끄면 고른 선만 움직입니다.">면 함께 이동</button>
       <button type="button" class="btn tip-late below" id="edit-join" aria-pressed="false" data-tip="끊긴 선을 직접 잇습니다. 켜면 끊긴 선 끝이 주황 점으로 보입니다. 점을 누르고, 이을 곳(다른 점이나 선 위)을 누르면 그 사이에 선이 생깁니다. 이은 선을 고르고 '무시'를 누르면 지워집니다.">선 잇기</button>
       <button type="button" class="btn" id="edit-undo">되돌리기</button>
       <button type="button" class="btn" id="edit-reset">전부 처음으로</button>
@@ -853,8 +856,9 @@ function moveLines(lines, opts) {
   if (!pr.segs) return { lines, overrides: opts.overrides };
   const hit = new Map(), movedEdges = [], still = [], atNode = new Map();
   const nodeRec = (id) => { let r = atNode.get(id); if (!r) atNode.set(id, (r = { fixed: false, ds: [] })); return r; };
+  const synth = [];   // 끊긴 끝을 이어 붙이느라 생긴 조각 (원래 선에는 없는 것)
   for (const e of pr.edges) {
-    if (e.src == null || pr.segs[e.src].li < 0) { still.push(e); nodeRec(e.u).fixed = nodeRec(e.v).fixed = true; continue; }
+    if (e.src == null || pr.segs[e.src].li < 0) { synth.push(e); continue; }
     const a = pr.nodes[e.u], b = pr.nodes[e.v], sg = { x1: a[0], y1: a[1], x2: b[0], y2: b[1] }; let mi = -1;
     for (let k = 0; k < mv.length; k++) { const o = mv[k]; if (o.x >= Math.min(a[0], b[0]) - 0.4 && o.x <= Math.max(a[0], b[0]) + 0.4 && o.y >= Math.min(a[1], b[1]) - 0.4 && o.y <= Math.max(a[1], b[1]) + 0.4 && distPointSeg(o.x, o.y, sg).d <= 0.3) mi = k; }
     if (mi < 0) { still.push(e); nodeRec(e.u).fixed = nodeRec(e.v).fixed = true; continue; }
@@ -862,6 +866,11 @@ function moveLines(lines, opts) {
     let l = hit.get(e.src); if (!l) hit.set(e.src, (l = []));
     l.push({ t0: Math.min(e.t0, e.t1), t1: Math.max(e.t0, e.t1), mi, dx: mv[mi].dx, dy: mv[mi].dy });
     movedEdges.push({ sg, dx: mv[mi].dx, dy: mv[mi].dy });
+  }
+  for (const e of synth) { // 이음 조각의 양쪽 선이 똑같이 옮겨졌으면 붙잡아 두지 않는다 (옮긴 자리에서 다시 이어진다). 그렇지 않으면 제자리에 둔다
+    const one = (r) => (r && !r.fixed && r.ds.length === 1 ? r.ds[0] : null), du = one(atNode.get(e.u)), dv = one(atNode.get(e.v));
+    if (du && dv && Math.abs(du.dx - dv.dx) < 1e-6 && Math.abs(du.dy - dv.dy) < 1e-6) continue;
+    still.push(e); nodeRec(e.u).fixed = nodeRec(e.v).fixed = true;
   }
   if (!hit.size) return { lines, overrides: opts.overrides };
   const byLine = new Map();
@@ -1150,6 +1159,31 @@ function buildStructure(lines, opts = {}) {
         if (q) bridges.push({ pts: [[P[0], P[1]], [q.x, q.y]], role });
       }
     });
+    if (!bridges.length) {
+      /* 양 끝이 다 붙어 있는데도 버려진 선: 이 선으로 둘러싸일 면이 다른 곳에서 열려 있다는 뜻이다 (모서리가 눈에 안 보일 만큼 살짝 떨어진 경우).
+         이 선을 빼면 도면이 두 덩어리로 갈라지므로, 두 덩어리가 가장 가까이 스치는 곳을 찾아 이어 준다 */
+      const len = (e) => Math.hypot(nodes[e.u][0] - nodes[e.v][0], nodes[e.u][1] - nodes[e.v][1]), use = (j) => edges[j].alive || inL[j];
+      let pick = -1; edges.forEach((e, i) => { if (!e.alive && !e.ignored && e.ov && inc[e.u].length > 1 && inc[e.v].length > 1 && (pick < 0 || len(e) > len(edges[pick]))) pick = i; });
+      if (pick >= 0) {
+        const side = new Int8Array(nodes.length);
+        const flood = (start, tag) => { const st = [start]; side[start] = tag; while (st.length) { const n = st.pop(); for (const j of inc[n]) { if (j === pick || !use(j)) continue; const f = edges[j], o = f.u === n ? f.v : f.u; if (!side[o]) { side[o] = tag; st.push(o); } } } };
+        flood(edges[pick].u, 1);
+        if (!side[edges[pick].v]) {
+          flood(edges[pick].v, 2);
+          const lim = Math.min(Math.max(eps * 1.5, 4.25), len(edges[pick]) * 0.4); let best = null;
+          const scan = (ta, tb) => { // ta 쪽의 점과 tb 쪽의 선 사이에서 가장 가까운 곳
+            const pts = []; nodes.forEach((q, n) => { if (side[n] === ta) pts.push(q); });
+            edges.forEach((f, j) => {
+              if (j === pick || !use(j) || side[f.u] !== tb) return;
+              const a = nodes[f.u], b = nodes[f.v], x0 = Math.min(a[0], b[0]) - lim, x1 = Math.max(a[0], b[0]) + lim, y0 = Math.min(a[1], b[1]) - lim, y1 = Math.max(a[1], b[1]) + lim, sg = { x1: a[0], y1: a[1], x2: b[0], y2: b[1] };
+              for (const q of pts) { if (q[0] < x0 || q[0] > x1 || q[1] < y0 || q[1] > y1) continue; const r = distPointSeg(q[0], q[1], sg); if (r.d <= lim && (!best || r.d < best.d)) best = { d: r.d, a: q, x: r.qx, y: r.qy }; }
+            });
+          };
+          scan(1, 2); scan(2, 1);
+          if (best && best.d > 1e-6) bridges.push({ pts: [[best.a[0], best.a[1]], [best.x, best.y]], role: 'cut' });
+        }
+      }
+    }
     if (bridges.length) return buildStructure(lines.concat(bridges), { ...opts, _repair: pass + 1 });
   }
 
@@ -1171,7 +1205,7 @@ function buildStructure(lines, opts = {}) {
     const el = Math.hypot(nodes[e.u][0] - nodes[e.v][0], nodes[e.u][1] - nodes[e.v][1]);
     rec.len += el; if (e.type === 'foldOut') rec.outLen += el;
   });
-  const tiny = (f) => f.netArea < 3; // 선 끝이 어긋나 생긴 미세 조각 (pt²)
+  const tiny = (f) => f.netArea < 10; // 선 끝이 어긋나 생긴 미세 조각 (pt², 약 1.2mm² 아래)
   const nbr = (m) => { const r = faces.map(() => []); for (const rec of m.values()) { r[rec.a].push([rec.b, rec]); r[rec.b].push([rec.a, rec]); } return r; };
   const foldN = nbr(foldAdj), cutN = nbr(cutAdj);
 
@@ -3311,6 +3345,20 @@ async function nudgeFlush() {
   editMsg = S.struct.faces.length !== nudgeFaces ? `선을 옮기면서 면이 ${nudgeFaces}개에서 ${S.struct.faces.length}개로 바뀌었습니다. 이웃한 선에서 떨어졌거나 다른 선을 넘어간 경우입니다. 의도한 것이 아니면 되돌리기(Ctrl+Z)를 누르세요.` : '';
   if (!$('edit-dlg').hidden) renderEdit(nudgeKeys);
 }
+let editFollow = true;   // 접는 선을 옮기면 그 너머(정면에서 먼 쪽)에 달린 면도 함께 옮긴다
+function farEdges(picked) { // 고른 접는 선 너머에 달린 면들의 선 (테두리와 그 안의 선)
+  const st = S.struct, out = new Set(); if (!st.hinges.length || !st.faces.length) return out;
+  const kids = new Map(); for (const h of st.hinges) { let l = kids.get(h.parent); if (!l) kids.set(h.parent, (l = [])); l.push(h.child); }
+  const mid = (e) => [(e.a[0] + e.b[0]) / 2, (e.a[1] + e.b[1]) / 2], near = (m, a, b) => distPointSeg(m[0], m[1], { x1: a[0], y1: a[1], x2: b[0], y2: b[1] }).d <= 0.3, far = new Set();
+  for (const e of picked) {
+    if (e.state !== 'ok') continue; const m = mid(e), h = st.hinges.find((x) => !x.weld && x.segs.some(([a, b]) => near(m, a, b))); if (!h) continue;
+    const stack = [h.child]; while (stack.length) { const f = stack.pop(); if (far.has(f)) continue; far.add(f); for (const k of kids.get(f) || []) stack.push(k); }
+  }
+  if (!far.size) return out;
+  const polys = st.faces.filter((f) => far.has(f.id)).map((f) => f.outer), ps = new Set(picked);
+  for (const e of st.allEdges) { if (ps.has(e)) continue; const m = mid(e); if (polys.some((P) => pointInPoly(m[0], m[1], P) || P.some((q, i) => near(m, q, P[(i + 1) % P.length])))) out.add(e); }
+  return out;
+}
 function nudgeEdit(dx, dy, sym) {   // sym: 전개도 가운데를 기준으로 양쪽을 같은 만큼 벌리거나(+) 좁힌다(-)
   if (!editSel.size || !S.struct) return;
   const E = S.struct.allEdges, tw = editTwin(), emid = (e) => [(e.a[0] + e.b[0]) / 2, (e.a[1] + e.b[1]) / 2];
@@ -3323,12 +3371,13 @@ function nudgeEdit(dx, dy, sym) {   // sym: 전개도 가운데를 기준으로 
     if (sym) { const b = s === 'twin' ? tw.box : tw && tw.mbox; if (!b) return [dx, dy]; const m = emid(e), ox = m[0] - (b.x0 + b.x1) / 2, oy = m[1] - (b.y0 + b.y1) / 2; return [Math.abs(ox) > 0.5 ? Math.sign(ox) * dx : 0, Math.abs(oy) > 0.5 ? Math.sign(oy) * dy : 0]; }
     return tw && tw.T && tw.T.mirror && s && s !== ref ? [-dx, dy] : [dx, dy];   // 좌우로 뒤집힌 짝은 좌우 방향만 반대로
   };
-  const plan = new Map(); for (const e of picked) plan.set(e, dFor(e));
-  if (tw && tw.T) for (const e of picked) { // 짝 전개도의 같은 선
+  const aux = editFollow && !sym ? farEdges(picked) : new Set(), all = [...aux].concat(picked);   // aux = 함께 따라가는 선 (선택에는 넣지 않는다)
+  const plan = new Map(); for (const e of all) plan.set(e, dFor(e));
+  if (tw && tw.T) for (const e of all) { // 짝 전개도의 같은 선
     const s = sideOf(e); if (!s) continue;
     const m = emid(e), q = applyT(s === 'main' ? tw.T : inverseT(tw.T), m[0], m[1]); let best = null;
     for (const c of E) { const cs = sideOf(c); if (!cs || cs === s) continue; const d = distPointSeg(q[0], q[1], { x1: c.a[0], y1: c.a[1], x2: c.b[0], y2: c.b[1] }).d; if (d <= 1.5 && (!best || d < best.d)) best = { d, c }; }
-    if (best && !plan.has(best.c)) plan.set(best.c, dFor(best.c));
+    if (best && !plan.has(best.c)) { plan.set(best.c, dFor(best.c)); if (aux.has(e)) aux.add(best.c); }
   }
   if (!nudgeOpen) { editSnap(); nudgeOpen = true; nudgeFaces = nudgeBusy ? nudgeFaces : -1; }
   clearTimeout(nudgeIdle); nudgeIdle = setTimeout(() => { nudgeOpen = false; }, 900);
@@ -3336,7 +3385,7 @@ function nudgeEdit(dx, dy, sym) {   // sym: 전개도 가운데를 기준으로 
   for (const [e, d] of plan) {
     let m = moveOf(e) || e._m;
     if (!m) { const c = omid(e); S.moves.push((m = { id: ++moveSeq, x: c[0], y: c[1], dx: 0, dy: 0 })); e._m = m; }   // 다시 계산되기 전에 또 눌러도 같은 기록에 더해지게 붙여 둔다
-    nudgeKeys.add('m' + m.id);
+    if (!aux.has(e)) nudgeKeys.add('m' + m.id);
     if (done.has(m)) continue; done.add(m);                                                                            // 한 기록이 여러 조각에 걸려 있어도 한 번만 더한다
     m.dx += d[0]; m.dy += d[1];
   }
@@ -3352,7 +3401,7 @@ let editTab = 'line', imgSel = -1, imgSeq = 0, imgUndoKey = '', imgDragI = -1;
 const IMG_USES = [['print', '인쇄']].concat(LAYER_ROLES.filter(([k]) => FINISH[k]));
 const EYE_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.8" fill="currentColor"/></svg>';
 const EYE_OFF_SVG = EYE_SVG.replace('</svg>', '<path d="M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>');
-function imgVals(o) { return { x: o.x, y: o.y, w: o.w, rot: o.rot, opacity: o.opacity, blend: o.blend, use: o.use, vis: o.vis }; }
+function imgVals(o) { return { x: o.x, y: o.y, w: o.w, h: o.h, rot: o.rot, opacity: o.opacity, blend: o.blend, use: o.use, vis: o.vis, dark: !!o.dark }; }
 function imgSnap() { S.imgUndo.push({ list: S.imgs.map((o) => ({ o, ...imgVals(o) })), off: !!S.printOff }); if (S.imgUndo.length > 60) S.imgUndo.shift(); }
 function imgTouch(key) { if (imgUndoKey !== key) { imgSnap(); imgUndoKey = key; } }   // 바를 끄는 동안은 한 번만 기록한다
 function imgUndoGo() { const u = S.imgUndo.pop(); if (!u) return; S.imgs = u.list.map(({ o, ...v }) => Object.assign(o, v)); S.printOff = u.off; imgSel = -1; imgUndoKey = ''; renderEdit(); queueTextures(); }
@@ -3370,7 +3419,7 @@ function texSize() { // 원본 인쇄가 없을 때 쓸 그림 크기
   if (S.finishes.length) return [S.finishes[0].w, S.finishes[0].h];
   const b = S.struct.bbox, k = 2048 / Math.max(b.maxX - b.minX, b.maxY - b.minY); return [Math.max(2, Math.round((b.maxX - b.minX) * k)), Math.max(2, Math.round((b.maxY - b.minY) * k))];
 }
-function drawImg(x, o, src) { const h = o.w * o.ph / o.pw; x.save(); x.translate(o.x, o.y); x.rotate(-o.rot * D2R); x.scale(1, -1); x.drawImage(src || o.img, -o.w / 2, -h / 2, o.w, h); x.restore(); }
+function drawImg(x, o, src) { const h = o.h; x.save(); x.translate(o.x, o.y); x.rotate(-o.rot * D2R); x.scale(1, -1); x.drawImage(src || o.img, -o.w / 2, -h / 2, o.w, h); x.restore(); }
 function printWithImgs() {
   const on = S.imgs.filter((o) => o.vis && o.use === 'print');
   if ((!on.length && !S.printOff) || !S.uv || !S.struct || !S.struct.bbox) return S.printCanvas;
@@ -3380,16 +3429,16 @@ function printWithImgs() {
   for (const o of on) { x.globalAlpha = o.opacity / 100; x.globalCompositeOperation = o.blend === 'multiply' ? 'multiply' : 'source-over'; drawImg(x, o); }
   return c;
 }
-function imgMask(o) { // 후가공 영역: 배경이 투명한 그림은 불투명한 부분, 배경이 있는 그림은 어두운 부분
-  if (o.alpha) return o.img;
-  if (!o._mask) { const k = Math.min(1, 1400 / Math.max(o.pw, o.ph)), c = document.createElement('canvas'); c.width = Math.max(1, Math.round(o.pw * k)); c.height = Math.max(1, Math.round(o.ph * k)); const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(o.img, 0, 0, c.width, c.height); const im = x.getImageData(0, 0, c.width, c.height), d = im.data; for (let i = 0; i < d.length; i += 4) { d[i + 3] = 255 - Math.min(d[i], d[i + 1], d[i + 2]); d[i] = d[i + 1] = d[i + 2] = 0; } x.putImageData(im, 0, 0); o._mask = c; }
+function imgMask(o) { // 후가공 영역: 기본은 그림 전체(투명한 곳만 빼고). '어두운 부분만'을 켜면 밝은 곳은 빠진다
+  if (!o.dark) return o.img;
+  if (!o._mask) { const k = Math.min(1, 1400 / Math.max(o.pw, o.ph)), c = document.createElement('canvas'); c.width = Math.max(1, Math.round(o.pw * k)); c.height = Math.max(1, Math.round(o.ph * k)); const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(o.img, 0, 0, c.width, c.height); const im = x.getImageData(0, 0, c.width, c.height), d = im.data; for (let i = 0; i < d.length; i += 4) { d[i + 3] = Math.round(Math.max(0, Math.min(255, (239 - (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2])) * 1.25)) * d[i + 3] / 255); d[i] = d[i + 1] = d[i + 2] = 0; } x.putImageData(im, 0, 0); o._mask = c; }
   return o._mask;
 }
 function imgFinishes() {
   const on = S.imgs.filter((o) => o.vis && FINISH[o.use]); if (!on.length || !S.uv || !S.struct || !S.struct.bbox) return [];
   let w, h; if (S.finishes.length) { w = S.finishes[0].w; h = S.finishes[0].h; } else { const [W, H] = texSize(), k = Math.min(1, 2048 / Math.max(W, H)); w = Math.round(W * k); h = Math.round(H * k); }
   return on.map((o) => {
-    const key = [o.x, o.y, o.w, o.rot, w, h, S.texBox].join('/');
+    const key = [o.x, o.y, o.w, o.h, o.rot, !!o.dark, w, h, S.texBox].join('/');
     if (!o._fin || o._fin.key !== key) { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d', { willReadFrequently: true }); x.setTransform(...texAffine(w, h)); drawImg(x, o, imgMask(o)); const d = x.getImageData(0, 0, w, h).data, cov = new Uint8Array(w * h); for (let q = 0, i = 3; q < cov.length; q++, i += 4) cov[q] = d[i]; o._fin = { key, cov, w, h }; }
     o._fin.set = { role: o.use, color: FINISH[o.use].color || '#ffffff', opacity: o.opacity, blend: o.blend, emboss: 'none' };
     return o._fin;
@@ -3407,22 +3456,31 @@ async function addImgFiles(files) {
     const st = S.struct, f = st.faces.find((q) => q.id === st.rootId) || st.faces[0]; let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; for (const q of f.outer) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }
     const w = Math.min((x1 - x0) * 0.6, (y1 - y0) * 0.6 * pw / ph);   // 정면 한가운데에, 면의 60% 크기로
     if (!n++) imgSnap();
-    S.imgs.push({ id: ++imgSeq, name: file.name, img, url, pw, ph, alpha, x: (x0 + x1) / 2, y: (y0 + y1) / 2, w, w0: w, rot: 0, opacity: 100, blend: 'normal', use: 'print', vis: true }); imgSel = S.imgs.length - 1;
+    S.imgs.push({ id: ++imgSeq, name: file.name, img, url, pw, ph, alpha, x: (x0 + x1) / 2, y: (y0 + y1) / 2, w, h: w * ph / pw, dark: false, rot: 0, opacity: 100, blend: 'normal', use: 'print', vis: true }); imgSel = S.imgs.length - 1;
   }
   if (n) editMsg = ''; renderEdit(); if (n) applyTextures();
 }
 function syncEditTab() { const im = editTab === 'img'; for (const b of $('edit-tabs').children) b.setAttribute('aria-pressed', String(b.dataset.tab === editTab)); $('edit-line-bar').hidden = im; $('edit-legend').hidden = im; $('img-side').hidden = !im; $('edit-map').classList.toggle('imgs', im); }
 function setEditTab(t) { if (t === editTab) return; editTab = t; setJoin(false, true); syncEditTab(); editMsg = ''; editSel = new Set(); imgSel = -1; renderEdit(new Set()); }
-function placeImg(im, o) { const h = o.w * o.ph / o.pw; for (const [k, v] of [['x', -o.w / 2], ['y', -h / 2], ['width', o.w], ['height', h], ['transform', `translate(${o.x.toFixed(3)} ${o.y.toFixed(3)}) rotate(${(-o.rot).toFixed(3)}) scale(1 -1)`]]) im.setAttribute(k, v); im.style.opacity = (FINISH[o.use] ? 0.5 : 1) * o.opacity / 100; im.style.mixBlendMode = !FINISH[o.use] && o.blend === 'multiply' ? 'multiply' : ''; }
-function drawImgSel() { // 고른 그림의 테두리와 손잡이 (모서리 = 크기, 위쪽 = 회전)
-  const ov = document.getElementById('img-ov'); if (!ov) return; ov.replaceChildren(); const o = S.imgs[imgSel]; if (!o || !o.vis || !editView) return;
-  const NS = 'http://www.w3.org/2000/svg', mk = (cls, d, h) => { const n = document.createElementNS(NS, 'path'); n.setAttribute('class', cls); n.setAttribute('d', d); if (h) n.dataset.h = h; return n; };
-  const r = $('edit-map').getBoundingClientRect(), k = Math.max(editView.w / (r.width || 1), editView.h / (r.height || 1)), hw = o.w / 2, hh = o.w * o.ph / o.pw / 2, top = -hh - 26 * k, f = (v) => v.toFixed(2);
-  ov.setAttribute('transform', `translate(${o.x.toFixed(3)} ${o.y.toFixed(3)}) rotate(${(-o.rot).toFixed(3)}) scale(1 -1)`);
-  ov.append(mk('isel', `M${f(-hw)} ${f(-hh)}H${f(hw)}V${f(hh)}H${f(-hw)}ZM0 ${f(-hh)}V${f(top)}`));
-  for (const [x, y, h] of [[-hw, -hh, 'c'], [hw, -hh, 'c'], [hw, hh, 'c'], [-hw, hh, 'c'], [0, top, 'r']]) { const d = `M${f(x)} ${f(y)}h0.01`; ov.append(mk('ih' + (h === 'r' ? ' rot' : ''), d, h), mk('ih2', d)); }
+const FIN_TINT = { gloss: ['#7fb7ff', 0.5], matte: ['#8e949e', 0.5], emboss: ['#8c7bd6', 0.45], deboss: ['#8c7bd6', 0.45] };   // 색이 없는 후가공을 미리 보기에서 알아보게 하는 색
+function finFilter(o, i) { // 후가공으로 쓰는 그림은 미리 보기에서 그 영역을 박 색(또는 표시 색)으로 칠해 보여 준다
+  const NS = 'http://www.w3.org/2000/svg', f = document.createElementNS(NS, 'filter'), m = document.createElementNS(NS, 'feColorMatrix');
+  const t = FINISH[o.use].metal ? [FINISH[o.use].color, 1] : FIN_TINT[o.use] || ['#8e949e', 0.5], c = hexRgb(t[0]).map((v) => (v / 255).toFixed(3)), a = t[1];
+  f.id = 'ifin' + i; f.setAttribute('color-interpolation-filters', 'sRGB'); for (const k of ['x', 'y']) f.setAttribute(k, '0'); f.setAttribute('width', '1'); f.setAttribute('height', '1');
+  m.setAttribute('type', 'matrix'); m.setAttribute('values', `0 0 0 0 ${c[0]} 0 0 0 0 ${c[1]} 0 0 0 0 ${c[2]} ` + (o.dark ? `${-0.374 * a} ${-0.734 * a} ${-0.142 * a} ${1.25 * a} ${-0.08 * a}` : `0 0 0 ${a} 0`)); f.append(m); return f;
 }
-function updImg() { const o = S.imgs[imgSel], im = document.getElementById('uimg' + imgSel); if (o && im) placeImg(im, o); drawImgSel(); }
+function imgTf(o) { return `translate(${o.x.toFixed(3)} ${o.y.toFixed(3)}) rotate(${(-o.rot).toFixed(3)}) scale(1 -1)`; }
+function placeImg(im, o, i) { const fin = !!FINISH[o.use]; for (const [k, v] of [['x', -o.w / 2], ['y', -o.h / 2], ['width', o.w], ['height', o.h], ['transform', imgTf(o)]]) im.setAttribute(k, v); if (fin) im.setAttribute('filter', `url(#ifin${i})`); else im.removeAttribute('filter'); im.style.opacity = o.opacity / 100; im.style.mixBlendMode = !fin && o.blend === 'multiply' ? 'multiply' : ''; }
+function drawImgSel() { // 고른 그림의 테두리와 손잡이 (모서리 = 비율 그대로 크기, 변 가운데 = 가로만·세로만, 위쪽 = 회전)
+  const ov = document.getElementById('img-ov'); if (!ov) return; ov.replaceChildren(); const o = S.imgs[imgSel]; if (!o || !o.vis || !editView) return;
+  const NS = 'http://www.w3.org/2000/svg', mk = (cls, d, h, cur) => { const n = document.createElementNS(NS, 'path'); n.setAttribute('class', cls); n.setAttribute('d', d); if (h) n.dataset.h = h; if (cur) n.style.cursor = cur; return n; };
+  const r = $('edit-map').getBoundingClientRect(), k = Math.max(editView.w / (r.width || 1), editView.h / (r.height || 1)), hw = o.w / 2, hh = o.h / 2, top = -hh - 26 * k, f = (v) => v.toFixed(2);
+  ov.setAttribute('transform', imgTf(o));
+  ov.append(mk('isel', `M${f(-hw)} ${f(-hh)}H${f(hw)}V${f(hh)}H${f(-hw)}ZM0 ${f(-hh)}V${f(top)}`));
+  for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, 0], [1, 0], [0, -1], [0, 1]]) { const d = `M${f(sx * hw)} ${f(sy * hh)}h0.01`; ov.append(mk('ih', d, sx + ',' + sy, sx && sy ? (sx * sy > 0 ? 'nwse-resize' : 'nesw-resize') : sx ? 'ew-resize' : 'ns-resize'), mk('ih2' + (sx && sy ? '' : ' side'), d)); }
+  { const d = `M0 ${f(top)}h0.01`; ov.append(mk('ih rot', d, 'r'), mk('ih2', d)); }
+}
+function updImg() { const o = S.imgs[imgSel], im = document.getElementById('uimg' + imgSel); if (o && im) placeImg(im, o, imgSel); drawImgSel(); }
 function printPreviewUrl() { // 미리 보기용으로 줄인 원본 인쇄
   if (!S._pv || S._pv.src !== S.printCanvas) { const c = S.printCanvas, k = Math.min(1, 1600 / Math.max(c.width, c.height)), t = document.createElement('canvas'); t.width = Math.round(c.width * k); t.height = Math.round(c.height * k); const x = t.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, t.width, t.height); x.drawImage(c, 0, 0, t.width, t.height); S._pv = { src: c, url: t.toDataURL('image/jpeg', 0.84) }; }
   return S._pv.url;
@@ -3430,7 +3488,7 @@ function printPreviewUrl() { // 미리 보기용으로 줄인 원본 인쇄
 function renderImgTab() {
   const svg = $('edit-map'), st = S.struct; svg.replaceChildren(); renderImgList();
   $('edit-note').textContent = `이미지 ${S.imgs.length}개`;
-  $('edit-hint').textContent = editMsg || (S.imgs.length ? '이미지를 끌어 옮기고, 모서리 점으로 크기를, 위쪽 점으로 회전을 바꿉니다(Shift를 누르면 15°씩). 방향키는 0.2mm씩 옮기고, Delete는 지웁니다.' : '"이미지 추가"를 누르거나 그림 파일을 이 창에 끌어다 놓으세요. 전개도 위에 올라가고 3D 상자에 바로 나옵니다.');
+  $('edit-hint').textContent = editMsg || (S.imgs.length ? '모서리 점은 크기, 변 가운데 점은 가로만·세로만, 위쪽 점은 회전입니다. 칼선 모서리에 가까이 가면 달라붙습니다(Alt를 누르면 붙지 않음). 방향키는 0.2mm씩 옮기고 Delete는 지웁니다.' : '"이미지 추가"를 누르거나 그림 파일을 이 창에 끌어다 놓으세요. 전개도 위에 올라가고 3D 상자에 바로 나옵니다.');
   $('edit-hint').style.color = editMsg ? 'var(--o)' : '';
   if (!st || !st.allEdges) return;
   if (!editView) editFit(); svg.setAttribute('viewBox', `${editView.x} ${editView.y} ${editView.w} ${editView.h}`);
@@ -3439,9 +3497,11 @@ function renderImgTab() {
   const ring = (q) => 'M' + q.map((v) => v[0].toFixed(2) + ' ' + v[1].toFixed(2)).join('L') + 'Z';
   for (const f of st.faces) g.append(mk('path', { d: ring(f.outer) + f.holes.map(ring).join(''), class: 'eface', 'fill-rule': 'evenodd' }));
   if (S.printCanvas && S.uv && !S.printOff) { const im = mk('image', { width: 1, height: 1, preserveAspectRatio: 'none', transform: `matrix(${uvInverse().join(' ')})` }); im.setAttribute('href', printPreviewUrl()); im.style.pointerEvents = 'none'; g.append(im); }
-  S.imgs.forEach((o, i) => { if (!o.vis) return; const im = mk('image', { class: 'uimg', preserveAspectRatio: 'none' }); im.setAttribute('href', o.url); im.dataset.i = i; im.id = 'uimg' + i; placeImg(im, o); g.append(im); });
+  const defs = mk('defs', {}); svg.prepend(defs);
+  S.imgs.forEach((o, i) => { if (!o.vis) return; if (FINISH[o.use]) defs.append(finFilter(o, i)); const im = mk('image', { class: 'uimg', preserveAspectRatio: 'none' }); im.setAttribute('href', o.url); im.dataset.i = i; im.id = 'uimg' + i; placeImg(im, o, i); g.append(im); });
   const by = {}; for (const e of st.allEdges) { if (e.state !== 'ok') continue; (by[e.type] = by[e.type] || []).push(`M${e.a[0].toFixed(2)} ${e.a[1].toFixed(2)}L${e.b[0].toFixed(2)} ${e.b[1].toFixed(2)}`); }
   for (const k in by) g.append(mk('path', { d: by[k].join(''), class: 'ln ' + k }));
+  const gd = mk('path', { class: 'iguide', d: '' }); gd.id = 'img-guides'; g.append(gd);
   const ov = mk('g', {}); ov.id = 'img-ov'; g.append(ov); drawImgSel();
 }
 function renderImgList() {
@@ -3450,12 +3510,11 @@ function renderImgList() {
   for (let i = S.imgs.length - 1; i >= 0; i--) { // 위에 있는 그림이 목록에서도 위
     const o = S.imgs[i], r = row((i === imgSel ? ' on' : '') + (o.vis ? '' : ' off'), i, `<button type="button" data-a="vis" title="${o.vis ? '숨기기' : '보이기'}">${o.vis ? EYE_SVG : EYE_OFF_SVG}</button><img alt="" draggable="false"><span class="nm"></span><span class="tag"></span><button type="button" data-a="del" title="지우기">×</button>`);
     r.draggable = true; r.querySelector('img').src = o.url; r.querySelector('.nm').textContent = o.name; r.querySelector('.nm').title = o.name; r.querySelector('.tag').textContent = o.use === 'print' ? '' : ((IMG_USES.find(([k]) => k === o.use) || ['', ''])[1].split(' ')[0]);
-    if (i === imgSel) { const pct = Math.round(o.w / o.w0 * 100), d = document.createElement('div'); d.className = 'iopts';
-      d.innerHTML = `<div class="r"><label>크기</label><input type="range" data-k="size" min="5" max="400" step="1" value="${Math.min(400, pct)}"><output>${pct}%</output></div>`
-        + `<div class="r"><label>회전</label><input type="range" data-k="rot" min="-180" max="180" step="1" value="${Math.round(o.rot)}"><output>${Math.round(o.rot)}°</output></div>`
-        + `<div class="r"><label>불투명도</label><input type="range" data-k="opacity" min="0" max="100" step="1" value="${o.opacity}"><output>${o.opacity}%</output></div>`
+    if (i === imgSel) { const d = document.createElement('div'); d.className = 'iopts';
+      d.innerHTML = `<div class="r"><label>불투명도</label><input type="range" data-k="opacity" min="0" max="100" step="1" value="${o.opacity}"><output>${o.opacity}%</output></div>`
         + `<div class="r"><label>섞기</label><div class="seg"><button type="button" class="btn mini" data-b="normal" aria-pressed="${o.blend !== 'multiply'}">보통</button><button type="button" class="btn mini" data-b="multiply" aria-pressed="${o.blend === 'multiply'}">곱하기</button></div></div>`
-        + `<div class="r"><label>쓰임</label><select data-k="use">${IMG_USES.map(([k, n]) => `<option value="${k}"${k === o.use ? ' selected' : ''}>${n}</option>`).join('')}</select></div>`;
+        + `<div class="r"><label>쓰임</label><select data-k="use">${IMG_USES.map(([k, n]) => `<option value="${k}"${k === o.use ? ' selected' : ''}>${n}</option>`).join('')}</select></div>`
+        + (FINISH[o.use] ? `<div class="r"><label>영역</label><div class="seg"><button type="button" class="btn mini" data-d="0" aria-pressed="${!o.dark}" title="그림이 있는 곳 전체에 후가공이 올라갑니다 (투명한 곳은 빼고)">전체</button><button type="button" class="btn mini" data-d="1" aria-pressed="${!!o.dark}" title="그림의 어두운 부분에만 올라갑니다. 흰 바탕에 그린 로고에 맞습니다">어두운 부분만</button></div></div>` : '');
       box.append(d); }
   }
   if (S.printCanvas) row(' base' + (S.printOff ? ' off' : ''), 'base', `<button type="button" data-a="vis" title="${S.printOff ? '보이기' : '숨기기'}">${S.printOff ? EYE_OFF_SVG : EYE_SVG}</button><span class="nm">원본 인쇄</span>`);
@@ -3463,7 +3522,8 @@ function renderImgList() {
 { // 인쇄 이미지 목록: 누르기·끌어서 순서 바꾸기·설정
   const box = $('img-list'), rowOf = (e) => { const r = e.target.closest && e.target.closest('.irow'); return r && box.contains(r) ? r : null; };
   box.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-b]'), o = S.imgs[imgSel];
+    const b = e.target.closest('[data-b]'), o = S.imgs[imgSel], dk = e.target.closest('[data-d]');
+    if (dk && o) { const v = dk.dataset.d === '1'; if (!!o.dark !== v) { imgSnap(); o.dark = v; renderEdit(); queueTextures(); } return; }
     if (b && o) { if (o.blend !== b.dataset.b) { imgSnap(); o.blend = b.dataset.b; renderEdit(); queueTextures(); } return; }
     const r = rowOf(e); if (!r) return; const a = (e.target.closest('button') || {}).dataset; const act = a && a.a;
     if (r.dataset.i === 'base') { if (act === 'vis') { imgSnap(); S.printOff = !S.printOff; renderEdit(); queueTextures(); } return; }
@@ -3475,10 +3535,10 @@ function renderImgList() {
   box.addEventListener('input', (e) => {
     const k = e.target.dataset.k, o = S.imgs[imgSel]; if (!k || !o) return; const v = e.target.value, out = e.target.parentNode.querySelector('output');
     imgTouch(k + o.id);
-    if (k === 'size') { o.w = o.w0 * v / 100; out.textContent = v + '%'; } else if (k === 'rot') { o.rot = +v; out.textContent = v + '°'; } else if (k === 'opacity') { o.opacity = +v; out.textContent = v + '%'; } else if (k === 'use') o.use = v;
-    updImg(); queueTextures();
+    if (k === 'opacity') { o.opacity = +v; out.textContent = v + '%'; updImg(); } else if (k === 'use') { o.use = v; renderEdit(); }
+    queueTextures();
   });
-  box.addEventListener('change', (e) => { imgUndoKey = ''; if (e.target.dataset.k === 'use') renderEdit(); });
+  box.addEventListener('change', () => { imgUndoKey = ''; });
   box.addEventListener('dragstart', (e) => { const r = rowOf(e); if (!r || r.dataset.i === 'base') { e.preventDefault(); return; } imgDragI = +r.dataset.i; e.dataTransfer.setData('text/plain', 'img'); e.dataTransfer.effectAllowed = 'move'; });
   box.addEventListener('dragover', (e) => { if (imgDragI < 0) return; const r = rowOf(e); for (const n of box.querySelectorAll('.irow.over')) n.classList.remove('over'); if (!r || r.dataset.i === 'base' || +r.dataset.i === imgDragI) return; e.preventDefault(); r.classList.add('over'); });
   box.addEventListener('drop', (e) => { const r = rowOf(e), from = imgDragI; imgDragI = -1; if (from < 0 || !r || r.dataset.i === 'base') return; e.preventDefault(); const to = +r.dataset.i; if (to === from) return; imgSnap(); const o = S.imgs.splice(from, 1)[0]; S.imgs.splice(to, 0, o); imgSel = to; renderEdit(); queueTextures(); });
@@ -3498,7 +3558,7 @@ async function addJoin(a, b) { // 두 점 사이에 선을 새로 넣고 전개�
   editMsg = n1 > n0 ? `선을 이었습니다. 면이 ${n0}개에서 ${n1}개로 늘었습니다.` : '선을 이었습니다. 면 수는 그대로입니다. 끊긴 곳이 더 있는지 확인해 주세요.';
   renderEdit(new Set());
 }
-function closeEdit() { setJoin(false, true); $('edit-dlg').hidden = true; $('edit-box').hidden = true; editSpace = false; resize(); }
+function closeEdit() { setJoin(false, true); $('edit-dlg').hidden = true; $('edit-box').hidden = true; editSpace = false; $('edit-map').classList.remove('pan', 'panning'); resize(); }
 async function applyEdit(role) {
   if (!editSel.size) return;
   const E = S.struct.allEdges, picked = [];
@@ -4011,6 +4071,7 @@ $('edit-open').addEventListener('click', () => openEdit());
 $('sel-edit').addEventListener('click', () => { const h = S.sel && S.sel.type === 'hinge' && S.struct.hinges[S.sel.id]; openEdit(h && h.segs ? new Set(h.segs.map((q) => edgeKey({ a: q[0], b: q[1] }))) : null); });
 $('edit-close').addEventListener('click', closeEdit);
 $('edit-roles').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && !b.disabled) applyEdit(b.dataset.role); });
+$('edit-follow').addEventListener('click', (e) => { editFollow = !editFollow; e.currentTarget.setAttribute('aria-pressed', String(editFollow)); e.currentTarget.blur(); });
 $('edit-join').addEventListener('click', (e) => { setJoin(!editJoin); e.currentTarget.blur(); });
 $('edit-sym').addEventListener('click', (e) => { editSym = !editSym; e.currentTarget.setAttribute('aria-pressed', String(editSym)); e.currentTarget.blur(); });
 $('edit-undo').addEventListener('click', () => undoEdit(false));
@@ -4020,14 +4081,14 @@ window.addEventListener('keydown', (e) => {
   if (editTab === 'img') { // 인쇄 이미지 탭
     const side = e.target && e.target.closest && e.target.closest('#img-side'), o = S.imgs[imgSel];
     if (e.key === 'Escape') { if (imgSel >= 0) { imgSel = -1; renderEdit(); } else closeEdit(); e.stopImmediatePropagation(); }
-    else if (e.code === 'Space' && !side) { editSpace = true; e.preventDefault(); }
+    else if (e.code === 'Space' && !side) { editSpace = true; $('edit-map').classList.add('pan'); e.preventDefault(); }
     else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); imgUndoGo(); }
     else if (o && !side && /^Arrow/.test(e.key) && !e.ctrlKey && !e.metaKey) { e.preventDefault(); e.stopImmediatePropagation(); const d = (e.shiftKey ? 1 : 0.2) / PT2MM; imgTouch('key' + o.id); o.x += e.key === 'ArrowRight' ? d : e.key === 'ArrowLeft' ? -d : 0; o.y += e.key === 'ArrowUp' ? d : e.key === 'ArrowDown' ? -d : 0; updImg(); queueTextures(); }
     else if (o && !side && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); imgSnap(); S.imgs.splice(imgSel, 1); imgSel = -1; renderEdit(); queueTextures(); }
     return;
   }
   if (e.key === 'Escape') { if (editJoin) { if (joinFrom) { joinFrom = null; editMsg = ''; renderEdit(); } else setJoin(false); } else closeEdit(); e.stopImmediatePropagation(); }
-  else if (e.code === 'Space') { editSpace = true; e.preventDefault(); }
+  else if (e.code === 'Space') { editSpace = true; $('edit-map').classList.add('pan'); e.preventDefault(); }
   else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undoEdit(false); }
   else if (/^Arrow/.test(e.key) && editSel.size && !e.ctrlKey && !e.metaKey) { // 고른 선 옮기기: 0.2mm, Shift와 함께 1mm. Alt 또는 '대칭 이동'이면 양쪽을 같은 만큼
     e.preventDefault(); e.stopImmediatePropagation();
@@ -4035,33 +4096,68 @@ window.addEventListener('keydown', (e) => {
     nudgeEdit(e.key === 'ArrowRight' ? d : e.key === 'ArrowLeft' ? -d : 0, e.key === 'ArrowUp' ? d : e.key === 'ArrowDown' ? -d : 0, e.altKey || editSym);
   }
 }, true);
-window.addEventListener('keyup', (e) => { if (e.code === 'Space') editSpace = false; });
+window.addEventListener('keyup', (e) => { if (e.code === 'Space') { editSpace = false; $('edit-map').classList.remove('pan'); } });
+window.addEventListener('blur', () => { editSpace = false; $('edit-map').classList.remove('pan', 'panning'); });
 { // 선 고치기 화면: 누르기 = 고르기, 끌기 = 묶어 고르기, Space+끌기·가운데 버튼 = 이동, 휠 = 확대
   const svg = $('edit-map'), box = $('edit-box'); let drag = null;
   const toDie = (cx, cy) => { const r = svg.getBoundingClientRect(), k = Math.max(editView.w / r.width, editView.h / r.height); // viewBox는 가운데 맞춤으로 들어간다
     return [editView.x + editView.w / 2 + (cx - r.left - r.width / 2) * k, -(editView.y + editView.h / 2 + (cy - r.top - r.height / 2) * k), k]; };
   let idrag = null;   // 인쇄 이미지 탭: 그림 옮기기·크기·회전
+  const snapTargets = () => { // 달라붙을 자리: 칼선의 모서리와 선 끝의 가로·세로 좌표 (곡선 중간의 점은 뺀다)
+    const N = new Map(), kk = (q) => q[0].toFixed(2) + ',' + q[1].toFixed(2);
+    for (const e of S.struct.allEdges) { if (e.state === 'ignored') continue; for (const [a, b] of [[e.a, e.b], [e.b, e.a]]) { const L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, k = kk(a); let r = N.get(k); if (!r) N.set(k, (r = { q: a, d: [] })); r.d.push([(b[0] - a[0]) / L, (b[1] - a[1]) / L]); } }
+    const xs = new Set(), ys = new Set();
+    for (const r of N.values()) { if (r.d.length === 2 && Math.abs(r.d[0][0] * r.d[1][1] - r.d[0][1] * r.d[1][0]) < 0.34 && r.d[0][0] * r.d[1][0] + r.d[0][1] * r.d[1][1] < 0) continue; xs.add(+r.q[0].toFixed(2)); ys.add(+r.q[1].toFixed(2)); }
+    return { xs: [...xs], ys: [...ys] };
+  };
+  const nearT = (list, v, thr) => { let b = null; for (const t of list) { const d = Math.abs(t - v); if (d <= thr && (!b || d < b.d)) b = { d, t }; } return b; };
+  const guides = (gx, gy) => { const n = document.getElementById('img-guides'); if (n) n.setAttribute('d', (gx != null ? `M${gx} -100000V100000` : '') + (gy != null ? `M-100000 ${gy}H100000` : '')); };
   const imgDown = (e) => {
     const t = e.target, h = t.dataset && t.dataset.h, i = t.dataset && t.dataset.i != null ? +t.dataset.i : -1;
     if (!h && i < 0) { if (imgSel >= 0) { imgSel = -1; renderEdit(); } return; }
     if (!h && i !== imgSel) { imgSel = i; renderEdit(); }
-    const o = S.imgs[imgSel]; if (!o) return; svg.setPointerCapture(e.pointerId); const q = toDie(e.clientX, e.clientY);
-    idrag = { mode: h || 'm', p: q, x: o.x, y: o.y, w: o.w, rot: o.rot, d0: Math.hypot(q[0] - o.x, q[1] - o.y) || 1, a0: Math.atan2(q[0] - o.x, q[1] - o.y) / D2R, moved: false };
+    const o = S.imgs[imgSel]; if (!o) return; svg.setPointerCapture(e.pointerId); const q = toDie(e.clientX, e.clientY), th = -o.rot * D2R, ux = [Math.cos(th), Math.sin(th)], uy = [Math.sin(th), -Math.cos(th)];
+    const [sx, sy] = h && h !== 'r' ? h.split(',').map(Number) : [0, 0];
+    idrag = { mode: !h ? 'm' : h === 'r' ? 'r' : 's', sx, sy, ux, uy, p: q, x: o.x, y: o.y, w: o.w, h: o.h, rot: o.rot, a0: Math.atan2(q[0] - o.x, q[1] - o.y) / D2R, moved: false, T: snapTargets(),
+      A: [o.x - ux[0] * sx * o.w / 2 - uy[0] * sy * o.h / 2, o.y - ux[1] * sx * o.w / 2 - uy[1] * sy * o.h / 2] };   // A = 크기를 바꿀 때 제자리에 있는 맞은편
   };
   svg.addEventListener('pointermove', (e) => {
-    if (!idrag) return; const o = S.imgs[imgSel]; if (!o) { idrag = null; return; } const q = toDie(e.clientX, e.clientY);
-    if (!idrag.moved) { if (Math.hypot(q[0] - idrag.p[0], q[1] - idrag.p[1]) / q[2] < 3) return; idrag.moved = true; imgSnap(); }
-    if (idrag.mode === 'm') { o.x = idrag.x + q[0] - idrag.p[0]; o.y = idrag.y + q[1] - idrag.p[1]; }
-    else if (idrag.mode === 'c') o.w = Math.max(3, idrag.w * Math.hypot(q[0] - o.x, q[1] - o.y) / idrag.d0);
-    else { let r = idrag.rot + Math.atan2(q[0] - o.x, q[1] - o.y) / D2R - idrag.a0; if (e.shiftKey) r = Math.round(r / 15) * 15; o.rot = ((r % 360) + 540) % 360 - 180; }
-    updImg(); queueTextures();
+    if (!idrag) return; const o = S.imgs[imgSel]; if (!o) { idrag = null; return; } const q = toDie(e.clientX, e.clientY), D = idrag, T = D.T, thr = 7 * q[2], snap = !e.altKey; let gx = null, gy = null;
+    if (!D.moved) { if (Math.hypot(q[0] - D.p[0], q[1] - D.p[1]) / q[2] < 3) return; D.moved = true; imgSnap(); }
+    if (D.mode === 'm') {
+      let nx = D.x + q[0] - D.p[0], ny = D.y + q[1] - D.p[1];
+      if (snap) { // 그림의 왼쪽·가운데·오른쪽(위·가운데·아래)이 칼선 모서리의 좌표에 가까우면 붙는다. 비스듬히 돌린 그림은 가운데만
+        const c = Math.abs(Math.cos(o.rot * D2R)), sn = Math.abs(Math.sin(o.rot * D2R)), al = c < 0.002 || sn < 0.002, ex = al ? (sn < 0.5 ? o.w : o.h) / 2 : 0, ey = al ? (sn < 0.5 ? o.h : o.w) / 2 : 0;
+        let bx = null, by = null;
+        for (const off of al ? [-ex, ex, 0] : [0]) { const r = nearT(T.xs, nx + off, thr); if (r && (!bx || r.d < bx.d - 1e-9)) bx = { d: r.d, t: r.t, off }; }
+        for (const off of al ? [-ey, ey, 0] : [0]) { const r = nearT(T.ys, ny + off, thr); if (r && (!by || r.d < by.d - 1e-9)) by = { d: r.d, t: r.t, off }; }
+        if (bx) { nx = bx.t - bx.off; gx = bx.t; } if (by) { ny = by.t - by.off; gy = by.t; }
+      }
+      o.x = nx; o.y = ny;
+    } else if (D.mode === 's') {
+      const { ux, uy, A, sx, sy } = D, dx = q[0] - A[0], dy = q[1] - A[1], axisOf = (u) => (Math.abs(u[0]) > 0.9999 ? 0 : Math.abs(u[1]) > 0.9999 ? 1 : -1); let w = D.w, h = D.h;
+      if (sx && sy) { // 모서리: 비율 그대로
+        let sc = Math.max(0.02, ((dx * ux[0] + dy * ux[1]) * sx * D.w + (dx * uy[0] + dy * uy[1]) * sy * D.h) / (D.w * D.w + D.h * D.h));
+        if (snap) { const C = [A[0] + (ux[0] * sx * D.w + uy[0] * sy * D.h) * sc, A[1] + (ux[1] * sx * D.w + uy[1] * sy * D.h) * sc], rx = nearT(T.xs, C[0], thr), ry = nearT(T.ys, C[1], thr);
+          if (rx && (!ry || rx.d <= ry.d) && Math.abs(C[0] - A[0]) > 1e-6 && (rx.t - A[0]) / (C[0] - A[0]) > 0) { sc *= (rx.t - A[0]) / (C[0] - A[0]); gx = rx.t; }
+          else if (ry && Math.abs(C[1] - A[1]) > 1e-6 && (ry.t - A[1]) / (C[1] - A[1]) > 0) { sc *= (ry.t - A[1]) / (C[1] - A[1]); gy = ry.t; } }
+        w = D.w * sc; h = D.h * sc;
+      } else { // 변 가운데: 가로만 또는 세로만
+        const u = sx ? ux : uy, sg = sx || sy, ax = axisOf(u); let v = Math.max(3, (dx * u[0] + dy * u[1]) * sg);
+        if (snap && ax >= 0) { const r = nearT(ax ? T.ys : T.xs, A[ax] + u[ax] * sg * v, thr); if (r) { const nv = (r.t - A[ax]) / (u[ax] * sg); if (nv > 3) { v = nv; if (ax) gy = r.t; else gx = r.t; } } }
+        if (sx) w = v; else h = v;
+      }
+      o.w = Math.max(3, w); o.h = Math.max(3, h); o.x = A[0] + ux[0] * sx * o.w / 2 + uy[0] * sy * o.h / 2; o.y = A[1] + ux[1] * sx * o.w / 2 + uy[1] * sy * o.h / 2;
+    } else { let r = D.rot + Math.atan2(q[0] - o.x, q[1] - o.y) / D2R - D.a0; if (e.shiftKey) r = Math.round(r / 15) * 15; else if (snap && Math.abs(r - Math.round(r / 90) * 90) < 3) r = Math.round(r / 90) * 90; o.rot = ((r % 360) + 540) % 360 - 180; }
+    guides(gx, gy); updImg(); queueTextures();
   });
-  const imgUp = () => { if (!idrag) return; const m = idrag.moved; idrag = null; if (m) { renderImgList(); queueTextures(); } };
+  const imgUp = () => { if (!idrag) return; const m = idrag.moved; idrag = null; guides(null, null); if (m) queueTextures(); };
   svg.addEventListener('pointerup', imgUp); svg.addEventListener('pointercancel', imgUp);
   svg.addEventListener('pointerdown', (e) => {
     if (!editView) return;
     if (editTab === 'img' && !(editSpace || e.button === 1)) { e.preventDefault(); imgDown(e); return; }
     svg.setPointerCapture(e.pointerId);
+    if (editSpace || e.button === 1) svg.classList.add('panning');
     drag = { x: e.clientX, y: e.clientY, pan: editSpace || e.button === 1, view: { ...editView }, moved: false, chain: e.target.dataset && e.target.dataset.chain, shift: e.shiftKey };
     e.preventDefault();
   });
@@ -4076,7 +4172,7 @@ window.addEventListener('keyup', (e) => { if (e.code === 'Space') editSpace = fa
     box.hidden = false; box.style.left = Math.min(e.clientX, drag.x) - r.left + 'px'; box.style.top = Math.min(e.clientY, drag.y) - r.top + 'px'; box.style.width = Math.abs(dx) + 'px'; box.style.height = Math.abs(dy) + 'px';
   });
   const end = (e) => {
-    if (!drag) return; const d = drag; drag = null; box.hidden = true;
+    if (!drag) return; const d = drag; drag = null; box.hidden = true; svg.classList.remove('panning');
     if (d.pan) return;
     if (editJoin) { // 선 잇기: 첫 번째 누름 = 시작점, 두 번째 누름 = 끝점
       if (d.moved) return; const q = snapAt(e.clientX, e.clientY);
@@ -4113,7 +4209,7 @@ window.addEventListener('keyup', (e) => { if (e.code === 'Space') editSpace = fa
     if (sn) sn.setAttribute('d', q ? `M${f(q)}h0.01` : '');
     if (ln) ln.setAttribute('d', joinFrom ? `M${f(joinFrom)}L${f(q || toDie(e.clientX, e.clientY))}` : '');
   });
-  svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', () => { drag = null; box.hidden = true; });
+  svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', () => { drag = null; box.hidden = true; svg.classList.remove('panning'); });
   svg.addEventListener('wheel', (e) => {
     if (!editView) return; e.preventDefault();
     const p = toDie(e.clientX, e.clientY), f = Math.exp(Math.max(-1, Math.min(1, e.deltaY / 240)) * 0.6), px = p[0], py = -p[1];
