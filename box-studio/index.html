@@ -67,6 +67,8 @@ main{flex:1;min-width:0;position:relative;background:var(--stage);overflow:hidde
 .label-drop .tile span{width:100%;padding:3px 5px;background:rgba(0,0,0,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
 .label-drop .tile .del{position:absolute;right:3px;top:3px;width:20px;height:20px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;font-size:14px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
 .label-drop .tile .del:hover{background:var(--o)}
+.label-drop .tile .eye{position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;cursor:pointer;display:grid;place-items:center;padding:0}.label-drop .tile .eye svg{width:13px;height:13px}.label-drop .tile .eye:hover{background:var(--o)}
+.label-drop .tile.off{background-blend-mode:luminosity;background-color:#3a3a40}.label-drop .tile.off span{opacity:.5}
 .label-drop .tile.plus{align-items:center;justify-content:center;font-size:22px;font-weight:400;border-style:dashed;background:none;color:rgba(255,255,255,.7)}
 .label-drop .empty{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:none;border:0;color:#fff;font:inherit;font-weight:700;cursor:pointer;min-height:98px}
 .label-drop .empty small{color:rgba(255,255,255,.55);font-weight:500;font-size:12px;letter-spacing:0;line-height:1.5}
@@ -384,11 +386,11 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
     <div class="body">
       <div id="map-wrap"><svg id="map" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="인식된 전개도"></svg></div>
       <div class="legend" id="map-legend"><span><i style="background:var(--cut)"></i>칼선</span><span><i style="background:var(--fold)"></i>안으로 접기</span><span><i style="background:var(--fold-out)"></i>밖으로 접기</span></div>
-      <p class="hint" id="map-hint">접는선이나 면을 누르면 바로 옆에 옵션 창이 뜹니다.</p>
+      <p class="hint" id="map-hint" hidden></p>
       <div id="side-box" hidden>
         <div class="seg"><button type="button" class="btn tip-late" id="side-flip" data-tip="">양면 뒤집기</button><button type="button" class="btn" id="side-mirror" aria-pressed="false">안쪽 좌우 반전</button></div>
       </div>
-      <div class="seg"><button type="button" class="btn" id="edit-open">선 고치기</button><button type="button" class="btn" id="angles-reset">접는 각도 초기화</button></div>
+      <div class="seg"><button type="button" class="btn" id="edit-open">수정</button></div>
     </div>
   </details>
 
@@ -445,7 +447,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
     <svg id="gizmo-svg" viewBox="-66 -66 132 132" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="상자 돌리기 구체: 빨강 X축, 초록 Y축, 파랑 Z축, 바깥 고리는 화면 방향"></svg>
   </div>
   <section class="pop" id="label-pop" hidden aria-label="라벨 옵션">
-    <div class="pop-head"><strong id="label-pop-name">라벨</strong><button type="button" class="x" id="label-pop-x" aria-label="라벨 옵션 닫기">×</button></div>
+    <div class="pop-head"><strong id="label-pop-name">라벨</strong><button type="button" class="x" id="label-vis" aria-label="라벨 보이기·숨기기" title="라벨 보이기 · 숨기기" style="display:grid;place-items:center"></button><button type="button" class="x" id="label-pop-x" aria-label="라벨 옵션 닫기">×</button></div>
     <div class="row srow"><label for="label-rot">회전</label><input type="range" id="label-rot" min="-180" max="180" step="1" value="0"><output id="label-rot-out" for="label-rot">0°</output></div>
     <div class="row srow"><label for="label-scale">크기</label><input type="range" id="label-scale" min="20" max="300" step="1" value="100"><output id="label-scale-out" for="label-scale">100%</output></div>
     <div class="row"><label class="name" for="label-lift">두께감 주기</label><input type="checkbox" id="label-lift" checked></div>
@@ -524,7 +526,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
   </section>
   <section class="pop" id="box-pop" hidden aria-label="상자 옵션">
     <div class="pop-head"><strong id="box-pop-name">상자</strong><button type="button" class="x" id="box-pop-x" aria-label="상자 선택 풀기">×</button></div>
-    <div class="seg" id="box-tabs" role="tablist"><button type="button" class="btn" data-tab="paper" aria-pressed="true">종이</button><button type="button" class="btn" data-tab="edge" aria-pressed="false">단면·안쪽</button><button type="button" class="btn" data-tab="lines" aria-pressed="false">칼선 인식</button></div>
+    <div class="seg" id="box-tabs" role="tablist"><button type="button" class="btn" data-tab="paper" aria-pressed="true">종이</button><button type="button" class="btn" data-tab="lines" aria-pressed="false">칼선 인식</button><button type="button" class="btn" data-tab="edge" aria-pressed="false">기타 설정</button></div>
     <div class="tab" data-tab="paper">
       <div class="row"><label class="name" for="paper">종이 질감</label>
         <select id="paper"><option value="none" selected>매끈하게</option><option value="fine">미세한 결</option><option value="felt">올록볼록 (펠트)</option><option value="linen">리넨 격자</option><option value="laid">가는 줄무늬</option><option value="kraft">크라프트 섬유</option><option value="custom">내 이미지</option></select></div>
@@ -552,6 +554,7 @@ details.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:10px}
         <input type="color" id="inside-c2" value="#ffe14d" aria-label="안쪽 면 색 2"><button type="button" class="btn mini" id="inside-pick2" aria-pressed="false">스포이드</button></div>
       <div class="row srow" id="inside-angle-row" hidden><label for="inside-angle">방향</label><input type="range" id="inside-angle" min="0" max="355" step="5" value="0"><output id="inside-angle-out" for="inside-angle">0°</output></div>
       <p class="hint" id="inside-hint" hidden></p>
+      <div class="row"><button type="button" class="btn" id="angles-reset" style="flex:1">접는 각도 초기화</button></div>
     </div>
     <div class="tab" data-tab="lines" hidden>
       <p class="hint" id="line-mode-note">칼선 레이어 안에서</p>
@@ -1736,7 +1739,7 @@ function queueEnv() { clearTimeout(envTimer); envTimer = setTimeout(buildEnv, 70
 const showGizmo = { light: false, reflector: false };   // 조명 위치와 반사판 위치를 따로 켜고 끈다
 const gizmoGroup = new THREE.Group(); gizmoGroup.visible = false; scene.add(gizmoGroup);
 function syncGizmoVis() { // 조명 · 반사판 창이 열려 있는 동안만 그 위치를 3D 화면에 보여 준다
-  const a = !$('pop-light').hidden, b = !$('pop-reflector').hidden; if (a === showGizmo.light && b === showGizmo.reflector) return;
+  const a = !$('pop-light').hidden, b = !$('pop-reflector').hidden; updateBoxGizmo(); if (a === showGizmo.light && b === showGizmo.reflector) return;
   showGizmo.light = a; showGizmo.reflector = b; gizmoGroup.visible = a || b; buildGizmos(); dirty = true;
 }   // 조명·반사판 위치 표시 (내보내기에는 안 찍힘)
 function textSprite(txt) {
@@ -2333,7 +2336,7 @@ function updateFold() {
   }
   S.labels.forEach((L, i) => { // 라벨은 표면 바로 위에. 나중에 올린 라벨이 조금 더 위
     if (!L.rt) return; const lf = labelLift(L) + i * 0.03;
-    for (const [id, me] of L.rt.meshes) { const m = wb.M.get(id); if (m) me.matrix.fromArray(m).multiply(T.makeTranslation(0, 0, lf)); }
+    for (const [id, me] of L.rt.meshes) { me.visible = !L.off; const m = wb.M.get(id); if (m) me.matrix.fromArray(m).multiply(T.makeTranslation(0, 0, lf)); }
   });
   lastM = wb.M; placeHighlight(); for (const L of S.labels) updateLabelBridge(L, wb.M);
   model.position.set(-wb.c[0] * UNIT, -wb.c[1] * UNIT, -wb.c[2] * UNIT);           // 상자 중심을 기준으로 돌린다
@@ -2601,7 +2604,7 @@ function updateLabelBridge(L, M) {
   if (!rt.bridge) { rt.bridge = new THREE.Mesh(new THREE.BufferGeometry(), rt.mat); rt.bridge.matrixAutoUpdate = false; rt.bridge.frustumCulled = false; rt.bridge.receiveShadow = true; model.add(rt.bridge); }
   const labelBridge = rt.bridge, wrapFrames = rt.frames, wrapLinks = rt.links; labelBridge.renderOrder = 2 + S.labels.indexOf(L);
   labelBridge.visible = false;
-  if (!st || !M || !wrapLinks.length) return;
+  if (!st || !M || !wrapLinks.length || L.off) return;
   const V = THREE.Vector3, lift = labelLift(L) + S.labels.indexOf(L) * 0.03, pos = [], uv = [], nrm = [], uvs = [];
   const suv = (p) => (S.uv ? S.uv(p[0], p[1]) : [0, 0]);   // 모서리 음영용: 전개도 위의 자리
   const cs = Math.cos(-L.rot * D2R), sn = Math.sin(-L.rot * D2R), k = 1 / L.scale;
@@ -2678,7 +2681,7 @@ function surfaceAt(cx, cy) { // 화면의 한 점 아래에 보이는 상자 겉
 function labelAt(h) { // 그 자리가 라벨 위인지 (위에 얹힌 라벨부터). 맞으면 몇 번째 라벨인지와, 라벨 가운데에서 잡은 자리까지의 차이(감싸기 좌표)를 돌려준다
   if (!h) return null;
   for (let i = S.labels.length - 1; i >= 0; i--) {
-    const L = S.labels[i], T = L.rt ? L.rt.frames.get(h.id) : null; if (!T) continue;
+    const L = S.labels[i], T = L.rt ? L.rt.frames.get(h.id) : null; if (!T || L.off) continue;   // 숨긴 라벨은 잡히지 않는다
     const q = affApply(T, [h.x, h.y]), dx = q[0] - L.x, dy = q[1] - L.y, c = Math.cos(-L.rot * D2R), sn = Math.sin(-L.rot * D2R);
     if (pointInPoly((c * dx - sn * dy) / L.scale, (sn * dx + c * dy) / L.scale, L.poly)) return { i, gx: dx, gy: dy };
   }
@@ -2705,6 +2708,7 @@ function anchorPoint(cx, cy) { // 화면의 한 점이 가리키는 기준면 �
 function updateLabelGizmo() {
   const lg = $('label-gizmo'), L = S.label;
   const pop = $('label-pop');
+  document.querySelectorAll('#label-drop .tile:not(.plus)').forEach((t, i) => t.classList.toggle('on', labelSel && i === S.li));   // 목록의 주황 테두리는 지금 고른 라벨에만
   if (!labelSel || !L || !lastM || !LF().size) { lg.style.display = 'none'; pop.hidden = true; return; }
   const r = renderer.domElement.getBoundingClientRect(), sr = $('stage').getBoundingClientRect(), c = Math.cos(L.rot * D2R), sn = Math.sin(L.rot * D2R), hw = (L.w * L.scale) / 2, hh = (L.h * L.scale) / 2;
   const at = (x, y) => [L.x + x * c - y * sn, L.y + x * sn + y * c];
@@ -2735,7 +2739,8 @@ function updateLabelGizmo() {
     st.setAttribute('x1', top[0]); st.setAttribute('y1', top[1]); st.setAttribute('x2', kx); st.setAttribute('y2', ky); rt.setAttribute('cx', kx); rt.setAttribute('cy', ky);
   }
 }
-function syncLabelUI() { const L = S.label; if (!L) return; $('label-lift').checked = !!L.lift; $('label-rot').value = L.rot; $('label-rot-out').textContent = Math.round(L.rot) + '°'; $('label-scale').value = Math.round(L.scale * 100); $('label-scale-out').textContent = Math.round(L.scale * 100) + '%'; }
+function setLabelOff(L, off) { if (!L) return; L.off = off; applyLabel(L); histSoon(); }
+function syncLabelUI() { const L = S.label; if (!L) return; $('label-vis').innerHTML = L.off ? EYE_OFF_SVG : EYE_SVG; $('label-lift').checked = !!L.lift; $('label-rot').value = L.rot; $('label-rot-out').textContent = Math.round(L.rot) + '°'; $('label-scale').value = Math.round(L.scale * 100); $('label-scale-out').textContent = Math.round(L.scale * 100) + '%'; }
 function initLabel3D() {
   let drag = null;
   canvas.addEventListener('pointerdown', (e) => {
@@ -2779,6 +2784,7 @@ function initLabel3D() {
   });
   const hend = () => { if (!hd) return; hd = null; labelBusy = false; refreshWrap(); updateLabelGizmo(); };
   $('label-pop-x').addEventListener('click', () => { popClosed = true; updateLabelGizmo(); });
+  $('label-vis').addEventListener('click', () => setLabelOff(S.label, !S.label.off));
   lg.addEventListener('pointerup', hend); lg.addEventListener('pointercancel', hend);
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && labelSel && !drag && !hd) { labelSel = false; updateLabelGizmo(); } });
 }
@@ -2787,7 +2793,8 @@ function initLabel3D() {
    끌면 상자가 바닥 위에서 움직인다. 빈 곳을 누르거나 Esc를 누르면 풀린다. 끌기만 하면(선택 전) 전처럼 화면이 돈다 */
 let boxSel = false;
 function updateBoxGizmo() {
-  const bg = $('box-gizmo'); $('box-pop').hidden = !boxSel; $('hud-b').style.left = boxSel && $('stage').clientWidth > 900 ? '326px' : '';   // 상자 옵션 창이 떠 있으면 접는 막대는 그 오른쪽 공간의 가운데로
+  const bg = $('box-gizmo'), lit = !$('pop-light').hidden || !$('pop-reflector').hidden;   // 조명·반사판 창이 열려 있으면 상자는 골라지기만 하고 옵션 창은 뜨지 않는다
+  $('box-pop').hidden = !boxSel || lit; $('hud-b').style.left = boxSel && !lit && $('stage').clientWidth > 900 ? '326px' : '';   // 상자 옵션 창이 떠 있으면 접는 막대는 그 오른쪽 공간의 가운데로
   if (!boxSel || !castPolys.length) { bg.style.display = 'none'; return; }
   const r = renderer.domElement.getBoundingClientRect(), sr = $('stage').getBoundingClientRect(), v = new THREE.Vector3(), P = [];
   for (const poly of castPolys) for (const p of poly) { v.set(p[0], p[1], p[2]).project(camera); if (v.z > 1) continue; P.push([(v.x * 0.5 + 0.5) * r.width + r.left - sr.left, (-v.y * 0.5 + 0.5) * r.height + r.top - sr.top]); }
@@ -2885,11 +2892,11 @@ function histSnap() {
     edits: S.edits.map((o) => ({ ...o })), adds: S.adds.map((o) => ({ ...o })), moves: S.moves.map((o) => ({ ...o })), flip: !!S.flip, inMirror: !!S.inMirror,
     inside: { ...S.inside }, edge: { ...S.edge }, lights: JSON.parse(JSON.stringify(S.lights)), reflectors: JSON.parse(JSON.stringify(S.reflectors)),
     imgs: S.imgs.map((o) => ({ o, ...imgVals(o) })), printOff: !!S.printOff,
-    labels: S.labels.map((L) => ({ L, id: L.uid || (L.uid = ++labelSeq), x: +L.x.toFixed(2), y: +L.y.toFixed(2), anchor: L.anchor, rot: L.rot, scale: +L.scale.toFixed(4), lift: !!L.lift })), li: S.li,
+    labels: S.labels.map((L) => ({ L, id: L.uid || (L.uid = ++labelSeq), x: +L.x.toFixed(2), y: +L.y.toFixed(2), anchor: L.anchor, rot: L.rot, scale: +L.scale.toFixed(4), lift: !!L.lift, off: !!L.off })), li: S.li,
     inputs: histInputs(),
   };
 }
-const histKey = (h) => JSON.stringify({ ...h, imgs: (h.imgs || []).map(({ o, ...v }) => [o.id, v]), labels: h.labels.map((o) => [o.id, o.x, o.y, o.anchor, o.rot, o.scale, o.lift]), li: h.labels.length ? 0 : -1 });   // 어느 라벨을 골랐는지는 변화로 치지 않는다
+const histKey = (h) => JSON.stringify({ ...h, imgs: (h.imgs || []).map(({ o, ...v }) => [o.id, v]), labels: h.labels.map((o) => [o.id, o.x, o.y, o.anchor, o.rot, o.scale, o.lift, !!o.off]), li: h.labels.length ? 0 : -1 });   // 어느 라벨을 골랐는지는 변화로 치지 않는다
 function histCommit() {
   hist.timer = 0; if (hist.applying || hist.busy || !S.struct) return;
   const h = histSnap(), k = histKey(h);
@@ -2918,7 +2925,7 @@ async function histApply(h) {
     S.inside = { ...h.inside }; S.edge = { ...h.edge }; S.lights = JSON.parse(JSON.stringify(h.lights)); S.reflectors = JSON.parse(JSON.stringify(h.reflectors));
     { const hi = h.imgs || [], key = (l) => JSON.stringify(l.map(({ o, ...v }) => [o.id, v])); if (key(hi) !== key(S.imgs.map((o) => ({ o, ...imgVals(o) }))) || !!h.printOff !== !!S.printOff) { S.imgs = hi.map(({ o, ...v }) => Object.assign(o, v)); S.printOff = !!h.printOff; imgSel = -1; applyTextures(); } }
     for (const L of S.labels) if (!h.labels.some((o) => o.L === L)) dropLabelMeshes(L);
-    S.labels = h.labels.map((o) => Object.assign(o.L, { x: o.x, y: o.y, anchor: o.anchor, rot: o.rot, scale: o.scale, lift: o.lift }));
+    S.labels = h.labels.map((o) => Object.assign(o.L, { x: o.x, y: o.y, anchor: o.anchor, rot: o.rot, scale: o.scale, lift: o.lift, off: !!o.off }));
     S.li = S.labels.length ? Math.max(0, Math.min(S.li, S.labels.length - 1)) : -1; if (!S.label) labelSel = false;
     syncLights(); renderLightUI('light'); renderLightUI('reflector'); syncInsideUI(); applyInside(); syncEdgeUI(); applyEdge();
     buildMeshes(); updateFold(); if (S.sel) select(S.sel); updateChips(); renderMap(); renderLabelTiles(); syncLabelUI(); updateLabelGizmo(); updateBoxGizmo(); renderSeq(); dirty = true;
@@ -2954,11 +2961,13 @@ function renderLabelTiles() {
   const grid = el('div', { class: 'tiles' });
   S.labels.forEach((L, i) => {
     if (!L.thumb) { const c = document.createElement('canvas'), k = 96 / Math.max(L.art.width, L.art.height); c.width = Math.max(1, Math.round(L.art.width * k)); c.height = Math.max(1, Math.round(L.art.height * k)); c.getContext('2d').drawImage(L.art, 0, 0, c.width, c.height); L.thumb = c.toDataURL('image/png'); }
-    const t = el('div', { class: 'tile' + (i === S.li && labelSel ? ' on' : ''), role: 'button', tabindex: '0', title: L.name }); t.style.backgroundImage = `url(${L.thumb})`;
+    const t = el('div', { class: 'tile' + (i === S.li && labelSel ? ' on' : '') + (L.off ? ' off' : ''), role: 'button', tabindex: '0', title: L.name }); t.style.backgroundImage = `url(${L.thumb})`;
     const x = el('button', { type: 'button', class: 'del', 'aria-label': L.name + ' 지우기', text: '×' });
     x.addEventListener('click', (e) => { e.stopPropagation(); removeLabel(i); applyLabel(); });
     t.addEventListener('click', () => { S.li = i; labelSel = true; popClosed = false; popPlace = true; applyLabel(); });
-    t.append(el('span', { text: L.name }), x); grid.append(t);
+    const eye = el('button', { type: 'button', class: 'eye', 'aria-label': L.name + (L.off ? ' 보이기' : ' 숨기기'), title: L.off ? '보이기' : '숨기기' }); eye.innerHTML = L.off ? EYE_OFF_SVG : EYE_SVG;
+    eye.addEventListener('click', (e) => { e.stopPropagation(); setLabelOff(L, !L.off); });
+    t.append(el('span', { text: L.name }), eye, x); grid.append(t);
   });
   const add = el('button', { type: 'button', class: 'tile plus', 'aria-label': '라벨 더 올리기', text: '+' }); add.addEventListener('click', () => $('label-file').click()); grid.append(add);
   box.append(grid);
@@ -3067,7 +3076,7 @@ function renderColorUI() {
   $('line-mode-hint').textContent = S.example ? '' : (S.pickedLayer ? `칼선이라는 이름의 레이어가 없어 "${S.pickedLayer}" 레이어를 칼선으로 골랐습니다. ` : '')
     + (!auto && S.guessedFold ? `규칙에 없는 색이지만 ${S.guessedFold} 선은 곧은 선뿐이고 안쪽에만 있어 접는 선으로 봤습니다. ` : '')
     + (auto ? '선 색이 나뉘어 있지 않아 모양으로 구분했습니다. 바깥 테두리는 자르는 선, 면과 면 사이의 선은 접는 선으로 봅니다. 떨어져 있는 표나 치수선은 빼고 가장 넓은 전개도만 씁니다.' : '선 색으로 구분합니다. 파랑·시안 계열은 안으로 접는 선, 노랑은 밖으로 접는 선, 그 밖은 자르는 선입니다.')
-    + (S.edits.length ? ` 직접 고친 선 ${S.edits.length}개가 적용돼 있습니다.` : ' 틀린 곳은 전개도의 "선 고치기"에서 바꿀 수 있습니다.');
+    + (S.edits.length ? ` 직접 고친 선 ${S.edits.length}개가 적용돼 있습니다.` : ' 틀린 곳은 전개도의 "수정"에서 바꿀 수 있습니다.');
   $('edit-open').disabled = !st || !st.allEdges || !st.allEdges.length;
   if (!S.colorRoles.size) { box.append(el('p', { class: 'hint', text: S.example ? '예시 상자는 마젠타 칼선과 시안 접는선으로 그려져 있습니다. 노랑(Y100)은 밖으로 접는 선으로 읽습니다.' : '칼선 레이어에서 선을 찾지 못했습니다.' })); return; }
   let i = 0;
@@ -3152,7 +3161,8 @@ function renderMap() {
   const svg = $('map');
   const st = S.struct;
   $('map-legend').style.display = mapMode === 'wrap' ? 'none' : '';
-  $('map-hint').textContent = mapMode === 'wrap' ? (S.label ? '주황색 면이 라벨이 붙은 기준면입니다. 라벨을 다른 면 위에 내려놓으면 그 면이 기준이 됩니다.' : '라벨을 올리면 이 지도에서 끌어 붙일 수 있습니다. 정면 위에 뚜껑이 이어져 보입니다.') : '접는선이나 면을 누르면 바로 옆에 옵션 창이 뜹니다.';
+  $('map-hint').textContent = mapMode === 'wrap' ? (S.label ? '주황색 면이 라벨이 붙은 기준면입니다. 라벨을 다른 면 위에 내려놓으면 그 면이 기준이 됩니다.' : '라벨을 올리면 이 지도에서 끌어 붙일 수 있습니다. 정면 위에 뚜껑이 이어져 보입니다.') : '';
+  $('map-hint').hidden = !$('map-hint').textContent;
   svg.replaceChildren();
   if (!st || !st.bbox) { $('map-note').textContent = ''; return; }
   const b = st.bbox, pad = 8, w = b.maxX - b.minX, h = b.maxY - b.minY;
@@ -3829,7 +3839,7 @@ async function rebuild(textures, refit, soft) {
     const sig = (x) => (x && x.bbox ? [x.faces.length, x.hinges.length, x.rootId].join('/') : '');
     if (sig(st) !== sig(S.struct)) { S.over = new Map(); S.dir = new Map(); S.bulge = new Map(); S.sel = null; if (st.faces.length) { const home = st.faces.find((f) => f.id === st.rootId) || st.faces[0]; for (const L of S.labels) { L.x = home.center[0]; L.y = home.center[1]; L.anchor = home.id; } } }
     S.struct = st; S.auto = defaultAngles(st);
-    setWarn(st.faces.length ? '' : '닫힌 칼선이 없습니다. 선 고치기에서 되돌려 주세요.');
+    setWarn(st.faces.length ? '' : '닫힌 칼선이 없습니다. 전개도의 "수정"에서 되돌려 주세요.');
     renderColorUI(); buildMeshes(); applyPaper(); updateFold(); if (refit) fitCamera('right'); renderMap(); select(S.sel); updateChips();
     return;
   }
@@ -3917,7 +3927,7 @@ async function rebuild(textures, refit, soft) {
   renderLayerUI(); renderColorUI();
   const msgs = st.warnings.slice();
   if (!st.faces.length) msgs.unshift(S.layers.length && !S.layers.some((l) => l.role === 'dieline') ? '칼선 레이어를 골라 주세요. 레이어 역할에서 칼선으로 지정하면 됩니다.' : '닫힌 칼선을 찾지 못했습니다. 아래 "끊긴 선 이어 붙이기" 값을 올려 보세요.');
-  else if (!st.hinges.some((h) => !h.weld)) msgs.unshift(auto ? '접는 선을 찾지 못해 평면으로만 보입니다. 전개도의 "선 고치기"에서 접는 선을 직접 지정해 주세요.' : '접는선을 찾지 못해 평면으로만 보입니다. 선 구분에서 접는선 색을 지정하거나 "모양으로 자동"을 눌러 보세요.');
+  else if (!st.hinges.some((h) => !h.weld)) msgs.unshift(auto ? '접는 선을 찾지 못해 평면으로만 보입니다. 전개도의 "수정"에서 접는 선을 직접 지정해 주세요.' : '접는선을 찾지 못해 평면으로만 보입니다. 선 구분에서 접는선 색을 지정하거나 "모양으로 자동"을 눌러 보세요.');
   setWarn(msgs.join(' '));
   $('gap-row').hidden = !!st.faces.length; $('gap2').value = $('gap').value; $('gap2-out').textContent = (+$('gap').value).toFixed(1) + 'mm';   // 상자가 안 뜨면 상자 옵션을 열 수 없으니, 이 값만은 여기서 바로 고칠 수 있게
   const boxKey = (st.bbox ? [st.bbox.minX, st.bbox.minY, st.bbox.maxX, st.bbox.maxY].map(Math.round).join('/') : '') + (twin ? `|${twin.kind}${twin.page}${twin.T.mirror ? 'm' : 's'}${S.flip ? 'f' : ''}` : '');
@@ -4314,6 +4324,13 @@ $('side-mirror').addEventListener('click', () => { if (!S.twin) return; S.inMirr
 let pickCb = null, pickBtn = null;
 const pickRay = new THREE.Raycaster();
 initLabel3D(); initBox3D();
+window.addEventListener('keydown', (e) => { // Tab: 조명·반사판 창에서는 다음 번호로(+는 건너뛴다), 상자 옵션 창에서는 다음 탭으로. Shift+Tab은 거꾸로
+  if (e.key !== 'Tab' || e.ctrlKey || e.metaKey || e.altKey) return; if (!$('edit-dlg').hidden || !$('exp-dlg').hidden) return;
+  const t = e.target; if (t && (t.isContentEditable || t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && ['text', 'number', 'search'].includes(t.type)))) return;
+  const d = e.shiftKey ? -1 : 1, kind = !$('pop-light').hidden ? 'light' : !$('pop-reflector').hidden ? 'reflector' : null;
+  if (kind) { const n = (kind === 'light' ? S.lights : S.reflectors).length; if (!n) return; e.preventDefault(); if (t && t.blur) t.blur(); curItem[kind] = (curItem[kind] + d + n) % n; renderLightUI(kind); return; }
+  if (!$('box-pop').hidden) { e.preventDefault(); if (t && t.blur) t.blur(); const bs = [...$('box-tabs').children], i = bs.findIndex((b) => b.getAttribute('aria-pressed') === 'true'); bs[(i + d + bs.length) % bs.length].click(); }
+});
 { // 오른쪽 도구: Q 조명 · W 반사판 · E 배경색 · R 바닥 그림자 (한글 입력 상태에서도 같은 자리 키로 동작한다)
   const KEYS = { KeyQ: 'btn-light', KeyW: 'btn-reflector', KeyE: 'btn-bg', KeyR: 'btn-shadow' };
   window.addEventListener('keydown', (e) => {
