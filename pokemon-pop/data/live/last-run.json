@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-11-23T06:35:47+09:00",
+  "ranAt": "2026-11-23T15:10:56+09:00",
   "stats": {
     "asOf": "2026-11-23",
-    "asOfIso": "2026-11-23T06:35:47+09:00",
+    "asOfIso": "2026-11-23T15:10:56+09:00",
     "cardsTotal": 4941,
     "cardsLive": 2443,
     "skippedTierC": 2498,
@@ -690,15 +690,15 @@
         "all": {
           "ebayEnabled": true,
           "jobsPlanned": 50,
-          "jobsOk": 2,
-          "jobsEmpty": 48,
+          "jobsOk": 7,
+          "jobsEmpty": 43,
           "jobsFailed": 0,
           "dryRun": false
         }
       },
       "jobsPlanned": 50,
-      "jobsOk": 2,
-      "jobsEmpty": 48,
+      "jobsOk": 7,
+      "jobsEmpty": 43,
       "jobsFailed": 0
     },
     "liveSource": "eBay+seed+BRG"
