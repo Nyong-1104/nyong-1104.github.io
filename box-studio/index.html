@@ -3555,13 +3555,20 @@ function openEdit(keys) {
   editSel = new Set(); editView = null; editMsg = ''; imgSel = -1; setJoin(false, true); $('edit-dlg').hidden = false; resize(); renderEdit(keys || new Set());
 }
 /* ---------- 인쇄 이미지: 전개도 위에 그림을 얹어 인쇄나 후가공으로 쓴다 ---------- */
-let fixOrder = [], imgSel = -1, imgSeq = 0, imgUndoKey = '', imgDragI = null;
+let fixOrder = [], imgSel = -1, imgSeq = 0, imgUndoKey = '', imgDragI = null, imgClip = null;
 const IMG_USES = [['print', '인쇄']].concat(LAYER_ROLES.filter(([k]) => FINISH[k]));
 const EYE_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.8" fill="currentColor"/></svg>';
 const EYE_OFF_SVG = EYE_SVG.replace('</svg>', '<path d="M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>');
 function imgVals(o) { return { x: o.x, y: o.y, w: o.w, h: o.h, rot: o.rot, opacity: o.opacity, blend: o.blend, use: o.use, vis: o.vis, dark: !!o.dark }; }
 function finAt() { return S.finPos == null || S.finPos > S.imgs.length ? S.imgs.length : Math.max(0, S.finPos); }   // 원본 후가공 바로 위에 오는 그림의 번호. 처음에는 모든 그림이 후가공 아래
 function imgRemove(i) { const fp = finAt(); S.imgs.splice(i, 1); S.finPos = i < fp ? fp - 1 : fp; }
+function imgCopy() { const o = S.imgs[imgSel]; if (!o) return false; imgClip = { src: o, over: imgSel >= finAt(), name: o.name, img: o.img, url: o.url, pw: o.pw, ph: o.ph, alpha: o.alpha, ...imgVals(o) }; return true; }   // 고른 그림을 기억해 둔다 (자리·크기·옵션까지)
+function imgPaste() { // 기억해 둔 그림을 같은 자리에 같은 옵션으로 하나 더 넣는다. 원본 바로 위에 쌓인다
+  const c = imgClip; if (!c || !S.uv) return false;
+  imgSnap(); const fp = finAt(), si = S.imgs.indexOf(c.src), at = si >= 0 ? si + 1 : c.over ? S.imgs.length : fp, { src, over, ...v } = c;
+  S.imgs.splice(at, 0, { id: ++imgSeq, ...v }); S.finPos = at <= fp && !(si < 0 && c.over) ? fp + 1 : fp;   // 원본 후가공보다 아래에 넣었으면 후가공 자리를 한 칸 올린다
+  imgSel = at; editSel = new Set(); if (editJoin) setJoin(false, true); return true;
+}
 function imgSnap() { fixOrder.push('i'); if (fixOrder.length > 150) fixOrder.shift(); $('edit-undo').disabled = false; S.imgUndo.push({ list: S.imgs.map((o) => ({ o, ...imgVals(o) })), off: !!S.printOff, fp: finAt() }); if (S.imgUndo.length > 60) S.imgUndo.shift(); }
 function imgTouch(key) { if (imgUndoKey !== key) { imgSnap(); imgUndoKey = key; } }   // 바를 끄는 동안은 한 번만 기록한다
 function imgUndoGo() { const u = S.imgUndo.pop(); if (!u) return; S.imgs = u.list.map(({ o, ...v }) => Object.assign(o, v)); S.printOff = u.off; S.finPos = u.fp == null ? null : u.fp; imgSel = -1; imgUndoKey = ''; renderEdit(); queueTextures(); }
@@ -4243,6 +4250,8 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { if (editJoin) { if (joinFrom) { joinFrom = null; editMsg = ''; renderEdit(); } else setJoin(false); } else if (imgSel >= 0) { imgSel = -1; renderEdit(); } else closeEdit(); e.stopImmediatePropagation(); }
   else if (e.code === 'Space' && !side) { editSpace = true; $('edit-map').classList.add('pan'); e.preventDefault(); }
   else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); fixUndo(); }
+  else if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'c' && o && !String(getSelection())) { e.preventDefault(); imgCopy(); editMsg = `"${o.name}"을 복사했습니다. Ctrl+V를 누르면 같은 자리에 같은 옵션으로 하나 더 들어갑니다.`; renderEdit(); }
+  else if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'v' && imgClip) { e.preventDefault(); if (imgPaste()) { editMsg = `"${imgClip.name}"을 하나 더 넣었습니다. 원본과 같은 자리에 겹쳐 있으니 끌어서 옮기세요.`; renderEdit(); queueTextures(); } }
   else if (side) return;   // 오른쪽 목록의 바·선택 칸은 제 할 일을 한다
   else if (o && arrow) { e.preventDefault(); e.stopImmediatePropagation(); const d = (e.shiftKey ? 1 : 0.2) / PT2MM; imgTouch('key' + o.id); o.x += e.key === 'ArrowRight' ? d : e.key === 'ArrowLeft' ? -d : 0; o.y += e.key === 'ArrowUp' ? d : e.key === 'ArrowDown' ? -d : 0; updImg(); queueTextures(); }   // 고른 그림 옮기기
   else if (o && del) { e.preventDefault(); e.stopImmediatePropagation(); imgSnap(); imgRemove(imgSel); imgSel = -1; renderEdit(); queueTextures(); }
@@ -4308,7 +4317,7 @@ window.addEventListener('blur', () => { editSpace = false; $('edit-map').classLi
     } else { let r = D.rot + Math.atan2(q[0] - o.x, q[1] - o.y) / D2R - D.a0; if (e.shiftKey) r = Math.round(r / 15) * 15; else if (snap && Math.abs(r - Math.round(r / 90) * 90) < 3) r = Math.round(r / 90) * 90; o.rot = ((r % 360) + 540) % 360 - 180; }
     guides(gx, gy); updImg(); queueTextures();
   });
-  const imgUp = () => { if (!idrag) return; const m = idrag.moved, ch = idrag.chain; idrag = null; guides(null, null); if (m) queueTextures(); else if (ch != null) { editSel = new Set([+ch]); imgSel = -1; nudgeOpen = false; editMsg = ''; renderEdit(); } };
+  const imgUp = () => { if (!idrag) return; const m = idrag.moved, ch = idrag.chain; idrag = null; guides(null, null); if (m) { queueTextures(); if (editMsg) { editMsg = ''; renderEdit(); } } else if (ch != null) { editSel = new Set([+ch]); imgSel = -1; nudgeOpen = false; editMsg = ''; renderEdit(); } };
   svg.addEventListener('pointerup', imgUp); svg.addEventListener('pointercancel', imgUp);
   svg.addEventListener('pointerdown', (e) => {
     if (!editView) return;
