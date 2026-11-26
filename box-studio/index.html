@@ -4772,8 +4772,9 @@ $('gap2').addEventListener('change', (e) => { $('gap').value = e.target.value; r
   };
   // 이메일과 라이선스는 평소에는 숨겨 두고, 구석의 ⓘ를 눌렀을 때만 작은 창으로 보여 준다
   const aboutBtn = $('about-btn'), aboutPop = $('about-pop'), smpBtn = $('sample-btn'), smpPop = $('sample-pop');
-  const showSamples = (on) => { smpPop.hidden = !on; smpBtn.setAttribute('aria-expanded', String(on)); };
-  const showAbout = (on) => { aboutPop.hidden = !on; aboutBtn.setAttribute('aria-expanded', String(on)); if (on) showSamples(false); };
+  const closeTools = () => { let any = false; for (const k of ['light', 'reflector', 'bg']) if (!$('pop-' + k).hidden) { $('pop-' + k).hidden = true; $('btn-' + k).setAttribute('aria-pressed', 'false'); any = true; } if (any) syncGizmoVis(); };   // 같은 자리에 뜨는 조명 · 반사판 · 배경 창은 닫는다 (겹치지 않게)
+  const showSamples = (on) => { smpPop.hidden = !on; smpBtn.setAttribute('aria-expanded', String(on)); if (on) closeTools(); };
+  const showAbout = (on) => { aboutPop.hidden = !on; aboutBtn.setAttribute('aria-expanded', String(on)); if (on) { showSamples(false); closeTools(); } };
   for (const sm of SAMPLES) { const b = el('button', { type: 'button', class: 'smp' }); b.dataset.id = sm.id; b.innerHTML = sampleThumb(sm.make()); b.append(el('span', { text: sm.name })); $('sample-grid').append(b); }
   $('sample-grid').addEventListener('click', (e) => { const b = e.target.closest('.smp'); if (!b) return; showSamples(false); useSample(b.dataset.id); });
   smpBtn.addEventListener('click', () => { showAbout(false); showSamples(smpPop.hidden); });
@@ -5204,7 +5205,7 @@ $('exp-go').addEventListener('click', () => { expClose(); exportPng().catch((err
 $('shot-close').addEventListener('click', () => { $('shot').hidden = true; });
 
 for (const k of ['light', 'reflector', 'bg']) { // 화면 안 도구 막대로 조명·반사판·배경 창을 켜고 끈다
-  const show = (on) => { for (const j of ['light', 'reflector', 'bg']) { const o = on && j === k; $('pop-' + j).hidden = !o; $('btn-' + j).setAttribute('aria-pressed', String(o)); } syncGizmoVis(); };   // 다른 창은 닫는다
+  const show = (on) => { for (const j of ['light', 'reflector', 'bg']) { const o = on && j === k; $('pop-' + j).hidden = !o; $('btn-' + j).setAttribute('aria-pressed', String(o)); } if (on) for (const j of ['sample', 'about']) { $(j + '-pop').hidden = true; $(j + '-btn').setAttribute('aria-expanded', 'false'); } syncGizmoVis(); };   // 다른 창은 닫는다 (같은 자리에 뜨는 예시 상자 · 단축키 창도)
   $('btn-' + k).addEventListener('click', () => show($('pop-' + k).hidden));
   $('pop-' + k).querySelector('[data-close]').addEventListener('click', () => show(false));
 }
