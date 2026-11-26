@@ -224,11 +224,17 @@ section.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:8px}
 .foot a:hover{color:#FF2F00}
 .foot .lic{color:#71717f;font-size:12px;margin-top:5px;line-height:1.5;font-weight:600}
 #key-guide{position:absolute;left:12px;right:12px;bottom:26px;z-index:18;display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-end;gap:6px 8px;pointer-events:none}#key-guide[hidden]{display:none}
-.kg{display:inline-flex;align-items:center;gap:3px;padding:3px 9px 3px 3px;border-radius:9px;background:rgba(255,255,255,.88);box-shadow:0 2px 10px rgba(10,10,20,.1);font-size:11.5px;font-weight:600;color:#33353f;white-space:nowrap;animation:kgin .16s ease-out}
+.kg{display:inline-flex;justify-content:center;transition:opacity .26s ease;animation:kgin .16s ease-out}
+.kg-in{display:inline-flex;align-items:center;gap:3px;padding:3px 9px 3px 3px;border-radius:9px;background:rgba(255,255,255,.88);box-shadow:0 2px 10px rgba(10,10,20,.1);font-size:11.5px;font-weight:600;color:#33353f;white-space:nowrap;transition:padding .34s ease}
+.kg .ch{display:block;flex:none;white-space:pre;overflow:hidden;max-width:1.5em;transition:max-width .22s ease calc(var(--i)*30ms),opacity .18s ease calc(var(--i)*30ms)}
+#key-guide.acting .kg:not(.act){opacity:.3}
+.kg.act .kg-in{padding-right:3px}
+.kg.act .eq{margin-left:0}.kg.act .ch{max-width:0;opacity:0;transition-delay:calc(var(--j)*30ms)}
+@media (prefers-reduced-motion:reduce){.kg,.kg-in,.kg .ch,.kg .eq{transition:none}}
 .kg kbd{font:inherit;font-size:10.5px;font-weight:700;min-width:20px;height:20px;padding:0 6px;border-radius:6px;background:#17171c;color:#fff;display:inline-grid;place-items:center;transition:background .08s,color .08s}
 .kg kbd.on{background:var(--o);color:#fff}.kg kbd svg{display:block}.kg kbd.ic{padding:0 3px}
 .kg kbd.m{background:none;color:#17171c;min-width:0;padding:0 2px 0 3px;height:20px}.kg kbd.m.on{background:none;color:var(--o)}
-.kg i{font-style:normal;color:#9a9aa6}.kg .eq{margin-left:3px}
+.kg i{font-style:normal;color:#9a9aa6}.kg .eq{display:inline-flex;align-items:center;margin-left:4px;transition:margin .34s ease}
 @keyframes kgin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 @media (hover:none),(max-width:900px){#key-guide{display:none!important}}
 #toast{position:fixed;left:calc(50% + 160px);bottom:38px;z-index:120;transform:translate(-50%,14px);background:#000;color:#fff;padding:13px 26px;border-radius:999px;font-size:13px;font-weight:600;letter-spacing:-.1px;white-space:nowrap;pointer-events:none;text-align:center;opacity:0;transition:opacity .22s ease,transform .22s cubic-bezier(.2,.8,.3,1);box-shadow:0 8px 26px rgba(0,0,0,.22)}
@@ -5438,6 +5444,8 @@ let rangeTick = 0;
 function paintRanges() { for (const r of document.querySelectorAll('input[type="range"]')) { const p = ((r.value - r.min) / (r.max - r.min || 1)) * 100 + '%'; if (r.dataset.p !== p) { r.dataset.p = p; r.style.setProperty('--p', p); } } }
 /* ---------- 단축키 가이드: 지금 누를 수 있는 키를 화면 아래 가운데에 작게 보여 준다 (ⓘ 창에서 켜고 끈다) ---------- */
 let kgOn = true, kgFlashList = null, kgFlashT = 0, kgSig = '', kgList = [];
+let kgShown = -1, kgHold = 0, kgPrev = 0, kgCand = -1, kgCandT = 0, kgFreeT = 0;   // 검은 알약으로 보이는 칩 · 적어도 이만큼(ms)은 더 보여 준다 · 앞 장면의 시각 / 맞아떨어진 칩과 그것을 보여 줄 때 / 칩 자리의 폭 고정을 풀 때
+const KG_MOD = new Set(['Ctrl', 'Shift', 'Alt']);
 try { kgOn = localStorage.getItem('bms-keyguide') !== '0'; } catch (e) { /* 저장소를 못 쓰는 곳에서는 늘 켜진 채로 */ }
 const KG = (keys, text, alt) => ({ keys: [].concat(keys), text, alt: !!alt });   // 키 이름 @L · @R 는 마우스 왼쪽 · 오른쪽 버튼: 글자 대신 그림으로 보여 준다 (방향키도)
 const KG_ICON = {
@@ -5463,7 +5471,7 @@ function kgContext() {
   if (editFocus && editSel.size) return [KG('방향키', '선 0.2mm 이동'), KG(['Shift', '방향키'], '1mm 이동'), KG('Delete', '선 지우기'), KG(['Shift', '@L'], '여러 줄 고르기')];
   if (pivSel || boxSel) {
     const ax = axisLock ? axisLock.toUpperCase() : '';
-    if (ax) return [KG('@L', ax === 'Y' ? '위아래로만 이동' : ax + '축으로만 이동'), KG('@R', ax + '축으로만 회전'), KG(ax, '고정 풀기'), KG(['X', 'Y', 'Z'].filter((k) => k !== ax), '다른 축', true), KG('방향키', '1mm 이동')];
+    if (ax) return [KG('@L', ax === 'Y' ? '위아래 이동' : ax + '축 이동'), KG('@R', ax + '축 회전'), KG(ax, '고정 풀기'), KG(['X', 'Y', 'Z'].filter((k) => k !== ax), '다른 축', true), KG('방향키', '1mm 이동')];
     const a = [KG('@L', pivSel ? '기준점 이동' : '상자 이동'), KG('@R', pivSel ? '조명 전체 회전' : '회전'), KG(['X', 'Y', 'Z'], '축 고정', true), KG('방향키', '1mm 이동'), KG(['Alt', '@L'], '위아래')];
     if (!pivSel) a.push(KG('`', '보기 방향 · 상자 자세'));
     return a;
@@ -5473,23 +5481,49 @@ function kgContext() {
   if (!$('pop-reflector').hidden) return [KG('Tab', '다음 반사판'), KG('@L', '반사판 방향'), KG('W', '반사판 닫기')];
   return [];
 }
+function kgMatch(list) { // 지금 누른 것과 꼭 맞는 안내 하나: 키가 모두 눌린 것 가운데 키가 가장 많은 것 (Alt + 왼쪽 버튼이면 '왼쪽 버튼'만 있는 안내는 아니다)
+  let best = -1, n = 0;
+  list.forEach((it, i) => { const full = it.alt ? it.keys.some((k) => kgDown.has(k)) : it.keys.every((k) => kgDown.has(k)), sz = it.alt ? 1 : it.keys.length; if (full && sz > n) { n = sz; best = i; } });
+  return best;
+}
+function kgShow(i, now) { // 맞아떨어진 칩을 도드라지게: 나머지는 흐려지고, 그 칩은 글자가 오른쪽부터 접히며 가운데로 줄어든다. i = -1 이면 거꾸로 되돌린다
+  const box = $('key-guide'), chips = [...box.children];
+  if (i >= 0) { if (!box._lock) { box._lock = true; const ws = chips.map((n) => n.getBoundingClientRect().width); chips.forEach((n, k) => { n.style.width = ws[k].toFixed(2) + 'px'; }); } kgHold = kgList[i].keys.every((k) => k[0] === '@') ? 260 : 650; kgFreeT = 0; }   // 키를 짧게 쳤어도 접혔다 펴지는 것이 보일 만큼은 둔다 (마우스로 끄는 것은 떼면 곧 돌아온다)   // 칩 자리의 폭은 그대로 두어야 줄이 흐트러지지 않는다
+  else kgFreeT = now + 900;
+  kgShown = i; box.classList.toggle('acting', i >= 0); chips.forEach((n, k) => n.classList.toggle('act', k === i));
+}
 function kgUpdate() {
-  const box = $('key-guide'); if (!kgOn) { if (!box.hidden) { box.hidden = true; kgSig = ''; kgList = []; } return; }
-  if (kgFlashList && performance.now() > kgFlashT) kgFlashList = null;
+  const box = $('key-guide'), now = performance.now(), dt = Math.min(120, now - kgPrev); kgPrev = now; if (kgShown >= 0 && kgHold > 0) kgHold -= dt;   // 화면이 잠깐 멈췄던 시간(되돌리기처럼 오래 걸리는 일)은 세지 않는다: 그래야 보여 주기도 전에 지나가지 않는다
+  if (!kgOn) { if (!box.hidden) { box.hidden = true; kgSig = ''; kgList = []; } return; }
+  if (kgFlashList && now > kgFlashT) kgFlashList = null;
   // 글자 키를 누르고 있는 동안에는 보이던 안내를 그대로 둔다: 눌린 키가 주황색으로 보이고, 떼면 그다음 안내로 바뀐다. Ctrl은 누르는 즉시 조합 안내로
   const held = kgList.length > 0 && [...kgDown].some((k) => k[0] !== '@' && k !== 'Ctrl' && k !== 'Shift' && k !== 'Alt' && kgList.some((it) => it.keys.includes(k)));
-  const list = held ? kgList : (kgFlashList || kgContext()), sig = JSON.stringify(list);
+  if (kgShown >= 0 && kgHold > 0 && kgMatch(kgList) < 0 && [...kgDown].some((k) => !kgList[kgShown].keys.includes(k))) kgHold = 0;   // 보여 주는 동안 다른 키를 누르면 기다리지 않고 바로 그 안내로 넘어간다
+  const m0 = kgMatch(kgList), busy = (m0 >= 0 && kgList[m0].keys.some((k) => !KG_MOD.has(k))) || (kgShown >= 0 && kgHold > 0);   // 맞아떨어진 안내를 보여 주는 동안에도 그대로 둔다
+  const list = held || busy ? kgList : (kgFlashList || kgContext()), sig = JSON.stringify(list);
   if (sig !== kgSig) {
-    kgSig = sig; kgList = list; box.textContent = '';
+    kgSig = sig; kgList = list; box.textContent = ''; box.classList.remove('acting'); box._lock = false; kgShown = kgCand = -1; kgFreeT = 0;
     for (const it of list) {
-      const n = document.createElement('span'); n.className = 'kg';
+      const w = document.createElement('span'), n = document.createElement('span'); w.className = 'kg'; n.className = 'kg-in'; w.append(n);
       it.keys.forEach((k, i) => { if (i && it.alt) { const sep = document.createElement('i'); sep.textContent = '/'; n.append(sep); } const kb = document.createElement('kbd'), ic = KG_ICON[k]; kb.dataset.k = k; if (ic) { kb.innerHTML = ic[1]; kb.title = ic[0]; kb.className = k[0] === '@' ? 'm' : 'ic'; } else kb.textContent = k; n.append(kb); });
-      const tx = document.createElement('span'); tx.className = 'eq'; tx.textContent = '= ' + it.text; n.append(tx); box.append(n);
+      const tx = document.createElement('span'), cs = [...it.text]; tx.className = 'eq'; tx.setAttribute('aria-label', it.text);
+      cs.forEach((ch, i) => { const c = document.createElement('span'); c.className = 'ch'; c.textContent = ch; c.style.setProperty('--i', i); c.style.setProperty('--j', cs.length - 1 - i); c.setAttribute('aria-hidden', 'true'); tx.append(c); });   // 글자 하나씩: 접힐 때는 오른쪽부터, 펴질 때는 왼쪽부터
+      n.append(tx); box.append(w);
     }
     box.hidden = !list.length;
   }
   if (box.hidden) return;
-  for (const kb of box.querySelectorAll('kbd')) kb.classList.toggle('on', kgDown.has(kb.dataset.k));
+  const m = kgMatch(kgList);
+  if (m >= 0) { // 꼭 맞는 안내가 있으면 그 칩의 키에만 불이 들어온다 (마우스만 쓰는 안내는 잠깐 누르고 있어야 줄어든다: 그냥 누르기만 할 때마다 깜박이지 않게)
+    if (kgCand !== m) { kgCand = m; kgCandT = now + (kgList[m].keys.every((k) => k[0] === '@') ? 140 : 0); }
+    [...box.children].forEach((n, k) => { for (const kb of n.querySelectorAll('kbd')) kb.classList.toggle('on', k === m && kgDown.has(kb.dataset.k)); });
+    if (now >= kgCandT && kgShown !== m && kgList[m].keys.some((k) => !KG_MOD.has(k))) kgShow(m, now);   // Ctrl처럼 함께 누르는 키만 있는 안내는 불만 켠다 (곧 조합 안내로 바뀐다)
+  } else {
+    kgCand = -1;
+    if (kgShown >= 0) { if (kgHold <= 0) kgShow(-1, now); }   // 짧게 눌렀어도 잠깐은 보여 준 뒤에 되돌린다 (그동안 불은 켜 둔다)
+    else for (const kb of box.querySelectorAll('kbd')) kb.classList.toggle('on', kgDown.has(kb.dataset.k));
+  }
+  if (kgFreeT && now > kgFreeT && kgShown < 0) { kgFreeT = 0; box._lock = false; for (const n of box.children) n.style.width = ''; }
   const hb = $('hud-b'), fw = hb.querySelector('.foldwrap'), bot = (hb.classList.contains('away') || !fw ? 26 : fw.offsetHeight + 30) + ($('toast').classList.contains('on') ? 52 : 0);   // 접는 막대나 알림과 겹치지 않게 그 위로
   // 아래쪽에 떠 있는 다른 창(왼쪽의 옵션 창 · 접은 패널의 작은 창, 오른쪽의 구체 · 도구 창) 사이의 빈 자리에만 놓는다. 자리가 너무 좁으면 숨긴다
   const sr = $('stage').getBoundingClientRect(), top = sr.bottom - bot - 96; let L = 12, R = sr.width - 12;
