@@ -5477,8 +5477,8 @@ function kgContext() {
     return a;
   }
   if (labelSel) return [KG('@L', '라벨 이동'), KG(['Ctrl', 'C'], '라벨 복사')];
-  if (!$('pop-light').hidden) return [KG('Tab', '다음 조명'), KG('@L', '조명 방향'), KG('Q', '조명 닫기')];
-  if (!$('pop-reflector').hidden) return [KG('Tab', '다음 반사판'), KG('@L', '반사판 방향'), KG('W', '반사판 닫기')];
+  if (!$('pop-light').hidden) return [KG('Tab', '다음 조명'), KG('@L', '조명 방향')];
+  if (!$('pop-reflector').hidden) return [KG('Tab', '다음 반사판'), KG('@L', '반사판 방향')];
   return [];
 }
 function kgMatch(list) { // 지금 누른 것과 꼭 맞는 안내 하나: 키가 모두 눌린 것 가운데 키가 가장 많은 것 (Alt + 왼쪽 버튼이면 '왼쪽 버튼'만 있는 안내는 아니다)
