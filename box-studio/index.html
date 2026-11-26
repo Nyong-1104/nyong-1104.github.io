@@ -34,7 +34,7 @@ button{cursor:pointer}
 
 /* ---------- layout ---------- */
 .app{display:flex;height:100%}
-.side{position:relative;width:320px;flex:none;background:var(--side);border-right:1px solid var(--line2);display:flex;flex-direction:column;gap:14px;overflow-y:auto;padding:28px 24px 0}
+.side{position:relative;width:320px;flex:none;background:var(--side);border-right:1px solid var(--line2);display:flex;flex-direction:column;gap:14px;overflow-y:auto;overflow-x:hidden;padding:28px 24px 0}
 main{flex:1;min-width:0;position:relative;background:var(--stage);overflow:hidden}
 #gap-row label{white-space:nowrap;flex:none}
 #side-close,#side-open{border:0;background:none;color:var(--mute);font:inherit;font-size:22px;line-height:1;width:28px;height:28px;border-radius:8px;cursor:pointer;display:grid;place-items:center;padding:0 0 3px}
@@ -42,6 +42,14 @@ main{flex:1;min-width:0;position:relative;background:var(--stage);overflow:hidde
 #side-close{position:absolute;right:8px;top:8px;z-index:6}
 #side-open{position:absolute;left:6px;top:15px;z-index:25}#side-open[hidden]{display:none}
 .app.noside .side{display:none}.app.noside .top{padding-left:40px}
+.app{position:relative}
+#side-rail{position:absolute;left:14px;top:calc(var(--top) + 14px);z-index:16;display:flex;flex-direction:column;gap:1px;background:rgba(0,0,0,.08);border-radius:11px;box-shadow:0 6px 22px rgba(10,10,20,.12)}#side-rail[hidden]{display:none}
+#side-rail .tool::after{right:auto;left:calc(100% + 8px)}#side-rail .tool[aria-pressed="true"]::after{display:none}
+.app.noside .side.float{display:flex;position:absolute;left:66px;top:calc(var(--top) + 14px);width:320px;max-height:calc(100% - var(--top) - 30px);z-index:31;border:1px solid var(--line2);border-radius:16px;box-shadow:0 14px 44px rgba(10,10,20,.18);padding:16px 18px 18px;gap:12px}
+.side.float>:is(#side-close,.logo,.subline,.side-bottom){display:none}
+.side.float:not([data-sec="files"])>:is(.lbl-row,.drop,#warn,#gap-row){display:none}
+.side.float[data-sec="files"]>#secs,.side.float[data-sec="map"] #sec-layers,.side.float[data-sec="layers"] #sec-map,.side.float #edit-wide{display:none}
+.side.float section.sec{border-top:0;padding-top:0}
 
 /* ---------- logo ---------- */
 .logo{font-size:52px;font-weight:800;letter-spacing:-2.4px;line-height:.94;color:#000;user-select:none;-webkit-user-select:none;margin:0}
@@ -205,12 +213,24 @@ section.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:8px}
 
 .side-bottom{margin-top:auto;position:sticky;bottom:0;z-index:5;background:var(--side);border-top:1px solid var(--line2);margin-left:-24px;margin-right:-24px;padding:12px 24px 16px;display:flex;flex-direction:column;gap:8px}
 .about{position:relative;display:grid;place-items:center;width:34px;height:34px}
-.about-btn{width:20px;height:20px;border-radius:50%;border:1.5px solid #c9c9d2;background:none;color:#a3a3ae;font:700 11px/1 Georgia,'Times New Roman',serif;font-style:italic;cursor:pointer;padding:0;display:grid;place-items:center}
+.about-btn{width:20px;height:20px;border-radius:50%;border:1.5px solid #c9c9d2;background:none;color:#a3a3ae;cursor:pointer;padding:0;display:block;position:relative}.about-btn svg{position:absolute;left:50%;top:50%;width:20px;height:20px;transform:translate(-50%,-50%);display:block}
+#sample-pop{width:354px;padding:12px}#sample-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.smp{border:1.5px solid var(--line);border-radius:10px;background:#fff;padding:6px 6px 7px;display:flex;flex-direction:column;gap:5px;align-items:center;font:inherit;font-size:11.5px;font-weight:600;color:#2a2c36;cursor:pointer}.smp:hover{border-color:var(--o);color:var(--o)}.smp.on{border-color:var(--o);box-shadow:inset 0 0 0 1px var(--o)}.smp svg{width:100%;height:66px;display:block}
+.kg-toggle{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;color:#2a2c36;padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid #e8e8ee;cursor:pointer}.kg-toggle span{flex:1}.kg-toggle input{position:absolute;opacity:0;pointer-events:none}
+.kg-toggle i{width:34px;height:20px;border-radius:10px;background:#d4d4dc;position:relative;transition:background .15s;flex:none}.kg-toggle i::after{content:'';position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .15s}.kg-toggle input:checked+i{background:var(--o)}.kg-toggle input:checked+i::after{transform:translateX(14px)}.kg-toggle input:focus-visible+i{outline:2px solid var(--o);outline-offset:2px}
 .about-btn:hover,.about-btn[aria-expanded="true"]{border-color:var(--o);color:var(--o)}
 .foot{position:absolute;right:0;top:38px;z-index:30;width:388px;white-space:normal;background:#fff;border:1px solid #e8e8ee;border-radius:12px;padding:12px 16px;box-shadow:0 10px 30px rgba(10,10,20,.16);font-size:15px;color:#2a2c36;line-height:1.6;font-weight:700}
 .foot a{color:#2a2c36;text-decoration:none;font-weight:700}
 .foot a:hover{color:#FF2F00}
 .foot .lic{color:#71717f;font-size:12px;margin-top:5px;line-height:1.5;font-weight:600}
+#key-guide{position:absolute;left:12px;right:12px;bottom:26px;z-index:18;display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-end;gap:6px 8px;pointer-events:none}#key-guide[hidden]{display:none}
+.kg{display:inline-flex;align-items:center;gap:3px;padding:3px 9px 3px 3px;border-radius:9px;background:rgba(255,255,255,.88);box-shadow:0 2px 10px rgba(10,10,20,.1);font-size:11.5px;font-weight:600;color:#33353f;white-space:nowrap;animation:kgin .16s ease-out}
+.kg kbd{font:inherit;font-size:10.5px;font-weight:700;min-width:20px;height:20px;padding:0 6px;border-radius:6px;background:#17171c;color:#fff;display:inline-grid;place-items:center;transition:background .08s,color .08s}
+.kg kbd.on{background:var(--o);color:#fff}.kg kbd svg{display:block}.kg kbd.ic{padding:0 3px}
+.kg kbd.m{background:none;color:#17171c;min-width:0;padding:0 2px 0 3px;height:20px}.kg kbd.m.on{background:none;color:var(--o)}
+.kg i{font-style:normal;color:#9a9aa6}.kg .eq{margin-left:3px}
+@keyframes kgin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (hover:none),(max-width:900px){#key-guide{display:none!important}}
 #toast{position:fixed;left:calc(50% + 160px);bottom:38px;z-index:120;transform:translate(-50%,14px);background:#000;color:#fff;padding:13px 26px;border-radius:999px;font-size:13px;font-weight:600;letter-spacing:-.1px;white-space:nowrap;pointer-events:none;text-align:center;opacity:0;transition:opacity .22s ease,transform .22s cubic-bezier(.2,.8,.3,1);box-shadow:0 8px 26px rgba(0,0,0,.22)}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 #toast .sub{display:block;margin-top:3px;font-size:11.5px;font-weight:500;color:#b9b9c4;letter-spacing:0}
@@ -245,6 +265,19 @@ section.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:8px}
 #sel-box{position:absolute;z-index:18;width:264px}   /* 고른 면·선 옆에 */
 .pop{pointer-events:auto;flex:none;background:rgba(var(--pop-rgb,255,255,255),var(--pop-ad,var(--pop-a,.42)));-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);border:1px solid rgba(0,0,0,.07);border-radius:16px;box-shadow:0 12px 40px rgba(10,10,20,.12);padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px}
 #sel-box{border-color:var(--o)}
+#pose-menu{position:absolute;z-index:19;width:186px;padding:8px 8px 9px;gap:6px}#pose-menu .pop-head{min-height:24px;padding-left:5px}#pose-menu .pop-head strong{font-size:12.5px}#pose-menu .x{width:24px;height:24px;font-size:19px}
+#pose-menu-list{display:flex;flex-direction:column;gap:5px}.pm-g{display:flex;flex-direction:column;gap:1px;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.07)}
+.pm-g button{display:flex;align-items:center;gap:8px;height:28px;padding:0 10px 0 7px;border:0;border-radius:0;background:rgba(255,255,255,.92);font:inherit;font-size:12px;font-weight:600;letter-spacing:-.2px;color:var(--ink);text-align:left;cursor:pointer;white-space:nowrap}.pm-g button .i{flex:none;display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.pm-g button:hover:not(:disabled),.pm-g button:focus-visible{background:var(--o);color:#fff;outline:0}.pm-g button:disabled{color:#b6b6c0;cursor:default;background:rgba(255,255,255,.62)}
+#stage.posing #sel-box{visibility:hidden;pointer-events:none}
+#bg-chips{display:flex;align-items:center;gap:6px;min-height:36px;padding:0 2px}#bg-saved{display:flex;gap:6px;margin-left:4px;padding-left:10px;border-left:1px solid var(--line)}#bg-saved:empty{display:none}
+.bgc{position:relative;flex:none;width:24px;height:24px;padding:0;border:0;border-radius:7px;cursor:pointer;background:var(--c,#fff);box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);transition:transform .12s}.bgc:hover{transform:scale(1.1)}
+.bgc.on{outline:2px solid var(--o);outline-offset:2px}.bgc:focus-visible,#bg-pick:not(.m):has(input:focus-visible){outline:2px solid var(--o);outline-offset:2px}
+.bgc.tr{background-color:#fff;background-image:linear-gradient(45deg,#d9d9e0 25%,transparent 25%,transparent 75%,#d9d9e0 75%),linear-gradient(45deg,#d9d9e0 25%,transparent 25%,transparent 75%,#d9d9e0 75%);background-size:10px 10px;background-position:0 0,5px 5px}
+#bg-pick{margin-left:auto;display:grid;place-items:center;background:rgba(255,255,255,.85);color:#1a1c22}#bg-pick.on{background:var(--c)}#bg-pick.dk{color:#fff}
+#bg-pick svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#bg-pick input{position:absolute;inset:0;width:100%;height:100%;margin:0;border:0;border-radius:7px;opacity:0;cursor:pointer}
+html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
 .pop-head{display:flex;align-items:center;gap:8px;min-height:28px}
 .pop-head strong{flex:1;font-size:14px;font-weight:700;letter-spacing:-.3px}
 .pop-head span{color:var(--mute);font-size:11.5px}
@@ -359,7 +392,7 @@ section.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:8px}
 #edit-roles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}#edit-roles[hidden]{display:none}
 #edit-roles .btn{grid-column:span 3;padding:6px 4px;white-space:nowrap}#edit-roles .btn.ico{grid-column:span 2;padding:0;height:30px;display:grid;place-items:center}#edit-roles .btn.ico i{display:block;width:24px;height:4px;border-radius:2px}
 .edit-bar[hidden],#edit-legend[hidden],#img-side[hidden]{display:none}
-#edit-head-btns{display:flex;gap:6px}#edit-head-btns .btn.ic{flex:none;width:38px;height:32px;padding:0;display:grid;place-items:center}#edit-head-btns .btn:disabled{opacity:.45;cursor:default}#edit-note{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#edit-head-btns{display:flex;gap:6px;position:relative}#edit-head-btns .tip-late{position:static}#edit-head-btns .tip-late::after{left:0;width:100%}#edit-head-btns .btn.ic{flex:none;width:38px;height:32px;padding:0;display:grid;place-items:center}#edit-head-btns .btn:disabled{opacity:.45;cursor:default}#edit-note{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #edit-body{flex:1;min-height:0;display:flex;gap:10px}#edit-body #edit-wrap{min-width:0}
 #img-side{width:252px;flex:none;display:flex;flex-direction:column;gap:8px;min-height:0}
 #img-list{display:flex;flex-direction:column;gap:6px}
@@ -405,7 +438,7 @@ section.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:8px}
   .side{width:100%;border-right:0;overflow:visible}
   .logo{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.subline{display:none}
   #hud-tr{overflow-x:auto;max-width:100%}
-  #side-close,#side-open{display:none!important}.app.noside .side{display:flex}
+  #side-close,#side-open,#side-rail{display:none!important}.app.noside .side{display:flex}
   #tool-pops,#box-pop,#sel-box{position:fixed;left:12px!important;right:12px;top:auto!important;bottom:12px;width:auto;max-height:62vh;overflow-y:auto;z-index:40}
   .pop{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}   /* 좁은 화면에서는 창이 패널 위에 겹쳐 뜨므로 비치지 않게 */
 }
@@ -416,7 +449,7 @@ section.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:8px}
 <div class="app">
 
 <aside class="side" id="panel">
-  <button type="button" id="side-close" aria-label="왼쪽 패널 접기" title="패널 접기 ( &lt; )">‹</button>
+  <button type="button" id="side-close" aria-label="왼쪽 패널 접기" title="패널 접기 ( , )">‹</button>
   <h1 class="logo" id="lg" aria-label="Box Mockup Studio">Box<br>Mockup<br>Studio</h1>
   <div class="subline">칼선 파일을 접어서 3D 상자로</div>
 
@@ -461,13 +494,26 @@ section.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:8px}
 
 <main id="stage">
   <canvas id="gl"></canvas>
-  <button type="button" id="side-open" aria-label="왼쪽 패널 펴기" title="패널 펴기 ( &gt; )" hidden>›</button>
+  <button type="button" id="side-open" aria-label="왼쪽 패널 펴기" title="패널 펴기 ( . )" hidden>›</button>
+  <div id="side-rail" role="toolbar" aria-label="접어 둔 패널의 기능" aria-orientation="vertical" hidden>
+    <button type="button" class="tool" data-sec="files" aria-pressed="false" aria-label="인쇄 데이터" data-tip="인쇄 데이터 · 상자 (A)"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg></button>
+    <button type="button" class="tool" data-sec="map" aria-pressed="false" aria-label="전개도" data-tip="전개도 (S)"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v5h5v6h-5v7H9v-7H4V8h5z"/></svg></button>
+    <button type="button" class="tool" data-sec="layers" aria-pressed="false" aria-label="레이어" data-tip="레이어 (D)"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 3.5 8.5 12 13l8.5-4.5z"/><path d="M3.5 12.5 12 17l8.5-4.5M3.5 16.5 12 21l8.5-4.5"/></svg></button>
+  </div>
   <div class="top">
     <div id="hud-tl"><span class="chip example" id="chip-example">예시 상자</span><span class="chip" id="chip-size"></span><span class="chip" id="chip-count"></span></div>
     <div id="hud-tr">
       <div class="about">
-        <button type="button" class="about-btn" id="about-btn" aria-expanded="false" aria-controls="about-pop" aria-label="단축키와 만든 사람" title="단축키 · 만든 사람">i</button>
+        <button type="button" class="about-btn" id="save-btn" aria-label="PNG 저장" title="PNG 저장 (Ctrl+S)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 5.2v6.6M7.3 9.3l2.7 2.7 2.7-2.7M6.4 14.6h7.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="about">
+        <button type="button" class="about-btn" id="sample-btn" aria-expanded="false" aria-controls="sample-pop" aria-label="예시 상자 고르기" title="예시 상자"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4.2 15 7v6l-5 2.8L5 13V7zM5 7l5 2.8L15 7M10 9.8v6" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/></svg></button>
+        <div class="foot" id="sample-pop" hidden><div id="sample-grid"></div></div>
+      </div>
+      <div class="about">
+        <button type="button" class="about-btn" id="about-btn" aria-expanded="false" aria-controls="about-pop" aria-label="단축키와 만든 사람" title="단축키 · 만든 사람"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="5.7" r="1.25" fill="currentColor"/><path d="M10 9v5.9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></button>
         <div class="foot" id="about-pop" hidden>
+          <label class="kg-toggle" for="kg-on"><span>단축키 가이드</span><input type="checkbox" id="kg-on" checked><i aria-hidden="true"></i></label>
           <dl class="keys-list">
             <dt><kbd>`</kbd></dt><dd>보기 방향 메뉴 · 한 번 더 누르면 상자 자세 메뉴</dd>
             <dt><kbd>0</kbd></dt><dd>화면에 맞춤</dd>
@@ -483,7 +529,8 @@ section.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:8px}
             <dt>조명 기준점</dt><dd>조명 · 반사판 창이 열려 있을 때 보이는 동그라미. 누르면 선택되고 상자처럼 옮기고 돌리기 (조명 전체가 함께 움직임) · 두 번 누르면 상자 한가운데로</dd>
             <dt>마우스 휠</dt><dd>슬라이더 · 숫자 칸 위에서 값 조절</dd>
             <dt><kbd>Q</kbd> <kbd>W</kbd> <kbd>E</kbd> <kbd>R</kbd></dt><dd>조명 · 반사판 · 배경색 창 열고 닫기, 바닥 그림자 켜고 끄기</dd>
-            <dt><kbd>&lt;</kbd> <kbd>&gt;</kbd></dt><dd>왼쪽 패널 접기 · 펴기</dd>
+            <dt><kbd>,</kbd> <kbd>.</kbd></dt><dd>왼쪽 패널 접기 · 펴기 (접으면 왼쪽에 아이콘으로 남음)</dd>
+            <dt><kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></dt><dd>패널을 접어 둔 동안: 인쇄 데이터 · 전개도 · 레이어 창 열고 닫기</dd>
             <dt><kbd>Ctrl</kbd> + <kbd>C</kbd> · <kbd>V</kbd></dt><dd>고른 상자를 하나 더 놓기 · 고른 라벨을 복사해 다른 상자에 붙이기</dd>
             <dt><kbd>Ctrl</kbd> + <kbd>S</kbd></dt><dd>PNG 저장</dd>
             <dt><kbd>Ctrl</kbd> + <kbd>Z</kbd></dt><dd>되돌리기 · <kbd>Shift</kbd>와 함께 누르면 다시 하기</dd>
@@ -530,6 +577,7 @@ section.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:8px}
   <svg id="label-gizmo" xmlns="http://www.w3.org/2000/svg" style="display:none" aria-label="라벨 손잡이"><path class="ol"/><line class="stem"/><circle class="hd" r="5.5" data-h="0"/><circle class="hd" r="5.5" data-h="1"/><circle class="hd" r="5.5" data-h="2"/><circle class="hd" r="5.5" data-h="3"/><circle class="rot" r="6.5"><title>끌어서 회전 (Shift = 15°씩)</title></circle></svg>
   <div id="pie" hidden><div class="pie-ring"><i></i></div><div class="pie-title"></div><div class="pie-tip"></div></div>
   <svg id="seq-gizmo" xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"></svg>
+  <div id="key-guide" hidden aria-hidden="true"></div>
   <div id="hud-b">
    <div class="foldwrap">
     <div id="seq-row" hidden>
@@ -563,11 +611,18 @@ section.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:8px}
     </section>
     <section class="pop" id="pop-bg" hidden aria-label="배경색">
       <div class="pop-head"><strong>배경</strong><button type="button" class="x" data-close="bg" aria-label="배경 창 닫기">×</button></div>
-      <div class="row"><label class="name" for="bg">배경색</label>
-        <select id="bg"><option value="transparent">투명</option><option value="#ffffff">흰색</option><option value="#f4f4f6" selected>밝은 회색</option><option value="#1a1c22">검정</option><option value="custom">사용자 지정</option></select>
-        <input type="color" id="bg-color" value="#ffd3c4" aria-label="배경색 사용자 지정" hidden></div>
+      <div id="bg-chips" role="radiogroup" aria-label="배경색">
+        <button type="button" class="bgc tr" role="radio" data-v="transparent" title="투명" aria-label="투명"></button><button type="button" class="bgc" role="radio" data-v="#ffffff" style="--c:#ffffff" title="흰색" aria-label="흰색"></button><button type="button" class="bgc" role="radio" data-v="#f4f4f6" style="--c:#f4f4f6" title="밝은 회색" aria-label="밝은 회색"></button><button type="button" class="bgc" role="radio" data-v="#1a1c22" style="--c:#1a1c22" title="검정" aria-label="검정"></button>
+        <span id="bg-saved"></span>
+        <label class="bgc" id="bg-pick" title="사용자 지정"><input type="color" id="bg-color" value="#ffd3c4" aria-label="배경색 사용자 지정"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.2 4.2l2.6 2.6M10.1 3.3l1-1a1.6 1.6 0 012.6 2.6l-1 1M10.9 7.7l-5.6 5.6-2.9.6.6-2.9 5.6-5.6"/></svg></label>
+      </div>
+      <select id="bg" hidden aria-hidden="true" tabindex="-1"><option value="transparent">투명</option><option value="#ffffff">흰색</option><option value="#f4f4f6" selected>밝은 회색</option><option value="#1a1c22">검정</option><option value="custom">사용자 지정</option></select>
     </section>
   </div>
+  <section class="pop" id="pose-menu" hidden aria-label="상자 자세">
+      <div class="pop-head"><strong>상자 자세</strong><button type="button" class="x" id="pose-menu-x" aria-label="닫기">×</button></div>
+      <div id="pose-menu-list"></div>
+  </section>
   <section class="pop" id="sel-box" hidden aria-label="선택한 면·접는선 옵션">
       <div class="pop-head"><strong id="sel-title"></strong><button type="button" class="x" id="sel-clear" aria-label="선택 해제">×</button></div>
       <div class="row" id="sel-angle-row">
@@ -772,6 +827,18 @@ import { OrbitControls } from './vendor/OrbitControls.js';
     const s = e.target;
     if (s && s.tagName === 'SELECT' && !s.multiple && !s.disabled && fine() && !e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown' || e.key === 'ArrowUp')) { e.preventDefault(); e.stopImmediatePropagation(); ddOpen(s); }
   }, true);
+}
+
+const kgDown = new Set();   // 지금 눌려 있는 키와 마우스 버튼 (단축키 가이드가 주황색으로 보여 준다)
+{
+  const tok = (e) => { const k = e.key, c = e.code || '';
+    if (k === 'Control' || k === 'Meta') return ['Ctrl']; if (k === 'Shift') return ['Shift']; if (k === 'Alt') return ['Alt']; if (k === 'Escape') return ['Esc']; if (k === 'Delete' || k === 'Backspace') return ['Delete']; if (k === 'Enter') return ['Enter']; if (k === 'Tab') return ['Tab'];
+    if (c === 'Space') return ['Space']; if (/^Arrow/.test(k)) return ['방향키']; if (/^Key[A-Z]$/.test(c)) return [c.slice(3)]; if (/^(Digit|Numpad)\d$/.test(c)) return [c.slice(-1)]; if (c === 'Comma') return [',']; if (c === 'Period') return ['.']; if (c === 'Backquote') return ['`']; return []; };
+  window.addEventListener('keydown', (e) => { for (const t of tok(e)) kgDown.add(t); }, true);
+  window.addEventListener('keyup', (e) => { const ts = tok(e); for (const t of ts) kgDown.delete(t); if (ts[0] === 'Ctrl') for (const t of [...kgDown]) if (t[0] !== '@' && t !== 'Shift' && t !== 'Alt') kgDown.delete(t); }, true);   // Ctrl을 떼면 함께 누르던 글자 키도 뗀 것으로 본다 (맥에서는 그 키의 뗌 신호가 오지 않는다)
+  window.addEventListener('blur', () => kgDown.clear());
+  window.addEventListener('pointerdown', (e) => { if (e.target && e.target.id === 'gl') kgDown.add(e.button === 2 ? '@R' : e.button === 0 ? '@L' : '@M'); }, true);
+  for (const ev of ['pointerup', 'pointercancel']) window.addEventListener(ev, () => { kgDown.delete('@L'); kgDown.delete('@R'); kgDown.delete('@M'); }, true);
 }
 
 window.addEventListener('keydown', (e) => { // 확인 창: Enter = 확인, Esc = 취소. 그 밖의 키는 뒤의 화면으로 넘기지 않는다
@@ -1890,7 +1957,7 @@ function resize() {
   camera.updateProjectionMatrix(); dirty = true;
 }
 new ResizeObserver(resize).observe(stage);
-function tick() { controls.update(); syncPanelBox(); if (labelSel) updateLabelGizmo(); if (boxSel) updateBoxGizmo(); if (pivSel) updatePivGizmo(); if (seqUI.open) updateSeqGizmo(); for (const k of ['light', 'reflector']) { const lb = lightBalls[k]; if (lb && lb.svg.isConnected && !$('pop-' + k).hidden) lb.draw(); } if (castDirty && ground.visible) drawCastShadows(); if (dirty) { renderer.render(scene, camera); dirty = false; } if (rangeTick++ % 6 === 0) paintRanges(); requestAnimationFrame(tick); }
+function tick() { controls.update(); syncPanelBox(); kgUpdate(); if (labelSel) updateLabelGizmo(); if (boxSel) updateBoxGizmo(); if (pivSel) updatePivGizmo(); if (seqUI.open) updateSeqGizmo(); for (const k of ['light', 'reflector']) { const lb = lightBalls[k]; if (lb && lb.svg.isConnected && !$('pop-' + k).hidden) lb.draw(); } if (castDirty && ground.visible) drawCastShadows(); if (dirty) { renderer.render(scene, camera); dirty = false; } if (rangeTick++ % 6 === 0) paintRanges(); requestAnimationFrame(tick); }
 
 /* ---------- 조명 · 반사판 ---------- */
 let lightObjs = [], envRT = null, envTimer = 0;
@@ -2618,11 +2685,14 @@ function fitCamera(view, tAlso) { // tAlso를 주면 그 접힘 정도의 모양
 function syncPoseUI() { /* 자세는 오른쪽 아래 구체와 ` 메뉴로 바꾼다 (따로 맞출 입력 칸이 없다) */ }
 function turnPose(axis, deg, fit) { // 지금 자세에서 세계 축 둘레로 더 돌린다
   pose.base.copy(new THREE.Quaternion().setFromAxisAngle(axis, deg * D2R).multiply(poseQuat())).normalize(); pose.rx = pose.ry = pose.rz = 0;
-  updateFold(); if (fit) fitCamera('fit');
+  updateFold(); if (fit) fitKeep();
+}
+function fitKeep() { // 조명 · 그림자의 크기 기준만 새 모양에 맞추고, 보던 방향과 확대는 그대로 둔다 (자세를 바꾸거나 상자를 더 놓을 때)
+  const cp = camera.position.clone(), ct = controls.target.clone(); fitCamera('fit'); camera.position.copy(cp); controls.target.copy(ct); controls.update(); dirty = true;
 }
 function setPose(base, rx = 0, ry = 0, rz = 0) {
   pose.base.copy(base); pose.rx = rx; pose.ry = ry; pose.rz = rz;
-  syncPoseUI(); updateFold(); fitCamera('fit');
+  syncPoseUI(); updateFold(); fitKeep();
 }
 /* 정면의 위아래: 정면(기준면)의 전개도 아래쪽 변에 상자의 나머지 큰 덩어리(뒷벽 → 바닥 …)가 달려 있으면 그 면은 뚜껑이고,
    뚜껑의 그림은 보통 경첩 쪽이 위가 되도록 그려 두므로 전개도 방향과는 위아래가 반대다. 그럴 때 세운 자세를 180° 돌려 준다 */
@@ -2651,7 +2721,6 @@ function faceToward(faceId, where) { // 조립된 상태에서 그 면의 바깥
     const n2 = n.clone().applyQuaternion(R); R.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.atan2(n2.y, n2.z)));   // 남은 기울기만큼 앞뒤로 눕히거나 세운다
   } else R.setFromUnitVectors(n, new THREE.Vector3(0, -1, 0));
   setPose(R.multiply(Q));
-  if (where === 'front') fitCamera('front');
   requestAnimationFrame(placeSelPop);
 }
 function faceRoll(faceId, deg) { // 그 면이 보는 방향은 그대로 두고, 면을 제자리에서 돌린다 (위아래 · 좌우 기준을 바꿀 때)
@@ -3122,7 +3191,7 @@ function initPivot() {
   hd.addEventListener('pointerup', end); hd.addEventListener('pointercancel', end);
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pivSel && !move) { setPivSel(false); e.stopImmediatePropagation(); } });   // 먼저 선택만 푼다 (조명 창은 한 번 더 눌러야 닫힌다)
 }
-function setBoxSel(on) { if (boxSel === on) return; boxSel = on; if (on && pivSel) setPivSel(false); if (on) $('box-pop-name').textContent = S.example ? '예시 상자' : (S.fileName || '상자'); if (!on && S.sel) select(null); updateBoxGizmo(); }
+function setBoxSel(on) { if (boxSel === on) return; boxSel = on; if (!on) poseMenuHide(); if (on && pivSel) setPivSel(false); if (on) $('box-pop-name').textContent = S.example ? '예시 상자' : (S.fileName || '상자'); if (!on && S.sel) select(null); updateBoxGizmo(); }
 function boxAt(cx, cy) { // 화면의 한 점 아래의 상자: 맞은 자리(세계 좌표)와, 면이면 그 면 번호·전개도 좌표
   if (!lastM) return null;
   const r = renderer.domElement.getBoundingClientRect();
@@ -3178,7 +3247,7 @@ function initBox3D() {
     setBoxSel(!!t.h);
   };
   canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end);
-  window.addEventListener('keydown', (e) => { if (e.key !== 'Escape' || !boxSel || drag) return; if (S.sel) select(null); else setBoxSel(false); });
+  window.addEventListener('keydown', (e) => { if (e.key !== 'Escape' || !boxSel || drag || !$('exp-dlg').hidden) return; if (S.sel) select(null); else setBoxSel(false); });
 }
 function refreshWrap(L = S.label) {
   if (!L || !S.struct || !S.struct.faces.length) return; const rt = labelRT(L);
@@ -3237,7 +3306,7 @@ function limboSweep() { // 되돌리기(지운 상자)나 다시 하기(되돌�
   hist.list.forEach((o, i) => { if (i > hist.at && o.h.op === 'add') keep.add(o.h.box); if (i <= hist.at && o.h.gone != null) keep.add(o.h.gone); });
   for (const [id, v] of limbo) if (!keep.has(id)) { limbo.delete(id); boxDispose(v.b); }
 }
-const histSoon = () => { clearTimeout(hist.timer); hist.timer = setTimeout(histCommit, 90); };
+const histSoon = (n) => { n = typeof n === 'number' ? n : 0; clearTimeout(hist.timer); hist.timer = setTimeout(() => { if (n < 40 && (kgDown.has('@L') || kgDown.has('@R'))) histSoon(n + 1); else histCommit(); }, 90); };   // 3D 화면을 끄는 중이면 손을 뗄 때까지 미룬다: 끄는 도중의 상태가 되돌리기 한 단계로 끼어들지 않게
 function histReset() { clearTimeout(hist.timer); hist.list = []; hist.at = -1; histCommit(); limboSweep(); syncUndoBtn(); }
 async function histApply(h, hs) {   // h: 상자 한 벌의 상태, hs: 장면(조명·배경)의 상태. 따로 주면 서로 다른 시점의 것을 섞어 되살린다
   hs = hs || h; if (!h) h = histSnap();
@@ -3497,7 +3566,7 @@ function renderLightUI(kind) {
       sliderRow(pre + '-pw', kind === 'light' ? '밝기' : '세기', 0, 200, 1, L.power, '%', (v) => { L.power = v; updateLights(); }),
       sliderRow(pre + '-sz', '크기', 30, 300, 5, L.size ?? 100, '%', (v) => { L.size = v; updateLights(); }),
       ...(kind === 'light' ? [sliderRow(pre + '-sp', '퍼짐', 10, 100, 1, L.spread ?? 100, '%', (v) => { L.spread = v; updateLights(); })] : [])));
-  } else box.append(el('p', { class: 'hint', text: kind === 'light' ? '조명이 없습니다. + 를 눌러 추가하세요.' : '+ 를 눌러 반사판을 추가하세요.' }));
+  } else if (kind === 'light') box.append(el('p', { class: 'hint', text: '조명이 없습니다. + 를 눌러 추가하세요.' }));
   $(kind + '-note').textContent = `${list.length} / ${MAX_ITEMS}개`;
 }
 function renderMap(keys) { renderSeq(); renderEdit(keys); }   // 전개도는 하나: 선·면·얹은 이미지를 모두 여기서 고르고 고친다
@@ -3524,21 +3593,58 @@ function showSel() { // 고른 것에 맞춰 옵션 창을 띄운다: 면 · 접
   else if (isF) { $('sel-title').textContent = '선택한 면'; const bg = S.bulge.get(sel.id) || { amt: 0, angle: 90 }; /* 기본은 세로로 휘는 아치 */ if (document.activeElement !== $('bulge-amt')) { $('bulge-amt').value = bg.amt; $('bulge-amt-out').textContent = bg.amt + 'mm'; } if (document.activeElement !== $('bulge-angle')) $('bulge-angle').value = bg.angle == null ? '' : bg.angle; }
   else $('sel-title').textContent = editSel.size > 1 ? `선택한 선 ${editSel.size}줄` : '선택한 선';
 }
+const POSE_LIST = [[['stand', '세우기'], ['lie', '눕히기'], ['side', '옆으로 눕히기'], ['lean', '비스듬히']], [['turnL', '왼쪽으로 90°'], ['turnR', '오른쪽으로 90°'], ['flip', '위아래 뒤집기']], [['face', '고른 면을 정면으로']]];   // 묶음별로 붙여서 보여 준다
+function poseIcon(v) { // 목록 왼쪽의 작은 그림: 화면 양옆의 도구 아이콘과 같은 선 그림. 돌리기 · 뒤집기는 화살표만
+  const d = {
+    stand: 'M12 3.6l5.2 2.7v11L12 20l-5.2-2.7v-11zM6.8 6.3 12 9l5.2-2.7M12 9v11',   // 세운 상자
+    lie: 'M12 8.4l8.5 4v3.3L12 19.8l-8.5-4.1v-3.3zM3.5 12.4l8.5 4.1 8.5-4.1M12 16.5v3.3',   // 납작하게 누운 상자
+    side: 'M9.5 7.2 20 10.8v5l-5.5 2.8L4 15v-5zM4 10l10.5 3.6 5.5-2.8M14.5 13.6v5',   // 옆으로 길게 누운 상자
+    lean: 'M9.6 18.4 7 7.6l6.8-1.7 2.6 10.8zM4 20.2h16',   // 기울어진 상자와 바닥
+    turnL: 'M3.5 12a8.5 8.5 0 1 0 2.8-6.3L3.5 8.2M3.5 3.5v4.7h4.7',
+    turnR: 'M20.5 12a8.5 8.5 0 1 1-2.8-6.3l2.8 2.5M20.5 3.5v4.7h-4.7',
+    flip: 'M12 3.8v16.4M8 7.8l4-4 4 4M8 16.2l4 4 4-4',
+    face: 'M7 4.5h10a2.5 2.5 0 0 1 2.5 2.5v10a2.5 2.5 0 0 1-2.5 2.5H7A2.5 2.5 0 0 1 4.5 17V7A2.5 2.5 0 0 1 7 4.5zM9.5 9.5h5v5h-5z',   // 면 하나를 앞으로
+  }[v];
+  return `<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
+}
+function poseAct(v) { // 상자 자세 바꾸기 (목록과 ` 메뉴가 같이 쓴다)
+  if (v === 'turnR') turnPose(new THREE.Vector3(0, 1, 0), 90, true); else if (v === 'turnL') turnPose(new THREE.Vector3(0, 1, 0), -90, true); else if (v === 'flip') turnPose(new THREE.Vector3(1, 0, 0), 180, true);
+  else if (v === 'face') { if (S.sel && S.sel.type === 'face') faceToward(S.sel.id, 'front'); }
+  else posePreset(v);
+}
+function poseMenuShow(cx, cy) { // 고른 상자를 오른쪽 버튼으로 눌렀다: 상자 자세 목록을 상자 옆에 띄운다 (면 · 선을 골랐을 때의 창과 같은 자리 규칙)
+  const m = $('pose-menu'), sr = $('stage').getBoundingClientRect(); m.hidden = false;
+  $('stage').classList.add('posing');   // 면 · 선을 골라 둔 채였다면 그 옵션 창은 잠시 숨긴다 (목록을 닫으면 다시 나온다)
+  for (const b of m.querySelectorAll('button[data-v]')) if (b.dataset.v === 'face') b.disabled = !(S.sel && S.sel.type === 'face');
+  placePopBy(m, cx - sr.left, cy - sr.top);
+}
+function poseMenuHide() { if ($('pose-menu').hidden) return; $('pose-menu').hidden = true; $('stage').classList.remove('posing'); requestAnimationFrame(placeSelPop); }
+function initPoseMenu() {
+  const m = $('pose-menu'), list = $('pose-menu-list');
+  for (const grp of POSE_LIST) { const g = el('div', { class: 'pm-g' }); for (const [v, name] of grp) { const b = document.createElement('button'); b.type = 'button'; b.dataset.v = v; b.innerHTML = poseIcon(v); b.append(el('span', { text: name })); if (v === 'face') b.title = '면을 하나 골라 두면 그 면이 정면을 보게 돌립니다'; g.append(b); } list.append(g); }
+  list.addEventListener('click', (e) => { const b = e.target.closest('button[data-v]'); if (!b || b.disabled) return; b.blur(); poseAct(b.dataset.v); histSoon(); });   // 눌러도 닫지 않는다: 90°씩 여러 번 돌리기 쉽게
+  $('pose-menu-x').addEventListener('click', poseMenuHide);
+  document.addEventListener('pointerdown', (e) => { if (!m.hidden && !(e.target.closest && e.target.closest('#pose-menu'))) poseMenuHide(); }, true);   // 목록 밖을 누르면 닫힌다
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !m.hidden) { poseMenuHide(); e.preventDefault(); e.stopImmediatePropagation(); } }, true);   // Esc는 목록만 닫는다 (상자 선택은 그대로)
+}
 function placeSelPop() { // 고른 면의 가운데 · 접는 선의 가운데가 화면에 보이는 자리 옆에 창을 둔다
   const box = $('sel-box'), sel = S.sel; if (box.hidden || !S.struct) return;
-  if (!sel) { const sr = $('stage').getBoundingClientRect(), mr = $('map-wrap').getBoundingClientRect(); box.style.left = '12px'; box.style.top = Math.max(64, Math.min(sr.height - box.offsetHeight - 8, mr.top - sr.top)) + 'px'; return; }   // 접는 선이 아닌 선: 3D에 가리킬 자리가 없으니 전개도 옆에
+  if (!sel) { const sr = $('stage').getBoundingClientRect(), mr = $('map-wrap').getBoundingClientRect(), fl = $('panel').classList.contains('float'); box.style.left = (fl ? Math.round($('panel').getBoundingClientRect().right - sr.left) + 12 : 12) + 'px'; box.style.top = Math.max(64, Math.min(sr.height - box.offsetHeight - 8, mr.top - sr.top)) + 'px'; return; }   // 접는 선이 아닌 선: 3D에 가리킬 자리가 없으니 전개도 옆에
   if (!lastM) return;
   let id, q;
   if (sel.type === 'hinge') { const h = S.struct.hinges[sel.id]; if (!h) return; id = h.parent; q = [(h.p0[0] + h.p1[0]) / 2, (h.p0[1] + h.p1[1]) / 2]; }
   else { const f = S.struct.faces.find((x) => x.id === sel.id); if (!f) return; id = f.id; q = f.center; }
   const o = faceObjs.get(id); if (!o) return;
   const v = o.front.localToWorld(new THREE.Vector3(q[0], q[1], 0)).project(camera), r = renderer.domElement.getBoundingClientRect(), sr = $('stage').getBoundingClientRect();
-  const x = (v.x * 0.5 + 0.5) * r.width + r.left - sr.left, y = (-v.y * 0.5 + 0.5) * r.height + r.top - sr.top, w = box.offsetWidth, hgt = box.offsetHeight;
+  placePopBy(box, (v.x * 0.5 + 0.5) * r.width + r.left - sr.left, (-v.y * 0.5 + 0.5) * r.height + r.top - sr.top);
+}
+function placePopBy(box, x, y) { // 화면의 한 점(x, y: 3D 화면 기준)을 가리키는 창을 상자 옆 빈 자리에 둔다: 상자와 다른 창을 가리지 않는 가장 가까운 곳
+  const r = renderer.domElement.getBoundingClientRect(), sr = $('stage').getBoundingClientRect(), w = box.offsetWidth, hgt = box.offsetHeight;
   // 상자가 화면에서 차지하는 네모
   let bx0 = Infinity, by0 = Infinity, bx1 = -Infinity, by1 = -Infinity; const pv = new THREE.Vector3();
   for (const poly of castPolys) for (const c of poly) { pv.set(c[0], c[1], c[2]).project(camera); if (pv.z > 1) continue; const px = (pv.x * 0.5 + 0.5) * r.width + r.left - sr.left, py = (-pv.y * 0.5 + 0.5) * r.height + r.top - sr.top; if (px < bx0) bx0 = px; if (px > bx1) bx1 = px; if (py < by0) by0 = py; if (py > by1) by1 = py; }
   const X0 = 8, X1 = sr.width - 66 - w, Y0 = 64, Y1 = sr.height - hgt - 8, cl = (v, a, b) => Math.max(a, Math.min(b, v)), G = 18;
-  const busy = ['box-pop', 'pop-light', 'pop-reflector', 'pop-bg', 'label-pop'].map((k) => $(k)).filter((n) => !n.hidden).map((n) => { const q = n.getBoundingClientRect(); return [q.left - sr.left - 8, q.top - sr.top - 8, q.right - sr.left + 8, q.bottom - sr.top + 8]; });   // 이미 떠 있는 다른 창
+  const busy = ['box-pop', 'pop-light', 'pop-reflector', 'pop-bg', 'label-pop', 'sel-box', 'pose-menu'].map((k) => $(k)).filter((n) => n !== box && !n.hidden && !(n.id === 'sel-box' && $('stage').classList.contains('posing'))).map((n) => { const q = n.getBoundingClientRect(); return [q.left - sr.left - 8, q.top - sr.top - 8, q.right - sr.left + 8, q.bottom - sr.top + 8]; });   // 이미 떠 있는 다른 창
   const hits = (L, T, R) => L < R[2] && L + w > R[0] && T < R[3] && T + hgt > R[1];
   const cands = [[bx1 + G, cl(y - 24, Y0, Y1)], [bx0 - G - w, cl(y - 24, Y0, Y1)], [cl(x - w / 2, X0, X1), by0 - G - hgt], [cl(x - w / 2, X0, X1), by1 + G]];   // 상자의 오른쪽 · 왼쪽 · 위 · 아래
   let best = null;
@@ -4172,7 +4278,7 @@ async function rebuild(textures, refit, soft) {
     const st = buildStructure(S.exLines.concat(S.adds.map((o) => ({ pts: [[o.ax, o.ay], [o.bx, o.by]], role: o.role, keep: true }))), { gapTol: 3, overrides: S.edits, moves: S.moves, rootPoint: S.exRoot });
     const sig = (x) => (x && x.bbox ? [x.faces.length, x.hinges.length, x.rootId].join('/') : '');
     if (sig(st) !== sig(S.struct)) { S.over = new Map(); S.dir = new Map(); S.bulge = new Map(); S.sel = null; if (st.faces.length) { const home = st.faces.find((f) => f.id === st.rootId) || st.faces[0]; for (const L of S.labels) { L.x = home.center[0]; L.y = home.center[1]; L.anchor = home.id; } } }
-    S.struct = st; S.auto = defaultAngles(st);
+    S.struct = st; S.auto = defaultAngles(st); applyExAngles(st, S.auto, S.exAngles);
     setWarn(st.faces.length ? '' : '닫힌 칼선이 없습니다. 전개도의 "수정"에서 되돌려 주세요.');
     renderColorUI(); buildMeshes(); applyPaper(); updateFold(); if (refit) fitCamera('right'); renderMap(); select(S.sel); updateChips();
     return;
@@ -4403,7 +4509,7 @@ function boxThumb(b) { // 타일에 넣을 작은 그림: 그 상자의 인쇄�
   if (b.thumbOf !== pc) { const c = document.createElement('canvas'), k = 112 / Math.max(pc.width, pc.height); c.width = Math.max(1, Math.round(pc.width * k)); c.height = Math.max(1, Math.round(pc.height * k)); c.getContext('2d').drawImage(pc, 0, 0, c.width, c.height); b.thumb = c.toDataURL('image/jpeg', 0.8); b.thumbOf = pc; }
   return b.thumb;
 }
-let panelShown = true;
+let panelShown = true, railClose = () => {};
 function syncPanelBox() { // 상자가 둘 이상인데 고른 것이 없으면 전개도·레이어 자리를 비운다 (하나뿐이면 늘 그 상자를 보여 준다)
   const show = boxes.length < 2 || boxSel || labelSel || !!S.sel || seqUI.open || editSel.size > 0 || imgSel >= 0 || editJoin;
   if (show === panelShown) return; panelShown = show; $('panel').classList.toggle('nobox', !show); renderBoxTiles();
@@ -4414,7 +4520,7 @@ function renderBoxTiles() { // 왼쪽의 인쇄 데이터 올리기 칸: 상자�
   if (!tiles) { $('file-name').textContent = DROP_TXT[0]; $('file-sub').innerHTML = DROP_TXT[1]; return; }   // 예시 상자뿐일 때는 처음의 올리기 칸
   const grid = el('div', { class: 'tiles' });
   for (const b of boxes) {
-    const st = boxState(b), name = st.example ? '예시 상자' : (st.fileName || '상자');
+    const st = boxState(b), name = st.example ? sampleName(st.sample) : (st.fileName || '상자');
     const t = el('div', { class: 'tile' + (b === boxCur && panelShown ? ' on' : ''), role: 'button', tabindex: '0', title: name }), th = boxThumb(b); if (th) t.style.backgroundImage = `url(${th})`;
     const x = el('button', { type: 'button', class: 'del', 'aria-label': name + ' 지우기', text: '×' });
     x.addEventListener('click', (e) => { e.stopPropagation(); boxRemove(b); });
@@ -4479,37 +4585,105 @@ window.addEventListener('keydown', (e) => { // Ctrl+C · Ctrl+V: 고른 라벨�
 });
 
 /* ---------- 예시 상자 (파일을 올리기 전 첫 화면) ---------- */
-function loadExample(keepHist) {   // keepHist: 되돌리기 기록을 비우지 않는다 (마지막 상자를 지워 예시로 돌아가는 경우)
-  const W = 198, D = 128, H = 300, G = 40, T = 44, F = D * 0.62, m = 7; // pt
-  const x1 = W, x2 = W + D, x3 = 2 * W + D, x4 = 2 * W + 2 * D;
-  const cut = [[0, 0], [x1, 0], [x1 + m, -F], [x2 - m, -F], [x2, 0], [x2, -D], [x2 + 10, -D - T], [x3 - 10, -D - T], [x3, -D], [x3, 0], [x3 + m, -F], [x4 - m, -F], [x4, 0], [x4, H],
-    [x4 - m, H + F], [x3 + m, H + F], [x3, H], [x2, H], [x2 - m, H + F], [x1 + m, H + F], [x1, H], [x1, H + D], [x1 - 10, H + D + T], [10, H + D + T], [0, H + D], [0, H], [-G, H - 16], [-G, 16], [0, 0]];
-  const folds = [[[0, 0], [0, H]], [[x1, 0], [x1, H]], [[x2, 0], [x2, H]], [[x3, 0], [x3, H]], [[0, H], [x1, H]], [[0, H + D], [x1, H + D]], [[x1, H], [x2, H]], [[x3, H], [x4, H]],
-    [[x2, 0], [x3, 0]], [[x2, -D], [x3, -D]], [[x1, 0], [x2, 0]], [[x3, 0], [x4, 0]]];
-  const lines = [{ pts: cut, role: 'cut' }, ...folds.map((f) => ({ pts: f, role: 'fold' }))];
-  let st = buildStructure(lines, { gapTol: 3 });
-  const frontFace = st.faces.find((f) => Math.abs(f.center[0] - (x2 + W / 2)) < 20 && f.center[1] > 0 && f.center[1] < H);
-  if (frontFace) st = buildStructure(lines, { gapTol: 3, rootId: frontFace.id });
+/* ---------- 예시 상자: 직접 그린 전개도 몇 가지 (길이는 pt) ---------- */
+function tubeSample({ ws, H, G = 40, top, bot }) { // 옆면이 한 줄로 이어진 통 모양: 옆면 너비들 · 높이 · 풀칠 날개 · 옆면마다 위아래 날개
+  const cut = [], fold = [], xs = [0]; for (const w of ws) xs.push(xs[xs.length - 1] + w); const X = xs[xs.length - 1], q3 = Math.sqrt(3) / 2;
+  cut.push([[0, 0], [-G, 16], [-G, H - 16], [0, H]], [[X, 0], [X, H]]); fold.push([[0, 0], [0, H]]);
+  for (let i = 1; i < ws.length; i++) fold.push([[xs[i], 0], [xs[i], H]]);
+  const tab = (P, Q, C, t = 18) => { // 뚜껑의 한 변에 붙는 끼움 날개: 접어 넣으면 옆면 안쪽에 걸려 뚜껑이 고정된다 (C = 뚜껑 가운데, 그 반대쪽으로 낸다)
+    const L = Math.hypot(Q[0] - P[0], Q[1] - P[1]), u = [(Q[0] - P[0]) / L, (Q[1] - P[1]) / L], m = t * 0.7; let n = [-u[1], u[0]];
+    if (((P[0] + Q[0]) / 2 - C[0]) * n[0] + ((P[1] + Q[1]) / 2 - C[1]) * n[1] < 0) n = [-n[0], -n[1]];
+    cut.push([P, [P[0] + u[0] * m + n[0] * t, P[1] + u[1] * m + n[1] * t], [Q[0] - u[0] * m + n[0] * t, Q[1] - u[1] * m + n[1] * t], Q]); fold.push([P, Q]);
+  };
+  const flap = (f, a, b, y0, sg) => {
+    if (!f) { cut.push([[a, y0], [b, y0]]); return; }   // 날개가 없는 변은 잘린 변
+    fold.push([[a, y0], [b, y0]]); const w = b - a, Y = (d) => y0 + sg * d;
+    if (f.t === 'lid') { cut.push([[a, y0], [a, Y(f.d)], [a + 10, Y(f.d + f.tuck)], [b - 10, Y(f.d + f.tuck)], [b, Y(f.d)], [b, y0]]); fold.push([[a, Y(f.d)], [b, Y(f.d)]]); }   // 뚜껑 + 끼움 날개
+    else if (f.t === 'dust') cut.push([[a, y0], [a + f.m, Y(f.d)], [b - f.m, Y(f.d)], [b, y0]]);   // 먼지 날개
+    else if (f.t === 'tri') { const A = [a, y0], T = [(a + b) / 2, Y(w * q3)], B = [b, y0], C = [(a + b) / 2, Y(w * q3 / 3)]; tab(A, T, C); tab(T, B, C); }   // 정삼각형 뚜껑: 남는 두 변에 끼움 날개
+    else if (f.t === 'hex') { const p = [[a, y0], [a - w / 2, Y(w * q3)], [a, Y(2 * w * q3)], [b, Y(2 * w * q3)], [b + w / 2, Y(w * q3)], [b, y0]], C = [(a + b) / 2, Y(w * q3)]; cut.push([p[0], p[1]], [p[4], p[5]]); tab(p[1], p[2], C); tab(p[2], p[3], C); tab(p[3], p[4], C); }   // 정육각형 뚜껑: 먼 쪽 세 변에 끼움 날개 (몸통 옆의 두 변은 이웃 옆면과 닿아 날개를 낼 자리가 없다)
+  };
+  ws.forEach((w, i) => { flap(top[i], xs[i], xs[i + 1], H, 1); flap(bot[i], xs[i], xs[i + 1], 0, -1); });
+  return { lines: [...cut.map((p) => ({ pts: p, role: 'cut' })), ...fold.map((p) => ({ pts: p, role: 'fold' }))], xs };
+}
+const SAMPLES = [
+  { id: 'basic', name: '기본 상자', make() {
+    const W = 198, D = 128, H = 300, G = 40, T = 44, F = D * 0.62, m = 7;
+    const x1 = W, x2 = W + D, x3 = 2 * W + D, x4 = 2 * W + 2 * D;
+    const cut = [[0, 0], [x1, 0], [x1 + m, -F], [x2 - m, -F], [x2, 0], [x2, -D], [x2 + 10, -D - T], [x3 - 10, -D - T], [x3, -D], [x3, 0], [x3 + m, -F], [x4 - m, -F], [x4, 0], [x4, H],
+      [x4 - m, H + F], [x3 + m, H + F], [x3, H], [x2, H], [x2 - m, H + F], [x1 + m, H + F], [x1, H], [x1, H + D], [x1 - 10, H + D + T], [10, H + D + T], [0, H + D], [0, H], [-G, H - 16], [-G, 16], [0, 0]];
+    const folds = [[[0, 0], [0, H]], [[x1, 0], [x1, H]], [[x2, 0], [x2, H]], [[x3, 0], [x3, H]], [[0, H], [x1, H]], [[0, H + D], [x1, H + D]], [[x1, H], [x2, H]], [[x3, H], [x4, H]],
+      [[x2, 0], [x3, 0]], [[x2, -D], [x3, -D]], [[x1, 0], [x2, 0]], [[x3, 0], [x4, 0]]];
+    return { lines: [{ pts: cut, role: 'cut' }, ...folds.map((f) => ({ pts: f, role: 'fold' }))], root: [x2 + W / 2, H / 2], bg: '#e9ecef', title: [x2 + W / 2, H * 0.66, 'SAMPLE BOX', 28], sub: [x2 + W / 2, H * 0.56], emboss: [x2 + W / 2, H * 0.14, 'FRONT', 16],
+      labels: [[W / 2, H * 0.6, 'BACK', 20], [x1 + D / 2, H * 0.6, 'SIDE', 16], [x3 + D / 2, H * 0.6, 'SIDE', 16], [W / 2, H + D / 2 + 5, 'TOP', 16, true], [x2 + W / 2, -D / 2 - 5, 'BOTTOM', 16]] };   // 뚜껑은 뒷면에서 넘어오므로 앞에서 읽히게 뒤집어 쓴다
+  } },
+  { id: 'tall', name: '세로형 단상자', make() { // 위아래 뚜껑이 같은 면에서 나오는 일자형
+    const W = 124, D = 92, H = 336, lid = { t: 'lid', d: D, tuck: 36 }, dust = { t: 'dust', d: D * 0.6, m: 6 }, { lines, xs } = tubeSample({ ws: [W, D, W, D], H, G: 34, top: [lid, dust, null, dust], bot: [lid, dust, null, dust] });
+    return { lines, root: [xs[2] + W / 2, H / 2], bg: '#e6ebe4', title: [xs[2] + W / 2, H * 0.62, 'TALL BOX', 22], sub: [xs[2] + W / 2, H * 0.56, 8.5], labels: [[W / 2, H * 0.5, 'BACK', 15], [xs[1] + D / 2, H * 0.5, 'SIDE', 13], [xs[3] + D / 2, H * 0.5, 'SIDE', 13], [W / 2, H + D / 2 + 4, 'TOP', 13, true], [W / 2, -D / 2 - 4, 'BOTTOM', 13]] };
+  } },
+  { id: 'cube', name: '정육면체', make() {
+    const A = 176, lid = { t: 'lid', d: A, tuck: 42 }, dust = { t: 'dust', d: A * 0.6, m: 8 }, { lines, xs } = tubeSample({ ws: [A, A, A, A], H: A, top: [lid, dust, null, dust], bot: [null, dust, lid, dust] });
+    return { lines, root: [xs[2] + A / 2, A / 2], bg: '#ece8df', title: [xs[2] + A / 2, A * 0.56, 'CUBE', 30], sub: [xs[2] + A / 2, A * 0.42], labels: [[A / 2, A * 0.5, 'BACK', 18], [xs[1] + A / 2, A * 0.5, 'SIDE', 16], [xs[3] + A / 2, A * 0.5, 'SIDE', 16], [A / 2, A * 1.5, 'TOP', 16, true], [xs[2] + A / 2, -A / 2, 'BOTTOM', 16]] };
+  } },
+  { id: 'tray', name: '트레이', make() { // 뚜껑 없는 상자: 바닥 + 벽 넷 + 모서리 붙임 날개
+    const W = 300, D = 200, h = 70, t = 52, m = 8;
+    const cut = [[0, -h], [W, -h], [W + t, -h + m], [W + t, -m], [W, 0], [W + h, 0], [W + h, D], [W, D], [W + t, D + m], [W + t, D + h - m], [W, D + h], [0, D + h], [-t, D + h - m], [-t, D + m], [0, D], [-h, D], [-h, 0], [0, 0], [-t, -m], [-t, -h + m], [0, -h]];
+    const folds = [[[0, 0], [W, 0]], [[W, 0], [W, D]], [[W, D], [0, D]], [[0, D], [0, 0]], [[W, -h], [W, 0]], [[0, -h], [0, 0]], [[W, D], [W, D + h]], [[0, D], [0, D + h]]];
+    return { lines: [{ pts: cut, role: 'cut' }, ...folds.map((f) => ({ pts: f, role: 'fold' }))], root: [W / 2, D + h / 2], bg: '#e4e9ee', title: [W / 2, D + h * 0.42, 'TRAY', 26], sub: [W / 2, D + h * 0.16, 10], labels: [[W / 2, D * 0.5, 'BOTTOM', 18], [W / 2, -h * 0.58, 'BACK', 15, true]] };   // 뒷벽을 기준으로 세운다: 바닥이 아래로 가고 위가 열린다
+  } },
+  { id: 'sleeve', name: '슬리브', make() { // 위아래가 뚫린 띠
+    const W = 220, D = 76, H = 150, { lines, xs } = tubeSample({ ws: [W, D, W, D], H, G: 30, top: [null, null, null, null], bot: [null, null, null, null] });
+    return { lines, root: [xs[2] + W / 2, H / 2], bg: '#efe6e2', title: [xs[2] + W / 2, H * 0.52, 'SLEEVE', 26], sub: [xs[2] + W / 2, H * 0.36], labels: [[W / 2, H * 0.46, 'BACK', 16], [xs[1] + D / 2, H * 0.46, 'SIDE', 12], [xs[3] + D / 2, H * 0.46, 'SIDE', 12]] };
+  } },
+  { id: 'prism', name: '삼각 기둥', make() { // 옆면 셋을 120°씩 접는다
+    const A = 160, H = 300, tri = { t: 'tri' }, { lines, xs } = tubeSample({ ws: [A, A, A], H, G: 34, top: [null, tri, null], bot: [null, tri, null] });
+    return { lines, root: [xs[1] + A / 2, H / 2], bg: '#e7e5ee', title: [xs[1] + A / 2, H * 0.6, 'PRISM', 26], sub: [xs[1] + A / 2, H * 0.52], labels: [[A / 2, H * 0.5, 'SIDE', 15], [xs[2] + A / 2, H * 0.5, 'SIDE', 15]], angles: xs.slice(0, -1).map((x) => ({ x, y: H / 2, a: 120 })) };
+  } },
+  { id: 'hex', name: '육각 기둥', make() { // 옆면 여섯을 60°씩 접는다
+    const A = 92, H = 250, hex = { t: 'hex' }, { lines, xs } = tubeSample({ ws: [A, A, A, A, A, A], H, G: 30, top: [null, null, hex, null, null, null], bot: [null, null, hex, null, null, null] });
+    return { lines, root: [xs[2] + A / 2, H / 2], bg: '#e3ece9', title: [xs[2] + A / 2, H * 0.6, 'HEX', 22], labels: [], angles: xs.slice(0, -1).map((x) => ({ x, y: H / 2, a: 60 })) };
+  } },
+];
+function applyExAngles(st, auto, list) { // 직각이 아닌 예시(삼각·육각 기둥): 정해 둔 접는 선의 기본 각도를 바꾼다
+  if (!list || !list.length) return;
+  for (const h of st.hinges) { if (h.weld) continue; const mx = (h.p0[0] + h.p1[0]) / 2, my = (h.p0[1] + h.p1[1]) / 2, o = list.find((q) => Math.abs(q.x - mx) < 3 && Math.abs(q.y - my) < 3); if (o) auto.set(h.id, (auto.get(h.id) < 0 ? -1 : 1) * o.a); }
+}
+function sampleThumb(d) { // 고르는 창에 넣을 작은 전개도 그림
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity; for (const l of d.lines) for (const p of l.pts) { x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); }
+  const pad = Math.max(x1 - x0, y1 - y0) * 0.04, path = (r) => d.lines.filter((l) => l.role === r).map((l) => 'M' + l.pts.map((p) => `${(p[0] - x0).toFixed(1)} ${(y1 - p[1]).toFixed(1)}`).join('L')).join('');
+  return `<svg viewBox="${-pad} ${-pad} ${x1 - x0 + 2 * pad} ${y1 - y0 + 2 * pad}" aria-hidden="true"><g fill="none" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"><path d="${path('cut')}" stroke="#ff2a8a" stroke-width="1.4" vector-effect="non-scaling-stroke"/><path d="${path('fold')}" stroke="#1c9bd6" stroke-width="1.2" vector-effect="non-scaling-stroke"/></g></svg>`;
+}
+const sampleName = (id) => (SAMPLES.find((x) => x.id === id) || SAMPLES[0]).name;
+function loadExample(keepHist, id) {   // keepHist: 되돌리기 기록을 비우지 않는다 (마지막 상자를 지워 예시로 돌아가는 경우). id: 어느 예시인지 (없으면 기본 상자)
+  const sm = SAMPLES.find((x) => x.id === id) || SAMPLES[0], d = sm.make(), lines = d.lines;
+  const st = buildStructure(lines, { gapTol: 3, rootPoint: d.root });
   const b = st.bbox, bw = b.maxX - b.minX, bh = b.maxY - b.minY, k = 2;
   const c = document.createElement('canvas'); c.width = Math.round(bw * k); c.height = Math.round(bh * k);
   const g = c.getContext('2d');
   g.setTransform(k, 0, 0, -k, -b.minX * k, b.maxY * k);
-  g.fillStyle = '#e9ecef'; g.fillRect(b.minX, b.minY, bw, bh);
-  const label = (x, y, txt, size, col, flip) => { g.save(); g.translate(x, y); g.scale(1, -1); if (flip) g.rotate(Math.PI); g.fillStyle = col; g.font = `600 ${size}px "IBM Plex Sans KR", sans-serif`; g.textAlign = 'center'; g.fillText(txt, 0, 0); g.restore(); };
-  label(x2 + W / 2, H * 0.66, 'SAMPLE BOX', 28, '#1b1f27'); label(x2 + W / 2, H * 0.56, 'Upload your file to replace', 11, '#5d6573'); label(x2 + W / 2, H * 0.14, 'FRONT', 16, '#1b1f27');
-  label(W / 2, H * 0.6, 'BACK', 20, '#1b1f27'); label(x1 + D / 2, H * 0.6, 'SIDE', 16, '#1b1f27'); label(x3 + D / 2, H * 0.6, 'SIDE', 16, '#1b1f27'); label(W / 2, H + D / 2 + 5, 'TOP', 16, '#1b1f27', true);   /* 뚜껑은 뒷면에서 넘어오므로 앞에서 읽히게 뒤집어 쓴다 */ label(x2 + W / 2, -D / 2 - 5, 'BOTTOM', 16, '#1b1f27');
-  // 예시 후가공: 전체 무광, FRONT = 형압, 제목 글자 = 유광
+  g.fillStyle = d.bg; g.fillRect(b.minX, b.minY, bw, bh);
+  const FONT = (size) => `600 ${size}px "IBM Plex Sans KR", sans-serif`;
+  const label = (x, y, txt, size, col, flip) => { g.save(); g.translate(x, y); g.scale(1, -1); if (flip) g.rotate(Math.PI); g.fillStyle = col; g.font = FONT(size); g.textAlign = 'center'; g.fillText(txt, 0, 0); g.restore(); };
+  label(d.title[0], d.title[1], d.title[2], d.title[3], '#1b1f27'); if (d.sub) label(d.sub[0], d.sub[1], 'Upload your file to replace', d.sub[2] || 11, '#5d6573'); if (d.emboss) label(d.emboss[0], d.emboss[1], d.emboss[2], d.emboss[3], '#1b1f27');
+  for (const [x, y, txt, size, flip] of d.labels) label(x, y, txt, size, '#1b1f27', flip);
+  // 예시 후가공: 전체 무광, 제목 글자 = 유광 (기본 상자는 FRONT = 형압도)
   const mask = (draw) => { const m = document.createElement('canvas'); m.width = c.width; m.height = c.height; const x = m.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, m.width, m.height); x.setTransform(k, 0, 0, -k, -b.minX * k, b.maxY * k); x.fillStyle = '#000'; draw(x); return coverageOf(m); };
   const set = (role) => ({ role, color: FINISH[role].color || '#ffffff', opacity: 100, blend: 'normal', emboss: 'none' });
-  const finishes = [
-    { set: set('matte'), ...mask((x) => x.fillRect(b.minX, b.minY, bw, bh)) },
-    { set: set('emboss'), ...mask((x) => { x.translate(x2 + W / 2, H * 0.14); x.scale(1, -1); x.font = '600 16px "IBM Plex Sans KR", sans-serif'; x.textAlign = 'center'; x.fillText('FRONT', 0, 0); }) },
-    { set: set('gloss'), ...mask((x) => { x.translate(x2 + W / 2, H * 0.66); x.scale(1, -1); x.font = '600 28px "IBM Plex Sans KR", sans-serif'; x.textAlign = 'center'; x.fillText('SAMPLE BOX', 0, 0); }) },
-  ];
-  Object.assign(S, { example: true, struct: st, auto: defaultAngles(st), over: new Map(), dir: new Map(), sel: null, printCanvas: c, finishes, exLines: lines, exRoot: [x2 + W / 2, H / 2], edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false, finPos: null,
+  const word = (t) => (x) => { x.translate(t[0], t[1]); x.scale(1, -1); x.font = FONT(t[3]); x.textAlign = 'center'; x.fillText(t[2], 0, 0); };
+  const finishes = [{ set: set('matte'), ...mask((x) => x.fillRect(b.minX, b.minY, bw, bh)) }];
+  if (d.emboss) finishes.push({ set: set('emboss'), ...mask(word(d.emboss)) });
+  finishes.push({ set: set('gloss'), ...mask(word(d.title)) });
+  const auto = defaultAngles(st); applyExAngles(st, auto, d.angles);
+  Object.assign(S, { example: true, sample: sm.id, struct: st, auto, over: new Map(), dir: new Map(), sel: null, printCanvas: c, finishes, exLines: lines, exRoot: d.root, exAngles: d.angles || null, edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false, finPos: null,
     uv: (x, y) => [(x - b.minX) / bw, (y - b.minY) / bh], colorRoles: new Map() });
   renderLayerUI(); renderColorUI(); applyTextures(); buildMeshes(); applyPaper(); updateFold(); fitCamera('right'); renderMap(); updateChips(); renderBoxTiles();
   if (!keepHist) histReset();
+}
+function useSample(id) { // 예시를 고르면 지금 있는 상자들 옆에 하나 더 놓는다 (되돌리면 치워진다)
+  if (!$('busy').hidden || hist.busy) return;
+  if (boxes.length >= BOX_MAX) { say(`상자는 ${BOX_MAX}개까지 놓을 수 있습니다`); return; }
+  const cp = camera.position.clone(), ct = controls.target.clone();
+  boxNew(); loadExample(true, id); boxPlaceNew(); camera.position.copy(cp); controls.target.copy(ct); fitKeep(); boxRefresh(); setBoxSel(true); histPush({ op: 'add' });   // 보던 방향과 확대는 그대로 둔다
 }
 
 /* ---------- 내보내기 ---------- */
@@ -4548,13 +4722,25 @@ function bgTint(k = 1) { // 배경색이 기본 배경에 견주어 얼마나 �
   const c = new THREE.Color(v === 'custom' ? $('bg-color').value : v), f = (a, b) => 1 + (Math.min(1.05, a / b) - 1) * k;
   return new THREE.Color(f(c.r, BG_BASE.r), f(c.g, BG_BASE.g), f(c.b, BG_BASE.b));
 }
+const BG_NAMED = new Set(['#ffffff', '#f4f4f6', '#1a1c22']);
+let bgSaved = []; try { bgSaved = JSON.parse(localStorage.getItem('bms-bg') || '[]').filter((c, i, a) => /^#[0-9a-f]{6}$/.test(c) && a.indexOf(c) === i).slice(0, 3); } catch (e) { bgSaved = []; }   // 직접 고른 배경색 3개까지 (브라우저에 저장)
+let bgLast = '', bgPicking = false, bgEdit = -1;   // 방금까지의 사용자 지정 색 / 색 고르기 창에서 고르는 중인지 / 그동안 함께 바뀌는 저장 칩의 자리
+function bgStore() { try { localStorage.setItem('bms-bg', JSON.stringify(bgSaved)); } catch (e) { /* 저장이 막힌 곳에서는 이번에만 기억한다 */ } }
+function syncBgChips() { // 색 칩 줄: 지금 배경에 테두리 표시. 직접 고른 색은 저장 칩에 있으면 그 칩에, 없으면 스포이드 칩에 표시
+  const v = $('bg').value, c = $('bg-color').value, box = $('bg-saved'), key = bgSaved.join();
+  if (box.dataset.k !== key) { box.dataset.k = key; box.replaceChildren(...bgSaved.map((x) => { const b = el('button', { type: 'button', class: 'bgc', role: 'radio', 'data-c': x, 'aria-label': '저장한 색 ' + x.toUpperCase() }); b.style.setProperty('--c', x); b.title = x.toUpperCase() + ' · 오른쪽 버튼: 지우기'; return b; })); }
+  const saved = v === 'custom' && bgSaved.includes(c);
+  for (const b of $('bg-chips').querySelectorAll('button.bgc')) { const on = b.dataset.v ? b.dataset.v === v : saved && b.dataset.c === c; b.classList.toggle('on', on); b.setAttribute('aria-checked', String(on)); }
+  const pk = $('bg-pick'), on = v === 'custom' && !saved, rgb = hexRgb(c); pk.classList.toggle('on', on); pk.style.setProperty('--c', c); pk.classList.toggle('dk', on && (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255 < 0.55);
+}
 function applyBg() {
-  const v = $('bg').value; $('bg-color').hidden = v !== 'custom';
+  const v = $('bg').value; syncBgChips();
   { // 배경 밝기에 맞춰 옵션 창과 막대를 바꾼다: 어두운 배경이면 어두운 유리 + 밝은 글자, 중간 회색이면 흰 유리를 조금 더 진하게
     const c = v === 'transparent' ? [255, 255, 255] : hexRgb(v === 'custom' ? $('bg-color').value : v), lum = (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255, cl = (x, a, b) => Math.max(a, Math.min(b, x)), root = document.documentElement;
     root.classList.toggle('ui-dark', lum < 0.5);
     root.style.setProperty('--pop-a', cl(0.42 + (0.94 - lum) * 0.5, 0.42, 0.64).toFixed(2)); root.style.setProperty('--glass-a', cl(0.72 + (0.94 - lum) * 0.3, 0.72, 0.85).toFixed(2));
   }
+  bgLast = $('bg-color').value;
   hemi.groundColor.set(0xf2f3f5).multiply(bgTint(BG_GROUND)); hemi.color.set(0xffffff).multiply(bgTint(BG_SKY)); if (envRT) queueEnv();   // 바닥에서 되비친 빛과 주변 반사에 배경색이 조금 섞인다
   const col = v === 'custom' ? $('bg-color').value : v;
   if (v === 'transparent') { scene.background = null; stage.classList.add('checker'); }
@@ -4579,10 +4765,16 @@ $('gap2').addEventListener('change', (e) => { $('gap').value = e.target.value; r
     return new Promise((res, rej) => { const a = document.createElement('textarea'); a.value = txt; a.style.cssText = 'position:fixed;opacity:0'; document.body.append(a); a.select(); const ok = document.execCommand('copy'); a.remove(); ok ? res() : rej(new Error('copy')); });
   };
   // 이메일과 라이선스는 평소에는 숨겨 두고, 구석의 ⓘ를 눌렀을 때만 작은 창으로 보여 준다
-  const aboutBtn = $('about-btn'), aboutPop = $('about-pop');
-  const showAbout = (on) => { aboutPop.hidden = !on; aboutBtn.setAttribute('aria-expanded', String(on)); };
+  const aboutBtn = $('about-btn'), aboutPop = $('about-pop'), smpBtn = $('sample-btn'), smpPop = $('sample-pop');
+  const showSamples = (on) => { smpPop.hidden = !on; smpBtn.setAttribute('aria-expanded', String(on)); };
+  const showAbout = (on) => { aboutPop.hidden = !on; aboutBtn.setAttribute('aria-expanded', String(on)); if (on) showSamples(false); };
+  for (const sm of SAMPLES) { const b = el('button', { type: 'button', class: 'smp' }); b.dataset.id = sm.id; b.innerHTML = sampleThumb(sm.make()); b.append(el('span', { text: sm.name })); $('sample-grid').append(b); }
+  $('sample-grid').addEventListener('click', (e) => { const b = e.target.closest('.smp'); if (!b) return; showSamples(false); useSample(b.dataset.id); });
+  smpBtn.addEventListener('click', () => { showAbout(false); showSamples(smpPop.hidden); });
+  document.addEventListener('pointerdown', (e) => { if (!smpPop.hidden && !(e.target.closest && e.target.closest('.about') && e.target.closest('.about').contains(smpPop))) showSamples(false); });
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !smpPop.hidden) { showSamples(false); e.stopImmediatePropagation(); } });
   aboutBtn.addEventListener('click', () => showAbout(aboutPop.hidden));
-  document.addEventListener('pointerdown', (e) => { if (!aboutPop.hidden && !e.target.closest('.about')) showAbout(false); });
+  document.addEventListener('pointerdown', (e) => { if (!aboutPop.hidden && !(e.target.closest && e.target.closest('.about') && e.target.closest('.about').contains(aboutPop))) showAbout(false); });
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !aboutPop.hidden) { showAbout(false); e.stopImmediatePropagation(); } });
   $('mail').addEventListener('click', (e) => { e.preventDefault(); copyText('cmy3544@gmail.com').then(() => toast('Email address copied', '이메일 주소가 복사되었습니다')).catch(() => toast('Could not copy the email', '이메일을 복사하지 못했습니다')); });
 }
@@ -4877,9 +5069,9 @@ canvas.addEventListener('dblclick', (e) => { // 상자가 없는 빈 곳을 두 
   if (gizmoGroup.visible) { const r = canvas.getBoundingClientRect(); pickRay.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera); const gh = pickRay.intersectObjects(gizmoGroup.children.filter((o) => o.userData && o.userData.kind), false)[0]; if (gh) { if (gh.object.userData.kind === 'pivot') resetPivot(); return; } }   // 조명 표시 위는 빈 곳이 아니다. 기준점을 두 번 누르면 상자 한가운데로 돌아간다
   if (boxAt(e.clientX, e.clientY) || otherBoxAt(e.clientX, e.clientY)) return;
   let any = false; for (const k of ['light', 'reflector', 'bg']) if (!$('pop-' + k).hidden) { $('pop-' + k).hidden = true; $('btn-' + k).setAttribute('aria-pressed', 'false'); any = true; }
-  if (any) syncGizmoVis();
+  railClose(); if (any) syncGizmoVis();
 });
-initLabel3D(); initBox3D(); initLift(); initPivot();
+initLabel3D(); initBox3D(); initLift(); initPivot(); initPoseMenu();
 window.addEventListener('keydown', (e) => { // Tab: 조명·반사판 창에서는 다음 번호로(+는 건너뛴다), 상자 옵션 창에서는 다음 탭으로. Shift+Tab은 거꾸로
   if (e.key !== 'Tab' || e.ctrlKey || e.metaKey || e.altKey) return; if (!$('exp-dlg').hidden) return;
   const t = e.target; if (t && (t.isContentEditable || t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && ['text', 'number', 'search'].includes(t.type)))) return;
@@ -4899,7 +5091,20 @@ window.addEventListener('keydown', (e) => { // Tab: 조명·반사판 창에서�
 }
 { // 왼쪽 패널 접기 · 펴기 ( < 로 접고 > 로 편다. Shift 없이 , . 만 눌러도 된다 ). 접으면 3D 화면이 그만큼 넓어진다
   const app = document.querySelector('.app');
-  const setSide = (on) => { app.classList.toggle('noside', !on); $('side-open').hidden = on; };   // 다시 들어오면 늘 펴진 상태
+  const rail = $('side-rail'), panel = $('panel');
+  // 접어 둔 패널: 왼쪽 아이콘을 누르면 그 부분만 작은 창으로 뜬다 (같은 아이콘을 다시 누르면 닫힘)
+  const railShow = (sec) => { const on = !!sec && !(panel.classList.contains('float') && panel.dataset.sec === sec); panel.classList.toggle('float', on); if (on) panel.dataset.sec = sec; else delete panel.dataset.sec; for (const b of rail.querySelectorAll('[data-sec]')) b.setAttribute('aria-pressed', String(on && b.dataset.sec === sec)); panel.scrollTop = 0; };
+  railClose = () => { if (panel.classList.contains('float')) railShow(null); };
+  const RAIL_KEYS = { KeyA: ['files', 'A', '인쇄 데이터'], KeyS: ['map', 'S', '전개도'], KeyD: ['layers', 'D', '레이어'] };   // 접어 둔 동안의 단축키
+  const setSide = (on) => { railShow(null); if (!on && panel.classList.contains('wide')) $('edit-wide').click(); app.classList.toggle('noside', !on); $('side-open').hidden = on; rail.hidden = on; keyFlash(on ? [[[','], '패널 접기'], [['.'], '패널 펴기']] : [[[','], '패널 접기'], [['.'], '패널 펴기'], [['A', 'S', 'D'], '인쇄 데이터 · 전개도 · 레이어', true]]); };   // 다시 들어오면 늘 펴진 상태
+  rail.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b || !b.dataset.sec) return; b.blur(); railShow(b.dataset.sec); if (e.isTrusted) { const k = Object.values(RAIL_KEYS).find((v) => v[0] === b.dataset.sec); keyFlash([[[k[1]], k[2]]]); } });
+  window.addEventListener('keydown', (e) => { // A · S · D: 접어 둔 패널의 인쇄 데이터 · 전개도 · 레이어 창을 열고 닫는다
+    const k = RAIL_KEYS[e.code]; if (!k || rail.hidden || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey || e.repeat) return; const t = e.target;
+    if (t && (t.isContentEditable || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || (t.tagName === 'INPUT' && !['range', 'checkbox', 'button', 'color', 'file'].includes(t.type)))) return;
+    if (!$('exp-dlg').hidden || !$('ask-dlg').hidden) return; e.preventDefault(); railShow(k[0]);
+  });
+  $('save-btn').addEventListener('click', (e) => { e.currentTarget.blur(); $('export').click(); if (e.isTrusted) keyFlash([[['Ctrl', 'S'], 'PNG 저장']]); });
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && panel.classList.contains('float') && !S.sel && !boxSel && !editSel.size && imgSel < 0 && !editJoin && $('exp-dlg').hidden) railShow(null); });
   $('side-close').addEventListener('click', () => setSide(false)); $('side-open').addEventListener('click', () => setSide(true));
   window.addEventListener('keydown', (e) => {
     if ((e.code !== 'Comma' && e.code !== 'Period') || e.ctrlKey || e.metaKey || e.altKey) return; const t = e.target;
@@ -4955,7 +5160,26 @@ $('label-rot').addEventListener('input', (e) => { if (!S.label) return; S.label.
 $('label-scale').addEventListener('input', (e) => { if (!S.label) return; S.label.scale = e.target.value / 100; $('label-scale-out').textContent = e.target.value + '%'; updateLabelUV(); });
 $('label-lift').addEventListener('change', (e) => { if (!S.label) return; S.label.lift = e.target.checked; applyLabel(); });
 $('finish').addEventListener('change', applyTextures);
-$('bg').addEventListener('change', applyBg); $('bg-color').addEventListener('input', applyBg);
+$('bg').addEventListener('change', applyBg);
+$('bg-color').addEventListener('blur', () => $('bg-pick').classList.remove('m'));
+$('bg-color').addEventListener('pointerdown', () => { const n = $('bg-color'), v = $('bg').value; $('bg-pick').classList.add('m');   // 마우스로 누른 뒤에는 초점 테두리를 그리지 않는다 (고른 칩의 테두리와 헷갈리지 않게)
+  if (!n.classList.contains('cp-open') && v !== 'custom' && v !== 'transparent') n.value = v; });   // 색 고르기 창은 지금 배경색에서 시작한다 (여는 것만으로는 배경이 바뀌지 않게)
+$('bg-color').addEventListener('click', () => { bgPicking = false; });   // 색 고르기 창을 여닫을 때마다 새로 시작
+$('bg-color').addEventListener('input', () => { // 고르는 동안: 저장 칩을 고른 채로 열었으면 그 칩의 색이 함께 바뀐다 (다른 칩은 그대로 남는다)
+  const c = $('bg-color').value; if (hist.applying) { applyBg(); return; }   // 되돌리기가 값을 되살리는 중이면 화면에만 반영한다 (저장 칩은 건드리지 않는다)
+  if (!bgPicking) { bgPicking = true; bgEdit = $('bg').value === 'custom' ? bgSaved.indexOf(bgLast) : -1; }
+  if (bgEdit >= 0) bgSaved[bgEdit] = c;
+  $('bg').value = 'custom'; applyBg();
+});
+$('bg-color').addEventListener('change', () => { // 색 고르기 창을 닫을 때 저장: 고른 칩이 있었으면 그 자리를 바꾸고, 없었으면 빈자리에 더한다. 3칸이 다 찼으면 저장하지 않는다 (남겨 둔 색이 밀려나지 않게)
+  const c = $('bg-color').value, at = bgPicking ? bgEdit : -1; bgPicking = false; if (hist.applying) { applyBg(); return; } if ($('bg').value !== 'custom') return;
+  if (at >= 0) bgSaved = bgSaved.filter((x, i) => bgSaved.indexOf(x) === i);   // 다른 칩과 같은 색이 되면 하나로
+  else if (BG_NAMED.has(c)) $('bg').value = c;
+  else if (!bgSaved.includes(c) && bgSaved.length < 3) bgSaved.push(c);
+  bgStore(); applyBg();
+});
+$('bg-chips').addEventListener('click', (e) => { const b = e.target.closest('button.bgc'); if (!b) return; if (b.dataset.v) $('bg').value = b.dataset.v; else { $('bg-color').value = b.dataset.c; $('bg').value = 'custom'; } applyBg(); });
+$('bg-chips').addEventListener('contextmenu', (e) => { const b = e.target.closest('button.bgc[data-c]'); if (!b) return; e.preventDefault(); bgSaved = bgSaved.filter((x) => x !== b.dataset.c); bgStore(); syncBgChips(); });   // 저장 칩을 오른쪽 버튼으로: 지우기
 $('btn-shadow').addEventListener('click', (e) => { ground.visible = !ground.visible; e.currentTarget.setAttribute('aria-pressed', String(ground.visible)); dirty = true; });
 $('hud-tr').addEventListener('click', (e) => { const v = e.target.dataset && e.target.dataset.view; if (v) fitCamera(v); });
 const expSize = () => { const w = stage.clientWidth, h = stage.clientHeight, k = Math.min(+$('exp-scale').value, Math.min(renderer.capabilities.maxTextureSize, 8192) / Math.max(w, h)); $('exp-size').textContent = `${Math.round(w * k)} × ${Math.round(h * k)} px · 지금 보이는 각도 그대로 저장됩니다.`; };
@@ -5028,6 +5252,7 @@ for (const k of ['light', 'reflector', 'bg']) { // 화면 안 도구 막대로 �
   }, true);
   window.addEventListener('contextmenu', (e) => { const t = e.target; if (!pieOpen && t && (t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && /^(text|search|url|email)$/.test(t.type)))) return; e.preventDefault(); }, true);   // 브라우저의 복사·모두 선택 메뉴는 띄우지 않는다
   window.addEventListener('keyup', (e) => { if (e.code === 'Backquote' && pieOpen && performance.now() - pieT > 320 && pieIdx >= 0) pieClose(true); }); // 누른 채 방향을 잡고 떼어도 된다
+  window.addEventListener('keydown', (e) => { if (pieOpen && e.key === 'Escape') { pieClose(false); e.preventDefault(); e.stopImmediatePropagation(); } }, true);   // 메뉴만 닫는다: 상자 선택 같은 다른 Esc 동작보다 먼저 받는다
   window.addEventListener('keydown', (e) => {
     if (pieOpen && e.key === 'Escape') { pieClose(false); e.stopImmediatePropagation(); return; }
     if (typing(e) || e.ctrlKey || e.metaKey || e.altKey) return;
@@ -5118,7 +5343,7 @@ for (const k of ['light', 'reflector', 'bg']) { // 화면 안 도구 막대로 �
     canvas.addEventListener('pointerdown', (e) => {
       if (e.button !== 2 || !(boxSel || pivSel) || !S.struct || !S.struct.faces.length || seqUI.open) return;
       e.stopImmediatePropagation(); e.preventDefault(); canvas.setPointerCapture(e.pointerId); camera.updateMatrixWorld();
-      const d = { id: e.pointerId, x: e.clientX, y: e.clientY, q0: pivSel ? new THREE.Quaternion() : poseQuat(), rig: pivSel ? rigSnap() : null, a: 0, b: 0, ax: null, up: new THREE.Vector3(0, 1, 0).transformDirection(camera.matrixWorld), right: new THREE.Vector3(1, 0, 0).transformDirection(camera.matrixWorld) };
+      const d = { id: e.pointerId, x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, moved: false, q0: pivSel ? new THREE.Quaternion() : poseQuat(), rig: pivSel ? rigSnap() : null, a: 0, b: 0, ax: null, up: new THREE.Vector3(0, 1, 0).transformDirection(camera.matrixWorld), right: new THREE.Vector3(1, 0, 0).transformDirection(camera.matrixWorld) };
       if (axisLock) { // 축 고정: 그 축의 고리를 앞쪽에서 잡고 끄는 것처럼 돈다. 축이 화면 쪽을 보고 있으면 상자 둘레를 도는 만큼 돈다
         d.ax = rings.find((r) => r.k === axisLock).axis.clone();
         const a3 = d.ax.clone().transformDirection(camera.matrixWorldInverse), t3 = new THREE.Vector3().crossVectors(d.ax, new THREE.Vector3(0, 0, 1).transformDirection(camera.matrixWorld)).transformDirection(camera.matrixWorldInverse), tl = Math.hypot(t3.x, t3.y);
@@ -5128,7 +5353,8 @@ for (const k of ['light', 'reflector', 'bg']) { // 화면 안 도구 막대로 �
       rdrag = d; canvas.style.cursor = 'grabbing';
     }, true);
     canvas.addEventListener('pointermove', (e) => {
-      if (!rdrag) return; const d = rdrag, dx = e.clientX - d.x, dy = e.clientY - d.y, sn = (v) => (e.shiftKey ? Math.round(v / 15) * 15 : v) * D2R, q = new THREE.Quaternion(); d.x = e.clientX; d.y = e.clientY;
+      if (!rdrag) return; if (!rdrag.moved) { if (Math.hypot(e.clientX - rdrag.x0, e.clientY - rdrag.y0) < 4) return; rdrag.moved = true; }   // 조금 움직인 것은 누르기로 본다
+      const d = rdrag, dx = e.clientX - d.x, dy = e.clientY - d.y, sn = (v) => (e.shiftKey ? Math.round(v / 15) * 15 : v) * D2R, q = new THREE.Quaternion(); d.x = e.clientX; d.y = e.clientY;
       if (d.ax) {
         if (d.circ) { const a = Math.atan2(-(e.clientY - d.cy), e.clientX - d.cx); let da = a - d.ang; if (da > Math.PI) da -= Math.PI * 2; if (da < -Math.PI) da += Math.PI * 2; d.ang = a; d.a += (da / D2R) * d.sgn; } else d.a += (dx * d.tx + dy * d.ty) * 0.4;
         q.setFromAxisAngle(d.ax, sn(d.a)).multiply(d.q0);
@@ -5136,7 +5362,10 @@ for (const k of ['light', 'reflector', 'bg']) { // 화면 안 도구 막대로 �
       if (d.rig) { rigApply(d.rig, q.normalize()); return; }   // 기준점: 처음 자리에서 돌린 만큼을 조명 전체에
       pose.base.copy(q).normalize(); pose.rx = pose.ry = pose.rz = 0; updateFold(); updateBoxGizmo();
     });
-    const rend = () => { if (!rdrag) return; try { canvas.releasePointerCapture(rdrag.id); } catch (_) { /* 이미 풀림 */ } rdrag = null; canvas.style.cursor = ''; };
+    const rend = (e) => {
+      if (!rdrag) return; const d = rdrag; try { canvas.releasePointerCapture(d.id); } catch (_) { /* 이미 풀림 */ } rdrag = null; canvas.style.cursor = '';
+      if (!d.moved && e && e.type === 'pointerup' && boxSel && !pivSel) { poseMenuShow(e.clientX, e.clientY); keyFlash([[['`'], '보기 방향 · 상자 자세']]); }   // 끌지 않고 눌렀다 뗐다: 상자 옆에 상자 자세 목록
+    };
     canvas.addEventListener('pointerup', rend); canvas.addEventListener('pointercancel', rend);
     /* 구체를 오른쪽 버튼으로 누르면 지금 각도(X·Y·Z)가 옆에 뜨고, 숫자를 바꿔 돌릴 수 있다. 마우스가 구체와 창에서 벗어나면 0.3초 뒤에 닫힌다 */
     {
@@ -5207,8 +5436,81 @@ for (const k of ['light', 'reflector', 'bg']) { // 화면 안 도구 막대로 �
 }
 let rangeTick = 0;
 function paintRanges() { for (const r of document.querySelectorAll('input[type="range"]')) { const p = ((r.value - r.min) / (r.max - r.min || 1)) * 100 + '%'; if (r.dataset.p !== p) { r.dataset.p = p; r.style.setProperty('--p', p); } } }
+/* ---------- 단축키 가이드: 지금 누를 수 있는 키를 화면 아래 가운데에 작게 보여 준다 (ⓘ 창에서 켜고 끈다) ---------- */
+let kgOn = true, kgFlashList = null, kgFlashT = 0, kgSig = '', kgList = [];
+try { kgOn = localStorage.getItem('bms-keyguide') !== '0'; } catch (e) { /* 저장소를 못 쓰는 곳에서는 늘 켜진 채로 */ }
+const KG = (keys, text, alt) => ({ keys: [].concat(keys), text, alt: !!alt });   // 키 이름 @L · @R 는 마우스 왼쪽 · 오른쪽 버튼: 글자 대신 그림으로 보여 준다 (방향키도)
+const KG_ICON = {
+  '@L': ['마우스 왼쪽 버튼', '<svg viewBox="0 0 14 18" width="13" height="17" aria-hidden="true"><path d="M7 1h-.4A4.6 4.6 0 0 0 2 5.6V8h5z" fill="currentColor"/><rect x="2" y="1" width="10" height="16" rx="5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2 8h10M7 1v7" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>'],
+  '@R': ['마우스 오른쪽 버튼', '<svg viewBox="0 0 14 18" width="13" height="17" aria-hidden="true"><path d="M7 1h.4A4.6 4.6 0 0 1 12 5.6V8H7z" fill="currentColor"/><rect x="2" y="1" width="10" height="16" rx="5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2 8h10M7 1v7" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>'],
+  방향키: ['방향키', '<svg viewBox="0 0 18 18" width="14" height="14" aria-hidden="true"><path d="M9 1.8 11.7 5.6H6.3zM9 16.2 6.3 12.4h5.4zM1.8 9l3.8-2.7v5.4zM16.2 9l-3.8 2.7V6.3z" fill="currentColor"/></svg>'],
+};
+function keyFlash(list) { if (!kgOn) return; kgFlashList = list.map(([keys, text, alt]) => KG(keys, text, alt)); kgFlashT = performance.now() + 2600; }   // 마우스로 한 일에 단축키가 있으면 잠깐 알려 준다
+function kgContext() {
+  if (!$('ask-dlg').hidden) return [KG('Enter', '확인')];
+  if (!$('exp-dlg').hidden) return [KG(['Ctrl', 'S'], '저장')];
+  const t = document.activeElement; if (t && (t.isContentEditable || t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && /^(text|number|search)$/.test(t.type)))) return [];
+  if (kgDown.has('Space')) return [KG(['Space', '@L'], '화면 이동')];   // Space를 누르고 있는 동안: 왼쪽 버튼으로 화면을 옮긴다
+  if (kgDown.has('Ctrl')) { // Ctrl을 누르고 있으면: 함께 쓸 수 있는 키
+    const a = [KG(['Ctrl', 'Z'], '되돌리기'), KG(['Ctrl', 'Shift', 'Z'], '다시 하기'), KG(['Ctrl', 'S'], 'PNG 저장')], what = editFocus && imgSel >= 0 ? '이미지' : labelSel ? '라벨' : boxSel ? '상자' : '';
+    if (what) a.push(KG(['Ctrl', 'C'], what + ' 복사'));
+    if ((editFocus && imgClip) || clip) a.push(KG(['Ctrl', 'V'], '붙여넣기'));
+    return a;
+  }
+  if (editJoin) return [KG('@L', joinFrom ? '이을 곳 고르기' : '시작할 점 고르기')];
+  if (seqUI.open) return [KG('@L', '접는 선을 단계에 넣기')];
+  if (editFocus && imgSel >= 0) return [KG('방향키', '0.2mm 이동'), KG(['Shift', '방향키'], '1mm 이동'), KG('Delete', '이미지 지우기'), KG('Ctrl', '복사 · 되돌리기')];
+  if (editFocus && editSel.size) return [KG('방향키', '선 0.2mm 이동'), KG(['Shift', '방향키'], '1mm 이동'), KG('Delete', '선 지우기'), KG(['Shift', '@L'], '여러 줄 고르기')];
+  if (pivSel || boxSel) {
+    const ax = axisLock ? axisLock.toUpperCase() : '';
+    if (ax) return [KG('@L', ax === 'Y' ? '위아래로만 이동' : ax + '축으로만 이동'), KG('@R', ax + '축으로만 회전'), KG(ax, '고정 풀기'), KG(['X', 'Y', 'Z'].filter((k) => k !== ax), '다른 축', true), KG('방향키', '1mm 이동')];
+    const a = [KG('@L', pivSel ? '기준점 이동' : '상자 이동'), KG('@R', pivSel ? '조명 전체 회전' : '회전'), KG(['X', 'Y', 'Z'], '축 고정', true), KG('방향키', '1mm 이동'), KG(['Alt', '@L'], '위아래')];
+    if (!pivSel) a.push(KG('`', '보기 방향 · 상자 자세'));
+    return a;
+  }
+  if (labelSel) return [KG('@L', '라벨 이동'), KG(['Ctrl', 'C'], '라벨 복사')];
+  if (!$('pop-light').hidden) return [KG('Tab', '다음 조명'), KG('@L', '조명 방향'), KG('Q', '조명 닫기')];
+  if (!$('pop-reflector').hidden) return [KG('Tab', '다음 반사판'), KG('@L', '반사판 방향'), KG('W', '반사판 닫기')];
+  return [];
+}
+function kgUpdate() {
+  const box = $('key-guide'); if (!kgOn) { if (!box.hidden) { box.hidden = true; kgSig = ''; kgList = []; } return; }
+  if (kgFlashList && performance.now() > kgFlashT) kgFlashList = null;
+  // 글자 키를 누르고 있는 동안에는 보이던 안내를 그대로 둔다: 눌린 키가 주황색으로 보이고, 떼면 그다음 안내로 바뀐다. Ctrl은 누르는 즉시 조합 안내로
+  const held = kgList.length > 0 && [...kgDown].some((k) => k[0] !== '@' && k !== 'Ctrl' && k !== 'Shift' && k !== 'Alt' && kgList.some((it) => it.keys.includes(k)));
+  const list = held ? kgList : (kgFlashList || kgContext()), sig = JSON.stringify(list);
+  if (sig !== kgSig) {
+    kgSig = sig; kgList = list; box.textContent = '';
+    for (const it of list) {
+      const n = document.createElement('span'); n.className = 'kg';
+      it.keys.forEach((k, i) => { if (i && it.alt) { const sep = document.createElement('i'); sep.textContent = '/'; n.append(sep); } const kb = document.createElement('kbd'), ic = KG_ICON[k]; kb.dataset.k = k; if (ic) { kb.innerHTML = ic[1]; kb.title = ic[0]; kb.className = k[0] === '@' ? 'm' : 'ic'; } else kb.textContent = k; n.append(kb); });
+      const tx = document.createElement('span'); tx.className = 'eq'; tx.textContent = '= ' + it.text; n.append(tx); box.append(n);
+    }
+    box.hidden = !list.length;
+  }
+  if (box.hidden) return;
+  for (const kb of box.querySelectorAll('kbd')) kb.classList.toggle('on', kgDown.has(kb.dataset.k));
+  const hb = $('hud-b'), fw = hb.querySelector('.foldwrap'), bot = (hb.classList.contains('away') || !fw ? 26 : fw.offsetHeight + 30) + ($('toast').classList.contains('on') ? 52 : 0);   // 접는 막대나 알림과 겹치지 않게 그 위로
+  // 아래쪽에 떠 있는 다른 창(왼쪽의 옵션 창 · 접은 패널의 작은 창, 오른쪽의 구체 · 도구 창) 사이의 빈 자리에만 놓는다. 자리가 너무 좁으면 숨긴다
+  const sr = $('stage').getBoundingClientRect(), top = sr.bottom - bot - 96; let L = 12, R = sr.width - 12;
+  for (const id of ['box-pop', 'sel-box', 'label-pop', 'panel', 'gizmo', 'tool-pops', 'pose-pop', 'pose-menu']) {
+    const el2 = $(id); if (!el2 || el2.hidden || (id === 'panel' && !el2.classList.contains('float')) || (id === 'sel-box' && $('stage').classList.contains('posing'))) continue;
+    const q = id === 'tool-pops' ? [...el2.children].find((c) => !c.hidden) : el2, r = q && q.getBoundingClientRect(); if (!r || !r.width || r.bottom <= top) continue;
+    if ((r.left + r.right) / 2 < (sr.left + sr.right) / 2) L = Math.max(L, r.right - sr.left + 12); else R = Math.min(R, r.left - sr.left - 12);
+  }
+  const mid = sr.width / 2, half = Math.min(mid - L, R - mid);
+  if (half >= 150) { L = mid - half; R = mid + half; }   // 가운데 기준으로 좌우 같은 폭. 그럴 자리도 없을 만큼 좁으면 남은 자리에 놓는다
+  const key = [bot, Math.round(L), Math.round(R)].join();
+  if (box._key !== key) { box._key = key; box.style.bottom = bot + 'px'; box.style.left = Math.round(L) + 'px'; box.style.right = Math.round(sr.width - R) + 'px'; box.style.visibility = R - L < 230 ? 'hidden' : ''; }
+}
+$('kg-on').checked = kgOn;
+$('kg-on').addEventListener('change', (e) => { kgOn = e.target.checked; try { localStorage.setItem('bms-keyguide', kgOn ? '1' : '0'); } catch (err) { /* 저장하지 못해도 이번에는 그대로 쓴다 */ } if (!kgOn) kgFlashList = null; });
+$('hud-tools').addEventListener('click', (e) => { if (!e.isTrusted) return; const b = e.target.closest && e.target.closest('.tool'), m = b && { 'btn-light': ['Q', '조명'], 'btn-reflector': ['W', '반사판'], 'btn-bg': ['E', '배경색'], 'btn-shadow': ['R', '바닥 그림자'] }[b.id]; if (m) keyFlash([[[m[0]], m[1]]]); }, true);   // 아이콘을 마우스로 눌렀을 때 그 단축키를 알려 준다
+$('export').addEventListener('click', (e) => { if (e.isTrusted) keyFlash([[['Ctrl', 'S'], 'PNG 저장']]); });
+$('edit-undo').addEventListener('click', (e) => { if (e.isTrusted) keyFlash([[['Ctrl', 'Z'], '되돌리기'], [['Ctrl', 'Shift', 'Z'], '다시 하기']]); });
+
 resize(); applyBg(); setEmboss(); syncInsideUI(); applyInside(); syncEdgeUI(); buildEnv(); syncLights(); renderLightUI('light'); renderLightUI('reflector'); loadExample(); tick();
-window.__app = { editState: () => ({ sel: [...editSel], img: imgSel, focus: editFocus, join: editJoin, view: editView && { ...editView }, chains: editChains.map((c, i) => ({ kind: c.kind, n: c.ids.length, hinge: hingeOfChain(i) })) }), select, gizHits: (x, y) => { const r = canvas.getBoundingClientRect(); pickRay.setFromCamera(new THREE.Vector2(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1), camera); return JSON.stringify(pickRay.intersectObjects(gizmoGroup.children.filter((o) => o.userData && o.userData.kind), false).map((h) => [h.object.userData.kind, h.object.userData.idx, +h.distance.toFixed(3)])); }, gizmoShown: () => gizmoGroup.visible, pivot: () => S.pivot, pivSel: () => pivSel, pivScreen: () => { const p = pivotOf().project(camera), r = renderer.domElement.getBoundingClientRect(); return [(p.x * 0.5 + 0.5) * r.width + r.left, (-p.y * 0.5 + 0.5) * r.height + r.top]; }, lightDist: (i) => distOf(S.lights[i]), lightScreen: (i) => { const L = S.lights[i], p = dirOf(L).multiplyScalar(fitInfo.r * 1.7 * distOf(L)).add(pivotOf()).project(camera), r = renderer.domElement.getBoundingClientRect(); return [(p.x * 0.5 + 0.5) * r.width + r.left, (-p.y * 0.5 + 0.5) * r.height + r.top]; }, limbo, sceneBoxes: () => scene.children.filter((o) => o.isGroup && o.children.some((c) => c.isGroup && Math.abs(c.scale.x - UNIT) < 1e-9)).length, boxDuplicate, poseQ: () => poseGroup.quaternion.toArray(), modelN: () => model.children.length, boxes, castNow: () => castPolys, updateFold, boxCur: () => boxCur, project: (c) => { const r = renderer.domElement.getBoundingClientRect(), v = new THREE.Vector3(c[0], c[1], c[2]).project(camera); return [(v.x * 0.5 + 0.5) * r.width + r.left, (-v.y * 0.5 + 0.5) * r.height + r.top]; }, boxUse, boxRemove, addBoxFile, boxState, hist, histGo, labelSelected: () => labelSel, boxSelected: () => boxSel, boxAt, faceObjs, fo: () => faceObjs, cast: () => castLayers, core: { extractStrokes, bandCentre, bandLike, ringCentre, buildStructure }, fillStrokes, lastM: () => lastM, effAngles, seqSteps, seqUI, setSeqOpen, autoSteps, hingeScreen, sealMap: () => sealMap, surfaceAt, wrapToWorld, S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, refreshWrap, renderMap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, camera, castStat, autoPickDieline, extraSheets }; // 점검용
+window.__app = { useSample, samples: SAMPLES.map((x) => x.id), keyGuide: () => ({ on: kgOn, list: kgList.map((it) => it.keys.join('+') + '=' + it.text), down: [...kgDown] }), editState: () => ({ sel: [...editSel], img: imgSel, focus: editFocus, join: editJoin, view: editView && { ...editView }, chains: editChains.map((c, i) => ({ kind: c.kind, n: c.ids.length, hinge: hingeOfChain(i) })) }), select, gizHits: (x, y) => { const r = canvas.getBoundingClientRect(); pickRay.setFromCamera(new THREE.Vector2(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1), camera); return JSON.stringify(pickRay.intersectObjects(gizmoGroup.children.filter((o) => o.userData && o.userData.kind), false).map((h) => [h.object.userData.kind, h.object.userData.idx, +h.distance.toFixed(3)])); }, gizmoShown: () => gizmoGroup.visible, pivot: () => S.pivot, pivSel: () => pivSel, pivScreen: () => { const p = pivotOf().project(camera), r = renderer.domElement.getBoundingClientRect(); return [(p.x * 0.5 + 0.5) * r.width + r.left, (-p.y * 0.5 + 0.5) * r.height + r.top]; }, lightDist: (i) => distOf(S.lights[i]), lightScreen: (i) => { const L = S.lights[i], p = dirOf(L).multiplyScalar(fitInfo.r * 1.7 * distOf(L)).add(pivotOf()).project(camera), r = renderer.domElement.getBoundingClientRect(); return [(p.x * 0.5 + 0.5) * r.width + r.left, (-p.y * 0.5 + 0.5) * r.height + r.top]; }, limbo, sceneBoxes: () => scene.children.filter((o) => o.isGroup && o.children.some((c) => c.isGroup && Math.abs(c.scale.x - UNIT) < 1e-9)).length, boxDuplicate, poseQ: () => poseGroup.quaternion.toArray(), modelN: () => model.children.length, boxes, castNow: () => castPolys, updateFold, boxCur: () => boxCur, project: (c) => { const r = renderer.domElement.getBoundingClientRect(), v = new THREE.Vector3(c[0], c[1], c[2]).project(camera); return [(v.x * 0.5 + 0.5) * r.width + r.left, (-v.y * 0.5 + 0.5) * r.height + r.top]; }, boxUse, boxRemove, addBoxFile, boxState, hist, histGo, labelSelected: () => labelSel, boxSelected: () => boxSel, boxAt, faceObjs, fo: () => faceObjs, cast: () => castLayers, core: { extractStrokes, bandCentre, bandLike, ringCentre, buildStructure }, fillStrokes, lastM: () => lastM, effAngles, seqSteps, seqUI, setSeqOpen, autoSteps, hingeScreen, sealMap: () => sealMap, surfaceAt, wrapToWorld, S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, refreshWrap, renderMap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, camera, castStat, autoPickDieline, extraSheets }; // 점검용
 </script>
 </body>
 </html>
