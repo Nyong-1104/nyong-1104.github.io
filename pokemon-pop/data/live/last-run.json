@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-11-26T09:01:11+09:00",
+  "ranAt": "2026-11-26T16:22:50+09:00",
   "stats": {
     "asOf": "2026-11-26",
-    "asOfIso": "2026-11-26T09:01:11+09:00",
+    "asOfIso": "2026-11-26T16:22:50+09:00",
     "cardsTotal": 4941,
     "cardsLive": 2443,
     "skippedTierC": 2498,
@@ -690,60 +690,16 @@
         "all": {
           "ebayEnabled": true,
           "jobsPlanned": 50,
-          "jobsOk": 26,
-          "jobsEmpty": 20,
-          "jobsFailed": 4,
-          "dryRun": false,
-          "errors": [
-            {
-              "cardId": "xy-p-150",
-              "lang": "jp",
-              "error": "<urlopen error [SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1011)>"
-            },
-            {
-              "cardId": "sv2a-200",
-              "lang": "kr",
-              "error": "<urlopen error [SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1011)>"
-            },
-            {
-              "cardId": "sv2a-203",
-              "lang": "kr",
-              "error": "<urlopen error [SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1011)>"
-            },
-            {
-              "cardId": "sv2a-203",
-              "lang": "en",
-              "error": "<urlopen error [SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1011)>"
-            }
-          ]
+          "jobsOk": 6,
+          "jobsEmpty": 44,
+          "jobsFailed": 0,
+          "dryRun": false
         }
       },
       "jobsPlanned": 50,
-      "jobsOk": 26,
-      "jobsEmpty": 20,
-      "jobsFailed": 4,
-      "errors": [
-        {
-          "cardId": "xy-p-150",
-          "lang": "jp",
-          "error": "<urlopen error [SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1011)>"
-        },
-        {
-          "cardId": "sv2a-200",
-          "lang": "kr",
-          "error": "<urlopen error [SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1011)>"
-        },
-        {
-          "cardId": "sv2a-203",
-          "lang": "kr",
-          "error": "<urlopen error [SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1011)>"
-        },
-        {
-          "cardId": "sv2a-203",
-          "lang": "en",
-          "error": "<urlopen error [SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1011)>"
-        }
-      ]
+      "jobsOk": 6,
+      "jobsEmpty": 44,
+      "jobsFailed": 0
     },
     "liveSource": "eBay+seed+BRG"
   }
