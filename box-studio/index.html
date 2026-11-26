@@ -310,7 +310,9 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
 #label-gizmo{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;overflow:visible}
 #label-gizmo .ol{fill:none;stroke:var(--o);stroke-width:1.5;stroke-dasharray:5 4;stroke-linejoin:round}
 #box-gizmo{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;overflow:visible}
-#box-gizmo path{fill:none;stroke:var(--o);stroke-width:1.5;stroke-linejoin:round}
+#box-gizmo path{fill:none;stroke:var(--o);stroke-width:1.5;stroke-linejoin:round}#box-gizmo.off path{stroke-dasharray:5 4;opacity:.8}
+#axis-guide{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;overflow:hidden}#axis-guide[hidden]{display:none}
+#axis-guide line{stroke-width:1.6;stroke-dasharray:7 6;stroke-linecap:round}#axis-guide[data-ax=x] stop{stop-color:#e5484d}#axis-guide[data-ax=y] stop{stop-color:#30a46c}#axis-guide[data-ax=z] stop{stop-color:#3e63dd}
 #panel.nobox .sec .body>*,#panel.nobox #gap-row,#panel.nobox #warn{display:none!important}#panel.nobox .sec .sec-h span,#panel.nobox .sec .sec-h .btn{visibility:hidden}
 #panel.nobox .sec .body::before{content:'선택된 상자가 없습니다';display:block;padding:22px 0;text-align:center;font-size:12px;color:var(--mute)}
 :is(#box-lift,#piv-lift){position:absolute;z-index:6;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:1.6px solid var(--o);background:#fff;color:var(--o);display:grid;place-items:center;padding:0;cursor:ns-resize;touch-action:none;box-shadow:0 2px 8px rgba(10,10,20,.16)}:is(#box-lift,#piv-lift)[hidden]{display:none}:is(#box-lift,#piv-lift):hover{background:var(--sel)}
@@ -578,6 +580,7 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
     <button type="button" class="btn" id="label-del">이 라벨 지우기</button>
   </section>
   <svg id="box-gizmo" xmlns="http://www.w3.org/2000/svg" style="display:none" aria-label="선택한 상자"><path/></svg>
+  <svg id="axis-guide" xmlns="http://www.w3.org/2000/svg" hidden aria-hidden="true"><defs><linearGradient id="axis-grad" gradientUnits="userSpaceOnUse"/></defs><line stroke="url(#axis-grad)"/></svg>
   <button type="button" id="box-lift" hidden aria-label="끌어서 상자를 위아래로 옮기기" title="끌어서 위아래로 옮기기 (Alt = 달라붙지 않게)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 1.5v11M4 4.3l3-2.8 3 2.8M4 9.7l3 2.8 3-2.8"/></svg><span id="box-lift-out"></span></button>
   <button type="button" id="piv-lift" hidden aria-label="끌어서 조명 기준점을 위아래로 옮기기" title="끌어서 위아래로 옮기기"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 1.5v11M4 4.3l3-2.8 3 2.8M4 9.7l3 2.8 3-2.8"/></svg><span id="piv-lift-out"></span></button>
   <svg id="label-gizmo" xmlns="http://www.w3.org/2000/svg" style="display:none" aria-label="라벨 손잡이"><path class="ol"/><line class="stem"/><circle class="hd" r="5.5" data-h="0"/><circle class="hd" r="5.5" data-h="1"/><circle class="hd" r="5.5" data-h="2"/><circle class="hd" r="5.5" data-h="3"/><circle class="rot" r="6.5"><title>끌어서 회전 (Shift = 15°씩)</title></circle></svg>
@@ -666,7 +669,7 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
       </div>
   </section>
   <section class="pop" id="box-pop" hidden aria-label="상자 옵션">
-    <div class="pop-head"><strong id="box-pop-name">상자</strong><button type="button" class="x" id="box-pop-x" aria-label="상자 선택 풀기">×</button></div>
+    <div class="pop-head"><strong id="box-pop-name">상자</strong><button type="button" class="x" id="box-vis" aria-label="상자 보이기·숨기기" title="상자 숨기기" style="display:grid;place-items:center"></button><button type="button" class="x" id="box-pop-x" aria-label="상자 선택 풀기">×</button></div>
     <div class="seg" id="box-tabs" role="tablist"><button type="button" class="btn" data-tab="paper" aria-pressed="true">종이</button><button type="button" class="btn" data-tab="lines" aria-pressed="false">칼선 인식</button><button type="button" class="btn" data-tab="edge" aria-pressed="false">기타 설정</button></div>
     <div class="tab" data-tab="paper">
       <div class="row"><label class="name" for="paper">종이 질감</label>
@@ -1673,6 +1676,7 @@ const defaultLights = () => [
 ];
 
 const boxDefaults = () => ({   // 상자 하나의 상태 (상자마다 한 벌)
+  off: false,   // 숨김: 화면·그림자·PNG에서 빠진다 (목록에는 남는다)
   example: true, doc: null, fileName: '', pages: [], layers: [], colorRoles: new Map(), colorUser: new Map(),
   layerOpen: null,   // 옵션을 펼쳐 둔 레이어
   edge: { mode: 'paper', color: '#b98d5f' },   // 종이 단면(두께 면): 종이 색 / 색 지정 / 골판지 무늬
@@ -1730,7 +1734,7 @@ function castLayer(i) {
 }
 const CAN_BLUR = typeof document.createElement('canvas').getContext('2d').filter === 'string';
 let contactLayer = null;
-function castGroups() { const G = []; for (const b of boxes) { const P = b === boxCur ? castPolys : b.v.castPolys; if (P && P.length) G.push(P); } return G; }   // 상자마다의 면 다각형 (세계 좌표)
+function castGroups() { const G = []; for (const b of boxes) { if ((b === boxCur ? S : b.S).off) continue; const P = b === boxCur ? castPolys : b.v.castPolys; if (P && P.length) G.push(P); } return G; }   // 상자마다의 면 다각형 (세계 좌표)
 function hull2(P) { // 평면 점들의 볼록 껍질
   if (P.length < 3) return P.slice(); P = P.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
   const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]), lo = [], up = [];
@@ -1768,10 +1772,20 @@ function drawContactShadow(fast) { // 닿은 곳의 그림자. 상자를 높이�
   mg.globalCompositeOperation = 'source-over'; mg.filter = 'none'; mg.fillStyle = '#000'; mg.fillRect(0, 0, n, n); mg.globalCompositeOperation = 'lighten';
   for (const { polys, d: diag } of GD) for (let j = 0; j <= nb; j++) {
     const hA = 0.24 * diag, sig = (e) => 0.011 * diag + 0.6 * e;   // 이 높이 위로는 그림자를 만들지 않는다 · 높을수록 넓게 퍼진다
-    const e = j ? hA * Math.pow(j / nb, 1.8) : 0.004 * diag, H = hull2(slicePts(polys, e)); if (H.length < 3) continue;
-    const v = Math.round(255 * Math.exp(-e / (0.07 * diag)));
+    const e = j ? hA * Math.pow(j / nb, 1.8) : 0.004 * diag;
+    // 이 높이 아래에 누워 있는 면(바닥에 펼친 전개도처럼)은 제 모양 그대로 찍고, 위로 서 있는 면들은 밑동을 두른 볼록한 테두리로 찍는다 (속이 빈 통도 바닥이 어두워지게).
+    // 전부를 볼록한 테두리 하나로 찍으면 바닥에 펼쳐 놓았을 때 오목한 곳까지 그림자로 메워진다
+    const shapes = [], up = [];
+    for (const P of polys) { let rise = false; for (const q of P) if (q[1] > e) { rise = true; break; } if (rise) up.push(P); const c = rise ? clipY(P, e, false) : P; if (c.length >= 3) shapes.push(c.map((q) => [q[0], q[2]])); }
+    if (up.length) { const H = hull2(slicePts(up, e)); if (H.length >= 3) shapes.push(H); }
+    const v = Math.round(255 * Math.exp(-e / (0.07 * diag))); let any = false;
     mg.filter = `blur(${Math.max(0.8, sig(e) * s).toFixed(2)}px)`; mg.fillStyle = `rgb(${v},${v},${v})`; mg.beginPath();
-    H.forEach((q, i) => { const px = (q[0] - cx + half) * s, py = (q[1] - cz + half) * s; if (i) mg.lineTo(px, py); else mg.moveTo(px, py); }); mg.closePath(); mg.fill();
+    for (const Q of shapes) {
+      const pts = Q.map((q) => [(q[0] - cx + half) * s, (q[1] - cz + half) * s]); let ar = 0; for (let i = 0; i < pts.length; i++) { const u = pts[i], w = pts[(i + 1) % pts.length]; ar += u[0] * w[1] - w[0] * u[1]; }
+      if (Math.abs(ar) < 0.5) continue; if (ar < 0) pts.reverse();   // 도는 방향을 맞춰야 겹친 면이 서로 지워지지 않는다
+      pts.forEach((u, i) => { if (i) mg.lineTo(u[0], u[1]); else mg.moveTo(u[0], u[1]); }); mg.closePath(); any = true;
+    }
+    if (any) mg.fill();
   }
   mg.filter = 'none'; mg.globalCompositeOperation = 'source-over';
   if (n !== 512) { Y.g.globalCompositeOperation = 'source-over'; Y.g.filter = 'none'; Y.g.imageSmoothingEnabled = true; Y.g.imageSmoothingQuality = 'high'; Y.g.drawImage(castScratch(n).c, 0, 0, 512, 512); }
@@ -1963,7 +1977,7 @@ function resize() {
   camera.updateProjectionMatrix(); dirty = true;
 }
 new ResizeObserver(resize).observe(stage);
-function tick() { controls.update(); syncPanelBox(); kgUpdate(); if (labelSel) updateLabelGizmo(); if (boxSel) updateBoxGizmo(); if (pivSel) updatePivGizmo(); if (seqUI.open) updateSeqGizmo(); for (const k of ['light', 'reflector']) { const lb = lightBalls[k]; if (lb && lb.svg.isConnected && !$('pop-' + k).hidden) lb.draw(); } if (castDirty && ground.visible) drawCastShadows(); if (dirty) { renderer.render(scene, camera); dirty = false; } if (rangeTick++ % 6 === 0) paintRanges(); requestAnimationFrame(tick); }
+function tick() { controls.update(); syncPanelBox(); kgUpdate(); if (axisLock || !$('axis-guide').hasAttribute('hidden')) updateAxisGuide(); if (labelSel) updateLabelGizmo(); if (boxSel) updateBoxGizmo(); if (pivSel) updatePivGizmo(); if (seqUI.open) updateSeqGizmo(); for (const k of ['light', 'reflector']) { const lb = lightBalls[k]; if (lb && lb.svg.isConnected && !$('pop-' + k).hidden) lb.draw(); } if (castDirty && ground.visible) drawCastShadows(); if (dirty) { renderer.render(scene, camera); dirty = false; } if (rangeTick++ % 6 === 0) paintRanges(); requestAnimationFrame(tick); }
 
 /* ---------- 조명 · 반사판 ---------- */
 let lightObjs = [], envRT = null, envTimer = 0;
@@ -3094,6 +3108,64 @@ function initLabel3D() {
    끌면 상자가 바닥 위에서 움직인다. 빈 곳을 누르거나 Esc를 누르면 풀린다. 끌기만 하면(선택 전) 전처럼 화면이 돈다 */
 let boxSel = false, axisLock = null;   // axisLock = 고정한 축 ('x' | 'y' | 'z'): 오른쪽 버튼으로는 그 축으로만 돌고, 왼쪽 버튼으로는 그 축 방향으로만 옮겨진다
 function setAxisLock(k) { axisLock = k; for (const g of document.querySelectorAll('#gizmo-svg g[data-ax]')) g.classList.toggle('lock', g.dataset.ax === k); const n = $('gizmo-lock'); n.hidden = !k; if (k) { n.textContent = k.toUpperCase() + '축'; n.dataset.ax = k; } }
+let axPolys = [], axPolySrc = null, axSig = '';
+const axRay = new THREE.Raycaster();
+function axisOccluders() { // 상자의 면들(세계 좌표의 다각형)을 '가리는 것'으로 쓸 수 있게 미리 정리해 둔다: 면의 평면과, 그 평면에 눕힌 2차원 꼭짓점
+  if (axPolySrc === castPolys) return axPolys; axPolySrc = castPolys; axPolys = [];
+  for (const Q of castPolys) {
+    if (Q.length < 3) continue; let nx = 0, ny = 0, nz = 0;
+    for (let i = 0; i < Q.length; i++) { const p = Q[i], q = Q[(i + 1) % Q.length]; nx += (p[1] - q[1]) * (p[2] + q[2]); ny += (p[2] - q[2]) * (p[0] + q[0]); nz += (p[0] - q[0]) * (p[1] + q[1]); }
+    const l = Math.hypot(nx, ny, nz); if (l < 1e-12) continue; nx /= l; ny /= l; nz /= l;
+    const ax = Math.abs(nx), ay = Math.abs(ny), az = Math.abs(nz), drop = ax >= ay && ax >= az ? 0 : ay >= az ? 1 : 2, i1 = (drop + 1) % 3, i2 = (drop + 2) % 3;
+    axPolys.push({ n: [nx, ny, nz], d: nx * Q[0][0] + ny * Q[0][1] + nz * Q[0][2], i1, i2, q: Q.map((p) => [p[i1], p[i2]]) });
+  }
+  return axPolys;
+}
+function updateAxisGuide() { // 축을 고정한 동안: 고른 것(상자 또는 조명 기준점)의 한가운데를 지나는 그 축 방향의 점선을 축 색으로 그린다. 상자에 가린 부분은 아주 연하게(10%), 상자에서 멀어질수록 점점 연하게. 화면 위에만 그리므로 PNG에는 들어가지 않는다
+  const g = $('axis-guide'); let c = null, half = 0, R = fitInfo.r;
+  const hide = () => { if (!g.hasAttribute('hidden')) g.setAttribute('hidden', ''); axSig = ''; };   // SVG 요소라 hidden 속성을 직접 붙였다 뗀다
+  const ai = axisLock === 'x' ? 0 : axisLock === 'y' ? 1 : 2;
+  if (axisLock && pivSel) c = pivotOf();
+  else if (axisLock && boxSel && castPolys.length) { const lo = [1e9, 1e9, 1e9], hi = [-1e9, -1e9, -1e9]; for (const poly of castPolys) for (const p of poly) for (let i = 0; i < 3; i++) { if (p[i] < lo[i]) lo[i] = p[i]; if (p[i] > hi[i]) hi[i] = p[i]; } c = new THREE.Vector3((lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, (lo[2] + hi[2]) / 2); half = (hi[ai] - lo[ai]) / 2; R = Math.max(1e-6, Math.hypot(hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]) / 2); }
+  if (!c) { hide(); return; }
+  const dir = new THREE.Vector3(ai === 0 ? 1 : 0, ai === 1 ? 1 : 0, ai === 2 ? 1 : 0), r = renderer.domElement.getBoundingClientRect(), sr = $('stage').getBoundingClientRect(), v = new THREE.Vector3(), eye = new THREE.Vector3();
+  camera.getWorldDirection(eye); const cd = eye.dot(v.copy(c).sub(camera.position));   // 가운데 점이 카메라 앞으로 얼마나 떨어져 있는지
+  const end = (sign) => { // 한쪽 끝: 화면 밖까지 길게 뻗되, 카메라 뒤로 넘어가지 않을 만큼만
+    let L = Math.max(fitInfo.r, cd) * 40; const along = eye.dot(dir) * sign; if (along < 0) L = Math.min(L, (cd - camera.near * 2) / -along * 0.98);
+    v.copy(c).addScaledVector(dir, sign * Math.max(L, 0)).project(camera); return [(v.x * 0.5 + 0.5) * r.width + r.left - sr.left, (-v.y * 0.5 + 0.5) * r.height + r.top - sr.top];
+  };
+  if (cd <= camera.near * 2) { hide(); return; }
+  const a = end(-1), b = end(1), ln = g.querySelector('line'), M = 60, X0 = -M, Y0 = -M, X1 = sr.width + M, Y1 = sr.height + M, dx = b[0] - a[0], dy = b[1] - a[1]; let t0 = 0, t1 = 1;   // 화면 둘레(조금 바깥)까지만 남긴다: 지나치게 긴 선을 그리지 않게
+  for (const [p, q] of [[-dx, a[0] - X0], [dx, X1 - a[0]], [-dy, a[1] - Y0], [dy, Y1 - a[1]]]) { if (Math.abs(p) < 1e-9) { if (q < 0) { hide(); return; } continue; } const t = q / p; if (p < 0) { if (t > t0) t0 = t; } else if (t < t1) t1 = t; }
+  if (!(t0 < t1) || !Number.isFinite(dx + dy)) { hide(); return; }
+  b[0] = a[0] + dx * t1; b[1] = a[1] + dy * t1; a[0] += dx * t0; a[1] += dy * t0;
+  const len = Math.hypot(b[0] - a[0], b[1] - a[1]); if (len < 4) { hide(); return; }   // 축이 화면을 똑바로 향하면 점으로만 보인다
+  const sig = axisLock + '|' + a.concat(b).map((n) => n.toFixed(1)).join() + '|' + camera.matrixWorld.elements.map((n) => n.toFixed(4)).join() + '|' + c.toArray().map((n) => n.toFixed(4)).join(), same = sig === axSig && axPolySrc === castPolys;
+  g.dataset.ax = axisLock; g.removeAttribute('hidden'); if (same) return;   // 달라진 것이 없으면 다시 계산하지 않는다
+  axSig = sig; const polys = axisOccluders(), eps = R * 4e-3, o = axRay.ray.origin, d = axRay.ray.direction, ndc = new THREE.Vector2(), w0 = new THREE.Vector3();
+  const at = (sv) => { // 화면 위 선의 한 점 → 그 점에 비치는 축 위의 점: 가운데에서 떨어진 거리(t)와 상자에 가렸는지
+    ndc.set(((a[0] + (b[0] - a[0]) * sv + sr.left - r.left) / r.width) * 2 - 1, -((a[1] + (b[1] - a[1]) * sv + sr.top - r.top) / r.height) * 2 + 1); axRay.setFromCamera(ndc, camera);
+    const bb = dir.dot(d), den = 1 - bb * bb; if (den < 1e-9) return { t: 0, hid: false }; w0.copy(c).sub(o); const dd = dir.dot(w0), e = d.dot(w0), t = (bb * e - dd) / den, k = (e - bb * dd) / den;
+    let hid = false;
+    for (const F of polys) { const dn = F.n[0] * d.x + F.n[1] * d.y + F.n[2] * d.z; if (Math.abs(dn) < 1e-9) continue; const kh = (F.d - (F.n[0] * o.x + F.n[1] * o.y + F.n[2] * o.z)) / dn; if (kh <= 1e-6 || kh >= k - eps) continue;
+      const hp = [o.x + kh * d.x, o.y + kh * d.y, o.z + kh * d.z], x = hp[F.i1], y = hp[F.i2], q = F.q; let ins = false; for (let i = 0, j = q.length - 1; i < q.length; j = i++) { if ((q[i][1] > y) !== (q[j][1] > y) && x < ((q[j][0] - q[i][0]) * (y - q[i][1])) / (q[j][1] - q[i][1]) + q[i][0]) ins = !ins; } if (ins) { hid = true; break; } }
+    return { t, hid };
+  };
+  const fade = (t) => Math.exp(-Math.max(0, Math.abs(t) - half) / (R * 1.3)), op = (m) => (m.hid ? 0.1 : 1) * fade(m.t);   // 상자를 벗어난 거리만큼 연해진다. 가린 곳은 그 10%
+  const N = Math.max(24, Math.min(220, Math.round(len / 5))), st = []; let prev = at(0), ps = 0, lastOp = op(prev), lastS = 0; st.push([0, lastOp]);
+  for (let i = 1; i <= N; i++) {
+    const sv = i / N, m = at(sv);
+    if (m.hid !== prev.hid) { // 가림이 바뀌는 자리를 정확히 찾아 그 자리에서 딱 끊는다
+      let lo = ps, hi = sv, ml = prev, mh = m; for (let k = 0; k < 9; k++) { const mid = (lo + hi) / 2, mm = at(mid); if (mm.hid === prev.hid) { lo = mid; ml = mm; } else { hi = mid; mh = mm; } }
+      const cut = (lo + hi) / 2; if (lastS < ps) st.push([ps, op(prev)]); st.push([cut, op(ml)]); st.push([cut, op(mh)]); lastOp = op(mh); lastS = cut;
+    }
+    const v2 = op(m); if (Math.abs(v2 - lastOp) > 0.025 || i === N) { if (lastS < ps && m.hid === prev.hid) st.push([ps, op(prev)]); st.push([sv, v2]); lastOp = v2; lastS = sv; }
+    prev = m; ps = sv;
+  }
+  const gr = $('axis-grad'); gr.setAttribute('x1', a[0].toFixed(1)); gr.setAttribute('y1', a[1].toFixed(1)); gr.setAttribute('x2', b[0].toFixed(1)); gr.setAttribute('y2', b[1].toFixed(1));
+  gr.innerHTML = st.map(([sv, v2]) => `<stop offset="${(sv * 100).toFixed(3)}%" stop-opacity="${Math.max(0, v2).toFixed(3)}"/>`).join('');
+  ln.setAttribute('x1', a[0].toFixed(1)); ln.setAttribute('y1', a[1].toFixed(1)); ln.setAttribute('x2', b[0].toFixed(1)); ln.setAttribute('y2', b[1].toFixed(1));
+}
 function updateBoxGizmo() {
   if (!boxSel && !pivSel && axisLock) setAxisLock(null);
   const bg = $('box-gizmo'), lit = !$('pop-light').hidden || !$('pop-reflector').hidden;   // 조명·반사판 창이 열려 있으면 상자는 골라지기만 하고 옵션 창은 뜨지 않는다
@@ -3199,7 +3271,7 @@ function initPivot() {
 }
 function setBoxSel(on) { if (boxSel === on) return; boxSel = on; if (!on) poseMenuHide(); if (on && pivSel) setPivSel(false); if (on) $('box-pop-name').textContent = S.example ? '예시 상자' : (S.fileName || '상자'); if (!on && S.sel) select(null); updateBoxGizmo(); }
 function boxAt(cx, cy) { // 화면의 한 점 아래의 상자: 맞은 자리(세계 좌표)와, 면이면 그 면 번호·전개도 좌표
-  if (!lastM) return null;
+  if (!lastM || S.off) return null;   // 숨긴 상자는 화면에서 집히지 않는다 (왼쪽 목록에서 고른다)
   const r = renderer.domElement.getBoundingClientRect();
   pickRay.setFromCamera(new THREE.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1), camera);
   const objs = []; for (const o of faceObjs.values()) { objs.push(o.front, o.back); if (o.wall) objs.push(o.wall); }
@@ -3285,7 +3357,7 @@ function histSnap() {
     over: [...S.over], dir: [...S.dir], bulge: [...S.bulge].map(([k, v]) => [k, { ...v }]),
     edits: S.edits.map((o) => ({ ...o })), adds: S.adds.map((o) => ({ ...o })), moves: S.moves.map((o) => ({ ...o })), flip: !!S.flip, inMirror: !!S.inMirror,
     inside: { ...S.inside }, edge: { ...S.edge }, lights: JSON.parse(JSON.stringify(S.lights)), reflectors: JSON.parse(JSON.stringify(S.reflectors)), pivot: S.pivot ? [S.pivot.x, S.pivot.y, S.pivot.z] : null,
-    imgs: S.imgs.map((o) => ({ o, ...imgVals(o) })), printOff: !!S.printOff, finPos: finAt(),
+    imgs: S.imgs.map((o) => ({ o, ...imgVals(o) })), printOff: !!S.printOff, finPos: finAt(), off: !!S.off,
     labels: S.labels.map((L) => ({ L, id: L.uid || (L.uid = ++labelSeq), x: +L.x.toFixed(2), y: +L.y.toFixed(2), anchor: L.anchor, rot: L.rot, scale: +L.scale.toFixed(4), lift: !!L.lift, off: !!L.off })), li: S.li,
     inputs: histInputs(),
   };
@@ -3331,14 +3403,14 @@ async function histApply(h, hs) {   // h: 상자 한 벌의 상태, hs: 장면(�
     }
     // ③ 나머지 상태
     pose.base.set(h.pose[0], h.pose[1], h.pose[2], h.pose[3]); pose.rx = h.pose[4]; pose.ry = h.pose[5]; pose.rz = h.pose[6]; S.pos = { x: h.pos[0], z: h.pos[1], y: h.pos[2] || 0 }; S.seq = { on: true, steps: h.seq[1] && h.seq[1].map((a) => a.slice()) }; seqUI.active = -1;
-    S.over = new Map(h.over); S.dir = new Map(h.dir); S.bulge = new Map(h.bulge.map(([k, v]) => [k, { ...v }]));
+    S.over = new Map(h.over); S.dir = new Map(h.dir); S.bulge = new Map(h.bulge.map(([k, v]) => [k, { ...v }])); S.off = !!h.off;
     S.inside = { ...h.inside }; S.edge = { ...h.edge }; S.lights = JSON.parse(JSON.stringify(hs.lights)); S.reflectors = JSON.parse(JSON.stringify(hs.reflectors)); S.pivot = hs.pivot ? { x: hs.pivot[0], y: hs.pivot[1], z: hs.pivot[2] } : null;
     { const hi = h.imgs || [], key = (l) => JSON.stringify(l.map(({ o, ...v }) => [o.id, v])); const hfp = h.finPos == null ? hi.length : h.finPos; if (key(hi) !== key(S.imgs.map((o) => ({ o, ...imgVals(o) }))) || !!h.printOff !== !!S.printOff || hfp !== finAt()) { S.imgs = hi.map(({ o, ...v }) => Object.assign(o, v)); S.printOff = !!h.printOff; S.finPos = hfp; imgSel = -1; applyTextures(); } }
     for (const L of S.labels) if (!h.labels.some((o) => o.L === L)) dropLabelMeshes(L);
     S.labels = h.labels.map((o) => Object.assign(o.L, { x: o.x, y: o.y, anchor: o.anchor, rot: o.rot, scale: o.scale, lift: o.lift, off: !!o.off }));
     S.li = S.labels.length ? Math.max(0, Math.min(S.li, S.labels.length - 1)) : -1; if (!S.label) labelSel = false;
     syncLights(); renderLightUI('light'); renderLightUI('reflector'); syncInsideUI(); applyInside(); syncEdgeUI(); applyEdge();
-    buildMeshes(); updateFold(); if (S.sel) select(S.sel); updateChips(); renderMap(); renderLabelTiles(); syncLabelUI(); updateLabelGizmo(); updateBoxGizmo(); renderSeq(); dirty = true;
+    buildMeshes(); updateFold(); if (S.sel) select(S.sel); updateChips(); renderMap(); renderLabelTiles(); syncLabelUI(); updateLabelGizmo(); updateBoxGizmo(); renderSeq(); syncBoxVis(); renderBoxTiles(); dirty = true;
   } finally { hist.applying = false; }
 }
 async function histGo(d) { // d = -1 되돌리기, +1 다시 하기
@@ -4455,7 +4527,7 @@ function boxRefresh() { // 왼쪽 패널과 옵션 창을 지금 고른 상자�
   $('paper-file-row').style.display = v('paper') === 'custom' ? '' : 'none';
   $('gap-row').hidden = S.example || !S.struct || !!S.struct.faces.length;
   $('side-box').hidden = !S.twin; $('side-mirror').setAttribute('aria-pressed', String(!!S.inMirror));
-  renderLayerUI(); renderColorUI(); syncInsideUI(); syncEdgeUI(); renderMap(); renderLabelTiles(); syncLabelUI(); updateLabelGizmo(); updateChips(); renderSeq(); renderBoxTiles(); updateBoxGizmo();
+  renderLayerUI(); renderColorUI(); syncInsideUI(); syncEdgeUI(); renderMap(); renderLabelTiles(); syncLabelUI(); updateLabelGizmo(); updateChips(); renderSeq(); renderBoxTiles(); updateBoxGizmo(); syncBoxVis();
   castDirty = true; dirty = true;
 }
 function boxUse(b, force) { // 상자 b를 고른다. 파일을 읽는 중이거나 되돌리는 중에는 바꾸지 않는다
@@ -4476,6 +4548,15 @@ function boxDispose(b) { // 고르지 않은 상자를 화면과 메모리에서
   for (const L of st.labels || []) if (L.rt && L.rt.mat) { if (L.rt.mat.map) L.rt.mat.map.dispose(); L.rt.mat.dispose(); }
   for (const m of [g.matFront, g.matBack, g.matEdge, g.matLabel]) { for (const k of ['map', 'roughnessMap', 'bumpMap']) if (m[k]) m[k].dispose(); m.dispose(); }
   g.bevelTex.dispose(); docDrop(st.doc);
+}
+function syncBoxVis() { // 숨긴 상자는 그리지 않는다 (그림자도 빠진다). 옵션 창의 눈 단추와 선택 테두리(숨긴 상자는 점선)도 맞춘다
+  for (const b of boxes) (b === boxCur ? poseGroup : b.g.poseGroup).visible = !boxState(b).off;
+  const v = $('box-vis'); v.innerHTML = S.off ? EYE_OFF_SVG : EYE_SVG; v.title = S.off ? '상자 보이기' : '상자 숨기기'; $('box-gizmo').classList.toggle('off', !!S.off);
+  castDirty = true; dirty = true;
+}
+function setBoxOff(b, off) { // 상자 숨기기 · 보이기. 기록은 지금 고른 상자를 기준으로 남으므로 먼저 그 상자로 넘어간다
+  if (!b || !$('busy').hidden || hist.busy) return; if (b !== boxCur && !boxUse(b)) return;
+  S.off = !!off; if (off && S.sel) select(null); syncBoxVis(); renderBoxTiles(); updateBoxGizmo(); histSoon();
 }
 function boxRemove(b) { // 상자를 지운다. 마지막 하나를 지우면 예시 상자로 돌아간다
   if (!b || !$('busy').hidden || hist.busy) return;
@@ -4507,7 +4588,7 @@ function otherBoxAt(cx, cy) { // 화면의 한 점 아래에 있는 '다른' 상
   const r = renderer.domElement.getBoundingClientRect();
   pickRay.setFromCamera(new THREE.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1), camera);
   let best = null;
-  for (const b of boxes) { if (b === boxCur) continue; const hit = pickRay.intersectObjects(b.g.model.children, false)[0]; if (hit && (!best || hit.distance < best.dist)) best = { box: b, dist: hit.distance }; }
+  for (const b of boxes) { if (b === boxCur || b.S.off) continue; const hit = pickRay.intersectObjects(b.g.model.children, false)[0]; if (hit && (!best || hit.distance < best.dist)) best = { box: b, dist: hit.distance }; }
   return best;
 }
 function boxThumb(b) { // 타일에 넣을 작은 그림: 그 상자의 인쇄면
@@ -4527,11 +4608,13 @@ function renderBoxTiles() { // 왼쪽의 인쇄 데이터 올리기 칸: 상자�
   const grid = el('div', { class: 'tiles' });
   for (const b of boxes) {
     const st = boxState(b), name = st.example ? sampleName(st.sample) : (st.fileName || '상자');
-    const t = el('div', { class: 'tile' + (b === boxCur && panelShown ? ' on' : ''), role: 'button', tabindex: '0', title: name }), th = boxThumb(b); if (th) t.style.backgroundImage = `url(${th})`;
+    const t = el('div', { class: 'tile' + (b === boxCur && panelShown ? ' on' : '') + (st.off ? ' off' : ''), role: 'button', tabindex: '0', title: name }), th = boxThumb(b); if (th) t.style.backgroundImage = `url(${th})`;
+    const eye = el('button', { type: 'button', class: 'eye', 'aria-label': name + (st.off ? ' 보이기' : ' 숨기기'), title: st.off ? '보이기' : '숨기기' }); eye.innerHTML = st.off ? EYE_OFF_SVG : EYE_SVG;
+    eye.addEventListener('click', (e) => { e.stopPropagation(); setBoxOff(b, !boxState(b).off); });
     const x = el('button', { type: 'button', class: 'del', 'aria-label': name + ' 지우기', text: '×' });
     x.addEventListener('click', (e) => { e.stopPropagation(); boxRemove(b); });
     t.addEventListener('click', () => { if (!boxUse(b)) return; if (labelSel) { labelSel = false; updateLabelGizmo(); renderLabelTiles(); } setBoxSel(true); });   // 상자를 고르면 라벨 선택은 푼다
-    t.append(el('span', { text: name }), x); grid.append(t);
+    t.append(el('span', { text: name }), eye, x); grid.append(t);
   }
   if (boxes.length < BOX_MAX) { const add = el('button', { type: 'button', class: 'tile plus', 'aria-label': '상자 더 올리기', title: `인쇄 데이터를 더 올리면 상자가 하나 더 생깁니다 (최대 ${BOX_MAX}개)`, text: '+' }); add.addEventListener('click', () => $('file').click()); grid.append(add); }
   box.append(grid);
@@ -4560,7 +4643,7 @@ function boxDuplicate(src) { // 상자를 똑같이 하나 더 만들어 옆에 
   if (boxes.length >= BOX_MAX) { say(`상자는 ${BOX_MAX}개까지 놓을 수 있습니다`); return; }
   boxNew();   // 지금 상자를 접어 두고 빈 상자를 편다. 이제 원본의 상태는 src.S에 있다
   for (const k of Object.keys(S)) if (!SCENE_KEYS.has(k)) delete S[k];
-  Object.assign(S, boxCopyState(src.S));
+  Object.assign(S, boxCopyState(src.S)); S.off = false;   // 숨긴 상자를 복사해도 새 상자는 보이게 놓는다
   pose.base.copy(src.pose.base); pose.rx = src.pose.rx; pose.ry = src.pose.ry; pose.rz = src.pose.rz;
   for (const id of BOX_INPUTS) if (id in src.inputs) $(id).value = src.inputs[id];
   setEmboss(); applyInside(); applyTextures(); buildMeshes(); applyPaper(); updateFold(); for (const L of S.labels) refreshWrap(L);
@@ -5056,8 +5139,8 @@ canvas.addEventListener('pointerdown', (e) => { // 3D 화면의 조명·반사�
   if (hit.object.userData.kind === 'pivot') { pivGrab(e); return; }
   setPivSel(false); const { kind, idx } = hit.object.userData; if (curItem[kind] !== idx) { curItem[kind] = idx; renderLightUI(kind); }   // 이미 골라 둔 것이면 창을 새로 그리지 않는다
   const L = (kind === 'light' ? S.lights : S.reflectors)[idx]; if (!L || !fitInfo) return;
-  const center = pivotOf(), rad = fitInfo.r * 1.7 * distOf(L) || 1, start = [e.clientX, e.clientY]; let moved = false;   // 기준점에서의 거리는 그대로 둔다
-  const sph = new THREE.Sphere(center, rad), p = new THREE.Vector3(), last = dirOf(L).multiplyScalar(rad).add(center);
+  const center = pivotOf(), start = [e.clientX, e.clientY]; let rad = fitInfo.r * 1.7 * distOf(L) || 1, moved = false, wheeled = false;   // 끄는 동안 기준점에서의 거리는 그대로 둔다 (휠로만 바뀐다)
+  const p = new THREE.Vector3(), last = dirOf(L).multiplyScalar(rad).add(center);
   const move = (ev) => {
     if (!moved) { if (Math.hypot(ev.clientX - start[0], ev.clientY - start[1]) < 4) return; moved = true; canvas.style.cursor = 'grabbing'; }
     const r2 = canvas.getBoundingClientRect(); pickRay.setFromCamera(new THREE.Vector2(((ev.clientX - r2.left) / r2.width) * 2 - 1, -((ev.clientY - r2.top) / r2.height) * 2 + 1), camera);
@@ -5068,8 +5151,14 @@ canvas.addEventListener('pointerdown', (e) => { // 3D 화면의 조명·반사�
     L.el = Math.max(-20, Math.min(90, Math.round(Math.asin(Math.max(-1, Math.min(1, v.y))) / D2R))); if (Math.hypot(v.x, v.z) > 1e-4) L.az = Math.round(Math.atan2(v.x, v.z) / D2R);
     updateLights();   // 창은 새로 그리지 않는다: 방향을 보여 주는 구는 매 화면마다 스스로 다시 그려진다
   };
-  const end = () => { window.removeEventListener('pointermove', move, true); window.removeEventListener('pointerup', end, true); window.removeEventListener('pointercancel', end, true); canvas.style.cursor = ''; if (moved) histSoon(); };
-  window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', end, true); window.addEventListener('pointercancel', end, true);
+  const wheel = (ev) => { // 잡고 있는 동안의 휠: 화면을 확대하는 대신 이 조명(반사판)의 거리를 바꾼다. 위로 굴리면 가까이, 아래로 굴리면 멀리 (5%씩, 창의 '거리'와 같은 범위)
+    ev.preventDefault(); ev.stopImmediatePropagation(); if (!ev.deltaY) return;
+    const d0 = L.dist ?? 100, d1 = Math.max(40, Math.min(300, Math.round((d0 + (ev.deltaY < 0 ? -5 : 5)) / 5) * 5)); if (d1 === d0) return;
+    L.dist = d1; wheeled = true; rad = fitInfo.r * 1.7 * distOf(L) || 1; last.copy(dirOf(L).multiplyScalar(rad).add(center)); updateLights();
+    const sl = $(`${kind}-${idx}-ds`); if (sl) { sl.value = d1; sl.style.setProperty('--p', ((d1 - 40) / 260) * 100 + '%'); const out = sl.parentNode.querySelector('output'); if (out) out.textContent = d1 + '%'; }   // 창의 '거리' 바도 따라 움직인다 (창을 새로 그리지는 않는다)
+  };
+  const end = () => { window.removeEventListener('pointermove', move, true); window.removeEventListener('pointerup', end, true); window.removeEventListener('pointercancel', end, true); window.removeEventListener('wheel', wheel, true); canvas.style.cursor = ''; if (moved || wheeled) histSoon(); };
+  window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', end, true); window.addEventListener('pointercancel', end, true); window.addEventListener('wheel', wheel, { capture: true, passive: false });
 }, true);
 canvas.addEventListener('dblclick', (e) => { // 상자가 없는 빈 곳을 두 번 누르면 조명·반사판·배경 창을 닫는다
   if (seqUI.open) return;
@@ -5163,6 +5252,16 @@ $('tab-print').addEventListener('click', () => setDropMode('print'));
 $('tab-label').addEventListener('click', () => setDropMode('label'));
 $('label-file').addEventListener('change', async (e) => { const fs = [...e.target.files]; e.target.value = ''; for (const f of fs) await loadLabel(f); });
 $('label-del').addEventListener('click', () => { if (S.label) { removeLabel(S.li); applyLabel(); } });
+$('box-vis').innerHTML = EYE_SVG; $('box-vis').addEventListener('click', (e) => { e.currentTarget.blur(); setBoxOff(boxCur, !S.off); });
+window.addEventListener('keydown', (e) => { // Delete: 고른 라벨, 없으면 고른 상자를 지운다 (Ctrl+Z로 되돌릴 수 있다). 전개도 · 레이어 쪽에서 고른 이미지 · 선이 있으면 그쪽이 먼저 받는다
+  if ((e.key !== 'Delete' && e.key !== 'Backspace') || e.ctrlKey || e.metaKey || e.altKey || e.repeat || !$('exp-dlg').hidden || !$('ask-dlg').hidden || !S.struct) return;
+  const t = e.target; if (t && t.tagName && (t.isContentEditable || /^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName))) return;
+  if (editFocus || editJoin || seqUI.open || !$('pie').hidden || $('stage').classList.contains('picking') || !$('busy').hidden || hist.busy) return;   // 왼쪽 패널을 만지던 중이면 상자를 지우지 않는다
+  if (labelSel && S.label) { e.preventDefault(); const nm = S.label.name; removeLabel(S.li); applyLabel(); say(`"${nm}" 라벨을 지웠습니다 · Ctrl+Z로 되돌리기`); return; }
+  if (!boxSel || S.sel) return;   // 면 · 접는 선을 고른 채로는 지우지 않는다
+  if (boxes.length === 1 && S.example && (S.sample || 'basic') === 'basic') return;   // 하나 남은 기본 예시 상자는 그대로 둔다
+  e.preventDefault(); boxRemove(boxCur); say('상자를 지웠습니다 · Ctrl+Z로 되돌리기');
+});
 $('label-rot').addEventListener('input', (e) => { if (!S.label) return; S.label.rot = +e.target.value; $('label-rot-out').textContent = S.label.rot + '°'; updateLabelUV(); });
 $('label-scale').addEventListener('input', (e) => { if (!S.label) return; S.label.scale = e.target.value / 100; $('label-scale-out').textContent = e.target.value + '%'; updateLabelUV(); });
 $('label-lift').addEventListener('change', (e) => { if (!S.label) return; S.label.lift = e.target.checked; applyLabel(); });
@@ -5545,7 +5644,7 @@ $('export').addEventListener('click', (e) => { if (e.isTrusted) keyFlash([[['Ctr
 $('edit-undo').addEventListener('click', (e) => { if (e.isTrusted) keyFlash([[['Ctrl', 'Z'], '되돌리기'], [['Ctrl', 'Shift', 'Z'], '다시 하기']]); });
 
 resize(); applyBg(); setEmboss(); syncInsideUI(); applyInside(); syncEdgeUI(); buildEnv(); syncLights(); renderLightUI('light'); renderLightUI('reflector'); loadExample(); tick();
-window.__app = { useSample, samples: SAMPLES.map((x) => x.id), keyGuide: () => ({ on: kgOn, list: kgList.map((it) => it.keys.join('+') + '=' + it.text), down: [...kgDown] }), editState: () => ({ sel: [...editSel], img: imgSel, focus: editFocus, join: editJoin, view: editView && { ...editView }, chains: editChains.map((c, i) => ({ kind: c.kind, n: c.ids.length, hinge: hingeOfChain(i) })) }), select, gizHits: (x, y) => { const r = canvas.getBoundingClientRect(); pickRay.setFromCamera(new THREE.Vector2(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1), camera); return JSON.stringify(pickRay.intersectObjects(gizmoGroup.children.filter((o) => o.userData && o.userData.kind), false).map((h) => [h.object.userData.kind, h.object.userData.idx, +h.distance.toFixed(3)])); }, gizmoShown: () => gizmoGroup.visible, pivot: () => S.pivot, pivSel: () => pivSel, pivScreen: () => { const p = pivotOf().project(camera), r = renderer.domElement.getBoundingClientRect(); return [(p.x * 0.5 + 0.5) * r.width + r.left, (-p.y * 0.5 + 0.5) * r.height + r.top]; }, lightDist: (i) => distOf(S.lights[i]), lightScreen: (i) => { const L = S.lights[i], p = dirOf(L).multiplyScalar(fitInfo.r * 1.7 * distOf(L)).add(pivotOf()).project(camera), r = renderer.domElement.getBoundingClientRect(); return [(p.x * 0.5 + 0.5) * r.width + r.left, (-p.y * 0.5 + 0.5) * r.height + r.top]; }, limbo, sceneBoxes: () => scene.children.filter((o) => o.isGroup && o.children.some((c) => c.isGroup && Math.abs(c.scale.x - UNIT) < 1e-9)).length, boxDuplicate, poseQ: () => poseGroup.quaternion.toArray(), modelN: () => model.children.length, boxes, castNow: () => castPolys, updateFold, boxCur: () => boxCur, project: (c) => { const r = renderer.domElement.getBoundingClientRect(), v = new THREE.Vector3(c[0], c[1], c[2]).project(camera); return [(v.x * 0.5 + 0.5) * r.width + r.left, (-v.y * 0.5 + 0.5) * r.height + r.top]; }, boxUse, boxRemove, addBoxFile, boxState, hist, histGo, labelSelected: () => labelSel, boxSelected: () => boxSel, boxAt, faceObjs, fo: () => faceObjs, cast: () => castLayers, core: { extractStrokes, bandCentre, bandLike, ringCentre, buildStructure }, fillStrokes, lastM: () => lastM, effAngles, seqSteps, seqUI, setSeqOpen, autoSteps, hingeScreen, sealMap: () => sealMap, surfaceAt, wrapToWorld, S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, refreshWrap, renderMap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, camera, castStat, autoPickDieline, extraSheets }; // 점검용
+window.__app = { useSample, samples: SAMPLES.map((x) => x.id), keyGuide: () => ({ on: kgOn, list: kgList.map((it) => it.keys.join('+') + '=' + it.text), down: [...kgDown] }), editState: () => ({ sel: [...editSel], img: imgSel, focus: editFocus, join: editJoin, view: editView && { ...editView }, chains: editChains.map((c, i) => ({ kind: c.kind, n: c.ids.length, hinge: hingeOfChain(i) })) }), select, gizHits: (x, y) => { const r = canvas.getBoundingClientRect(); pickRay.setFromCamera(new THREE.Vector2(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1), camera); return JSON.stringify(pickRay.intersectObjects(gizmoGroup.children.filter((o) => o.userData && o.userData.kind), false).map((h) => [h.object.userData.kind, h.object.userData.idx, +h.distance.toFixed(3)])); }, gizmoShown: () => gizmoGroup.visible, pivot: () => S.pivot, pivSel: () => pivSel, pivScreen: () => { const p = pivotOf().project(camera), r = renderer.domElement.getBoundingClientRect(); return [(p.x * 0.5 + 0.5) * r.width + r.left, (-p.y * 0.5 + 0.5) * r.height + r.top]; }, reflDist: (i) => distOf(S.reflectors[i]), reflScreen: (i) => { const L = S.reflectors[i], p = dirOf(L).multiplyScalar(fitInfo.r * 1.7 * distOf(L)).add(pivotOf()).project(camera), r = renderer.domElement.getBoundingClientRect(); return [(p.x * 0.5 + 0.5) * r.width + r.left, (-p.y * 0.5 + 0.5) * r.height + r.top]; }, lightDist: (i) => distOf(S.lights[i]), lightScreen: (i) => { const L = S.lights[i], p = dirOf(L).multiplyScalar(fitInfo.r * 1.7 * distOf(L)).add(pivotOf()).project(camera), r = renderer.domElement.getBoundingClientRect(); return [(p.x * 0.5 + 0.5) * r.width + r.left, (-p.y * 0.5 + 0.5) * r.height + r.top]; }, limbo, sceneBoxes: () => scene.children.filter((o) => o.isGroup && o.children.some((c) => c.isGroup && Math.abs(c.scale.x - UNIT) < 1e-9)).length, boxDuplicate, poseQ: () => poseGroup.quaternion.toArray(), modelN: () => model.children.length, boxes, castNow: () => castPolys, updateFold, boxCur: () => boxCur, project: (c) => { const r = renderer.domElement.getBoundingClientRect(), v = new THREE.Vector3(c[0], c[1], c[2]).project(camera); return [(v.x * 0.5 + 0.5) * r.width + r.left, (-v.y * 0.5 + 0.5) * r.height + r.top]; }, boxUse, boxRemove, addBoxFile, boxState, hist, histGo, labelSelected: () => labelSel, boxSelected: () => boxSel, boxAt, faceObjs, fo: () => faceObjs, cast: () => castLayers, core: { extractStrokes, bandCentre, bandLike, ringCentre, buildStructure }, fillStrokes, lastM: () => lastM, effAngles, seqSteps, seqUI, setSeqOpen, autoSteps, hingeScreen, sealMap: () => sealMap, surfaceAt, wrapToWorld, S, pose, fitCamera, setPose, posePreset, faceToward, loadLabel, setMapMode, computeWrap, refreshWrap, renderMap, scene, camera, renderer, THREE, hemi, matFront, matLabel, model, poseGroup, controls, camera, castStat, autoPickDieline, extraSheets }; // 점검용
 </script>
 </body>
 </html>
