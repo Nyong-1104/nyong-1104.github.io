@@ -402,6 +402,7 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
 #edit-roles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}#edit-roles[hidden]{display:none}
 #edit-roles .btn{grid-column:span 3;padding:6px 4px;white-space:nowrap}#edit-roles .btn.ico{grid-column:span 2;padding:0;height:30px;display:grid;place-items:center}#edit-roles .btn.ico i{display:block;width:24px;height:4px;border-radius:2px}
 .edit-bar[hidden],#edit-legend[hidden],#img-side[hidden]{display:none}
+#map-tag{position:absolute;left:8px;top:8px;z-index:2;height:20px;padding:0 8px;border-radius:10px;background:rgba(23,23,28,.78);color:#fff;font-size:11px;font-weight:700;line-height:20px;pointer-events:none}#map-tag[hidden]{display:none}#edit-head-btns .btn[hidden]{display:none}
 #edit-head-btns{display:flex;gap:6px;position:relative}#edit-head-btns .tip-late{position:static}#edit-head-btns .tip-late::after{left:0;width:100%}#edit-head-btns .btn.ic{flex:none;width:38px;height:32px;padding:0;display:grid;place-items:center}#edit-head-btns .btn:disabled{opacity:.45;cursor:default}#edit-note{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #edit-body{flex:1;min-height:0;display:flex;gap:10px}#edit-body #edit-wrap{min-width:0}
 #img-side{width:252px;flex:none;display:flex;flex-direction:column;gap:8px;min-height:0}
@@ -425,9 +426,18 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
 #edit-legend i.dash{background:repeating-linear-gradient(90deg,#b4b4c0 0 4px,transparent 4px 7px)}
 .modal{position:fixed;inset:0;background:rgba(10,10,20,.4);display:grid;place-items:center;padding:24px;z-index:60}
 #exp-dlg .row .name{display:flex;align-items:center;gap:8px}#exp-dlg .row .name svg{flex:none;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-#exp-dlg input[type=checkbox]{appearance:none;-webkit-appearance:none;position:relative;width:36px;height:21px;border-radius:11px;background:#d5d5dd;cursor:pointer;transition:background .16s}   /* 넣을지 말지: 켜고 끄는 스위치 */
-#exp-dlg input[type=checkbox]::after{content:"";position:absolute;left:2px;top:2px;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(10,10,20,.28);transition:transform .16s}
-#exp-dlg input[type=checkbox]:checked{background:var(--o)}#exp-dlg input[type=checkbox]:checked::after{transform:translateX(15px)}#exp-dlg input[type=checkbox]:focus-visible{outline:2px solid var(--o);outline-offset:2px}
+.dlg input[type=checkbox]{appearance:none;-webkit-appearance:none;position:relative;width:36px;height:21px;border-radius:11px;background:#d5d5dd;cursor:pointer;transition:background .16s}   /* 넣을지 말지: 켜고 끄는 스위치 */
+.dlg input[type=checkbox]::after{content:"";position:absolute;left:2px;top:2px;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(10,10,20,.28);transition:transform .16s}
+.dlg input[type=checkbox]:checked{background:var(--o)}.dlg input[type=checkbox]:checked::after{transform:translateX(15px)}.dlg input[type=checkbox]:focus-visible{outline:2px solid var(--o);outline-offset:2px}
+#pg-dlg .dlg{width:min(600px,100%)}#pg-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pg-foot{display:flex;align-items:center;gap:10px;margin-top:2px}#pg-sw{display:flex;align-items:center;gap:8px;flex:none;margin-right:auto;font-size:12.5px;font-weight:600;white-space:nowrap;cursor:pointer;user-select:none;-webkit-user-select:none}#pg-sw input{flex:none}   /* 스위치와 이름을 붙여 둔다 */
+#pg-foot .btn{flex:none;width:auto;min-height:0;height:34px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;padding:0 18px;line-height:1;border-radius:10px;font-size:13px;letter-spacing:0}   /* 두 단추 높이를 맞추고, 한글이 위로 떠 보이지 않게 살짝 내린다 */
+#pg-note{display:flex;gap:14px;align-items:baseline;background:#111114;color:#fff;border-radius:10px;padding:10px 14px;font-size:12.5px;line-height:1.5}#pg-note b{flex:none;font-weight:700}#pg-note em{font-style:normal;font-weight:700}#pg-foot .btn[hidden]{display:none}#pg-go{font-weight:700}
+#pg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;max-height:min(52vh,460px);overflow:auto;padding:3px}
+.pgt{position:relative;display:block;padding:0;border:0;border-radius:12px;background:#f1f1f4;cursor:pointer;aspect-ratio:4/3;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(10,10,20,.08)}.pgt canvas{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);object-fit:contain}
+.pgt .n{position:absolute;left:7px;top:7px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:rgba(23,23,28,.78);color:#fff;font-size:11px;font-weight:700;line-height:20px;text-align:center}
+.pgt .r{position:absolute;right:7px;top:7px;height:20px;padding:0 8px;border-radius:10px;background:var(--o);color:#fff;font-size:11px;font-weight:700;line-height:20px}.pgt .r:empty{display:none}
+.pgt.on{outline:2.5px solid var(--o);outline-offset:1px}.pgt:focus-visible{outline:2.5px solid var(--o);outline-offset:1px}.pgt:hover{background:#eaeaef}
 #exp-fmt{flex-wrap:nowrap;margin-bottom:2px}#exp-fmt .btn{padding:9px 4px;font-weight:700}#exp-dlg .row[hidden]{display:none}
 #ask-dlg .dlg{width:min(320px,100%);gap:14px;padding:20px}#ask-msg{margin:0;font-size:13.5px;line-height:1.55;font-weight:600}#ask-dlg .seg .btn{padding:9px 4px}
 .dlg{background:#fff;border-radius:18px;box-shadow:0 24px 70px rgba(10,10,20,.22);padding:16px 20px 20px;width:min(360px,100%);display:flex;flex-direction:column;gap:10px}
@@ -484,13 +494,13 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
   <section class="sec" id="sec-map">
     <div class="sec-h">전개도 <span id="map-note"></span></div>
     <div class="body">
-      <div id="edit-head-btns"><button type="button" class="btn ic tip-late" id="edit-join" aria-pressed="false" aria-label="선 잇기" data-tip="선 잇기: 끊긴 선을 직접 잇습니다. 켜면 끊긴 선 끝이 주황 점으로 보입니다. 점을 누르고, 이을 곳(다른 점이나 선 위)을 누르면 그 사이에 선이 생깁니다."><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="5.5" r="2.5"/><path d="M7.5 16.5l9-9"/></svg></button><button type="button" class="btn ic" id="edit-undo" aria-label="되돌리기" title="되돌리기 (Ctrl+Z)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><button type="button" class="btn ic tip-late" id="edit-reset" aria-label="선 처음으로" data-tip="선 처음으로: 고치고 지우고 이은 선을 모두 처음 상태로 되돌립니다. 얹은 이미지는 그대로 둡니다."><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 8v4l2.5 2.5"/></svg></button></div>
-      <div id="map-wrap"><div id="edit-wrap"><svg id="edit-map" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="전개도: 선과 면, 얹은 이미지를 눌러서 고릅니다"></svg><div id="edit-box" hidden></div></div></div>
+      <div id="edit-head-btns"><button type="button" class="btn ic" id="map-side" aria-pressed="false" aria-label="안쪽면 보기" title="안쪽면 보기" hidden><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="3.5" width="12" height="12" rx="2"/><path d="M5.5 8.5H5a1.5 1.5 0 0 0-1.5 1.5v9A1.5 1.5 0 0 0 5 20.5h9a1.5 1.5 0 0 0 1.5-1.5v-.5"/></svg></button><button type="button" class="btn ic" id="map-mirror" aria-pressed="false" aria-label="좌우 반전" title="좌우 반전: 지금 보이는 면의 인쇄를 좌우로 뒤집습니다"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><path d="M8.5 7 3.5 12l5 5z"/><path d="M15.5 7l5 5-5 5z"/></svg></button><button type="button" class="btn ic tip-late" id="edit-join" aria-pressed="false" aria-label="선 잇기" data-tip="선 잇기: 끊긴 선을 직접 잇습니다. 켜면 끊긴 선 끝이 주황 점으로 보입니다. 점을 누르고, 이을 곳(다른 점이나 선 위)을 누르면 그 사이에 선이 생깁니다."><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="5.5" r="2.5"/><path d="M7.5 16.5l9-9"/></svg></button><button type="button" class="btn ic" id="edit-undo" aria-label="되돌리기" title="되돌리기 (Ctrl+Z)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><button type="button" class="btn ic tip-late" id="edit-reset" aria-label="선 처음으로" data-tip="선 처음으로: 고치고 지우고 이은 선을 모두 처음 상태로 되돌립니다. 얹은 이미지는 그대로 둡니다."><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 8v4l2.5 2.5"/></svg></button></div>
+      <div id="map-wrap"><div id="edit-wrap"><span id="map-tag" hidden></span><svg id="edit-map" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="전개도: 선과 면, 얹은 이미지를 눌러서 고릅니다"></svg><div id="edit-box" hidden></div></div></div>
       <div class="legend" id="map-legend"><span><i style="background:var(--cut)"></i>칼선</span><span><i style="background:var(--fold)"></i>안으로 접기</span><span><i style="background:var(--fold-out)"></i>밖으로 접기</span></div>
       <p class="hint" id="edit-note" hidden></p>
       <p class="hint" id="edit-hint" hidden></p>
       <div id="side-box" hidden>
-        <div class="seg"><button type="button" class="btn tip-late" id="side-flip" data-tip="">양면 뒤집기</button><button type="button" class="btn" id="side-mirror" aria-pressed="false">안쪽 좌우 반전</button></div>
+        <div class="seg"><button type="button" class="btn tip-late" id="side-flip" data-tip="">양면 뒤집기</button></div>
       </div>
     </div>
   </section>
@@ -727,6 +737,15 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
   <div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="ask-msg">
     <p id="ask-msg"></p>
     <div class="seg"><button type="button" class="btn" id="ask-no">취소</button><button type="button" class="btn" id="ask-yes" aria-pressed="true"></button></div>
+  </div>
+</div>
+
+<div id="pg-dlg" class="modal" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="pg-title">
+    <div class="pop-head"><strong id="pg-title"></strong><button type="button" class="x" id="pg-cancel" aria-label="닫기">×</button></div>
+    <div id="pg-grid" role="group" aria-label="대지"></div>
+    <div id="pg-note"><b>양면 인쇄</b><span>1개의 아트보드에 양면 모두 있으면 <em>1개만 선택</em></span></div>
+    <div id="pg-foot"><label id="pg-sw"><input type="checkbox" id="pg-auto" role="switch">양면 인쇄</label><button type="button" class="btn" id="pg-swap" hidden>바깥 ↔ 안쪽</button><button type="button" class="btn primary" id="pg-go">불러오기</button></div>
   </div>
 </div>
 
@@ -1692,9 +1711,10 @@ const boxDefaults = () => ({   // 상자 하나의 상태 (상자마다 한 벌)
   example: true, doc: null, fileName: '', pages: [], layers: [], colorRoles: new Map(), colorUser: new Map(),
   layerOpen: null,   // 옵션을 펼쳐 둔 레이어
   edge: { mode: 'paper', color: '#b98d5f' },   // 종이 단면(두께 면): 종이 색 / 색 지정 / 골판지 무늬
-  twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null,   // 양면 인쇄: 짝이 되는 안쪽면, 바깥·안쪽 뒤집기
+  twin: null, flip: false, inMirror: false, outMirror: false, insideCanvas: null, uvIn: null,   // 양면 인쇄: 짝이 되는 안쪽면, 바깥·안쪽 뒤집기. inMirror · outMirror = 안쪽면 · 바깥면 인쇄를 좌우로 뒤집어 입히기
   inside: { mode: 'paper', c1: '#f47bb0', c2: '#ffe14d', angle: 0, auto: true },   // 안쪽 면 표시 방식
   sheets: [],   // 후가공을 대지(쪽)로 나눠 둔 파일의 나머지 쪽 [{page, name, role, color, opacity, blend, emboss}]
+  mainPage: 0, noTwin: false, onlyPage: false,   // 대지를 골라 불러온 경우: 본체로 쓸 쪽 번호(0 = 알아서) / 양면으로 읽지 않기 / 다른 쪽은 아예 쓰지 않기
   lineMode: 'color', lineModeUser: null, edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false, finPos: null, rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', guessedFold: '',   // 선 구분 방식, 직접 고친 선 [{x, y, role}]
   dielinePage: 1, struct: null, auto: new Map(), over: new Map(), dir: new Map(), t: 1, sel: null,
   uv: null, printCanvas: null, finishes: [], texBox: '', paperCustom: null,
@@ -3367,7 +3387,7 @@ function histSnap() {
     box: boxCur.id,
     pose: [pose.base.x, pose.base.y, pose.base.z, pose.base.w, pose.rx, pose.ry, pose.rz].map((v) => +v.toFixed(5)), pos: [+S.pos.x.toFixed(4), +S.pos.z.toFixed(4), +(S.pos.y || 0).toFixed(4)], seq: [S.seq.on, S.seq.steps],
     over: [...S.over], dir: [...S.dir], bulge: [...S.bulge].map(([k, v]) => [k, { ...v }]),
-    edits: S.edits.map((o) => ({ ...o })), adds: S.adds.map((o) => ({ ...o })), moves: S.moves.map((o) => ({ ...o })), flip: !!S.flip, inMirror: !!S.inMirror,
+    edits: S.edits.map((o) => ({ ...o })), adds: S.adds.map((o) => ({ ...o })), moves: S.moves.map((o) => ({ ...o })), flip: !!S.flip, inMirror: !!S.inMirror, outMirror: !!S.outMirror,
     inside: { ...S.inside }, edge: { ...S.edge }, lights: JSON.parse(JSON.stringify(S.lights)), reflectors: JSON.parse(JSON.stringify(S.reflectors)), pivot: S.pivot ? [S.pivot.x, S.pivot.y, S.pivot.z] : null,
     imgs: S.imgs.map((o) => ({ o, ...imgVals(o) })), printOff: !!S.printOff, finPos: finAt(), off: !!S.off,
     labels: S.labels.map((L) => ({ L, id: L.uid || (L.uid = ++labelSeq), x: +L.x.toFixed(2), y: +L.y.toFixed(2), anchor: L.anchor, rot: L.rot, scale: +L.scale.toFixed(4), lift: !!L.lift, off: !!L.off })), li: S.li,
@@ -3408,9 +3428,9 @@ async function histApply(h, hs) {   // h: 상자 한 벌의 상태, hs: 장면(�
     for (const id in want) { const n = $(id); if (!n || cur[id] === want[id]) continue; if (n.type === 'checkbox') n.checked = want[id]; else n.value = want[id]; n.dispatchEvent(new Event('input', { bubbles: true })); n.dispatchEvent(new Event('change', { bubbles: true })); }
     await new Promise((r) => setTimeout(r, 0)); await idle();
     // ② 전개도 구조가 달라지는 것(선 종류·이동, 양면 뒤집기): 먼저 다시 계산한다
-    const tex = !!S.flip !== h.flip || !!S.inMirror !== h.inMirror;
+    const tex = !!S.flip !== h.flip || !!S.inMirror !== h.inMirror || !!S.outMirror !== !!h.outMirror;
     if (tex || JSON.stringify([S.edits, S.moves, S.adds]) !== JSON.stringify([h.edits, h.moves, h.adds || []])) {
-      S.edits = h.edits.map((o) => ({ ...o })); S.adds = (h.adds || []).map((o) => ({ ...o })); S.moves = h.moves.map((o) => ({ ...o })); S.flip = h.flip; S.inMirror = h.inMirror; S.sel = null;
+      S.edits = h.edits.map((o) => ({ ...o })); S.adds = (h.adds || []).map((o) => ({ ...o })); S.moves = h.moves.map((o) => ({ ...o })); S.flip = h.flip; S.inMirror = h.inMirror; S.outMirror = !!h.outMirror; S.sel = null;
       await rebuild(tex, false, true); await idle();
     }
     // ③ 나머지 상태
@@ -3771,6 +3791,7 @@ function setSelAngle(mag, dir) {
   syncSel(); updateFold(); updateChips(); for (const L of S.labels) refreshWrap(L);
 }
 /* ---------- 선 고치기: 칼선 레이어의 모든 선을 크게 보여 주고, 골라서 종류를 바꾼다 ---------- */
+let mapSide = 'out';   // 전개도에 띄운 면: 'out' 바깥면, 'in' 안쪽면 (양면 인쇄일 때만 고를 수 있다). 안쪽면은 종이를 뒤집어 본 모습이라 선이 좌우로 뒤집혀 보인다
 let editStruct = null, editKeys = new Set(), editViewKey = '', editFocus = false, overEdit = false;   // 지금 그려 둔 전개도 · 고른 줄의 열쇠(다시 읽은 뒤에도 같은 줄을 찾는다) · 화면 맞춤 기준 · 마지막으로 만진 곳이 전개도·레이어인지 · 마우스가 전개도 위인지
 let editChains = [], editSel = new Set(), editView = null, editSpace = false, editMsg = '', editJoin = false, joinFrom = null, editEnds = [];   // editJoin = 선 잇기 켜짐, joinFrom = 먼저 누른 점, editEnds = 끊긴 선 끝들
 function lineChains(st) { // 갈림길에서 갈림길까지를 한 줄로 묶는다 (곡선도 한 번에 고르도록)
@@ -3796,19 +3817,42 @@ const movedCount = () => S.moves.filter((o) => Math.abs(o.dx) > 1e-6 || Math.abs
 let moveSeq = 0;
 const mmTxt = (dx, dy) => [[dx, '→', '←'], [dy, '↑', '↓']].filter(([v]) => Math.abs(v) > 1e-6).map(([v, p, n]) => (v > 0 ? p : n) + (Math.abs(v) * PT2MM).toFixed(1) + 'mm').join(' ');
 const editSnap = () => { histSoon(); fixOrder.push('e'); if (fixOrder.length > 150) fixOrder.shift(); S.editUndo.push({ e: S.edits.slice(), a: S.adds.slice(), m: S.moves.map((o) => ({ ...o })) }); if (S.editUndo.length > 60) S.editUndo.shift(); };
+const mapMid = () => (S.struct && S.struct.bbox ? S.struct.bbox.minX + S.struct.bbox.maxX : 0);   // 안쪽면을 볼 때 좌우를 뒤집는 기준 (x → mapMid − x)
+function uvPlace(fn) { // 그림의 (0~1) 자리 → 전개도 좌표로 놓는 변환 (fn: 전개도 좌표 → 그림 자리)
+  const p0 = fn(0, 0), px = fn(1, 0), py = fn(0, 1), ux = px[0] - p0[0], uy = py[0] - p0[0], vx = px[1] - p0[1], vy = py[1] - p0[1], det = ux * vy - uy * vx || 1;
+  const Xu = vy / det, Xv = -uy / det, X0 = (-vy * p0[0] + uy * p0[1]) / det, Yu = -vx / det, Yv = ux / det, Y0 = (vx * p0[0] - ux * p0[1]) / det;
+  return [Xu, Yu, -Xv, -Yv, X0 + Xv, Y0 + Yv];
+}
+function insidePreviewUrl() { // 미리 보기용으로 줄인 안쪽 인쇄
+  if (!S._pvIn || S._pvIn.src !== S.insideCanvas) { const c = S.insideCanvas, k = Math.min(1, 1600 / Math.max(c.width, c.height)), t = document.createElement('canvas'); t.width = Math.round(c.width * k); t.height = Math.round(c.height * k); const x = t.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, t.width, t.height); x.drawImage(c, 0, 0, t.width, t.height); S._pvIn = { src: c, url: t.toDataURL('image/jpeg', 0.84) }; }
+  return S._pvIn.url;
+}
+function twinBox() { // 한 대지에 나란히 그려 둔 짝 전개도(안쪽면)가 놓인 자리. 전개도에는 본체 하나만 보여 주고 이 자리의 선은 그리지 않는다 (모양이 같으므로)
+  const t = S.twin, b = S.struct && S.struct.bbox; if (!t || t.kind !== 'comp' || !b) return null;
+  const p = applyT(t.T, b.minX, b.minY), q = applyT(t.T, b.maxX, b.maxY), m = Math.max(b.maxX - b.minX, b.maxY - b.minY) * 0.03;
+  return [Math.min(p[0], q[0]) - m, Math.min(p[1], q[1]) - m, Math.max(p[0], q[0]) + m, Math.max(p[1], q[1]) + m];
+}
+let editFitKey = '';   // 화면 맞춤을 잡았을 때의 본체 자리: 양면 뒤집기처럼 본체가 다른 전개도로 바뀌면 다시 맞춘다
 function editFit() {
-  const E = S.struct.allEdges; let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
-  for (const e of E) for (const q of [e.a, e.b]) { if (q[0] < x0) x0 = q[0]; if (q[0] > x1) x1 = q[0]; if (q[1] < y0) y0 = q[1]; if (q[1] > y1) y1 = q[1]; }
+  const all = S.struct.allEdges, own = S.twin ? all.filter((e) => e.main) : all, E = own.length ? own : all; let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;   // 양면 인쇄면 본체 전개도에만 맞춘다 (짝이 되는 전개도는 화면 밖에 둔다)
+  if (mapSide === 'in') { const m = mapMid(); for (const e of E) for (const q of [e.a, e.b]) { const x = m - q[0]; if (x < x0) x0 = x; if (x > x1) x1 = x; if (q[1] < y0) y0 = q[1]; if (q[1] > y1) y1 = q[1]; } }
+  else for (const e of E) for (const q of [e.a, e.b]) { if (q[0] < x0) x0 = q[0]; if (q[0] > x1) x1 = q[0]; if (q[1] < y0) y0 = q[1]; if (q[1] > y1) y1 = q[1]; }
   const pad = Math.max(x1 - x0, y1 - y0) * 0.04 + 4; editView = { x: x0 - pad, y: -y1 - pad, w: x1 - x0 + pad * 2, h: y1 - y0 + pad * 2 };
 }
 function renderEdit(keepKeys) {
   const svg = $('edit-map'), st = S.struct; svg.replaceChildren();
   { const vk = boxCur.id + '|' + (S.fileName || '') + '|' + (S.example ? 1 : 0);   // 다른 상자나 다른 파일로 바뀌었으면 고른 것과 확대 상태를 처음으로
-    if (vk !== editViewKey) { editViewKey = vk; editView = null; editSel = new Set(); editKeys = new Set(); imgSel = -1; editMsg = ''; if (editJoin) setJoin(false, true); keepKeys = keepKeys || new Set(); } }
+    if (vk !== editViewKey) { editViewKey = vk; mapSide = 'out'; editView = null; editFitKey = ''; editSel = new Set(); editKeys = new Set(); imgSel = -1; editMsg = ''; if (editJoin) setJoin(false, true); keepKeys = keepKeys || new Set(); } }
   if (imgSel >= S.imgs.length) imgSel = -1;
+  if (!S.twin && mapSide !== 'out') { mapSide = 'out'; editView = null; }   // 양면이 아니면 바깥면만 있다
+  const inner = mapSide === 'in';
+  { const sb = $('map-side'), mb = $('map-mirror'), tg = $('map-tag'); sb.hidden = !S.twin; sb.setAttribute('aria-pressed', String(inner)); sb.title = inner ? '바깥면 보기' : '안쪽면 보기'; sb.setAttribute('aria-label', sb.title);
+    mb.disabled = !!S.example || !st; mb.setAttribute('aria-pressed', String(!!(inner ? S.inMirror : S.outMirror))); tg.hidden = !S.twin; tg.textContent = inner ? '안쪽면' : '바깥면'; $('edit-join').disabled = inner; }
   renderImgList();
   if (!st || !st.allEdges) { $('map-note').textContent = ''; $('edit-note').hidden = $('edit-hint').hidden = true; showSel(); return; }
-  const E = st.allEdges; editChains = lineChains(st).filter((c) => c.kind !== 'ignored');   // 지운 선은 보이지도 골라지지도 않는다
+  const E = st.allEdges, tb = twinBox(), inTwin = (e) => { const mx = (e.a[0] + e.b[0]) / 2, my = (e.a[1] + e.b[1]) / 2; return !e.main && mx >= tb[0] && mx <= tb[2] && my >= tb[1] && my <= tb[3]; };
+  editChains = lineChains(st).filter((c) => c.kind !== 'ignored' && !(tb && c.ids.every((i) => inTwin(E[i]))));   // 지운 선은 보이지도 골라지지도 않는다. 양면이면 짝 전개도의 선도 그리지 않는다
+  { const b = st.bbox, k = b ? [S.twin ? 1 : 0, Math.round((b.minX + b.maxX) / 2 / Math.max(1, (b.maxX - b.minX) * 0.2)), Math.round((b.minY + b.maxY) / 2 / Math.max(1, (b.maxY - b.minY) * 0.2))].join('/') : ''; if (k !== editFitKey) { if (editFitKey) editView = null; editFitKey = k; } }
   if (!keepKeys && editStruct !== st) keepKeys = editKeys;   // 전개도를 다시 읽었으면 줄 번호가 달라졌으니 열쇠로 다시 찾는다
   editStruct = st;
   if (keepKeys) { editSel = new Set(); editChains.forEach((c, ci) => { if (c.ids.some((i) => keepKeys.has(edgeKey(E[i])) || keepKeys.has(edgeKeyCur(E[i])))) editSel.add(ci); }); }
@@ -3817,12 +3861,13 @@ function renderEdit(keepKeys) {
   const NS = 'http://www.w3.org/2000/svg';
   const mk = (tag, attrs) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); return n; };
   const defs = mk('defs', {}); svg.append(defs);
-  const g = mk('g', { transform: 'scale(1,-1)' }); svg.append(g);
+  const g = mk('g', { transform: inner ? `matrix(-1 0 0 -1 ${mapMid()} 0)` : 'scale(1,-1)' }); svg.append(g);   // 안쪽면: 종이를 뒤집어 본 모습 (좌우가 뒤집힌다)
   const ring = (q) => 'M' + q.map((v) => v[0].toFixed(2) + ' ' + v[1].toFixed(2)).join('L') + 'Z';
   for (const f of st.faces) g.append(mk('path', { d: ring(f.outer) + f.holes.map(ring).join(''), class: 'eface', 'fill-rule': 'evenodd', 'data-face': f.id }));
   // 인쇄: 원본 인쇄 위에 얹은 그림들. 그림 요소는 다시 그릴 때도 그대로 써서 깜빡이지 않게 한다
-  if (S.printCanvas && S.uv && !S.printOff) { const url = printPreviewUrl(); let im = S._pvEl; if (!im || im._u !== url) { im = mk('image', { width: 1, height: 1, preserveAspectRatio: 'none' }); im.setAttribute('href', url); im.style.pointerEvents = 'none'; im._u = url; S._pvEl = im; } im.setAttribute('transform', `matrix(${uvInverse().join(' ')})`); g.append(im); }
-  S.imgs.forEach((o, i) => { if (!o.vis) return; if (FINISH[o.use]) defs.append(finFilter(o, i)); let im = o._el; if (!im) { im = mk('image', { class: 'uimg', preserveAspectRatio: 'none' }); im.setAttribute('href', o.url); o._el = im; } im.dataset.i = i; im.id = 'uimg' + i; placeImg(im, o, i); g.append(im); });
+  if (inner) { if (S.insideCanvas && S.uvIn) { const im = mk('image', { width: 1, height: 1, preserveAspectRatio: 'none' }); im.setAttribute('href', insidePreviewUrl()); im.style.pointerEvents = 'none'; im.setAttribute('transform', `matrix(${uvPlace(S.uvIn).join(' ')})`); g.append(im); } }   // 안쪽면에는 안쪽 인쇄만 보여 준다 (얹은 이미지는 바깥면의 것)
+  else if (S.printCanvas && S.uv && !S.printOff) { const url = printPreviewUrl(); let im = S._pvEl; if (!im || im._u !== url) { im = mk('image', { width: 1, height: 1, preserveAspectRatio: 'none' }); im.setAttribute('href', url); im.style.pointerEvents = 'none'; im._u = url; S._pvEl = im; } im.setAttribute('transform', `matrix(${uvInverse().join(' ')})`); g.append(im); }
+  if (!inner) S.imgs.forEach((o, i) => { if (!o.vis) return; if (FINISH[o.use]) defs.append(finFilter(o, i)); let im = o._el; if (!im) { im = mk('image', { class: 'uimg', preserveAspectRatio: 'none' }); im.setAttribute('href', o.url); o._el = im; } im.dataset.i = i; im.id = 'uimg' + i; placeImg(im, o, i); g.append(im); });
   if (S.sel && S.sel.type === 'face') { const f = st.faces.find((x) => x.id === S.sel.id); if (f) g.append(mk('path', { d: ring(f.outer) + f.holes.map(ring).join(''), class: 'fsel', 'fill-rule': 'evenodd' })); }   // 고른 면: 인쇄 위에 옅게 덮어 보여 준다
   const dOf = (c) => c.ids.map((i) => `M${E[i].a[0].toFixed(2)} ${E[i].a[1].toFixed(2)}L${E[i].b[0].toFixed(2)} ${E[i].b[1].toFixed(2)}`).join('');
   const top = [];
@@ -3837,7 +3882,7 @@ function renderEdit(keepKeys) {
   for (const n of top) g.append(n);
   { // 끊긴 선 끝: 다른 선과 만나지 않고 혼자 끝나는 점
     const deg = new Map(), kk = (q) => q[0].toFixed(2) + ',' + q[1].toFixed(2);
-    for (const e of E) { if (e.state === 'ignored') continue; for (const q of [e.a, e.b]) { const k = kk(q), o = deg.get(k); if (o) o.n++; else deg.set(k, { n: 1, q }); } }
+    for (const e of E) { if (e.state === 'ignored' || (tb && inTwin(e))) continue; for (const q of [e.a, e.b]) { const k = kk(q), o = deg.get(k); if (o) o.n++; else deg.set(k, { n: 1, q }); } }
     editEnds = [...deg.values()].filter((o) => o.n === 1).map((o) => o.q);
     if (editJoin) {
       const dot = (q, cls, id) => { const n = mk('path', { d: q ? `M${q[0].toFixed(2)} ${q[1].toFixed(2)}h0.01` : '', class: cls }); if (id) n.id = id; return n; };
@@ -3986,7 +4031,7 @@ function imgFinishes() {
     return o._fin;
   });
 }
-async function addImgFiles(files) {
+async function addImgFiles(files) { if (mapSide === 'in') { mapSide = 'out'; editView = null; }   // 이미지는 바깥면에 얹는다
   editFocus = true;   // 넣은 이미지가 골라진 채로 뜨니, 방향키·Delete도 바로 그 이미지가 받는다
   if (!S.struct || !S.struct.faces.length || !S.uv) return; let n = 0;
   for (const file of files) {
@@ -4167,39 +4212,102 @@ async function readLayers(doc) {
   for (const id of Object.keys(groups)) if (!flat.includes(id)) flat.push(id);
   return flat.filter((id) => groups[id]).map((id) => { const role = guessLayerRole(groups[id].name || ''); return { id, name: groups[id].name || id, role, color: (FINISH[role] && FINISH[role].color) || '#eebe60', opacity: 100, blend: 'normal', emboss: 'none' }; });
 }
-async function loadFile(file, added) {   // added: 상자를 하나 더 만드는 중 (되돌리기 기록을 비우지 않는다)
+function pageHasTwin(pg, layers) { // 어림으로: 이 대지에 같은 모양의 전개도가 둘 있는지 (있으면 '양면 인쇄'를 켜 둔 채로 보여 준다)
+  try {
+    const ids = layers.filter((l) => l.role === 'dieline').map((l) => l.id), vivid = (x) => { const mx = Math.max(...x.rgb), mn = Math.min(...x.rgb); return mx > 0 && (mx - mn) / mx > 0.7; };
+    let strokes = ids.length ? pg.strokes.filter((x) => ids.includes(x.layer)) : layers.length ? pg.strokes : pg.strokes.filter(vivid); if (strokes.length < 4) strokes = pg.strokes;
+    const lines = strokes.flatMap((x) => x.polylines.map((q) => ({ pts: q, role: 'cut' }))); if (lines.length < 8 || lines.length > 20000) return false;
+    const st = buildStructure(lines, { gapTol: 1 / PT2MM, auto: true }); return !!(st.bbox && compTwin(st, pg.num));
+  } catch (e) { return false; }
+}
+function pagePicker(doc, pages, layers, name) { // 대지가 여러 개인 파일: 불러올 대지를 고르게 한다. 양면 인쇄를 끄면 대지 하나(단면), 켜면 하나(그 대지 안의 두 전개도가 바깥 · 안쪽) 또는 둘(먼저 고른 것이 바깥면). 닫으면 null
+  return new Promise((done) => {
+    const dlg = $('pg-dlg'), grid = $('pg-grid'), sw = $('pg-auto'), tasks = [], printIds = layers.filter((l) => l.role === 'print').map((l) => l.id), twinOf = new Map();
+    const amount = (pg) => (printIds.length ? printIds.reduce((a, id) => a + Math.max(0, (pg.layerOps[id] || 0) - 2), 0) : pg.ops);
+    let sel = [pages.reduce((a, pg) => (amount(pg) > amount(a) ? pg : a), pages[0]).num], alive = true, touched = false;   // 처음에는 인쇄 내용이 가장 많은 대지 (지금까지 알아서 고르던 것)
+    const guess = () => { // 스위치를 직접 건드리기 전까지: 고른 대지에 전개도가 둘이면 양면 인쇄를 켜 둔다
+      if (touched || sel.length !== 1) return; const n = sel[0]; if (!twinOf.has(n)) twinOf.set(n, pageHasTwin(pages[n - 1], layers)); sw.checked = twinOf.get(n);
+    };
+    const sync = () => {
+      guess();
+      for (const t of grid.children) { const n = +t.dataset.n, i = sel.indexOf(n); t.classList.toggle('on', i >= 0); t.setAttribute('aria-pressed', String(i >= 0)); t.querySelector('.r').textContent = sel.length === 2 && i >= 0 ? (i ? '안쪽면' : '바깥면') : ''; }
+      $('pg-swap').hidden = sel.length !== 2; $('pg-go').disabled = !sel.length;
+    };
+    const close = (v) => { if (!alive) return; alive = false; for (const t of tasks) { try { t.cancel(); } catch (e) { /* 이미 끝남 */ } } dlg.hidden = true; window.removeEventListener('keydown', key, true); grid.replaceChildren(); done(v); };
+    const go = () => { if (sel.length) close({ main: sel[0], inner: (sw.checked && sel[1]) || 0, auto: sw.checked }); };
+    const key = (e) => { // 창이 떠 있는 동안: Enter = 불러오기, Esc = 닫기. 다른 단축키는 아래로 내려가지 않는다
+      if (e.key === 'Tab' || e.ctrlKey || e.metaKey) return; e.stopImmediatePropagation();
+      if (e.key === 'Escape') { e.preventDefault(); close(null); } else if (e.key === 'Enter') { e.preventDefault(); go(); }
+    };
+    grid.replaceChildren(...pages.map((pg) => {
+      const t = el('button', { type: 'button', class: 'pgt', 'data-n': pg.num, 'aria-label': `${pg.num}번 대지` }), cv = document.createElement('canvas'); t.append(cv, el('span', { class: 'n', text: String(pg.num) }), el('span', { class: 'r' }));
+      t.addEventListener('click', () => { // 단면: 누른 대지 하나로 바뀐다. 양면: 둘까지 고른다 (고른 것을 다시 누르면 풀리고, 셋째를 누르면 안쪽면이 그것으로 바뀐다)
+        const i = sel.indexOf(pg.num);
+        if (!sw.checked) sel = [pg.num]; else if (i >= 0) { if (sel.length > 1) sel.splice(i, 1); } else if (sel.length >= 2) sel[1] = pg.num; else sel.push(pg.num);
+        sync();
+      });
+      t.addEventListener('dblclick', () => { sel = [pg.num]; sync(); go(); });
+      (async () => { // 작은 미리보기: 대지마다 차례로 그린다
+        try { const page = await doc.getPage(pg.num); if (!alive) return; const v0 = page.getViewport({ scale: 1 }), vp = page.getViewport({ scale: 360 / Math.max(v0.width, v0.height) }); cv.width = Math.round(vp.width); cv.height = Math.round(vp.height);
+          const g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); const task = page.render({ canvasContext: g, viewport: vp }); tasks.push(task); await task.promise; } catch (e) { /* 미리보기를 못 그려도 고를 수는 있다 */ }
+      })();
+      return t;
+    }));
+    $('pg-title').textContent = name || '대지 고르기'; sw.checked = false;
+    sw.onchange = () => { touched = true; if (!sw.checked && sel.length > 1) sel = [sel[0]]; sync(); };   // 단면으로 바꾸면 먼저 고른 대지 하나만 남긴다
+    $('pg-go').onclick = go; $('pg-cancel').onclick = () => close(null); $('pg-swap').onclick = () => { sel.reverse(); sync(); };
+    dlg.onpointerdown = (e) => { if (e.target === dlg) close(null); };
+    window.addEventListener('keydown', key, true); sync(); dlg.hidden = false; $('pg-go').focus();
+  });
+}
+async function loadFile(file, added, opt) {   // added: 상자를 하나 더 만드는 중 (되돌리기 기록을 비우지 않는다). opt: { pre: 이미 읽어 둔 것(doc, pages, layers), pick: 고른 대지 }
   const token = ++S.token;
   setWarn(''); await busy('파일 읽는 중…');
   try {
     if (!pdfjsLib) throw new Error('PDF 엔진을 불러오지 못했습니다. 새로 고침해 주세요.');
-    const data = new Uint8Array(await file.arrayBuffer());
-    const head = new TextDecoder('latin1').decode(data.subarray(0, 1024));
-    if (!head.includes('%PDF')) throw new Error('PDF 호환으로 저장된 AI 또는 PDF만 읽을 수 있습니다. 일러스트레이터에서 저장할 때 "PDF 호환 파일 만들기"를 켜 주세요.');
-    const doc = await pdfjsLib.getDocument({ data }).promise;
-    if (token !== S.token) return;
- let layers = await readLayers(doc);
-    const pages = []; 
-    const count = Math.min(doc.numPages, 8);
-    for (let p = 1; p <= count; p++) {
-      await busy(`칼선 읽는 중… (${p}/${count})`);
-      const page = await doc.getPage(p);
-      const ol = await page.getOperatorList();
+    let doc, pages, layers, pick = (opt && opt.pick) || null, back = null;
+    if (opt && opt.pre) { doc = opt.pre.doc; pages = opt.pre.pages; layers = opt.pre.layers.map((l) => ({ ...l })); }   // 같은 파일의 다른 대지: 읽어 둔 것을 함께 쓴다
+    else {
+      const data = new Uint8Array(await file.arrayBuffer());
+      const head = new TextDecoder('latin1').decode(data.subarray(0, 1024));
+      if (!head.includes('%PDF')) throw new Error('PDF 호환으로 저장된 AI 또는 PDF만 읽을 수 있습니다. 일러스트레이터에서 저장할 때 "PDF 호환 파일 만들기"를 켜 주세요.');
+      doc = await pdfjsLib.getDocument({ data }).promise;
       if (token !== S.token) return;
-      const { strokes, layerOps, fills } = extractStrokes(ol.fnArray, ol.argsArray, pdfjsLib.OPS);
-      pages.push({ num: p, strokes, layerOps, fills, ops: ol.fnArray.length });
+      layers = await readLayers(doc); pages = [];
+      const count = Math.min(doc.numPages, 8);
+      for (let p = 1; p <= count; p++) {
+        await busy(`칼선 읽는 중… (${p}/${count})`);
+        const page = await doc.getPage(p);
+        const ol = await page.getOperatorList();
+        if (token !== S.token) return;
+        const { strokes, layerOps, fills } = extractStrokes(ol.fnArray, ol.argsArray, pdfjsLib.OPS);
+        pages.push({ num: p, strokes, layerOps, fills, ops: ol.fnArray.length });
+      }
+      layers = dedupeLayers(layers, pages);
     }
-    layers = dedupeLayers(layers, pages);
+    if (!pick && pages.length > 1) { // 대지가 여럿: 무엇을 불러올지 묻는다
+      await busy(''); pick = await pagePicker(doc, pages, layers, file.name);
+      if (token !== S.token) return;
+      if (!pick) { docDrop(doc); return null; }   // 고르지 않고 닫았다: 아무것도 바꾸지 않는다
+      await busy('전개도 분석 중…');
+    }
+    if (opt && opt.pre) docKeep(doc);
     docDrop(S.doc);
     S.seq.steps = null; seqUI.active = -1;
-    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false, finPos: null, rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', sheets: [], twin: null, flip: false, inMirror: false, insideCanvas: null, uvIn: null });
+    Object.assign(S, { example: false, doc, fileName: file.name, pages, layers, colorUser: new Map(), over: new Map(), dir: new Map(), bulge: new Map(), sel: null, uv: null, texBox: '', lineModeUser: null, edits: [], adds: [], moves: [], editUndo: [], imgs: [], imgUndo: [], printOff: false, finPos: null, rootAt: null, rootTried: false, noLayerAll: false, pickedLayer: '', sheets: [], twin: null, flip: false, inMirror: false, outMirror: false, insideCanvas: null, uvIn: null, mainPage: pick ? pick.main : 0, noTwin: !!pick && !pick.auto, onlyPage: !!(pick && pick.only) });
     S.inside.auto = true;
     const picked = autoPickDieline(layers, pages); if (picked) S.pickedLayer = picked.name;
-    S.sheets = extraSheets(layers, pages);
+    S.sheets = S.onlyPage ? [] : extraSheets(layers, pages);
+    if (pick && pick.inner) { // 안쪽면으로 고른 대지: 후가공 후보가 아니라 안쪽 인쇄로 쓴다
+      let sh = S.sheets.find((x) => x.page === pick.inner); if (!sh) S.sheets.push((sh = { page: pick.inner, name: `${pick.inner}쪽 대지`, from: '', role: 'off', color: '#eebe60', opacity: 100, blend: 'normal', emboss: 'none' }));
+      sh.role = 'inside';
+    }
     pose.base.identity(); pose.rx = pose.ry = pose.rz = 0; S.pos = { x: 0, z: 0 }; boxSel = false; updateBoxGizmo(); syncPoseUI(); S.poseFresh = true;
     $('file-name').textContent = file.name;
     $('file-sub').textContent = `${doc.numPages}쪽 · 다른 파일은 다시 눌러서`;
     await rebuild(true, true);
     if (!added) histReset();   // 새 파일: 되돌리기 기록을 여기서부터 다시 쌓는다
+    return back;
   } catch (err) {
     console.error(err);
     setWarn(err && err.message ? err.message : '파일을 읽지 못했습니다.');
@@ -4223,6 +4331,7 @@ function extraSheets(layers, pages) { // 인쇄·은박·실크를 대지(쪽)�
   if (!printIds.length || pages.length < 2) return [];
   const amount = (pg) => printIds.reduce((a, id) => a + Math.max(0, (pg.layerOps[id] || 0) - 2), 0);
   let main = pages[0]; for (const pg of pages) if (amount(pg) > amount(main)) main = pg;
+  if (S.mainPage && pages[S.mainPage - 1]) main = pages[S.mainPage - 1];   // 대지를 골라 불러왔으면 그 대지가 본체
   const cand = pages.filter((pg) => pg !== main && amount(pg) > 0);
   // 이름은 후가공인데 어느 쪽에도 내용이 없는 레이어가 있으면, 그 후가공이 다른 대지에 그려져 있다고 본다
   const empty = layers.filter((l) => FINISH[l.role] && !pages.some((pg) => (pg.layerOps[l.id] || 0) - 2 > 0));
@@ -4274,16 +4383,15 @@ function dielineStrokes(pg) {
   }
   return pg._auto;
 }
-function pickPage(role) { // 해당 역할의 내용이 가장 많은 쪽
+function pickPage(role) { // 해당 역할의 내용이 가장 많은 쪽. 대지를 골라 불러왔으면 그 대지부터 본다
   const ids = S.layers.filter((l) => l.role === role).map((l) => l.id);
+  const amt = (pg) => (S.layers.length ? ids.reduce((a, id) => a + Math.max(0, (pg.layerOps[id] || 0) - 2), 0) : (role === 'print' ? pg.ops : 0));
+  const mp = S.mainPage ? S.pages[S.mainPage - 1] : null; if (mp && (amt(mp) > 0 || S.onlyPage)) return amt(mp) > 0 ? mp : null;
   let best = null;
-  for (const pg of S.pages) {
-    const n = S.layers.length ? ids.reduce((a, id) => a + Math.max(0, (pg.layerOps[id] || 0) - 2), 0) : (role === 'print' ? pg.ops : 0);
-    if (n > 0 && (!best || n > best.n)) best = { n, pg };
-  }
+  for (const pg of S.pages) { const n = amt(pg); if (n > 0 && (!best || n > best.n)) best = { n, pg }; }
   return best ? best.pg : null;
 }
-function pickLayerPage(id) { let best = null; for (const pg of S.pages) { const n = (pg.layerOps[id] || 0) - 1; if (n > 0 && (!best || n > best.n)) best = { n, pg }; } return best ? best.pg : null; }
+function pickLayerPage(id) { const mp = S.mainPage ? S.pages[S.mainPage - 1] : null; if (mp && ((mp.layerOps[id] || 0) - 1 > 0 || S.onlyPage)) return (mp.layerOps[id] || 0) - 1 > 0 ? mp : null; let best = null; for (const pg of S.pages) { const n = (pg.layerOps[id] || 0) - 1; if (n > 0 && (!best || n > best.n)) best = { n, pg }; } return best ? best.pg : null; }
 async function renderLayers(doc, layers, pageNum, ids, bbox, maxPx) { // ids: 보이게 할 레이어 id 집합
   const page = await doc.getPage(pageNum);
   const base = page.getViewport({ scale: 1 });
@@ -4375,7 +4483,7 @@ async function rebuild(textures, refit, soft) {
   }
   await busy('전개도 분석 중…');
   // 칼선이 가장 많이 들어 있는 쪽을 고른다
-  const pickDl = () => { let r = null; for (const pg of S.pages) { const st = dielineStrokes(pg); const n = st.reduce((a, s) => a + s.polylines.length, 0); if (n && (!r || n > r.n)) r = { n, pg, st }; } return r; };
+  const pickDl = () => { let r = null; const mp = S.mainPage ? S.pages[S.mainPage - 1] : null; if (mp) { const st = dielineStrokes(mp), n = st.reduce((a, s) => a + s.polylines.length, 0); if (n || S.onlyPage) return n ? { n, pg: mp, st } : null; } for (const pg of S.pages) { const st = dielineStrokes(pg); const n = st.reduce((a, s) => a + s.polylines.length, 0); if (n && (!r || n > r.n)) r = { n, pg, st }; } return r; };
   let dl = pickDl();
   if (!S.layers.length && !S.noLayerAll && !dl) { S.noLayerAll = true; dl = pickDl(); }
   const roles = new Map();
@@ -4414,13 +4522,13 @@ async function rebuild(textures, refit, soft) {
   S._dbg = { lines: mainLines(), bopts };
   let st = buildStructure(mainLines(), bopts);
   /* 양면 인쇄 찾기: ① 같은 대지에 좌우가 뒤집힌 전개도가 하나 더 있는 경우 ② 다른 대지(쪽)에 안쪽면을 그려 둔 경우 */
-  let twin = st.bbox && dl ? compTwin(st, dl.pg.num) : null, outPage = null;
+  let twin = st.bbox && dl && !S.noTwin ? compTwin(st, dl.pg.num) : null, outPage = null;
   if (!twin && st.bbox) for (const sh of S.sheets) {
     if (!sh.checked) { // 처음 한 번: 그 쪽의 전개도가 뒤집힌 모양이면 안쪽면으로 본다
       sh.checked = true;
       const ds = dielineStrokes(S.pages[sh.page - 1]), t = ds.length ? pageTwin(st, buildStructure(linesOf(ds), { gapTol: bopts.gapTol, auto })) : null;
       sh.T = t ? t.T : { mirror: false, dx: 0, dy: 0 }; sh.hasDie = !!t;
-      if (t && t.T.mirror && t.score >= 0.7 && sh.role === 'off') sh.role = 'inside';
+      if (t && t.T.mirror && t.score >= 0.7 && sh.role === 'off' && !S.noTwin) sh.role = 'inside';
     }
     if (sh.role === 'inside') { twin = { kind: 'page', page: sh.page, T: sh.T, hasDie: sh.hasDie }; break; }
   }
@@ -4460,7 +4568,7 @@ async function rebuild(textures, refit, soft) {
   else if (!st.hinges.some((h) => !h.weld)) msgs.unshift(auto ? '접는 선을 찾지 못해 평면으로만 보입니다. 전개도의 "수정"에서 접는 선을 직접 지정해 주세요.' : '접는선을 찾지 못해 평면으로만 보입니다. 선 구분에서 접는선 색을 지정하거나 "모양으로 자동"을 눌러 보세요.');
   setWarn(msgs.join(' '));
   $('gap-row').hidden = !!st.faces.length; $('gap2').value = $('gap').value; $('gap2-out').textContent = (+$('gap').value).toFixed(1) + 'mm';   // 상자가 안 뜨면 상자 옵션을 열 수 없으니, 이 값만은 여기서 바로 고칠 수 있게
-  const boxKey = (st.bbox ? [st.bbox.minX, st.bbox.minY, st.bbox.maxX, st.bbox.maxY].map(Math.round).join('/') : '') + (twin ? `|${twin.kind}${twin.page}${twin.T.mirror ? 'm' : 's'}${S.flip ? 'f' : ''}` : '');
+  const boxKey = (st.bbox ? [st.bbox.minX, st.bbox.minY, st.bbox.maxX, st.bbox.maxY].map(Math.round).join('/') : '') + (twin ? `|${twin.kind}${twin.page}${twin.T.mirror ? 'm' : 's'}${S.flip ? 'f' : ''}` : '') + (S.outMirror ? '|o' : '');
   if (st.faces.length && (textures || !S.uv || boxKey !== S.texBox)) {
     const b = st.bbox, plainUv = (x, y) => [(x - b.minX) / (b.maxX - b.minX), (y - b.minY) / (b.maxY - b.minY)];
     S.printCanvas = null; S.finishes = []; S.uv = null; S.texBox = boxKey; S.insideCanvas = null; S.uvIn = null;
@@ -4489,6 +4597,7 @@ async function rebuild(textures, refit, soft) {
       }
     } catch (err) { console.error(err); msgs.push('인쇄면을 그리지 못해 흰 종이로 표시했습니다.'); setWarn(msgs.join(' ')); S.printCanvas = null; S.finishes = []; }
     if (!S.uv) S.uv = plainUv;
+    if (S.outMirror) { const u0 = S.uv; S.uv = (x, y) => u0(b.minX + b.maxX - x, y); }   // 바깥면 좌우 반전: 전개도의 가운데를 기준으로 뒤집힌 자리의 그림을 읽는다 (인쇄와 후가공이 함께 뒤집힌다)
     if (token !== S.token) return;
     if (!S.rootTried && !S.example && !S.flip) { // 파일을 처음 읽었을 때 한 번: 인쇄 내용을 보고 정면을 다시 고른다
       S.rootTried = true; const at = pickFront(st);
@@ -4498,7 +4607,7 @@ async function rebuild(textures, refit, soft) {
     applyTextures();
   }
   syncInsideUI(); applyInside();
-  $('side-box').hidden = !twin; $('side-mirror').setAttribute('aria-pressed', String(S.inMirror));
+  $('side-box').hidden = !twin;
   if (twin) $('side-flip').dataset.tip = '양면 인쇄로 읽었습니다. ' + (twin.kind === 'comp' ? '같은 대지에 나란히 놓인 두 전개도 가운데 ' + (S.flip ? '반대쪽' : '한쪽') + '을 바깥면으로 썼습니다.' : `${outPage || (printPg0() || { num: 1 }).num}쪽을 바깥면, ${twin.page}쪽을 안쪽면으로 썼습니다.`) + ' 바깥과 안쪽이 바뀌어 보이면 "양면 뒤집기"를 누르세요.';
   if (st.faces.length) S.poseFresh = false;   // 새 파일의 첫 자세는 한 번만 잡는다. 그 뒤 레이어·후가공·선 설정을 바꿔도 상자를 돌려 둔 자세는 그대로
   buildMeshes(); applyPaper(); updateFold(); if (refit) fitCamera('right'); renderMap(); select(S.sel); updateChips(); renderBoxTiles();
@@ -4538,7 +4647,7 @@ function boxRefresh() { // 왼쪽 패널과 옵션 창을 지금 고른 상자�
   $('inside-angle-out').textContent = v('inside-angle') + '°'; $('fold-out').textContent = v('fold') + '%';
   $('paper-file-row').style.display = v('paper') === 'custom' ? '' : 'none';
   $('gap-row').hidden = S.example || !S.struct || !!S.struct.faces.length;
-  $('side-box').hidden = !S.twin; $('side-mirror').setAttribute('aria-pressed', String(!!S.inMirror));
+  $('side-box').hidden = !S.twin;
   renderLayerUI(); renderColorUI(); syncInsideUI(); syncEdgeUI(); renderMap(); renderLabelTiles(); syncLabelUI(); updateLabelGizmo(); updateChips(); renderSeq(); renderBoxTiles(); updateBoxGizmo(); syncBoxVis();
   castDirty = true; dirty = true;
 }
@@ -4583,17 +4692,16 @@ function boxPlaceNew() { // 새로 들어온 상자를 이미 있는 상자들�
   if (x1 === -Infinity || n0 === Infinity) return;
   S.pos = { ...S.pos, x: S.pos.x + x1 + Math.max(0.15, (n1 - n0) * 0.25) - n0 }; updateFold();
 }
-async function addBoxFile(file) { // 인쇄 데이터를 올리면 상자가 하나 더 생긴다 (예시 상자만 있을 때는 그 자리에 들어간다)
+async function addBoxFile(file) { // 인쇄 데이터를 올리면 상자가 하나 생긴다 (예시 상자만 있을 때는 그 자리에 들어간다). 대지가 여럿이면 고르는 창이 뜬다
   if (!$('busy').hidden || hist.busy) return;
-  if (S.example && boxes.length === 1) return loadFile(file);
-  if (boxes.length >= BOX_MAX) { setWarn(`상자는 ${BOX_MAX}개까지 놓을 수 있습니다. 지금 있는 상자를 지운 뒤에 올려 주세요.`); return; }
-  const prev = boxCur, nb = boxNew();
-  await loadFile(file, true);
-  if (!S.doc) { // 읽지 못했다: 만들던 상자를 치우고 원래 상자로 돌아간다
-    const msg = $('warn').hidden ? '' : $('warn').textContent;
-    boxLeave(); boxStash(); boxLoad(prev); boxes.splice(boxes.indexOf(nb), 1); boxDispose(nb); boxRefresh(); setWarn(msg); return;
-  }
-  boxPlaceNew(); fitCamera('fit'); boxRefresh(); setBoxSel(true); histPush({ op: 'add' });   // 되돌리면 이 상자가 치워진다
+  const more = async (opt) => { // 상자를 하나 더 만들어 그 안에 읽는다. 읽지 못했으면 만들던 상자를 치우고 원래 상자로 돌아간다
+    const prev = boxCur, nb = boxNew(), res = await loadFile(file, true, opt);
+    if (!S.doc) { const msg = $('warn').hidden ? '' : $('warn').textContent; boxLeave(); boxStash(); boxLoad(prev); boxes.splice(boxes.indexOf(nb), 1); boxDispose(nb); boxRefresh(); setWarn(msg); return false; }
+    boxPlaceNew(); fitCamera('fit'); boxRefresh(); setBoxSel(true); histPush({ op: 'add' });   // 되돌리면 이 상자가 치워진다
+    return res || true;
+  };
+  if (S.example && boxes.length === 1) await loadFile(file);
+  else { if (boxes.length >= BOX_MAX) { setWarn(`상자는 ${BOX_MAX}개까지 놓을 수 있습니다. 지금 있는 상자를 지운 뒤에 올려 주세요.`); return; } await more(); }
 }
 function otherBoxAt(cx, cy) { // 화면의 한 점 아래에 있는 '다른' 상자 가운데 가장 앞에 있는 것
   if (boxes.length < 2) return null;
@@ -5040,6 +5148,7 @@ window.addEventListener('keydown', (e) => { // 전개도 · 레이어 목록의 
   else if (o && del) { e.preventDefault(); e.stopImmediatePropagation(); imgSnap(); imgRemove(imgSel); imgSel = -1; renderEdit(); queueTextures(); }
   else if (del && lines) { e.preventDefault(); e.stopImmediatePropagation(); applyEdit('ignore'); }   // 고른 선 지우기
   else if (arrow && lines) { // 고른 선 옮기기: 0.2mm, Shift와 함께 1mm
+    if (mapSide === 'in') { mapSide = 'out'; editView = null; }   // 선은 바깥면에서 옮긴다 (안쪽면은 좌우가 뒤집혀 보여 방향이 헷갈린다)
     e.preventDefault(); e.stopImmediatePropagation();
     const d = (e.shiftKey ? 1 : 0.2) / PT2MM;
     nudgeEdit(e.key === 'ArrowRight' ? d : e.key === 'ArrowLeft' ? -d : 0, e.key === 'ArrowUp' ? d : e.key === 'ArrowDown' ? -d : 0);
@@ -5050,7 +5159,7 @@ window.addEventListener('blur', () => { editSpace = false; $('edit-map').classLi
 { // 선 고치기 화면: 누르기 = 고르기, 끌기 = 묶어 고르기, Space+끌기·가운데 버튼 = 이동, 휠 = 확대
   const svg = $('edit-map'), box = $('edit-box'); let drag = null;
   const toDie = (cx, cy) => { const r = svg.getBoundingClientRect(), k = Math.max(editView.w / r.width, editView.h / r.height); // viewBox는 가운데 맞춤으로 들어간다
-    return [editView.x + editView.w / 2 + (cx - r.left - r.width / 2) * k, -(editView.y + editView.h / 2 + (cy - r.top - r.height / 2) * k), k]; };
+    const x = editView.x + editView.w / 2 + (cx - r.left - r.width / 2) * k; return [mapSide === 'in' ? mapMid() - x : x, -(editView.y + editView.h / 2 + (cy - r.top - r.height / 2) * k), k]; };   // 안쪽면을 보고 있으면 좌우를 되돌려 읽는다
   let idrag = null;   // 인쇄 이미지 탭: 그림 옮기기·크기·회전
   const snapTargets = () => { // 달라붙을 자리: 칼선의 모서리와 선 끝의 가로·세로 좌표 (곡선 중간의 점은 뺀다)
     const N = new Map(), kk = (q) => q[0].toFixed(2) + ',' + q[1].toFixed(2);
@@ -5261,7 +5370,8 @@ $('inside-c1').addEventListener('input', (e) => { S.inside.c1 = e.target.value; 
 $('inside-c2').addEventListener('input', (e) => { S.inside.c2 = e.target.value; applyInside(); });
 $('inside-angle').addEventListener('input', (e) => { S.inside.angle = +e.target.value; $('inside-angle-out').textContent = e.target.value + '°'; applyInside(); });
 $('side-flip').addEventListener('click', () => { if (!S.twin) return; S.flip = !S.flip; S.sel = null; rebuild(true, true); });
-$('side-mirror').addEventListener('click', () => { if (!S.twin) return; S.inMirror = !S.inMirror; rebuild(true); });
+$('map-side').addEventListener('click', (e) => { e.currentTarget.blur(); if (!S.twin) return; mapSide = mapSide === 'in' ? 'out' : 'in'; if (editJoin) setJoin(false, true); editView = null; editSel = new Set(); imgSel = -1; renderEdit(); });   // 전개도에 바깥면 · 안쪽면을 바꿔 가며 띄운다
+$('map-mirror').addEventListener('click', (e) => { e.currentTarget.blur(); if (S.example || !S.struct || !$('busy').hidden) return; if (mapSide === 'in' && S.twin) S.inMirror = !S.inMirror; else S.outMirror = !S.outMirror; rebuild(true); });   // 좌우 반전: 지금 전개도에 떠 있는 면의 인쇄를 뒤집는다
 /* 스포이드: 누른 뒤 상자를 찍으면 그 자리의 인쇄 색(조명 영향을 뺀 원래 색)을 가져온다 */
 let pickCb = null, pickBtn = null;
 const pickRay = new THREE.Raycaster();
