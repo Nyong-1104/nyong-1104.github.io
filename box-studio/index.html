@@ -41,7 +41,7 @@ main{flex:1;min-width:0;position:relative;background:var(--stage);overflow:hidde
 #side-close:hover,#side-open:hover{background:rgba(0,0,0,.06);color:var(--o)}
 #side-close{position:absolute;right:8px;top:8px;z-index:6}
 #side-open{position:absolute;left:6px;top:15px;z-index:25}#side-open[hidden]{display:none}
-.app.noside .side{display:none}.app.noside .top{padding-left:40px}
+.app.noside .side{display:none}
 .app{position:relative}
 #side-rail{position:absolute;left:14px;top:calc(var(--top) + 14px);z-index:16;display:flex;flex-direction:column;gap:1px;background:rgba(0,0,0,.08);border-radius:11px;box-shadow:0 6px 22px rgba(10,10,20,.12)}#side-rail[hidden]{display:none}
 #side-rail .tool::after{right:auto;left:calc(100% + 8px)}#side-rail .tool[aria-pressed="true"]::after{display:none}
@@ -245,10 +245,12 @@ section.sec>.body{display:flex;flex-direction:column;gap:8px;padding-top:8px}
 /* ---------- 스테이지 ---------- */
 #stage.checker{background-color:#fff;background-image:linear-gradient(45deg,#ebebef 25%,transparent 25%,transparent 75%,#ebebef 75%),linear-gradient(45deg,#ebebef 25%,transparent 25%,transparent 75%,#ebebef 75%);background-size:20px 20px;background-position:0 0,10px 10px}
 #gl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
-.top{position:absolute;left:0;right:0;top:0;z-index:20;min-height:var(--top);display:flex;align-items:center;gap:12px;padding:8px 16px 8px 20px;flex-wrap:wrap;
+.top{position:absolute;left:0;right:0;top:0;z-index:20;min-height:var(--top);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto) minmax(0,1fr);align-items:center;gap:12px;padding:8px 16px;
   background:var(--glass);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);border-bottom:1px solid rgba(0,0,0,.06)}
 @supports not (backdrop-filter:blur(1px)){.top,.bar{background:rgba(255,255,255,.96)}}
-#hud-tl{display:flex;align-items:center;gap:10px;min-width:0;flex:1;font-size:14px;font-weight:700;letter-spacing:-.3px;white-space:nowrap}
+#top-title{grid-column:1;justify-self:start;max-width:100%;margin-left:28px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;font-weight:800;letter-spacing:-.6px;display:none;user-select:none;-webkit-user-select:none}.app.noside #top-title{display:block}   /* 왼쪽 패널을 접었을 때만: 패널의 큰 제목 대신 */
+#hud-tl{grid-column:1 / 3;display:flex;align-items:center;justify-content:flex-start;gap:10px;min-width:0;margin-left:4px;font-size:14px;font-weight:700;letter-spacing:-.3px;white-space:nowrap}   /* 패널이 나와 있을 때는 왼쪽에 붙는다 */
+.app.noside #hud-tl{grid-column:2;justify-content:center;margin-left:0}   /* 패널을 접으면 왼쪽은 제목 자리, 칩은 한가운데 */
 .chip{overflow:hidden;text-overflow:ellipsis}
 #chip-count{color:var(--mute);font-weight:500}
 .chip.example{padding:2px 9px;border-radius:999px;background:var(--o);color:#fff;font-size:11px;font-weight:700;flex:none}
@@ -300,7 +302,7 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
 .dot.off{background:none!important;border:1.5px solid currentColor;width:10px;height:10px;position:relative;opacity:.55}   /* 끔: 사선이 그어진 빈 동그라미 */
 .dot.off::after{content:'';position:absolute;left:-3px;right:-3px;top:50%;height:1.5px;margin-top:-.75px;background:currentColor;transform:rotate(-45deg)}
 .sortbar button.is-off{color:var(--mute);text-decoration:line-through}.sortbar button.is-off.on{color:rgba(255,255,255,.75)}
-#hud-tr{display:flex;gap:2px;flex:none}
+#hud-tr{grid-column:3;justify-self:end;display:flex;gap:2px}
 #hud-tr .btn{border:0;background:none;min-height:34px;padding:0 10px;border-radius:9px;font-size:12.5px}
 #hud-tr .btn:hover{background:rgba(0,0,0,.05);color:var(--o)}
 .keys-list{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0 0 12px;padding-bottom:12px;border-bottom:1px solid #e8e8ee;font-size:12px;font-weight:500;line-height:1.45;color:#4a4c58}
@@ -422,6 +424,11 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
 #edit-box{position:absolute;border:1px dashed var(--o);background:rgba(255,47,0,.08);pointer-events:none;border-radius:3px}
 #edit-legend i.dash{background:repeating-linear-gradient(90deg,#b4b4c0 0 4px,transparent 4px 7px)}
 .modal{position:fixed;inset:0;background:rgba(10,10,20,.4);display:grid;place-items:center;padding:24px;z-index:60}
+#exp-dlg .row .name{display:flex;align-items:center;gap:8px}#exp-dlg .row .name svg{flex:none;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#exp-dlg input[type=checkbox]{appearance:none;-webkit-appearance:none;position:relative;width:36px;height:21px;border-radius:11px;background:#d5d5dd;cursor:pointer;transition:background .16s}   /* 넣을지 말지: 켜고 끄는 스위치 */
+#exp-dlg input[type=checkbox]::after{content:"";position:absolute;left:2px;top:2px;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(10,10,20,.28);transition:transform .16s}
+#exp-dlg input[type=checkbox]:checked{background:var(--o)}#exp-dlg input[type=checkbox]:checked::after{transform:translateX(15px)}#exp-dlg input[type=checkbox]:focus-visible{outline:2px solid var(--o);outline-offset:2px}
+#exp-fmt{flex-wrap:nowrap;margin-bottom:2px}#exp-fmt .btn{padding:9px 4px;font-weight:700}#exp-dlg .row[hidden]{display:none}
 #ask-dlg .dlg{width:min(320px,100%);gap:14px;padding:20px}#ask-msg{margin:0;font-size:13.5px;line-height:1.55;font-weight:600}#ask-dlg .seg .btn{padding:9px 4px}
 .dlg{background:#fff;border-radius:18px;box-shadow:0 24px 70px rgba(10,10,20,.22);padding:16px 20px 20px;width:min(360px,100%);display:flex;flex-direction:column;gap:10px}
 #shot{position:fixed;inset:0;background:rgba(10,10,20,.5);display:grid;place-items:center;padding:24px;z-index:50}
@@ -445,7 +452,7 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
   main{order:-1;height:58vh;flex:none}
   .side{width:100%;border-right:0;overflow:visible}
   .logo{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.subline{display:none}
-  #hud-tr{overflow-x:auto;max-width:100%}
+  #hud-tr{overflow-x:auto;max-width:100%}#top-title{display:none!important}
   #side-close,#side-open,#side-rail{display:none!important}.app.noside .side{display:flex}
   #tool-pops,#box-pop,#sel-box{position:fixed;left:12px!important;right:12px;top:auto!important;bottom:12px;width:auto;max-height:62vh;overflow-y:auto;z-index:40}
   .pop{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}   /* 좁은 화면에서는 창이 패널 위에 겹쳐 뜨므로 비치지 않게 */
@@ -457,7 +464,7 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
 <div class="app">
 
 <aside class="side" id="panel">
-  <button type="button" id="side-close" aria-label="왼쪽 패널 접기" title="패널 접기 ( , )">‹</button>
+  <button type="button" id="side-close" aria-label="왼쪽 패널 접기" title="패널 접기 ( . )">‹</button>
   <h1 class="logo" id="lg" aria-label="Box Mockup Studio">Box<br>Mockup<br>Studio</h1>
   <div class="subline">칼선 파일을 접어서 3D 상자로</div>
 
@@ -495,7 +502,7 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
   </div>
 
   <div class="side-bottom">
-    <button type="button" class="btn primary" id="export" title="PNG 저장 (Ctrl+S)">PNG 저장</button>
+    <button type="button" class="btn primary" id="export" title="Export (Ctrl+S)">Export</button>
     <p class="hint" id="exp-note"></p>
   </div>
 </aside>
@@ -509,10 +516,11 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
     <button type="button" class="tool" data-sec="layers" aria-pressed="false" aria-label="레이어" data-tip="레이어 (D)"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 3.5 8.5 12 13l8.5-4.5z"/><path d="M3.5 12.5 12 17l8.5-4.5M3.5 16.5 12 21l8.5-4.5"/></svg></button>
   </div>
   <div class="top">
+    <strong id="top-title">Box Mockup Studio</strong>
     <div id="hud-tl"><span class="chip example" id="chip-example">예시 상자</span><span class="chip" id="chip-size"></span><span class="chip" id="chip-count"></span></div>
     <div id="hud-tr">
       <div class="about">
-        <button type="button" class="about-btn" id="save-btn" aria-label="PNG 저장" title="PNG 저장 (Ctrl+S)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 5.2v6.6M7.3 9.3l2.7 2.7 2.7-2.7M6.4 14.6h7.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg></button>
+        <button type="button" class="about-btn" id="save-btn" aria-label="Export" title="Export (Ctrl+S)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 5.2v6.6M7.3 9.3l2.7 2.7 2.7-2.7M6.4 14.6h7.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg></button>
       </div>
       <div class="about">
         <button type="button" class="about-btn" id="sample-btn" aria-expanded="false" aria-controls="sample-pop" aria-label="예시 상자 고르기" title="예시 상자"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4.2 15 7v6l-5 2.8L5 13V7zM5 7l5 2.8L15 7M10 9.8v6" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/></svg></button>
@@ -537,10 +545,10 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
             <dt>조명 기준점</dt><dd>조명 · 반사판 창이 열려 있을 때 보이는 동그라미. 누르면 선택되고 상자처럼 옮기고 돌리기 (조명 전체가 함께 움직임) · 두 번 누르면 상자 한가운데로</dd>
             <dt>마우스 휠</dt><dd>슬라이더 · 숫자 칸 위에서 값 조절</dd>
             <dt><kbd>Q</kbd> <kbd>W</kbd> <kbd>E</kbd> <kbd>R</kbd></dt><dd>조명 · 반사판 · 배경색 창 열고 닫기, 바닥 그림자 켜고 끄기</dd>
-            <dt><kbd>,</kbd> <kbd>.</kbd></dt><dd>왼쪽 패널 접기 · 펴기 (접으면 왼쪽에 아이콘으로 남음)</dd>
+            <dt><kbd>.</kbd></dt><dd>왼쪽 패널 접기 · 펴기 (접으면 왼쪽에 아이콘으로 남음)</dd>
             <dt><kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></dt><dd>패널을 접어 둔 동안: 인쇄 데이터 · 전개도 · 레이어 창 열고 닫기</dd>
             <dt><kbd>Ctrl</kbd> + <kbd>C</kbd> · <kbd>V</kbd></dt><dd>고른 상자를 하나 더 놓기 · 고른 라벨을 복사해 다른 상자에 붙이기</dd>
-            <dt><kbd>Ctrl</kbd> + <kbd>S</kbd></dt><dd>PNG 저장</dd>
+            <dt><kbd>Ctrl</kbd> + <kbd>S</kbd></dt><dd>Export (PNG · PSD 저장)</dd>
             <dt><kbd>Ctrl</kbd> + <kbd>Z</kbd></dt><dd>되돌리기 · <kbd>Shift</kbd>와 함께 누르면 다시 하기</dd>
             <dt><kbd>Esc</kbd></dt><dd>선택 풀기, 옵션 창 닫기</dd>
           </dl>
@@ -724,10 +732,13 @@ html.ui-dark .bgc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
 
 <div id="exp-dlg" class="modal" hidden>
   <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="exp-title">
-    <div class="pop-head"><strong id="exp-title">PNG로 저장</strong><button type="button" class="x" id="exp-cancel" aria-label="닫기">×</button></div>
+    <div class="pop-head"><strong id="exp-title">Export</strong><button type="button" class="x" id="exp-cancel" aria-label="닫기">×</button></div>
+    <div class="seg" id="exp-fmt" role="group" aria-label="파일 형식"><button type="button" class="btn" data-v="png" aria-pressed="true">PNG</button><button type="button" class="btn" data-v="psd" aria-pressed="false">PSD</button></div>
     <div class="row"><label class="name" for="exp-scale">크기</label>
       <select id="exp-scale"><option value="1">화면 그대로</option><option value="2" selected>2배 크기</option><option value="3">3배 크기</option><option value="4">4배 크기</option></select></div>
-    <div class="row"><label class="name" for="exp-alpha">배경 없이 저장</label><input type="checkbox" id="exp-alpha" checked></div>
+    <div class="row" data-fmt="png"><label class="name" for="exp-pbg"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 15l4.5-4.5 4 4 3-3 5.5 5.5"/><circle cx="15.5" cy="9" r="1.4"/></svg>배경</label><input type="checkbox" id="exp-pbg" role="switch"></div>
+    <div class="row" data-fmt="psd" hidden><label class="name" for="exp-sh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h7v10H7z"/><path d="M14 8l4 2.5v6L7 17"/><ellipse cx="13" cy="19.5" rx="8" ry="1.6"/></svg>그림자</label><input type="checkbox" id="exp-sh" role="switch" checked></div>
+    <div class="row" data-fmt="psd" hidden><label class="name" for="exp-bg"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 15l4.5-4.5 4 4 3-3 5.5 5.5"/><circle cx="15.5" cy="9" r="1.4"/></svg>배경</label><input type="checkbox" id="exp-bg" role="switch" checked></div>
     <p class="hint" id="exp-size"></p>
     <button type="button" class="btn primary" id="exp-go">저장</button>
   </div>
@@ -4123,7 +4134,7 @@ function updateChips() {
   const { lo, hi } = foldedBox(computeFold(S.struct, effAngles(), 1));
   const mm = (k) => Math.round((hi[k] - lo[k]) * PT2MM);
   $('chip-size').hidden = false; $('chip-size').textContent = `조립 크기 ${mm(0)} × ${mm(1)} × ${mm(2)} mm`;
-  $('chip-count').hidden = false; $('chip-count').textContent = S.example ? '파일을 올리면 바뀝니다' : S.fileName;
+  $('chip-count').hidden = !!S.example; $('chip-count').textContent = S.example ? '' : S.fileName;   // 예시 상자일 때는 파일 이름 자리를 비운다
   $('angles-reset').disabled = !S.over.size;
 }
 function setWarn(msg) { $('warn').hidden = !msg; $('warn').textContent = msg || ''; }
@@ -4776,11 +4787,32 @@ function useSample(id) { // 예시를 고르면 지금 있는 상자들 옆에 �
 }
 
 /* ---------- 내보내기 ---------- */
+async function zipOne(name, blob) { // 파일 하나를 압축 없이 ZIP에 담는다 (PSD를 받아 주지 않는 화면에서 쓴다)
+  const data = new Uint8Array(await blob.arrayBuffer()), nm = new TextEncoder().encode(name), T = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; T[n] = c >>> 0; }
+  let crc = 0xffffffff; for (let i = 0; i < data.length; i++) crc = T[(crc ^ data[i]) & 255] ^ (crc >>> 8); crc = (crc ^ 0xffffffff) >>> 0;
+  const d = new Date(), tm = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dt = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  const head = (sig, extra) => { const h = new Uint8Array(extra), v = new DataView(h.buffer); v.setUint32(0, sig, true); return [h, v]; };
+  const [lh, lv] = head(0x04034b50, 30); lv.setUint16(4, 20, true); lv.setUint16(6, 0x0800, true); lv.setUint16(10, tm, true); lv.setUint16(12, dt, true); lv.setUint32(14, crc, true); lv.setUint32(18, data.length, true); lv.setUint32(22, data.length, true); lv.setUint16(26, nm.length, true);
+  const [ch, cv] = head(0x02014b50, 46); cv.setUint16(4, 20, true); cv.setUint16(6, 20, true); cv.setUint16(8, 0x0800, true); cv.setUint16(12, tm, true); cv.setUint16(14, dt, true); cv.setUint32(16, crc, true); cv.setUint32(20, data.length, true); cv.setUint32(24, data.length, true); cv.setUint16(28, nm.length, true);
+  const [eh, ev] = head(0x06054b50, 22); ev.setUint16(8, 1, true); ev.setUint16(10, 1, true); ev.setUint32(12, 46 + nm.length, true); ev.setUint32(16, 30 + nm.length + data.length, true);
+  return new Blob([lh, nm, data, ch, nm, eh], { type: 'application/zip' });
+}
 async function saveBlob(blob, filename) {
   if (window.claude && typeof window.claude.use === 'function') {
-    try { const d = await window.claude.use('downloads'); if (d) { await d.save({ filename, data: blob }); return; } }
-    catch (e) { if (e && (e.code === 'declined' || e.code === 'rate_limited')) return; }
-    $('shot-img').src = URL.createObjectURL(blob); $('shot').hidden = false; return;
+    const pic = /\.png$/i.test(filename);
+    try {
+      const d = await window.claude.use('downloads');
+      if (d) {
+        try { await d.save({ filename, data: blob }); return; }
+        catch (e) { // 이 화면이 받아 주지 않는 형식(PSD)이면 ZIP에 담아 다시 건넨다
+          if (!e || e.code !== 'rejected_extension' || pic) throw e;
+          await d.save({ filename: filename.replace(/\.[^.]+$/, '') + '.zip', data: await zipOne(filename, blob) }); $('exp-note').textContent = '이 미리보기 화면은 PSD를 바로 받을 수 없어 ZIP에 담아 저장했습니다.'; return;
+        }
+      }
+    } catch (e) { if (e && (e.code === 'declined' || e.code === 'rate_limited')) return; }
+    if (pic) { $('shot-img').src = URL.createObjectURL(blob); $('shot').hidden = false; } else { $('exp-note').textContent = '이 화면에서는 파일을 저장하지 못했습니다.'; say('이 화면에서는 PSD를 저장하지 못했습니다'); }
+    return;
   }
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
@@ -4792,7 +4824,7 @@ async function exportPng() {
   const bgPrev = scene.background, pr = renderer.getPixelRatio();
   const gz = gizmoGroup.visible; gizmoGroup.visible = false;   // 조명 위치 표시는 찍지 않는다
   for (const h of hiObjs) h.obj.visible = false;                // 선택 표시도 찍지 않는다
-  if ($('exp-alpha').checked) scene.background = null;
+  if (!$('exp-pbg').checked) scene.background = null;   // '배경'을 끄면 투명하게
   renderer.setPixelRatio(1); renderer.setSize(Math.round(w * k), Math.round(h * k), false);
   renderer.render(scene, camera);
   const blob = await new Promise((r) => canvas.toBlob(r, 'image/png'));
@@ -4802,6 +4834,90 @@ async function exportPng() {
   const baseName = (S.example ? '예시상자' : S.fileName.replace(/\.[^.]+$/, '')).replace(/[\\/:*?"<>|]+/g, '_');
   $('exp-note').textContent = `${Math.round(w * k)} × ${Math.round(h * k)} px 이미지를 만들었습니다.`;
   await saveBlob(blob, `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}-${baseName}-mockup.png`);
+}
+
+/* PSD로 저장: 같은 시점에서 상자를 하나씩만 켜고 찍어 레이어로 나눈다 (아래부터 배경 · 그림자 · 먼 상자 … 가까운 상자). 파일은 직접 쓴다 (8비트 RGB, 줄마다 PackBits 압축) */
+function packBits(src, from, n, out, o) { // 한 줄을 PackBits로 눌러 out에 쓴다. 쓴 뒤의 자리를 돌려준다
+  let i = 0;
+  while (i < n) {
+    let run = 1; const v = src[from + i]; while (run < 128 && i + run < n && src[from + i + run] === v) run++;
+    if (run >= 3 || (run === 2 && (i + 2 >= n))) { out[o++] = 257 - run; out[o++] = v; i += run; continue; }
+    const st = i; let len = 0;   // 되풀이가 아닌 구간: 같은 값이 셋 이상 이어지는 곳 앞까지
+    while (i < n && len < 128) { if (i + 2 < n && src[from + i] === src[from + i + 1] && src[from + i] === src[from + i + 2]) break; i++; len++; }
+    out[o++] = len - 1; for (let k = 0; k < len; k++) out[o++] = src[from + st + k];
+  }
+  return o;
+}
+function psdChannel(plane, w, h) { // 채널 하나(가로 w, 세로 h 한 바이트씩) → 압축 방식 2바이트 + 줄마다의 길이 + 눌린 줄들
+  if (!w || !h) return new Uint8Array([0, 0]);
+  const cap = new Uint8Array(2 + h * 2 + h * (w + Math.ceil(w / 128) + 2)), dv = new DataView(cap.buffer); dv.setUint16(0, 1); let o = 2 + h * 2;
+  for (let y = 0; y < h; y++) { const s0 = o; o = packBits(plane, y * w, w, cap, o); dv.setUint16(2 + y * 2, o - s0); }
+  return cap.slice(0, o);
+}
+function psdLayer(name, ascii, img, W, H) { // 찍은 그림(RGBA) → 레이어 하나: 비어 있지 않은 부분만 잘라, 채널별로 눌러 둔다
+  const d = img.data; let x0 = W, y0 = H, x1 = -1, y1 = -1;
+  for (let y = 0, p = 3; y < H; y++) for (let x = 0; x < W; x++, p += 4) if (d[p]) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  if (x1 < 0) return { name, ascii, top: 0, left: 0, bottom: 0, right: 0, ch: [0, 0, 0, 0].map(() => new Uint8Array([0, 0])) };
+  const w = x1 - x0 + 1, h = y1 - y0 + 1, pl = [0, 1, 2, 3].map(() => new Uint8Array(w * h));
+  for (let y = 0; y < h; y++) { let p = ((y + y0) * W + x0) * 4, q = y * w; for (let x = 0; x < w; x++, p += 4, q++) { pl[0][q] = d[p]; pl[1][q] = d[p + 1]; pl[2][q] = d[p + 2]; pl[3][q] = d[p + 3]; } }
+  return { name, ascii, top: y0, left: x0, bottom: y1 + 1, right: x1 + 1, ch: [psdChannel(pl[3], w, h), psdChannel(pl[0], w, h), psdChannel(pl[1], w, h), psdChannel(pl[2], w, h)] };   // 투명도, 빨강, 초록, 파랑 순서
+}
+function psdFile(W, H, layers, merged, alpha) { // 레이어들(아래 것부터)과 합친 그림으로 PSD 파일을 만든다
+  const parts = [], u8 = (...a) => parts.push(new Uint8Array(a)), u16 = (v) => u8((v >> 8) & 255, v & 255), u32 = (v) => u8((v >>> 24) & 255, (v >>> 16) & 255, (v >>> 8) & 255, v & 255), str = (t) => parts.push(new Uint8Array([...t].map((c) => c.charCodeAt(0))));
+  str('8BPS'); u16(1); u8(0, 0, 0, 0, 0, 0); u16(alpha ? 4 : 3); u32(H); u32(W); u16(8); u16(3);   // 머리말: RGB, 채널마다 8비트
+  u32(0);                                                                                       // 색 모드 자료 없음
+  u32(28); str('8BIM'); u16(1005); u16(0); u32(16); u32(72 << 16); u16(1); u16(1); u32(72 << 16); u16(1); u16(1);   // 해상도 72 dpi
+  const recs = [], data = [];
+  for (const L of layers) {
+    const r = [], p = (...a) => r.push(...a), p16 = (v) => p((v >> 8) & 255, v & 255), p32 = (v) => p((v >>> 24) & 255, (v >>> 16) & 255, (v >>> 8) & 255, v & 255), ps = (t) => { for (const c of t) p(c.charCodeAt(0)); };
+    p32(L.top); p32(L.left); p32(L.bottom); p32(L.right); p16(4);
+    [-1, 0, 1, 2].forEach((id, i) => { p16(id & 0xffff); p32(L.ch[i].length); });
+    ps('8BIM'); ps('norm'); p(255, 0, 8, 0);                                                    // 보통 섞기, 불투명도 100%, 보임
+    const ex = [], e = (...a) => ex.push(...a), e32 = (v) => e((v >>> 24) & 255, (v >>> 16) & 255, (v >>> 8) & 255, v & 255);
+    e32(0); e32(0);                                                                             // 마스크 없음, 섞기 범위 없음
+    const nm = L.ascii.slice(0, 31); e(nm.length); for (const c of nm) e(c.charCodeAt(0)); while (ex.length % 4) e(0);   // 옛 방식 이름 (영문)
+    for (const c of '8BIMluni') e(c.charCodeAt(0)); e32(4 + L.name.length * 2); e32(L.name.length); for (const c of L.name) { const k = c.charCodeAt(0); e(k >> 8, k & 255); }   // 유니코드 이름 (한글)
+    p32(ex.length); r.push(...ex); recs.push(new Uint8Array(r)); for (const c of L.ch) data.push(c);
+  }
+  let li = 2; for (const r of recs) li += r.length; for (const c of data) li += c.length; const pad = li % 2;
+  u32(4 + li + pad + 4); u32(li + pad); u16((alpha ? -layers.length : layers.length) & 0xffff);   // 합친 그림에 투명도가 있으면 레이어 수를 음수로 적는다
+  for (const r of recs) parts.push(r); for (const c of data) parts.push(c); if (pad) u8(0);
+  u32(0);                                                                                       // 전체 마스크 없음
+  const n = alpha ? 4 : 3, px = W * H, md = merged.data, plane = new Uint8Array(px), lens = new Uint8Array(n * H * 2), lv = new DataView(lens.buffer), rows = [];
+  for (let c = 0; c < n; c++) { // 합친 그림: 채널을 차례로 (투명한 곳의 색은 흰 바탕에 얹은 것으로 적는다)
+    for (let i = 0, p = 0; i < px; i++, p += 4) { const a = md[p + 3]; plane[i] = c === 3 ? a : alpha ? Math.round((md[p + c] * a + 255 * (255 - a)) / 255) : md[p + c]; }
+    const row = new Uint8Array(W + Math.ceil(W / 128) + 2); for (let y = 0; y < H; y++) { const o = packBits(plane, y * W, W, row, 0); lv.setUint16((c * H + y) * 2, o); rows.push(row.slice(0, o)); }
+  }
+  u16(1); parts.push(lens); for (const r of rows) parts.push(r);
+  return new Blob(parts, { type: 'image/vnd.adobe.photoshop' });
+}
+async function exportPsd() {
+  const w = stage.clientWidth, h = stage.clientHeight, cap = Math.min(renderer.capabilities.maxTextureSize, 8192), k = Math.min(+$('exp-scale').value, cap / Math.max(w, h)), W = Math.round(w * k), H = Math.round(h * k);
+  await busy('PSD를 만드는 중…');
+  const bgPrev = scene.background, pr = renderer.getPixelRatio(), gz = gizmoGroup.visible, gv = ground.visible, noBg = !$('exp-bg').checked || !bgPrev, sh = gv && $('exp-sh').checked;   // 빼기로 한 것은 레이어도 만들지 않고 합친 그림에서도 뺀다
+  const live = boxes.filter((b) => !boxState(b).off), grp = (b) => (b === boxCur ? poseGroup : b.g.poseGroup), cv = document.createElement('canvas'); cv.width = W; cv.height = H; const cg = cv.getContext('2d', { willReadFrequently: true });
+  const shoot = () => { renderer.render(scene, camera); cg.clearRect(0, 0, W, H); cg.drawImage(canvas, 0, 0); return cg.getImageData(0, 0, W, H); };   // 지금 켜 둔 것만 찍어 낱낱의 점으로 읽는다
+  const names = live.map((b) => { const st = boxState(b); return st.example ? sampleName(st.sample) : (st.fileName || '상자').replace(/\.[^.]+$/, ''); });
+  let blob = null;
+  try {
+    gizmoGroup.visible = false; for (const o of hiObjs) o.obj.visible = false; renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+    const layers = [], wait = () => new Promise((r) => setTimeout(r, 0));
+    scene.background = noBg ? null : bgPrev; ground.visible = sh; const merged = shoot(); await wait();                 // ① 합친 그림 (넣기로 한 것만)
+    for (const b of live) grp(b).visible = false;
+    if (!noBg) { ground.visible = false; layers.push(psdLayer('배경', 'Background', shoot(), W, H)); await wait(); }   // ② 배경색만
+    scene.background = null;
+    if (sh) { ground.visible = true; const L = psdLayer('그림자', 'Shadow', shoot(), W, H); if (L.right > L.left) layers.push(L); await wait(); }   // ③ 바닥 그림자만
+    ground.visible = false;
+    const eye = new THREE.Vector3(), c3 = new THREE.Box3(), mid = new THREE.Vector3(); camera.getWorldDirection(eye);
+    const order = live.map((b, i) => { grp(b).visible = true; c3.setFromObject(grp(b)); grp(b).visible = false; return { b, i, z: c3.isEmpty() ? 0 : eye.dot(c3.getCenter(mid).sub(camera.position)) }; }).sort((a, c) => c.z - a.z);   // ④ 상자: 먼 것부터 (가까운 것이 위 레이어)
+    for (const { b, i } of order) { grp(b).visible = true; const L = psdLayer(live.length > 1 ? `상자 ${i + 1} · ${names[i]}` : names[i], 'Box ' + (i + 1), shoot(), W, H); grp(b).visible = false; if (L.right > L.left) layers.push(L); await wait(); }   // 화면 밖에 있어 찍히지 않은 상자는 레이어를 만들지 않는다
+    blob = psdFile(W, H, layers, merged, noBg);
+    $('exp-note').textContent = `${W} × ${H} px · 레이어 ${layers.length}장의 PSD를 만들었습니다.`;
+  } finally {
+    for (const o of hiObjs) o.obj.visible = true; scene.background = bgPrev; gizmoGroup.visible = gz; ground.visible = gv; syncBoxVis(); renderer.setPixelRatio(pr); renderer.setSize(w, h, false); dirty = true; await busy('');
+  }
+  const d = new Date(), pad = (n) => String(n).padStart(2, '0'), baseName = (S.example ? '예시상자' : S.fileName.replace(/\.[^.]+$/, '')).replace(/[\\/:*?"<>|]+/g, '_');
+  await saveBlob(blob, `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}-${baseName}-mockup.psd`);
 }
 
 /* ---------- 이벤트 ---------- */
@@ -5185,27 +5301,27 @@ window.addEventListener('keydown', (e) => { // Tab: 조명·반사판 창에서�
     $(id).click();
   });
 }
-{ // 왼쪽 패널 접기 · 펴기 ( < 로 접고 > 로 편다. Shift 없이 , . 만 눌러도 된다 ). 접으면 3D 화면이 그만큼 넓어진다
+{ // 왼쪽 패널 접기 · 펴기 ( . 하나로 접었다 편다 ). 접으면 3D 화면이 그만큼 넓어진다
   const app = document.querySelector('.app');
   const rail = $('side-rail'), panel = $('panel');
   // 접어 둔 패널: 왼쪽 아이콘을 누르면 그 부분만 작은 창으로 뜬다 (같은 아이콘을 다시 누르면 닫힘)
   const railShow = (sec) => { const on = !!sec && !(panel.classList.contains('float') && panel.dataset.sec === sec); panel.classList.toggle('float', on); if (on) panel.dataset.sec = sec; else delete panel.dataset.sec; for (const b of rail.querySelectorAll('[data-sec]')) b.setAttribute('aria-pressed', String(on && b.dataset.sec === sec)); panel.scrollTop = 0; };
   railClose = () => { if (panel.classList.contains('float')) railShow(null); };
   const RAIL_KEYS = { KeyA: ['files', 'A', '인쇄 데이터'], KeyS: ['map', 'S', '전개도'], KeyD: ['layers', 'D', '레이어'] };   // 접어 둔 동안의 단축키
-  const setSide = (on) => { railShow(null); if (!on && panel.classList.contains('wide')) $('edit-wide').click(); app.classList.toggle('noside', !on); $('side-open').hidden = on; rail.hidden = on; keyFlash(on ? [[[','], '패널 접기'], [['.'], '패널 펴기']] : [[[','], '패널 접기'], [['.'], '패널 펴기'], [['A', 'S', 'D'], '인쇄 데이터 · 전개도 · 레이어', true]]); };   // 다시 들어오면 늘 펴진 상태
+  const setSide = (on) => { railShow(null); if (!on && panel.classList.contains('wide')) $('edit-wide').click(); app.classList.toggle('noside', !on); $('side-open').hidden = on; rail.hidden = on; keyFlash(on ? [[['.'], '패널 접기']] : [[['.'], '패널 펴기'], [['A', 'S', 'D'], '인쇄 데이터 · 전개도 · 레이어', true]]); };   // 다시 들어오면 늘 펴진 상태
   rail.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b || !b.dataset.sec) return; b.blur(); railShow(b.dataset.sec); if (e.isTrusted) { const k = Object.values(RAIL_KEYS).find((v) => v[0] === b.dataset.sec); keyFlash([[[k[1]], k[2]]]); } });
   window.addEventListener('keydown', (e) => { // A · S · D: 접어 둔 패널의 인쇄 데이터 · 전개도 · 레이어 창을 열고 닫는다
     const k = RAIL_KEYS[e.code]; if (!k || rail.hidden || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey || e.repeat) return; const t = e.target;
     if (t && (t.isContentEditable || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || (t.tagName === 'INPUT' && !['range', 'checkbox', 'button', 'color', 'file'].includes(t.type)))) return;
     if (!$('exp-dlg').hidden || !$('ask-dlg').hidden) return; e.preventDefault(); railShow(k[0]);
   });
-  $('save-btn').addEventListener('click', (e) => { e.currentTarget.blur(); $('export').click(); if (e.isTrusted) keyFlash([[['Ctrl', 'S'], 'PNG 저장']]); });
+  $('save-btn').addEventListener('click', (e) => { e.currentTarget.blur(); $('export').click(); if (e.isTrusted) keyFlash([[['Ctrl', 'S'], 'Export']]); });
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && panel.classList.contains('float') && !S.sel && !boxSel && !editSel.size && imgSel < 0 && !editJoin && $('exp-dlg').hidden) railShow(null); });
   $('side-close').addEventListener('click', () => setSide(false)); $('side-open').addEventListener('click', () => setSide(true));
   window.addEventListener('keydown', (e) => {
-    if ((e.code !== 'Comma' && e.code !== 'Period') || e.ctrlKey || e.metaKey || e.altKey) return; const t = e.target;
+    if (e.code !== 'Period' || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return; const t = e.target;
     if (t && (t.isContentEditable || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || (t.tagName === 'INPUT' && !['range', 'checkbox', 'button', 'color', 'file'].includes(t.type)))) return;
-    if (!$('exp-dlg').hidden) return; e.preventDefault(); setSide(e.code === 'Period');
+    if (!$('exp-dlg').hidden) return; e.preventDefault(); setSide(app.classList.contains('noside'));   // 접혀 있으면 펴고, 펴져 있으면 접는다
   });
 }
 $('box-pop-x').addEventListener('click', () => setBoxSel(false));
@@ -5288,19 +5404,23 @@ $('bg-chips').addEventListener('click', (e) => { const b = e.target.closest('but
 $('bg-chips').addEventListener('contextmenu', (e) => { const b = e.target.closest('button.bgc[data-c]'); if (!b) return; e.preventDefault(); bgSaved = bgSaved.filter((x) => x !== b.dataset.c); bgStore(); syncBgChips(); });   // 저장 칩을 오른쪽 버튼으로: 지우기
 $('btn-shadow').addEventListener('click', (e) => { ground.visible = !ground.visible; e.currentTarget.setAttribute('aria-pressed', String(ground.visible)); dirty = true; });
 $('hud-tr').addEventListener('click', (e) => { const v = e.target.dataset && e.target.dataset.view; if (v) fitCamera(v); });
-const expSize = () => { const w = stage.clientWidth, h = stage.clientHeight, k = Math.min(+$('exp-scale').value, Math.min(renderer.capabilities.maxTextureSize, 8192) / Math.max(w, h)); $('exp-size').textContent = `${Math.round(w * k)} × ${Math.round(h * k)} px · 지금 보이는 각도 그대로 저장됩니다.`; };
+let expFmt = 'png';   // 고른 형식 (창을 닫았다 열어도 그대로)
+const expSize = () => { const w = stage.clientWidth, h = stage.clientHeight, k = Math.min(+$('exp-scale').value, Math.min(renderer.capabilities.maxTextureSize, 8192) / Math.max(w, h)), psd = expFmt === 'psd';
+  for (const b of $('exp-fmt').children) b.setAttribute('aria-pressed', String(b.dataset.v === expFmt));
+  for (const r of $('exp-dlg').querySelectorAll('.row[data-fmt]')) r.hidden = r.dataset.fmt !== expFmt;   // 그 형식의 설정만 보인다
+  $('exp-size').textContent = `${Math.round(w * k)} × ${Math.round(h * k)} px · ` + (psd ? '상자마다 한 장씩 레이어로 나눠 저장합니다.' : '지금 보이는 각도 그대로 저장됩니다.'); };
 const expClose = () => { $('exp-dlg').hidden = true; };
 $('export').addEventListener('click', () => { expSize(); $('exp-dlg').hidden = false; $('exp-go').focus(); });   // 저장 옵션은 팝업에서 고른다
-window.addEventListener('keydown', (e) => { // Ctrl+S: PNG 저장 창을 연다. 창이 떠 있을 때 한 번 더 누르면 그대로 저장한다
+window.addEventListener('keydown', (e) => { // Ctrl+S: Export 창을 연다. 창이 떠 있을 때 한 번 더 누르면 그대로 저장한다
   if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey || e.key.toLowerCase() !== 's') return;
   e.preventDefault(); if (e.repeat || !$('busy').hidden) return;
   if ($('exp-dlg').hidden) $('export').click(); else $('exp-go').click();
 }, true);
-$('exp-scale').addEventListener('change', expSize);
+$('exp-scale').addEventListener('change', expSize); $('exp-fmt').addEventListener('click', (e) => { const b = e.target.closest('button[data-v]'); if (!b) return; expFmt = b.dataset.v; expSize(); });
 $('exp-cancel').addEventListener('click', expClose);
 $('exp-dlg').addEventListener('pointerdown', (e) => { if (e.target === $('exp-dlg')) expClose(); });
 window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('exp-dlg').hidden) { expClose(); e.stopImmediatePropagation(); } });
-$('exp-go').addEventListener('click', () => { expClose(); exportPng().catch((err) => { console.error(err); $('exp-note').textContent = '이미지를 만들지 못했습니다. 크기를 낮춰 다시 시도해 주세요.'; }); });
+$('exp-go').addEventListener('click', () => { expClose(); (expFmt === 'psd' ? exportPsd() : exportPng()).catch((err) => { console.error(err); $('exp-note').textContent = '이미지를 만들지 못했습니다. 크기를 낮춰 다시 시도해 주세요.'; }); });
 $('shot-close').addEventListener('click', () => { $('shot').hidden = true; });
 
 for (const k of ['light', 'reflector', 'bg']) { // 화면 안 도구 막대로 조명·반사판·배경 창을 켜고 끈다
@@ -5560,7 +5680,7 @@ function kgContext() {
   const t = document.activeElement; if (t && (t.isContentEditable || t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && /^(text|number|search)$/.test(t.type)))) return [];
   if (kgDown.has('Space')) return [KG(['Space', '@L'], '화면 이동')];   // Space를 누르고 있는 동안: 왼쪽 버튼으로 화면을 옮긴다
   if (kgDown.has('Ctrl')) { // Ctrl을 누르고 있으면: 함께 쓸 수 있는 키
-    const a = [KG(['Ctrl', 'Z'], '되돌리기'), KG(['Ctrl', 'Shift', 'Z'], '다시 하기'), KG(['Ctrl', 'S'], 'PNG 저장')], what = editFocus && imgSel >= 0 ? '이미지' : labelSel ? '라벨' : boxSel ? '상자' : '';
+    const a = [KG(['Ctrl', 'Z'], '되돌리기'), KG(['Ctrl', 'Shift', 'Z'], '다시 하기'), KG(['Ctrl', 'S'], 'Export')], what = editFocus && imgSel >= 0 ? '이미지' : labelSel ? '라벨' : boxSel ? '상자' : '';
     if (what) a.push(KG(['Ctrl', 'C'], what + ' 복사'));
     if ((editFocus && imgClip) || clip) a.push(KG(['Ctrl', 'V'], '붙여넣기'));
     return a;
@@ -5640,7 +5760,7 @@ function kgUpdate() {
 $('kg-on').checked = kgOn;
 $('kg-on').addEventListener('change', (e) => { kgOn = e.target.checked; try { localStorage.setItem('bms-keyguide', kgOn ? '1' : '0'); } catch (err) { /* 저장하지 못해도 이번에는 그대로 쓴다 */ } if (!kgOn) kgFlashList = null; });
 $('hud-tools').addEventListener('click', (e) => { if (!e.isTrusted) return; const b = e.target.closest && e.target.closest('.tool'), m = b && { 'btn-light': ['Q', '조명'], 'btn-reflector': ['W', '반사판'], 'btn-bg': ['E', '배경색'], 'btn-shadow': ['R', '바닥 그림자'] }[b.id]; if (m) keyFlash([[[m[0]], m[1]]]); }, true);   // 아이콘을 마우스로 눌렀을 때 그 단축키를 알려 준다
-$('export').addEventListener('click', (e) => { if (e.isTrusted) keyFlash([[['Ctrl', 'S'], 'PNG 저장']]); });
+$('export').addEventListener('click', (e) => { if (e.isTrusted) keyFlash([[['Ctrl', 'S'], 'Export']]); });
 $('edit-undo').addEventListener('click', (e) => { if (e.isTrusted) keyFlash([[['Ctrl', 'Z'], '되돌리기'], [['Ctrl', 'Shift', 'Z'], '다시 하기']]); });
 
 resize(); applyBg(); setEmboss(); syncInsideUI(); applyInside(); syncEdgeUI(); buildEnv(); syncLights(); renderLightUI('light'); renderLightUI('reflector'); loadExample(); tick();
